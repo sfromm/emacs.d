@@ -1,0 +1,13 @@
+# misc top level dirs
+auto-save-list
+backups
+tramp
+elpa
+# misc files
+*~
+*.elc
+.*.lock
+\#*
+savehist
+session.*
+secrets.el.gpg
