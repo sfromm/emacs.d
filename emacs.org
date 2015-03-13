@@ -1,0 +1,1857 @@
+#+TITLE: Emacs configuration
+#+AUTHOR: Stephen Fromm
+#+OPTIONS: toc:4 h:4
+
+* Emacs Configuration
+
+** About this file
+<<babel-init>>
+
+This is my Emacs configuration (mostly) maintained in one file, that is
+kept organized with *org-mode*. It is inspired from a variety of
+sources, including (in no particular order):
+
+- [[http://sachachua.com/blog/][Sacha Chua]]'s [[http://sachac.github.io/.emacs.d/Sacha.html][emacs configuration]]
+- [[http://eschulte.github.io/emacs24-starter-kit/][Emacs Starter Kit]]
+- [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][Creation and conservation of computer files]], and later [[https://github.com/grettke/home/blob/master/ALEC.org][ALEC]]
+- [[http://kitchingroup.cheme.cmu.edu/blog/][John Kitchin]]'s [[https://github.com/jkitchin/jmax][emacs configuration]]
+- [[http://doc.norang.ca/org-mode.html][Bernt Hansen (norang.ca) Org Mode]] (Organize Your Life in Plain Text)
+- [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB (EmacsWiki)]]
+- [[http://bzg.fr/emacs.html][Bastien Guerry]]
+- [[https://github.com/larstvei/dot-emacs][Lars Tveito]]
+- [[https://github.com/purcell/emacs.d][Steve Purcell]]
+- [[http://zeekat.nl/articles/making-emacs-work-for-me.html][Making Emacs work for me]]
+- [[https://github.com/howardabrams/dot-files][Howard Abrams]]
+- [[https://github.com/jd/emacs.d][Julien Danjou]]
+- [[https://github.com/joedicastro/dotfiles/tree/master/emacs][Joe Di Castro]]
+
+Embedding Emacs configuration in *org-mode* is heavily inspired by the
+ideas in [[http://en.wikipedia.org/wiki/Literate_programming][Literate Programming]].
+
+This will hopefully lend itself better to explain and track why I
+use different elements in my configuration, including discussion,
+comments, todo items, and so on.
+
+First thing's first: a base config is needed in =~/.emacs.d/init.el=.
+Remember to keep this simple.  :-)
+
+#+BEGIN_SRC emacs-lisp  :tangle no
+(require 'package
+(package-initialize t)
+(require 'org)
+(require 'ob-tangle)
+
+; load up private configuration
+(if (file-exists-p (concat user-emacs-directory "private.org"))
+  (org-babel-load-file (concat user-emacs-directory "private.org"))
+  )
+
+; load up the bulk of my configuration
+(org-babel-load-file (concat user-emacs-directory "emacs.org"))
+#+END_SRC
+
+** Personal information
+
+Set my name.  =user-mail-address= is defined in /private.org/.
+
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Stephen Fromm")
+#+END_SRC
+
+** Emacs initialization
+
+The first time this file is loaded, it will take awhile to install the
+miscellaneous packages.  This will not be an issue the second time you
+start Emacs with this configuration.
+
+*** Add package sources
+
+Use =M-x package-refresh-contents= to reload the list of packages
+after adding these for the first time.
+
+MELPA is probably the more popular package repository.  It also has lots
+of packages compared to other repositories.  Be aware that MELPA uses
+snapshots instead of 'stable' releases.
+
+- [2014-05-16 Fri] [[http://emacsredux.com/blog/2014/05/16/melpa-stable/][Turns out]] that there is also a [[http://melpa-stable.milkbox.net/#/][MELPA stable]].  I
+  should add that to the =package-archive= list.
+
+#+BEGIN_SRC emacs-lisp
+  (setq package-archives '(
+                           ("org" . "http://orgmode.org/elpa/")
+                           ("melpa" . "http://melpa.org/packages/")
+                           ("gnu" . "http://elpa.gnu.org/packages/")
+                           ("marmalade" . "http://marmalade-repo.org/packages/")
+                           ("e6h" . "http://www.e6h.org/packages/")
+                           ))
+  (package-initialize)
+  (require 'package)
+#+END_SRC
+
+*** Install packages if necessary
+
+ELPA provides a nice resource to install packages.  The following
+function facilitates installing packages from ELPA.  It will refresh the
+package database before trying to install a package.
+
+Further down, I also use the feature from =use-package= where it can
+install a package.
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/package-install (package)
+  "Install PACKAGE it not yet installed."
+  (unless (package-installed-p package)
+    (message "%s" "Refreshing package database...")
+    (package-refresh-contents)
+    (message "%s" " done.")
+    (package-install package)
+    (delete-other-windows)))
+#+END_SRC
+
+*** Define lisp directories and Use use-package
+
+The following directories have lisp files that I will user later on.
+Best to load them now.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/site-lisp")
+#+END_SRC
+
+[[https://github.com/jwiegley/use-package][use-package]] is a declaration macro that allows you to isolate package
+configuration in your Emacs configuration.  This [[http://ericjmritz.name/2013/11/25/simplify-emacs-configuration-with-use-package/][page]] provides an
+example of how to use =use-package=.  Don't forget the [[https://github.com/jwiegley/use-package/blob/master/README.md][documentation]] for
+*use-package*.
+
+#+BEGIN_SRC emacs-lisp
+(sf/package-install 'use-package)
+(require 'use-package)
+#+END_SRC
+
+*** Funtions and other building blocks
+
+Pull in some packages that will be useful later.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'cl)
+#+END_SRC
+
+Define a function that will switch to the last used buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/switch-to-last-buffer ()
+    (interactive)
+    (switch-to-buffer (other-buffer (current-buffer) 1)))
+#+END_SRC
+
+Save all buffers and then run =depot-sync.sh=.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/save-all ()
+    (interactive)
+    (progn
+      (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
+      (save-some-buffers t)
+      ; (with-temp-buffer (async-shell-command "depot-sync.sh" t))
+      ))
+#+END_SRC
+
+Define function that will disable =global-linum=.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/nolinum ()
+    "Disable global-linum-mode"
+    (global-linum-mode 0))
+#+END_SRC
+
+Function to create a full ISO 8601 format timestamp.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/timestamp ()
+    "Insert full ISO 8601 format timestamp"
+    (interactive)
+    (insert (format-time-string "%Y-%m-%dT%T%z")))
+#+END_SRC
+
+Toggle whitespace cues.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/whitespace ()
+    "Enable whitespace visualizations"
+    (setq highlight-tabs t)
+    (setq show-trailing-whitespace t))
+#+END_SRC
+
+*** DONE Load encrypted secrets
+    CLOSED: [2014-04-25 Fri 10:40]
+
+<<emacs-secrets>>
+
+The following uses [[http://www.gnu.org/software/emacs/manual/html_mono/epa.html][EasyPG Assistant]] for the encryption.  This enables
+you to store secrets (aka passwords) in a separate, encrypted file that
+is loaded when needed.
+
+I updated this to be in a function so that it doesn't prompt right away
+when starting Emacs.  This function can then be called by other parts as
+needed.
+
+#+BEGIN_SRC emacs-lisp
+;  (eval-after-load 'erc
+;    (progn
+;      (load-file (concat user-emacs-directory "secrets.el.gpg"))
+;    ))
+#+END_SRC
+
+The following was a helpful resource when setting this up.
+
+http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
+
+- [2015-03-12 Thu] I don't really use this anymore.  For passwords, I
+  use an encrypted /authinfo/.  For /private.org/, I maintain that
+  separately.
+
+**** CANCELLED Consider using =gpg-agent= and public key encryption
+     CLOSED: [2015-03-12 Thu 19:02]
+
+**** CANCELLED Consider loading secrets file on demand
+     CLOSED: [2015-03-12 Thu 19:02]
+
+** Org mode
+
+[[http://orgmode.org/][Org mode]] is a big reason why I've switched back to Emacs.  I use it for
+taking notes, tracking projects and todo items, and other miscellaneous
+items.
+
+Things to bring up org-mode.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f8>") 'org-cycle-agenda-files)
+  (global-set-key (kbd "<f12>") 'org-agenda)
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cb" 'org-switchb)
+#+END_SRC
+
+The following does lots of things:
+
+- Enable spell-check when in *org-mode*.
+- Define the default =org-directory=.
+- Make agenda views /sticky/ via =org-agenda-sticky=.  This basically
+  means that when you switch to _org-agenda_, Emacs will switch to the
+  _org-agenda_ buffer but not refresh it.  You need to manually refresh
+  it by hand with _r_ or _g_.
+- Define where to capture notes (=org-default-notes-file=) and the
+  templates to use (=org-capture-templates=).
+- Note when a task is rescheduled.
+- This defines some basics like where and what files with
+  =org-agenda-files=.
+- Define =org-todo-keywords=.  This is discussed in the [[http://orgmode.org/manual/TODO-Items.html][manual]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-plus-contrib
+    :diminish org-mode
+    :ensure t
+    :init
+    (progn
+      (add-hook 'org-mode-hook 'turn-on-auto-fill)
+      (add-hook 'org-mode-hook '(lambda() (set-fill-column 72)))
+      (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
+      (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
+      (setq
+        org-directory "~/depot/doc/org"
+        org-agenda-sticky t
+        org-default-notes-file (concat org-directory "/journal.org")
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-log-done t
+        org-completion-use-ido t
+        org-log-reschedule "note"
+        org-agenda-files (list
+                           (concat org-directory "/journal.org")
+                           (concat org-directory "/work.org")
+                           (concat org-directory "/personal.org"))
+        org-capture-templates '(
+                                 ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+                                   "* %?%U\n")
+                                 )
+        org-file-apps (quote ((auto-mode . emacs)
+                               ("\\.doc\\'" . "ooffice %s")
+                               ("\\.docx\\'" . "ooffice %s")
+                               ("\\.xlsx\\'" . "ooffice %s")
+                               ("\\.pptx\\'" . "ooffice %s")
+                               ("\\.pdf\\'" . default)))
+        org-modules '(org-w3m org-bbdb
+                       org-bibtex org-docview
+                       org-gnus org-info
+                       org-irc org-mhe org-rmail org-habit)
+        org-todo-keywords '(
+                             (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
+                             (sequence "|" "CANCELLED(c)")
+                             )
+        )
+      (org-load-modules-maybe t)
+      ))
+#+END_SRC
+
+Finally, pull in *org-git-link* to reference git links.  More
+information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-git-link
+    :load-path "package/org-mode/contrib/lisp")
+#+END_SRC
+
+*** Contacts
+
+Instead of tinkering with *BBDB*, which seemed to require more energy
+than I want to commit, *[[https://julien.danjou.info/projects/emacs-packages#org-contacts][org-contacts]]* looks like a good alternative.
+It is /org-ish/ which is also a plus.  If _org-contacts-files_ is not
+set, *org-contacts* will search all your Org files.  Since I'm storing
+contacts elsewhere, this needs to be set.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-contacts
+    :load-path "package/org-mode/contrib/lisp"
+    :config
+    (progn
+      (setq org-contacts-files (list  "~/depot/doc/org/contacts.org"))
+      (push '("c" "Contacts" entry (file (concat org-directory "/contacts.org"))
+               "* %(org-contacts-template-name)
+:PROPERTIES:
+:EMAIL: %(org-contacts-template-email)
+:PHONE:
+:ADDRESS:
+:BIRTHDAY:
+:END:") org-capture-templates)
+      )
+    )
+#+END_SRC
+
+*** Pomodoro
+
+The [[http://pomodorotechnique.com/][pomodoro technique]] is basically about time management.  You use a
+timer to break down work into intervals, traditionally 25 minutes in
+length, separated by short breaks.  The following installs
+*org-pomodoro* and sets up hooks to do notifications.  It also overrides
+the normal org-mode /clock-in/ and /clock-out/ functions.  These are
+normally *org-clock-in* and *org-clock-out*.
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'org-pomodoro)
+  (global-set-key (kbd "C-c C-x C-i") 'org-pomodoro)
+  (global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
+  (defun sf/notify-pomodoro (title message)
+    (notifications-notify
+      :title title
+      :body message
+      :urgency 'low))
+
+  (add-hook 'org-pomodoro-finished-hook
+    (lambda ()
+      (sf/notify-pomodoro "Pomodoro completed" "Time for a break")))
+
+  (add-hook 'org-pomodoro-break-finished-hook
+    (lambda ()
+      (sf/notify-pomodoro "Break completed" "Ready for another?")))
+
+  (add-hook 'org-pomodoro-long-break-finished-hook
+    (lambda ()
+      (sf/notify-pomodoro "Long break completed" "Ready for another?")))
+#+END_SRC
+
+*** Babel mode
+
+This defines which languages are enabled for evaluation by org-babel.
+[[http://ditaa.sourceforge.net/][ditaa]] allows creation of diagrams from Emacs.  May require using emacs
+=artist-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((ditaa . t)
+      (emacs-lisp . t)
+      (org . t)
+      (perl . t)
+      (python . t)
+      (ruby . t)
+      (sh . t)
+     ))
+#+END_SRC
+
+You can type =C-c '= to edit the current code block.  This will bring up
+a major-mode edit buffer containing the body of the code block.  You can
+then use =C-c '= again to exit.
+
+*** Exporting
+
+One of the (many) nice features of org-mode is that you can export to
+many different formats.  What follows is miscellaneous resources online
+that discuss exporting.
+
+- [[http://orgmode.org/manual/Exporting.html#Exporting][Org Mode Manual, Exporting]]
+- [[http://orgmode.org/worg/org-contrib/babel/examples/article-class.html][Org-article LaTeX class]]
+- [[http://home.fnal.gov/~neilsen/notebook/orgExamples/org-examples.html][Emacs org-mode examples and cookbook]]
+- [[http://emacs-fu.blogspot.com/2011/04/nice-looking-pdfs-with-org-mode-and.html][Emacs Fu: Nice looking PDFs with org-mode and xetex]]
+
+** Packages
+
+This section defines all the packages I use.  It installs (if needed)
+and configures them per my usage.  Sections will come and go.
+
+*** Emacs vi emulation
+
+I have too much Vim muscle memory to let go of the keybindings.  [[https://gitorious.org/evil/pages/Home][evil]]
+provides an emulation mode that I find extremely useful.
+
+While I have _<leader>_ configured, I don't use this as much as I used
+to.  I typically use *helm* or *ido* for quickly changing between
+buffers.
+
+Lastly, this also sets the initial state of some modes to _emacs_ where
+it makes sense.
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'evil)
+  (sf/package-install 'evil-leader)
+  (use-package evil
+    :init
+    (progn
+      (use-package evil-leader
+        :init (global-evil-leader-mode)
+        :config
+        (progn
+          ;; evil-leader
+          (evil-leader/set-leader ",")
+          (evil-leader/set-key
+            "," 'sf/switch-to-last-buffer)))
+      (evil-mode 1))
+    :config
+    (progn
+      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode ))
+        (evil-set-initial-state mode 'emacs))
+      ))
+#+END_SRC
+
+*** BBDB
+
+BBDB, the Big-Brother Database.  As noted elsewhere, I use *org-contacts*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package bbdb
+    :disabled t
+    :init
+    (progn
+      (bbdb-initialize)
+      )
+    )
+#+END_SRC
+
+*** Bookmarks
+
+Bookmarks are a way to jump to files and other things.  They are saved
+to =~/.emacs.d/bookmarks=. 
+
+| Keybinding  | Command                                 |
+|-------------+-----------------------------------------|
+| C-x r m     | Set bookmark for visited file, at point |
+| C-x r b BMK | Jump to bookmark named BMK              |
+| C-x r l     | List all bookmarks                      |
+
+[[http://oremacs.com/2015/01/06/rushing-headlong/][headlong]]: 
+
+#+BEGIN_SRC emacs-lisp
+(use-package headlong
+  :ensure headlong
+ )
+#+END_SRC
+
+[[http://www.emacswiki.org/emacs/BookmarkPlus][Bookmark+]]:
+
+#+BEGIN_SRC emacs-lisp
+(use-package bookmark+
+  :ensure bookmark+
+  )
+#+END_SRC
+
+*** Diminish
+
+Use =diminish= to clean up clutter on the modeline.  =use-package= has a
+built-in mechanism to diminish a mode.
+
+#+BEGIN_SRC emacs-lisp
+(sf/package-install 'diminish)
+;(diminish 'undo-tree-mode)
+#+END_SRC
+
+*** Ediff
+
+I am fairly used to *vimdiff*'s behavior.  I haven't had lots of
+opportunities to familiarize myself with *ediff*, but the following
+kinda-sorta helps.
+
+#+BEGIN_SRC emacs-lisp
+(setq ediff-split-window-function 'split-window-horizontally)
+#+END_SRC
+
+*** Elfeed
+
+[[https://github.com/skeeto/elfeed][Elfeed]] is a web feed (ATOM and RSS) reader for Emacs.  At this point,
+I'm just playing with elfeed.  I don't know whether it will replace my
+other news-reading utility.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed
+    :ensure elfeed
+    :config
+    (progn
+      (setq elfeed-feeds
+        '(("http://codeascraft.com/feed/" devops)
+           ("http://endlessparentheses.com/atom.xml" devops emacs)
+           ("http://planet.emacsen.org/atom.xml" devops emacs)
+           ("http://oremacs.com/atom.xml" devops emacs)
+           ("http://xkcd.com/atom.xml" comics fun)
+           ("https://what-if.xkcd.com/feed.atom" fun)
+           ("http://mbork.pl/?action=rss" emacs devops)
+           ("http://www.howardism.org/index.xml" emacs devops)
+           ("http://kitchingroup.cheme.cmu.edu/blog/feed/atom/" emacs devops)
+           ("http://planetsysadmin.com/atom.xml" devops)
+           ("http://planet.fedoraproject.org/atom.xml" devops linux fedora)
+           ))
+      (dolist (mode '(elfeed-show-mode elfeed-search-mode))
+        (evil-set-initial-state mode 'emacs))
+      ))
+#+END_SRC
+
+*** Emacsclient and server
+
+This allows you to start a single Emacs process and then connect to it
+via =emacsclient=.  In general, be sure to use =emacsclient -n= tells
+=emacsclient= to not wait for the server to return.
+
+#+BEGIN_SRC emacs-lisp
+  (load "server")
+  (unless (server-running-p) (server-start))
+#+END_SRC
+
+*** Helm
+    
+[[https://github.com/emacs-helm/helm][Helm]] is an incremental completion and selectio narrowing framework for
+Emacs.  It helps narrow your choices when searching for files, buffers,
+commands, et cetera.
+
+- [[http://tuhdo.github.io/helm-intro.html][Helm: A Package in a league of its own]]
+
+| Keybinding | Command                           |
+|------------+-----------------------------------|
+| C-c ?      | Display help when in Helm session |
+|            |                                   | 
+
+The following rebinds *C-x c* to *C-c h* because the former is too close
+to the command *C-x C-c*, *save-buffers-kill-terminal*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :ensure helm
+    :diminish helm-mode
+    :init
+    (progn
+      (require 'helm-config)
+      (setq 
+        helm-ff-skip-boring-files t
+        helm-split-window-in-side-p t
+        helm-ff-file-name-history-use-recentf t)
+      (global-set-key (kbd "C-c h") 'helm-command-prefix)
+      (global-unset-key (kbd "C-x c"))
+      (helm-mode 1)
+      (helm-autoresize-mode t))
+    :config
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    :bind (("M-x" . helm-M-x)
+            ("C-x C-f" . helm-find-files)
+            ("<f7>" . helm-recentf)
+            ("C-x b" . helm-mini))
+    )
+
+#+END_SRC
+
+*** Hydra - Making Emacs bindings stick around
+
+[[https://github.com/abo-abo/hydra][Hydra]] is a Emacs package that can be used to tie related commands into a
+family of short bindings with a common prefix - aka the Hydra.
+
+Abo Abo has some interesting posts on Hydra that demonstrate its
+utility:
+
+- [[http://oremacs.com/2015/02/03/one-hydra-two-hydra/][One Hydra Two Hydra Red Hydra Blue Hydra]]
+- [[http://oremacs.com/2015/02/04/pre-hydra-post/][New in Hydra - :pre and :post clauses]]
+- [[http://oremacs.com/2015/02/02/colorful-hydrae/][Colorful Hydras]]
+
+Let's give it a shot.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra
+    :ensure t)
+#+END_SRC
+
+*** IDO
+
+A first crack at using [[http://www.emacswiki.org/InteractivelyDoThings][IDO]], aka /Interactively Do Things/.  Of
+particular note, *ido-vertical-mode* is enabled again.
+
+A few handy key-bindings when using IDO:
+
+| Keybinding | Command                                       |
+|------------+-----------------------------------------------|
+| C-n        | move next through list                        |
+| C-p        | move to previous in list                      |
+| Tab        | display possible completion in buffer         |
+| RET        | go down inside the directory in front of list |
+| backspace  | go up to parent directory                     |
+| //         | go to root directory                          |
+| ~/         | go to home directory                          |
+| C-f        | fall back to find file                        |
+| C-d        | enter Dired for directory                     |
+| C-j        | create new file named with text you entered   |
+| C-b        | go back to buffer selection mode              |
+
+[2015-02-09 Mon]: I disabled *ido* in favor of *helm*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ido
+    :disabled t
+    :init
+    (progn
+      (use-package ido-vertical-mode
+        :ensure t
+        :disabled t
+        :init (ido-vertical-mode 1))
+      (use-package smex
+        :ensure smex
+        :disabled t
+        :init (smex-initialize)
+        :bind ("M-x" . smex))
+      (use-package flx-ido
+        :ensure flx-ido
+        :disabled t
+        :init (flx-ido-mode 1))
+      (ido-mode 1)
+      (ido-everywhere t)
+      (setq
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-faces nil
+        ido-use-filename-at-point nil
+        ido-auto-merge-work-directories-length 0))
+    :bind (("<f7>" . recentf-open-files)
+            ("C-x b" . ido-switch-buffer))
+    )
+#+END_SRC
+
+Some possibly useful references:
+- [[http://www.emacswiki.org/emacs/InteractivelyDoThings][EmacsWiki IDO]]
+- [[http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/][Mastering Emacs: Introduction to IDO]]
+- [[http://ergoemacs.org/emacs/emacs_buffer_switching.html][ErgoEmacs: Buffer switching]]
+
+*** Instant messaging: jabber & irc
+
+**** Jabber
+
+There is a jabber package for Emacs, along with a [[http://emacs-jabber.sourceforge.net/manual-0.8.0/index.html][manual]]. I'm still on
+the fence as to whether I want to use this.  Regardless, here's the
+necessary configuration.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package jabber
+    :ensure t
+    :config
+    (progn
+      (setq 
+        jabber-account-list sf/jabber-account-alist
+        jabber-history-enabled t ; enable logging
+        jabber-use-global-history nil
+        jabber-backlog-number 40
+        jabber-backlog-days 30
+        jabber-history-dir "~/.local/share/logs/jabber"
+        jabber-alert-info-message-hooks (quote (jabber-info-libnotify jabber-info-echo jabber-info-display))
+        jabber-alert-message-hooks (quote (jabber-message-notifications jabber-message-echo jabber-message-scroll))
+        jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
+        jabber-alert-muc-hooks (quote (jabber-muc-notifications-personal jabber-muc-echo jabber-muc-scroll))
+        )
+      (dolist (mode '(jabber-chat-mode jabber-roster-mode))
+        (evil-set-initial-state mode 'emacs))
+      (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
+      )
+    )
+#+END_SRC
+
+**** IRC
+
+Install [[http://www.bitlbee.org][bitlbee]] [[https://github.com/unhammer/bitlbee.el][mode]] to facilitate chatting on other networks via IRC.
+
+#+BEGIN_SRC emacs-lisp
+(sf/package-install 'bitlbee)
+#+END_SRC
+
+Go ahead and setup ERC.  This will also pull in TLS and _notifications_.
+More information about ERC can be found at [[http://www.emacswiki.org/wiki/ERC][EmacsWiki]].  The authinfo file
+has nick and password information.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'notifications)
+  (require 'tls)
+  (use-package erc
+    :config
+    (progn
+
+      (use-package erc-match
+        :config
+        (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                         "324" "329" "333" "353" "477")))
+
+      (setq erc-modules '(autojoin autoaway button completion fill irccontrols
+                           list log match menu move-to-prompt netsplit
+                           networks notifications readonly ring
+                           services smiley spelling stamp track))
+      (erc-services-mode t)
+      (setq
+        erc-nick sf/erc-nick 
+        erc-user-full-name sf/erc-nick
+        erc-away-nickname sf/erc-away-nick
+        erc-keywords sf/erc-keywords
+        erc-auto-join-channels-alist sf/erc-channels-alist
+        erc-insert-timestamp-function 'erc-insert-timestamp-left
+        erc-timestamp-format "%H:%M:%S "
+        ;; kill buffer after channel /part
+        erc-kill-buffer-on-part t
+        ;; kill buffer for server messages after /quit
+        erc-kill-server-buffer-on-quit t
+        ;; autoaway
+        erc-auto-discard-away t
+        erc-autoaway-use-emacs-idle t
+        ;; logging
+        erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
+        erc-log-channels-directory "~/.local/share/logs/erc/"
+        erc-log-insert-log-on-open nil
+        erc-prompt-for-nickserv-password nil
+        erc-save-buffer-on-part t)
+      ))
+#+END_SRC
+
+The following function will either start ERC or switch to the bufer.
+See http://emacs-fu.blogspot.com/2009/06/erc-emacs-irc-client.html. 
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/erc-connect ()
+    "Connect to IRC via ERC"
+    (interactive)
+    (when (y-or-n-p "Connect to freenode? ")
+      (erc-tls :server "irc.freenode.net" :port 6697))
+    (when (y-or-n-p "Connect to bitlbee? ")
+      (progn
+        (use-package bitlbee)
+        (bitlbee-start)
+        (sleep-for 2)
+        (erc :server "localhost" :port 6667)))
+    )
+#+END_SRC
+
+Finally, add a join hook to authenticate to /bitlbee/.  This comes from
+[[http://www.emacswiki.org/BitlBee][emacswiki]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun bitlbee-netrc-identify ()
+    "Auto-identify for Bitlbee channels using authinfo or netrc.
+
+     The entries that we look for in netrc or authinfo files have
+     their 'port' set to 'bitlbee', their 'login' or 'user' set to
+     the current nickname and 'server' set to the current IRC
+     server's name.  A sample value that works for authenticating
+     as user 'keramida' on server 'localhost' is:
+
+     machine localhost port bitlbee login keramida password supersecret"
+    (interactive)
+    (when (string= (buffer-name) "&bitlbee")
+      (let* ((secret (plist-get (nth 0 (auth-source-search :max 1
+                                         :host erc-server
+                                         :user (erc-current-nick)
+                                         :port "bitlbee"))
+                       :secret))
+              (password (if (functionp secret)
+                          (funcall secret)
+                          secret)))
+        (erc-message "PRIVMSG" (concat (erc-default-target) " " "identify" " " password) nil))))
+  ;; Enable the netrc authentication function for &biblbee channels.
+  (add-hook 'erc-join-hook 'bitlbee-netrc-identify)
+#+END_SRC
+
+*** Ledger
+
+[[http://www.ledger-cli.org/][Ledger]] is a double entry accounting system that can be used from the CLI
+and from Emacs.  There is also a Haskell port, [[http://hledger.org/][hledger]], that is
+compatible with ledger.  Hledger also has support for a web daemon that
+may make data entry simpler.
+
+- [[http://www.ledger-cli.org/3.0/doc/ledger3.html][Ledger 3 Documentation]]
+- [[http://www.ledger-cli.org/3.0/doc/ledger-mode.html][Ledger Mode]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ledger-mode
+    :ensure t)
+#+END_SRC
+
+*** magit
+
+I use [[http://magit.github.io/][magit]], the emacs mode for git.  It can be used to review diffs,
+commit, push changes, and other things.  Documentation is available in
+_info_ and [[http://magit.github.io/master/magit.html][online]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :commands magit-status
+    :bind ("C-x g" . magit-status))
+#+END_SRC
+
+*** Music with EMMS
+
+[[https://www.gnu.org/software/emms/manual/index.html][EMMS]] is a multimedia system for Emacs.  I only want it as a way to
+interact with [[http://www.musicpd.org/][MPD]].  I commented the blob out, but left it here for
+posterity.  Work needed includes: key-bindings and browser-mode.
+
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'emms-setup)
+  ;; (require 'emms-player-mpd)
+  ;; (require 'emms-playing-time)
+  ;; (require 'emms-playlist-mode)
+  ;; (emms-playing-time 1)
+  ;; (setq
+  ;;   emms-player-mpd-server-name "localhost"
+  ;;   emms-player-mpd-music-directory "~/mpd/Music"
+  ;; )
+  ;; (add-to-list 'emms-player-list 'emms-player-mpd)
+  ;; (add-to-list 'emms-info-functions 'emms-info-mpd)
+#+END_SRC
+
+*** Powerline
+
+One way to get a fancy modeline.  Disabled for now.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package powerline
+    :disabled t
+    :ensure t
+    :init (powerline-default-theme))
+#+END_SRC
+
+*** Tmux integration
+
+[[https://github.com/syohex/emacs-emamux][Emamux]] allows you to interact with tmux from Emacs.  Should be
+interesting to try, but have yet to hit on a use-case.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emamux
+    :ensure emamux)
+#+END_SRC
+
+*** Twitter
+
+[[https://github.com/hayamiz/twittering-mode][Twittering]] is a major mode that allows access to Twitter.  You can start
+*twittering* with =M-x twit=.  
+
+Keybindings of interest:
+
+| Key              | Command                             |
+|------------------+-------------------------------------|
+| g                | Update current timeline             |
+| V                | Open or switch timeline             |
+| u                | Post tweet                          |
+| RET              | Post reply to pointed tweet         |
+| C-c RET          | Post organic retweet                |
+| C-u C-c RET      | Post official retweet               |
+| d                | Send direct message                 |
+| C-c C-w          | Delete the pointed tweet            |
+| 0                | Go to beginning of line             |
+| ^                | Go to beginning of text on the line |
+| $                | Go to end of the line               |
+| G                | Go to bottom tweet                  |
+| H                | Go to top tweet                     |
+| h                | Move cursor left                    |
+| j                | Go to next tweet                    |
+| k                | Go to previous tweet                |
+| l                | Move cursor right                   |
+| n                | Go to next tweet by the author      |
+| p                | Go to previous tweet by author      |
+| TAB              | Go to next thing (link, user, URL)  |
+| M-TAB            | Go to previous thing                |
+| C-v / SPC        | Scroll buffer upward                |
+| M-v / <backspace | Scroll buffer downward              |
+|                  |                                     |
+
+#+BEGIN_SRC emacs-lisp
+  (use-package twittering-mode
+    :ensure twittering-mode
+    :config
+    (progn
+      (setq
+        twittering-icon-mode nil
+        twittering-use-master-password t
+        )
+      ))
+#+END_SRC
+
+*** Window Management
+
+[[https://github.com/abo-abo/ace-window][ace-window]] is a mechanism to quickly switch between windows in an Emacs
+frame.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window :ensure ace-window)
+#+END_SRC
+
+[[http://www.emacswiki.org/emacs/TransposeFrame][Transpose Frame]] is a utility to quickly transpose the arrangement of
+windows in the current frame.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package transpose-frame :ensure transpose-frame)
+#+END_SRC
+
+** General configuration
+
+And finally, we get to general configuration of Emacs.  ;-)
+
+*** Basics
+
+Use UTF-8 as the default locale.
+
+#+BEGIN_SRC emacs-lisp
+(prefer-coding-system 'utf-8)
+#+END_SRC
+
+Define format for line numbers on the side, when *linum-mode* is
+enabled.
+
+#+BEGIN_SRC emacs-lisp
+(setq linum-format "%4d")
+#+END_SRC
+
+Turn on highlighting of current line.  See Emacs manual on [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Cursor-Display.html][Cursor Display]].
+
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode 1)
+#+END_SRC
+
+Skip the splash screen ...
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-splash-screen t)
+#+END_SRC
+
+*** COMMENT Backups
+
+By default, Emacs will save backup files in the current directory.  This
+will litter =~= files everywhere.  The following will store them in
+=~/.emacs.d/backups=.  If need be, they can be found via =C-x C-f
+(find-file)=.
+
+This will keep a large number of backups.  =delete-old-versions= will
+prevent trimming of backup versions.  =version-control= makes numeric
+backup versions unconditionally.  Lastly, =auto-save-file-name-transforms=
+will make filenames unique when saved in the backup directory.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar sf/emacs-autosave-directory
+    (concat user-emacs-directory "backups/")
+    "This variable dictates where to put auto saves. It is set to a
+      directory called backups located in your .emacs.d/ directory.")
+
+  (setq
+    backup-directory-alist `((".*" . ,sf/emacs-autosave-directory))
+    auto-save-file-name-transforms `((".*" ,sf/emacs-autosave-directory t))
+    delete-old-versions -1
+    version-control t
+    )
+#+END_SRC
+
+*** Saving and History
+
+Save commands and their history.
+
+#+BEGIN_SRC emacs-lisp
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode 1)
+  (setq savehist-save-minibuffer-history 1)
+  (setq savehist-additional-variables
+    '(kill-ring search-ring regexp-search-ring))
+#+END_SRC
+
+The following will control [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save-Control.html][auto-save]] behavior.
+
+#+BEGIN_SRC emacs-lisp
+  (setq auto-save-timeout 120)
+  (setq auto-save-interval 1000)
+#+END_SRC
+
+With Emacs 24.4, the following will allow you to use the
+_focus-out-hook_ for different things.  My preference here is to
+instruct Emacs to save buffers.
+
+#+BEGIN_SRC emacs-lisp
+  (when (version<= "24.4" emacs-version)
+    (add-hook 'focus-out-hook 'sf/save-all))
+#+END_SRC
+
+Some sort of alternative would be nice.  I tried
+=mouse-leave-buffer-hook=, but that fires more often than I'd like.  It
+is important to remember that buffer != X11 window.  The old idea of
+running =sf/save-all= on a schedule is not that great either.
+
+#+BEGIN_SRC emacs-lisp
+;;  (add-hook 'mouse-leave-buffer-hook 'sf/save-all)
+#+END_SRC
+
+*** Appearance
+
+A few things when in graphical mode:
+- Disable the toolbar and scroll bar.
+- Enable [[http://www.nyan.cat/][Nyan Cat]]!
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'nyan-mode)
+  (when (display-graphic-p)
+    (tool-bar-mode -1)
+  ;  (set-scroll-bar-mode 'right)
+    (scroll-bar-mode -1)
+    (nyan-mode)
+    )
+#+END_SRC
+
+Activate syntax highlighting.  See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][Font Lock]] in the Emacs manual.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'font-lock)
+  (global-font-lock-mode 1)
+  (setq font-lock-use-default-colors t)
+#+END_SRC
+
+Add some information to the mode line: line, column, battery remaining,
+and the time.
+
+#+BEGIN_SRC emacs-lisp
+  (setq line-number-mode t)
+  (setq column-number-mode t)
+  (setq display-battery-mode t)
+  (setq display-time-24hr-format t)
+  (display-battery-mode)
+#+END_SRC
+
+*** Themes
+
+This installs and enables an Emacs theme.  I try out different themes on
+a regular basis, but have been partial to [[http://ethanschoonover.com/solarized][Solarized]] for a long time.
+More about Emacs themes can be read in the manual on [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Themes.html][custom-themes]].
+This only loads the theme if there is graphical display present.
+
+#+BEGIN_SRC emacs-lisp
+  (dolist (p '(gruvbox-theme
+               naquadah-theme solarized-theme
+               color-theme-sanityinc-tomorrow
+               spacegray-theme ample-theme
+               tronesque-theme))
+    (progn (sf/package-install p)))
+  (when (display-graphic-p)
+    (load-theme 'solarized-dark t))
+#+END_SRC
+
+More information about themes can be found at EmacsWiki:
+
+http://www.emacswiki.org/emacs/ColorTheme
+
+This includes installing a theme for one buffer (=M-x
+color-theme-buffer-local=) or for a specific frame.  You can also toggle
+between day/night (light/dark) themes.
+
+*** Fonts
+
+Lastly, let's set the font and size.  For awhile, I've been comfortable
+with _Inconsolata_.  An alternative to this is _DejaVu Sans Mono_.
+
+This is taken from [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html#sec-11-3][C3F]] section on fonts.
+
+This used to bind *C-=* to *sf/font-size-increase* and *C--* to
+*sf/font-size-decrease*.  With /Emacs-24.4/, this didn't work anymore.
+While it would be prudent to investigate why, I discovered that *C-x
+C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
+will increase, decrease, and reset the font size.
+
+#+BEGIN_SRC emacs-lisp
+  (defconst sf/font-base "DejaVu Sans Mono" "Preferred font")
+  (defvar sf/font-size 10 "Preferred font size")
+  (defun sf/font-ok-p ()
+    "Is configured font valid?"
+    (interactive)
+    (member sf/font-base (font-family-list)))
+  (defun sf/font-name ()
+    "Compute font name and size string"
+    (interactive)
+    (let* ((size (number-to-string sf/font-size))
+            (name (concat sf/font-base "-" size)))
+      name))
+  (defun sf/font-size-increase ()
+    "Increase font size"
+    (interactive)
+    (setq sf/font-size (+ sf/font-size 1))
+    (sf/font-update))
+  (defun sf/font-size-decrease ()
+    "Decrease font size"
+    (interactive)
+    (setq sf/font-size (- sf/font-size 1))
+    (sf/font-update))
+  (defun sf/font-update ()
+    "Update font configuration"
+    (interactive)
+    (if (sf/font-ok-p)
+      (progn
+        (message "Setting font to: %s" (sf/font-name))
+        (set-default-font (sf/font-name)))))
+  (sf/font-update)
+#+END_SRC
+
+*** Behavior
+
+**** Buffers
+
+Use =uniquify= to make two (or more) buffers open with the same file
+name distinguishable.  The configuration below tries to best match the
+full path name.  Try to ignore special buffers.
+
+#+BEGIN_SRC emacs-lisp
+(require 'uniquify)
+(setq 
+  uniquify-buffer-name-style 'forward
+  uniquify-separator "/"
+  uniquify-ignore-buffers-re "^\\*"
+  uniquify-after-kill-buffer-p t)
+#+END_SRC
+
+- [2015-03-04 Wed] Drop [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Iswitchb.html][iswitchb]] as it is deprecated.
+
+**** Windows
+
+I used to use _switch-window_ to navigate between windows.  Nowadays, I
+use either =helm= or the =hydra= below.
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'switch-window)
+  ;; (use-package switch-window
+  ;;   :bind ("C-x o" . switch-window)
+  ;;   :init
+  ;;   (progn (setq switch-window-shortcut-style 'alphabet)))
+#+END_SRC
+
+This is my preferred mechanism to navigate between windows.  It uses
+=hydra=, =ace-window=, and =windmove= (among others).  This is taken
+from [[http://oremacs.com/2015/02/04/pre-hydra-post/][oremacs.com]].
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key
+    (kbd "C-M-o")
+    (defhydra hydra-window ()
+      "window"
+      ("h" windmove-left)
+      ("j" windmove-down)
+      ("k" windmove-up)
+      ("l" windmove-right)
+      ("v" (lambda ()
+             (interactive)
+             (split-window-right)
+             (windmove-right)) "vert")
+      ("x" (lambda ()
+             (interactive)
+             (split-window-below)
+             (windmove-down)) "horz")
+      ("t" transpose-frame "'")
+      ("o" delete-other-windows "one" :color blue)
+      ("a" ace-window "ace")
+      ("s" ace-swap-window "swap")
+      ("d" ace-delete-window "del")
+      ("i" ace-maximize-window "ace-one" :color blue)
+      ("b" ido-switch-buffer "buf")
+      ("m" headlong-bookmark-jump "bmk")
+      ("q" nil "cancel")))
+#+END_SRC
+
+I'm not using =ace-jump= at this time.
+
+#+BEGIN_SRC emacs-lisp
+;  (sf/package-install 'ace-jump-mode)
+#+END_SRC
+
+**** Mouse
+
+The following tries to smooth out mouse scrolling so that it isn't so
+jumpy.  There are a couple references:
+
+- http://www.emacswiki.org/emacs/SmoothScrolling
+- http://stackoverflow.com/questions/3631220/fix-to-get-smooth-scrolling-in-emacs
+
+#+BEGIN_SRC emacs-lisp
+(setq 
+  scroll-step 1               ;; keyboard scroll one line at a time
+  scroll-conservatively 10000
+  scroll-preserve-screen-position 1
+  mouse-wheel-follow-mouse 't ;; scroll window under mouse
+  mouse-wheel-progressive-speed nil     ;;  don't accelerate scrolling
+  mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+#+END_SRC
+
+Autoselect the window with the mouse pointer.  This is effectively
+/focus-follows-mouse/, but for windows in an Emacs frame.
+
+#+BEGIN_SRC emacs-lisp
+(setq mouse-autoselect-window t)
+#+END_SRC
+
+**** General 
+
+In general, use spaces instead of tabs.
+
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+END_SRC
+
+This defines where values are set if you use Customize.  My preference
+is to configure things here or in _init.el_.
+
+#+BEGIN_SRC emacs-lisp
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+#+END_SRC
+
+**** DONE Making opening files easier
+     CLOSED: [2014-05-06 Tue 09:17]
+
+Emacs provides a mode called [[https://www.gnu.org/software/emacs/manual/html_node/emacs/File-Conveniences.html][recentf-mode]] that will track files you
+open.  When you call =recentf-open-files=, it will present a numbered
+list and you can then select the file to open.  [[http://ergoemacs.org/][ErgoEmacs]] also discusses
+how to configure [[http://ergoemacs.org/emacs/emacs_recentf.html][recentf-mode]].
+
+The following enables =recentf-mode= and binds *F7* to =helm-recentf=.
+It also limits the maximum number of items in the =recentf= menu.
+
+#+BEGIN_SRC emacs-lisp
+  (recentf-mode t)
+  (setq recentf-max-menu-items 25)
+  (global-set-key (kbd "<f7>") 'helm-recentf)
+#+END_SRC
+
+** Programming and Editing
+
+*** Basics
+
+Show matching parenthesis.
+
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+#+END_SRC
+
+I want a final newline to be added to a file when it is about to be
+saved.
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default require-final-newline t)
+#+END_SRC
+
+*** Lisp
+
+A default offset of 2 seems to make sense for lisp.
+
+#+BEGIN_SRC emacs-lisp
+(setq lisp-indent-offset 2)
+#+END_SRC
+
+*** Lua
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lua-mode
+    :ensure t)
+#+END_SRC
+
+*** Markdown
+
+Help Emacs grok when to trigger /markdown-mode/ when editing certain
+files.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure t
+    :init
+    (progn
+      (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+      (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+      ))
+#+END_SRC
+
+*** Python
+
+Turn on *linum-mode* when editing Python files.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook 'linum-mode)
+(add-hook 'python-mode-hook 'sf/whitespace)
+#+END_SRC
+
+*** Shell scripts
+
+Also turn on *linum-mode* for shell scripts.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'shell-script-mode 'linum-mode)
+#+END_SRC
+
+*** Text
+
+Use auto-fill and set a column width to 72.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook
+  '(lambda() (set-fill-column 72)))
+#+END_SRC
+
+*** YAML
+
+A helper mode when editing [[http://yaml.org/][YAML]] files.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :ensure t
+    :config
+    (progn
+      (setq yaml-indent-offset 2)
+      (add-hook 'yaml-mode-hook 'linum-mode)
+      (add-hook 'yaml-mode-hook 'sf/whitespace)
+      )
+    )
+#+END_SRC
+
+*** JSON
+
+A helper mode when editing [[www.json.org][JSON]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package json-mode
+    :ensure t
+    :config
+    (progn
+      (add-hook 'json-mode-hook 'linum-mode)
+      (add-hook 'json-mode-hook 'sf/whitespace)
+      )
+    )
+#+END_SRC
+
+** Mail configuration
+
+*** General
+
+I tend to try several different mail clients over time.  This includes
+typical GUI clients and Emacs-based clients.  Sometimes the client
+behavior is enough at odds at what I want and I don't want to bother
+forcing it the way I work.  The following sets up some basics for when
+using Emacs for mail.  First and foremost, Use the =message-user-agent=
+for composing email.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    mail-user-agent 'message-user-agent
+    mail-from-style 'angles
+  )
+#+END_SRC
+
+*** Sending email
+
+Send email via SMTP instead of using a local sendmail binary.
+
+#+BEGIN_SRC emacs-lisp
+(setq message-send-mail-function 'smtpmail-send-it)
+#+END_SRC
+
+Set up =message-mode=.  This will kill the buffer after sending an email
+and set preferences for message citation and how to forward an
+email. For more on configuring Emacs =message-mode=, see the [[https://www.gnu.org/software/emacs/manual/html_mono/message.html][manual]].
+
+#+BEGIN_SRC emacs-lisp
+  (setq message-kill-buffer-on-exit t
+    message-citation-line-format "On %a, %Y-%m-%d at %T %z, %N wrote:"
+    message-citation-line-function (quote message-insert-formatted-citation-line)
+    message-make-forward-subject-function (quote message-forward-subject-fwd)
+    message-signature t
+    message-signature-file "~/.signature"
+    )
+#+END_SRC
+
+Enable certain modes for *message-mode*:
+
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'message-mode-hook 'footnote-mode)
+  (add-hook 'message-mode-hook 'turn-on-flyspell)
+#+END_SRC
+
+The following configures default SMTP settings for =smtpmail=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    smtpmail-stream-type 'ssl
+    smtpmail-smtp-server sf/smtp-server
+    smtpmail-smtp-service 465
+    smtpmail-smtp-user sf/smtp-user
+    )
+#+END_SRC
+
+Be sure to use an encrypted /authinfo/ file.
+
+#+BEGIN_SRC emacs-lisp
+(setq smtpmail-auth-credentials "~/.authinfo.gpg")
+#+END_SRC
+
+Use /dired/ to attach files to /notmuch/ messages.  
+
+#+BEGIN_SRC emacs-lisp
+(require 'gnus-dired)
+#+END_SRC
+
+*** Mutt
+
+If I'm using /mutt/, I want the related buffers to behave as if they are
+email-related. 
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("/tmp/mutt.*" . message-mode))
+  (add-hook 'message-mode-hook
+    'turn-on-auto-fill
+    (lambda()
+      (auto-fill-mode t)
+      (setq fill-column 72)
+      (setq mail-header-separator "")
+      )
+    )
+#+END_SRC
+
+*** Multiple identities
+
+One day, perhaps, I will want to use multiple accounts (ie. identities)
+when sending email via Emacs.  Much of this was taken from [[http://notmuchmail.org/emacstips/#index17h2][notmuch
+emacstips]].  You can find =gnus-alias.el= on [[http://www.emacswiki.org/emacs/gnus-alias.el][emacswiki]].
+
+=gnus-alias-identity= takes a lot of arguments.  They are briefly
+described below.
+
+1. Account nickname
+2. Other identity it may refer to
+3. Sender address
+4. Organization header
+5. Extra headers
+6. Extra body text
+7. Signature file
+
+#+BEGIN_EXAMPLE
+(setq gnus-alias-identity alist
+  '(("gmail" nil "Joe Smith <jsmith@example.net>" nil nil nil nil))
+  )
+#+END_EXAMPLE
+
+#+BEGIN_SRC emacs-lisp
+(setq gnus-alias-identity-alist sf/gnus-alias-alist)
+#+END_SRC
+
+*** offlineimap
+
+This is a mode to run [[http://offlineimap.org/][offlineimap]] from.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package offlineimap
+    :ensure t)
+#+END_SRC
+
+*** notmuch
+
+[[http://notmuchmail.org/][notmuch]] is basically a mail indexer.  It helps you to better tame your
+inbox with search, tagging, and other functions.  There is a CLI
+interface to interact with your email in Maildir format.  Or, you can
+use the Emacs notmuch client front-end. 
+
+If you want to follow development more closely than one's distribution,
+the following will checkout and build source on RedHat derived
+distributions.
+
+#+BEGIN_EXAMPLE
+$ git clone git://notmuchmail.org/git/notmuch
+$ sudo yum install offlineimap xapian-core-devel \
+  gmime-devel libtalloc-devel gcc gcc-c++
+$ ./configure --prefix /usr/local && make && sudo make install
+#+END_EXAMPLE
+
+Define various keybindings.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package notmuch
+    :init
+    (progn
+      (setq
+        gnus-inhibit-images t
+        notmuch-archive-tags '("-inbox" "-unread" "+archive")
+        notmuch-crypto-process-mime t
+        notmuch-fcc-dirs sf/notmuch-fcc-dirs
+        notmuch-hello-thousands-separator ","
+        notmuch-search-oldest-first nil
+        notmuch-show-part-button-default-action 'notmuch-show-view-part
+        notmuch-saved-searches '(
+                                  ("inbox" . "tag:inbox")
+                                  ("announce" . "tag:announce and not tag:archive and tag:unread")
+                                  ("reports" . "tag:reports")
+                                  ("lists" . "tag:lists and not tag:archive")
+                                  ("ansible" . "tag:ansible")
+                                  ("github" . "tag:github")
+                                  ("ganeti" . "tag:ganeti")
+                                  ("noc" . "tag:noc")
+                                  )
+        )
+      (when (not (string= system-name sf/work-workstation))
+        (setq notmuch-command "~/bin/notmuch-remote.sh"))
+      (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
+      (define-key notmuch-show-mode-map (kbd "d")
+        (lambda ()
+          "mark message for trash"
+          (interactive)
+          (notmuch-show-add-tag '("+trash" "-inbox" "-unread"))
+          (unless (notmuch-show-next-open-message)
+            (notmuch-show-next-thread t))))
+      (define-key notmuch-search-mode-map (kbd "d")
+        (lambda ()
+          "mark message for trash"
+          (interactive)
+          (notmuch-search-tag (list "+trash" "-inbox" "-unread"))
+          (notmuch-search-next-thread )))
+      (define-key notmuch-show-mode-map (kbd "j")
+        (lambda ()
+          "mark message as junk"
+          (interactive)
+          (notmuch-show-add-tag (list "+spam" "-inbox" "-unread"))
+          (unless (notmuch-show-next-open-message)
+            (notmuch-show-next-thread t))))
+      (define-key notmuch-show-mode-map (kbd "F")
+        (lambda ()
+          "star message"
+          (interactive)
+          (notmuch-show-add-tag (list "+flagged"))))
+      (define-key notmuch-search-mode-map (kbd "F")
+        (lambda ()
+          "star thread"
+          (interactive)
+          (notmuch-search-tag (list "+flagged"))))
+      (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
+      (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
+      (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer)
+      (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
+      (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
+      (dolist (mode '(notmuch-search notmuch-show notmuch-help))
+        (evil-set-initial-state mode 'emacs))
+      )
+    )
+#+END_SRC
+
+Last, but not least, enable linking to messages from org-mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-notmuch
+    :load-path "package/org-mode/contrib/lisp")
+#+END_SRC
+
+*** mu4e
+
+[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is a emacs-frontend to [[http://www.djcbsoftware.nl/code/mu/][mu]], a tool for managing email in [[http://cr.yp.to/proto/maildir.html][Maildir]]
+format.  Similar to notmuch, it requires other tools to pull down (eg
+offlineimap) and send (eg. smtpmail) your email.  It has an online
+[[http://www.djcbsoftware.nl/code/mu/mu4e/][manual]].
+
+The first thing to do is build the index:
+
+#+BEGIN_QUOTE
+$ mu index --maildir ~/Maildir
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+  (defun my-mu4e-set-account ()
+    "Set the account for composing a message."
+    (let* ((account
+             (if mu4e-compose-parent-message
+               (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                 (string-match "/\\(.*?\\)/" maildir)
+                 (match-string 1 maildir))
+               (completing-read (format "Compose with account: (%s) "
+                                  (mapconcat #'(lambda (var) (car var))
+                                    sf/mu4e-account-alist "/"))
+                 (mapcar #'(lambda (var) (car var)) sf/mu4e-account-alist)
+                 nil t nil nil (car sf/mu4e-account-alist))))
+            (account-vars (cdr (assoc account sf/mu4e-account-alist))))
+      (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+          account-vars)
+        (error "No email account found"))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e
+    :disabled t
+    :config
+    (progn
+      (require 'mu4e-contrib)
+      (setq
+        mu4e-attachment-dir "~/Downloads"
+        mu4e-html2text-command 'mu4e-shr2text
+        mu4e-use-fancy-chars t
+        mu4e-get-mail-command "true"
+        mu4e-bookmarks
+         '(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+           ("date:today..now" "Today's messages" ?t)
+           ("date:7d..now" "Last 7 days" ?w)
+           ("mime:text/calendar" "Meeting invites" ?c)
+           ("mime:image/*" "Messages with images" ?p)
+           ("from:cisco.com OR to:cisco.com" "Cisco" ?i)
+           ("from:level3.com OR to:level3.com" "Level3" ?l )
+           ("from:comcast.com OR to:comcast.com" "Comcast" ?C)
+           ("from:centurylink.com OR to:centurylink.com" "Centurylink" ?L)
+           ("from:ftr.com OR to:ftr.com" "Frontier" ?F)
+           ("from:Internet2" "Internet2" ?I)
+           ("from:lsnetworks.net OR to:lsnetworks.net" "LSN" ?Z))
+        mu4e-compose-signature-auto-include nil
+        mu4e-view-scroll-to-next nil     ;; do not advance to next message when scolling
+        mu4e-sent-folder   "/.Sent"       ;; folder for sent messages
+        mu4e-drafts-folder "/.Drafts"     ;; unfinished messages
+        mu4e-trash-folder  "/.Trash"      ;; trashed messages
+        mu4e-refile-folder "/.Archives")  ;; saved messages
+      (when (not (string= system-name sf/work-workstation))
+        (setq
+          mu4e-get-mail-command "offlineimap"
+          mu4e-maildir       "~/Maildir"   ;; top-level Maildir
+          mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
+          mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
+          mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
+          mu4e-refile-folder "/Work/Archives")   ;; saved messages
+        (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account))
+      )
+    )
+#+END_SRC
+
+
+
+*** vm
+
+[[http://www.emacswiki.org/emacs/CategoryViewMail][ViewMail]], aka VM, is a mail package for Emacs.  Development is hosted on
+[[https://launchpad.net/vm][Launchpad]].  There is also a [[http://news.gmane.org/gmane.emacs.viewmail][discussion list]].  The Emacs Wiki has some
+useful pointers.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package vm
+    :disabled t
+    :config
+    (progn
+      (require 'vcard)
+      (setq
+        vm-imap-account-alist sf/vm-imap-alist
+        vm-imap-folder-cache-directory "~/.local/share/imap-cache/"
+        vm-visible-headers '("From:"
+                              "To:"
+                              "Apparently-To:"
+                              "Cc:"
+                              "Subject:"
+                              "Date:"
+                              "^Replay-To:"
+                              "Resent-From:"
+                              "Resent-To:")
+        vm-primary-inbox sf/primary
+        vm-circular-folders nil
+        vm-confirm-new-folders t
+        vm-mutable-windows nil
+        vm-forwarding-subject-format "Fwd: %s"
+        vm-digest-send-type "mime"
+        vm-forwarding-digest-type "mime"
+        vm-move-after-deleting t
+        vm-move-after-undeleting nil
+        vm-delete-after-saving t
+        vm-delete-after-archiving t
+        vm-delete-after-bursting t
+        vm-enable-addons '(check-recipients check-for-empty-subject encode-headers)
+        vm-highlighted-header-regexp "From:\\|To:\\|C[Cc]:\\|Subject:"
+        ; deal with mime and html
+        vm-mail-prompt-if-subject-empty t
+        vm-assimilate-html-command "striptags"
+        vm-mime-default-face-charsets t ; just show all and let emacs deal with it
+        vm-mime-default-face-charset-exceptions '()
+        vm-mime-internal-content-types t
+        vm-mime-external-content-types-alist '(
+                                                ("application/pdf" "evince")
+                                                ("application/rtf" "libreoffice")
+                                                ("application/msword" "libreoffice")
+                                                ("application/vnd.oasis.opendocument.text" "libreoffice")
+                                                ("application/vnd.oasis.opendocument.text-template" "libreoffice")
+                                                ("application/vnd.oasis.opendocument.spreadsheet" "libreoffice")
+                                                ("application/vnd.oasis.opendocument.presentation" "libreoffice")
+                                                )
+        vm-mime-text/html-handler 'auto-select
+        ; vm-mime-text/html-handler 'shr ; maybe one day
+        vm-mime-text/html-blocker "<img[^>]*\\s-src=."
+        vm-mime-attachment-source-directory (expand-file-name "~/")
+        ; control window and frame behavior
+        vm-mutable-windows t
+        vm-mutable-frames nil
+        vm-frame-per-completion nil
+        vm-frame-per-composition t
+        vm-frame-per-edit nil
+        vm-frame-per-folder nil
+        vm-frame-per-summary nil
+        vm-summary-format "%n%a%* %y-%-3.3m %2d %H %-20.20F %4l %I%s\n"
+        vm-mime-attachment-save-directory "~/Downloads"
+        vm-included-text-attribution-format "On %w, %y-%m-%d at %h (%z), %F wrote:"
+        vm-reply-subject-prefix "Re: "
+        )
+      (define-key vm-mode-map "r" 'vm-reply-include-text)
+      (define-key vm-mode-map "R" 'vm-followup-include-text)
+      (define-key vm-mode-map "f" 'vm-forward-message)
+      (define-key vm-mode-map "c" 'vm-visit-imap-folder)
+      (define-key vm-mode-map "k" nil)
+      (define-key vm-mode-map "K" 'vm-kill-subject)
+      (dolist (mode '(vm-summary-mode vm-presentation-mode))
+        (evil-set-initial-state mode 'emacs))
+      (add-hook 'vm-presentation-mode-hook
+        (lambda ()
+          (visual-line-mode 1)
+          (setq word-wrap 1)
+          (setq line-move-visual t)))
+      ))
+#+END_SRC
+
+*** gnus
+
+[[http://www.gnus.org/manual/gnus_toc.html][Gnus]] is a built-in message reader for Emacs.  It supports reading and
+composing both mail and news.  The [[http://www.gnus.org/manual/gnus_toc.html][manual]] is available online.  There
+are lots and lots of posts online about configuring *Gnus*.  Much of
+this is influenced by:
+
+- [[http://www.cataclysmicmutation.com/2010/11/multiple-gmail-accounts-in-gnus/][Multiple GMail Accounts in Gnus]]
+- [[http://blog.binchen.org/posts/notes-on-using-gnus.html][Practical guide to use Gnus with Gmail]]
+- https://github.com/pierre-lecocq/qsdfgh.com/blob/master/articles/gnus-configuration-example.org
+
+A note regarding terminology:  Gnus uses the term /archiving/ to
+describe the method for storing mail you send. 
+
+This enables searching of IMAP based accounts.
+#+BEGIN_SRC emacs-lisp
+(require 'nnir)
+#+END_SRC
+
+Highlights on miscellaneous points from the manual:
+
+- [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Archived-Messages.html][Archived messages]] (aka the Sent mail folder)
+- [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][Expiring mail]]
+
+Accounts and other sources of reading material.  The first sets the
+default method for fetching articles.  This also sets /secondary/
+methods, which happens to be IMAP.
+
+Generally speaking, it is hard for me to get past treating email as
+news.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gnus
+    :disabled t
+    :commands gnus
+    :init
+    (progn
+      (require 'nnir)
+      (setq gnus-select-method '(nntp "news.gmane.org"))
+      ;; http://www.gnus.org/manual/gnus_397.html
+      (add-to-list 'gnus-secondary-select-methods
+        '(nnimap "work"
+           (nnimap-address sf/nnimap-address)
+           (nnimap-server-port 993)
+           (nnimap-stream tls)
+           (nnimap-authinfo-file "~/.authinfo.gpg")
+           (nnir-search-engine imap)
+           )
+        )
+      (setq gnus-agent t
+        gnus-gcc-mark-as-read t
+        gnus-message-archive-group "Sent"
+        gnus-sum-thread-tree-indent          " "
+        gnus-sum-thread-tree-single-indent   "◎ "
+        gnus-sum-thread-tree-root            "● "
+        gnus-sum-thread-tree-false-root      "☆"
+        gnus-sum-thread-tree-vertical        "│"
+        gnus-sum-thread-tree-leaf-with-other "├─► "
+        gnus-sum-thread-tree-single-leaf     "╰─► "
+        gnus-single-article-buffer nil
+        gnus-summary-display-arrow t
+        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
+        gnus-thread-ignore-subject t
+        ; http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines
+        gnus-user-date-format-alist '(
+                                       ((gnus-seconds-today) . "Today, %H:%M")
+                                       ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
+                                       (604800 . "%A %H:%M") ;;that's one week
+                                       ((gnus-seconds-month) . "%A %d")
+                                       ((gnus-seconds-year) . "%B %d")
+                                       (t . "%B %d '%y"))
+        gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B%s%)\n"
+
+        gnus-parameters '(
+                           ("work"
+                             ; @see http://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html
+                             ;; press 'E' to expire email
+  ;                           (expiry-wait 90)
+  ;                           (expiry-target "nnimap+work:Trash")
+                             (posting-style
+                               (gcc "nnimap+work:Sent")
+                               (address sf/email-work))
+                             (expiry-wait . never)
+                             (display . all))
+                           )
+        )
+      ; http://www.gnus.org/manual/big-gnus.html#Group-Topics
+      (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+      )
+    )
+    
+
+#+END_SRC
+
+**** Group buffer
+
+Gnus starts in the [[http://www.gnus.org/manual/gnus_15.html#SEC15][group buffer]].  This lists subscribed groups.  For an
+email account, this would be email folders.  Type *L* to see all groups,
+including those with no unread articles.  Type *l* to see only
+subscribed groups with unread articles.  Type *g* to refresh the
+subscribed groups.
+
+**** Server buffer
+
+The Gnus [[http://www.gnus.org/manual/gnus_159.html#SEC159][server buffer]] can be entered via *^*
+(*gnus-group-enter-server-mode*).  Gnus uses backends (eg nnimap) to
+connect to real servers.  The server buffer is a way to view the
+backends in use.
+
+**** Summary buffer
+
+The Gnus [[http://www.gnus.org/manual/gnus_59.html#SEC59][summary buffer]] will show the messages for a given group.  Think
+of it as emails in a folder.  Type *SPACE* to view the currently
+selected article.  Type *=* (*gnus-summary-expand-window*) to close the
+article view and only display the summary.
+
+** Le Fin
+
+The end.  Send a message so that the user knows it has been completely
+loaded.
+
+#+BEGIN_SRC emacs-lisp
+(message "%s" "Finished loading config")
+#+END_SRC
