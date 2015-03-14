@@ -3,6 +3,8 @@ auto-save-list
 backups
 tramp
 elpa
+jabber-avatar-cache
+url
 # misc files
 *~
 *.elc
