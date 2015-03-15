@@ -1517,6 +1517,13 @@ Define various keybindings.
       (when (not (string= system-name sf/work-workstation))
         (setq notmuch-command "~/bin/notmuch-remote.sh"))
       (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
+      (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
+      (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
+      (dolist (mode '(notmuch-search notmuch-show notmuch-help))
+        (evil-set-initial-state mode 'emacs))
+      )
+    :config
+    (progn
       (define-key notmuch-show-mode-map (kbd "d")
         (lambda ()
           "mark message for trash"
@@ -1550,10 +1557,6 @@ Define various keybindings.
       (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
       (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
       (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer)
-      (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
-      (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-      (dolist (mode '(notmuch-search notmuch-show notmuch-help))
-        (evil-set-initial-state mode 'emacs))
       )
     )
 #+END_SRC
