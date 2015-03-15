@@ -221,15 +221,10 @@ http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
 taking notes, tracking projects and todo items, and other miscellaneous
 items.
 
-Things to bring up org-mode.
+First, install the latest and greatest.
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f8>") 'org-cycle-agenda-files)
-  (global-set-key (kbd "<f12>") 'org-agenda)
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cb" 'org-switchb)
+(sf/package-install 'org-plus-contrib)
 #+END_SRC
 
 The following does lots of things:
@@ -248,9 +243,7 @@ The following does lots of things:
 - Define =org-todo-keywords=.  This is discussed in the [[http://orgmode.org/manual/TODO-Items.html][manual]].
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-plus-contrib
-    :diminish org-mode
-    :ensure t
+  (use-package org
     :init
     (progn
       (add-hook 'org-mode-hook 'turn-on-auto-fill)
@@ -289,15 +282,21 @@ The following does lots of things:
                              )
         )
       (org-load-modules-maybe t)
-      ))
+      )
+    :bind (("<f8>" . org-cycle-agenda-files)
+            ("<f12>" . org-agenda)
+            ("C-c l" . org-store-link)
+            ("C-c c" . org-capture)
+            ("C-c a" . org-agenda)
+            ("C-c b" . org-switchb))
+    )
 #+END_SRC
 
 Finally, pull in *org-git-link* to reference git links.  More
 information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-git-link
-    :load-path "package/org-mode/contrib/lisp")
+  (use-package org-git-link)
 #+END_SRC
 
 *** Contacts
@@ -310,7 +309,6 @@ contacts elsewhere, this needs to be set.
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-contacts
-    :load-path "package/org-mode/contrib/lisp"
     :config
     (progn
       (setq org-contacts-files (list  "~/depot/doc/org/contacts.org"))
@@ -1494,6 +1492,7 @@ Define various keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
+    :ensure notmuch
     :init
     (progn
       (setq
@@ -1562,8 +1561,7 @@ Define various keybindings.
 Last, but not least, enable linking to messages from org-mode.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-notmuch
-    :load-path "package/org-mode/contrib/lisp")
+  (use-package org-notmuch)
 #+END_SRC
 
 *** mu4e
