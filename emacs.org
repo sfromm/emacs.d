@@ -842,6 +842,22 @@ One way to get a fancy modeline.  Disabled for now.
     :init (powerline-default-theme))
 #+END_SRC
 
+*** Terminals
+
+References on the subject of running terminals in Emacs:
+
+- [[http://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs]]
+
+Pull in *multi-term* and set *bash* as the default shell.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :ensure t
+    :init
+    (setq multi-term-program "/bin/bash")
+    )
+#+END_SRC
+
 *** Tmux integration
 
 [[https://github.com/syohex/emacs-emamux][Emamux]] allows you to interact with tmux from Emacs.  Should be
