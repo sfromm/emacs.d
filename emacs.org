@@ -477,7 +477,6 @@ built-in mechanism to diminish a mode.
 
 #+BEGIN_SRC emacs-lisp
 (sf/package-install 'diminish)
-;(diminish 'undo-tree-mode)
 #+END_SRC
 
 *** Ediff
@@ -963,7 +962,7 @@ Skip the splash screen ...
 (setq inhibit-splash-screen t)
 #+END_SRC
 
-*** COMMENT Backups
+*** Backups
 
 By default, Emacs will save backup files in the current directory.  This
 will litter =~= files everywhere.  The following will store them in
@@ -1024,6 +1023,23 @@ running =sf/save-all= on a schedule is not that great either.
 
 #+BEGIN_SRC emacs-lisp
 ;;  (add-hook 'mouse-leave-buffer-hook 'sf/save-all)
+#+END_SRC
+
+Lastly, enable *undo-tree-mode*.  You can visualize the changes with
+=C-x u= (=undo-tree-visualize=).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :defer t
+    :diminish undo-tree-mode
+    :init
+    (progn
+      (global-undo-tree-mode)
+      (setq
+        undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t)
+      )
+    )
 #+END_SRC
 
 *** Appearance
