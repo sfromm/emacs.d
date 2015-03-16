@@ -894,8 +894,10 @@ Keybindings of interest:
       (setq
         twittering-icon-mode nil
         twittering-use-master-password t
+        twittering-private-info-file "~/.emacs.d/user/twittering-mode.gpg"
         )
-      ))
+      )
+    )
 #+END_SRC
 
 *** Window Management
