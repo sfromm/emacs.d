@@ -798,15 +798,17 @@ may make data entry simpler.
 
 *** magit
 
-I use [[http://magit.github.io/][magit]], the emacs mode for git.  It can be used to review diffs,
+I use [[http://magit.github.io/][magit]], the emacs mode for [[http://git-scm.com/][git]].  It can be used to review diffs,
 commit, push changes, and other things.  Documentation is available in
-_info_ and [[http://magit.github.io/master/magit.html][online]].
+_info_ and [[http://magit.github.io/master/magit.html][online]].  This also installs [[https://github.com/pidu/git-timemachine][git-timemachine]], a way of
+navigating a file's history in [[http://git-scm.com/][git]].
 
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
     :commands magit-status
     :bind ("C-x g" . magit-status))
+  (sf/package-install 'git-timemachine)
 #+END_SRC
 
 *** Music with EMMS
