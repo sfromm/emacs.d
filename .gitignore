@@ -5,6 +5,7 @@ tramp
 elpa
 jabber-avatar-cache
 url
+user/
 # misc files
 *~
 *.elc
