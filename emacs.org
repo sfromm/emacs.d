@@ -276,6 +276,7 @@ The following does lots of things:
                        org-bibtex org-docview
                        org-gnus org-info
                        org-irc org-mhe org-rmail org-habit)
+        org-src-window-setup 'current-window
         org-todo-keywords '(
                              (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
                              (sequence "|" "CANCELLED(c)")
@@ -1085,14 +1086,14 @@ More about Emacs themes can be read in the manual on [[https://www.gnu.org/softw
 This only loads the theme if there is graphical display present.
 
 #+BEGIN_SRC emacs-lisp
-  (dolist (p '(gruvbox-theme
+  (dolist (p '(gruvbox-theme leuven-theme
                naquadah-theme solarized-theme
                color-theme-sanityinc-tomorrow
                spacegray-theme ample-theme
                professional-theme tronesque-theme))
     (progn (sf/package-install p)))
   (when (display-graphic-p)
-    (load-theme 'solarized-dark t))
+    (load-theme 'leuven t))
 #+END_SRC
 
 More information about themes can be found at EmacsWiki:
