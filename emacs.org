@@ -1541,12 +1541,11 @@ Define various keybindings.
         notmuch-show-part-button-default-action 'notmuch-show-view-part
         notmuch-saved-searches '(
                                   ("inbox" . "tag:inbox")
+                                  ("today" . "date:today..now")
+                                  ("7 days" . "date:7d..now")
                                   ("announce" . "tag:announce and not tag:archive and tag:unread")
                                   ("reports" . "tag:reports")
                                   ("lists" . "tag:lists and not tag:archive")
-                                  ("ansible" . "tag:ansible")
-                                  ("github" . "tag:github")
-                                  ("ganeti" . "tag:ganeti")
                                   ("noc" . "tag:noc")
                                   )
         )
