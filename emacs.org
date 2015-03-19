@@ -1892,3 +1892,5 @@ loaded.
 #+BEGIN_SRC emacs-lisp
 (message "%s" "Finished loading config")
 #+END_SRC
+
+Copyright (C) 2014-2015 Stephen Fromm
