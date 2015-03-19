@@ -1542,12 +1542,12 @@ Define various keybindings.
         notmuch-show-part-button-default-action 'notmuch-show-view-part
         notmuch-saved-searches '(
                                   ("inbox" . "tag:inbox")
-                                  ("today" . "date:today..now")
-                                  ("7 days" . "date:7d..now")
+                                  ("today" . "date:today..now and not tag:archive")
+                                  ("7 days" . "date:7d..now and not tag:archive")
                                   ("announce" . "tag:announce and not tag:archive and tag:unread")
                                   ("reports" . "tag:reports")
                                   ("lists" . "tag:lists and not tag:archive")
-                                  ("noc" . "tag:noc")
+                                  ("noc active" . "tag:noc and not tag:archive")
                                   )
         )
       (when (not (string= system-name sf/work-workstation))
