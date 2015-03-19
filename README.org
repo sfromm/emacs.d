@@ -1,0 +1,46 @@
+#+TITLE: README
+#+AUTHOR: Stephen Fromm
+
+* README
+
+This effectively serves as my [[http://www.gnu.org/software/emacs/][Emacs]] configuration.  This would not be
+possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are three main components:
+
+- /init.el/: Just enough emacs-lisp to load, via [[http://orgmode.org/worg/org-contrib/babel/][org-babel]], /private.org/
+  and [[file:emacs.org][emacs.org]].
+- /private.org/ This defines miscellaneous variables with private values
+  that are later used in [[file:emacs.org][emacs.org]].
+- /emacs.org/ This is the bulk of the configuration.  It endeavors to
+  follow the model of [[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by
+  /allowing the act of programming o take place inside of Org-mode
+  documents/. 
+
+** Usage
+
+In order to use, clone this repository:
+
+#+BEGIN_EXAMPLE
+$ git clone https://github.com/sfromm/dot-emacs.d ~/.emacs.d
+#+END_EXAMPLE
+
+When you first start [[http://www.gnu.org/software/emacs/][Emacs]] with this configuration, it may take awhile
+for it to download and install all the packages it uses.  This only
+applies for the first run.
+
+** Private variables
+
+The following enumerates the variables defined in /private.org/:
+
+- ~sf/email-work~
+- ~sf/smtp-server~
+- ~sf/smtp-user~
+- ~sf/gnus-alias-alist~
+- ~sf/notmuch-fcc-dirs~
+- ~sf/vm-primary~
+- ~sf/vm-imap-alist~
+- ~sf/nnimap-address~
+- ~sf/mu4e-account-alist~
+- ~sf/jabber-account-alist~
+- ~sf/erc-channels-alist~
+- ~sf/erc-nick~
+- ~sf/erc-away-nick~
