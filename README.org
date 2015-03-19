@@ -1,7 +1,7 @@
 #+TITLE: README
 #+AUTHOR: Stephen Fromm
 
-* README
+* Emacs configuration
 
 This effectively serves as my [[http://www.gnu.org/software/emacs/][Emacs]] configuration.  This would not be
 possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are three main components:
@@ -12,7 +12,7 @@ possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate
   that are later used in [[file:emacs.org][emacs.org]].
 - /emacs.org/: This is the bulk of the configuration.  It endeavors to
   follow the model of [[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by
-  /allowing the act of programming o take place inside of Org-mode
+  /allowing the act of programming to take place inside of Org-mode
   documents/. 
 
 ** Usage
