@@ -1051,10 +1051,12 @@ Lastly, enable *undo-tree-mode*.  You can visualize the changes with
 
 A few things when in graphical mode:
 - Disable the toolbar and scroll bar.
-- Enable [[http://www.nyan.cat/][Nyan Cat]]!
+- Enable [[http://www.nyan.cat/][Nyan Cat]] [[https://github.com/TeMPOraL/nyan-mode][nyan mode]]!
+- Install [[https://julien.danjou.info/projects/emacs-packages][rainbow mode]] to /colorize color names in buffers/.
 
 #+BEGIN_SRC emacs-lisp
   (sf/package-install 'nyan-mode)
+  (sf/package-install 'rainbow-mode)
   (when (display-graphic-p)
     (tool-bar-mode -1)
   ;  (set-scroll-bar-mode 'right)
@@ -1090,7 +1092,7 @@ More about Emacs themes can be read in the manual on [[https://www.gnu.org/softw
 This only loads the theme if there is graphical display present.
 
 #+BEGIN_SRC emacs-lisp
-  (dolist (p '(gruvbox-theme leuven-theme
+  (dolist (p '(gruvbox-theme leuven-theme material-theme
                naquadah-theme solarized-theme
                color-theme-sanityinc-tomorrow
                spacegray-theme ample-theme
