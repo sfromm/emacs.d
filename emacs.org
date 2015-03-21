@@ -181,6 +181,22 @@ Toggle whitespace cues.
     (setq show-trailing-whitespace t))
 #+END_SRC
 
+While it is pretty straightforward to update packages via
+~list-packages~ (via ~U x~), the following function makes it perhaps a
+little easier.
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/update-packages ()
+  "update all installed packages"
+  (save-window-excursion
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute t)
+    (message "packages updated")
+    )
+  )
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
