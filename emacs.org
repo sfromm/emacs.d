@@ -1363,6 +1363,7 @@ Also turn on *linum-mode* for shell scripts.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'shell-script-mode 'linum-mode)
+(add-hook 'shell-script-mode 'sf/whitespace)
 #+END_SRC
 
 *** Text
