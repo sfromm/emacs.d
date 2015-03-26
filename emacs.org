@@ -1284,7 +1284,6 @@ is to configure things here or in _init.el_.
 (when (file-exists-p custom-file)
   (load custom-file))
 #+END_SRC
-
 **** DONE Making opening files easier
      CLOSED: [2014-05-06 Tue 09:17]
 
@@ -1300,6 +1299,22 @@ It also limits the maximum number of items in the =recentf= menu.
   (recentf-mode t)
   (setq recentf-max-menu-items 25)
   (global-set-key (kbd "<f7>") 'helm-recentf)
+#+END_SRC
+
+**** Helpers
+
+Define a hydra to start/switch between applications.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key
+    (kbd "<f9>")
+    (defhydra hydra-app-selector (:color blue)
+      "application"
+      ("e" notmuch "email")
+      ("r" elfeed "elfeed")
+      ("t" twit "twitter")
+      )
+    )
 #+END_SRC
 
 ** Programming and Editing
