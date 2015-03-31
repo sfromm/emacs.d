@@ -256,6 +256,8 @@ The following does lots of things:
 - Note when a task is rescheduled.
 - This defines some basics like where and what files with
   =org-agenda-files=.
+- Use the current window when invoking =org-agenda=.
+- And, just in case, restore windows after quitting =org-agenda=.
 - Define =org-todo-keywords=.  This is discussed in the [[http://orgmode.org/manual/TODO-Items.html][manual]].
 
 #+BEGIN_SRC emacs-lisp
@@ -278,6 +280,8 @@ The following does lots of things:
                            (concat org-directory "/journal.org")
                            (concat org-directory "/work.org")
                            (concat org-directory "/personal.org"))
+        org-agenda-restore-windows-after-quit t
+        org-agenda-window-setup 'current-window
         org-capture-templates '(
                                  ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
                                    "* %?%U\n")
