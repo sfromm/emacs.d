@@ -285,6 +285,8 @@ The following does lots of things:
         org-capture-templates '(
                                  ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
                                    "* %?%U\n")
+                                 ("l" "Student log" entry (file (concat org-directory "/student.org"))
+                                   "** %U %^{Name} %^{In|Out} %?")
                                  )
         org-file-apps (quote ((auto-mode . emacs)
                                ("\\.doc\\'" . "ooffice %s")
