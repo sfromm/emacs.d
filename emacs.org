@@ -24,6 +24,7 @@ sources, including (in no particular order):
 - [[https://github.com/howardabrams/dot-files][Howard Abrams]]
 - [[https://github.com/jd/emacs.d][Julien Danjou]]
 - [[https://github.com/joedicastro/dotfiles/tree/master/emacs][Joe Di Castro]]
+- [[http://org.rix.si/][Ryan Rix]]'s [[http://doc.rix.si/org/fsem.html][Hardcore Freestyle Emacs]]
 
 Embedding Emacs configuration in *org-mode* is heavily inspired by the
 ideas in [[http://en.wikipedia.org/wiki/Literate_programming][Literate Programming]].
