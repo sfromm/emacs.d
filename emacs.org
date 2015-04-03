@@ -1134,6 +1134,21 @@ and the time.
   (display-battery-mode)
 #+END_SRC
 
+**** TODO Use ~after-make-frame-functions~ if using emacsclient
+
+If I start Emacs via ~emacs --server~, I still want the frame to have
+the right look when I invoke =emacsclient=.  Something like:
+
+#+BEGIN_EXAMPLE
+(if (daemonp)
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+      (select-frame frame)
+      (load-theme foo))))
+#+END_EXAMPLE
+
+Another option with ~defadvice~: http://www.emacswiki.org/emacs/SettingFrameColorsForEmacsClient
+
 *** Themes
 
 This installs and enables an Emacs theme.  I try out different themes on
