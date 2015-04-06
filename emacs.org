@@ -1923,8 +1923,15 @@ news.
         gnus-sum-thread-tree-single-leaf     "╰─► "
         gnus-single-article-buffer nil
         gnus-summary-display-arrow t
-        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
-        gnus-thread-ignore-subject t
+  ;      gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
+                                          ;      gnus-thread-ignore-subject t
+        gnus-activate-level 2
+        gnus-thread-sort-functions '(gnus-thread-sort-by-subject
+                                      gnus-thread-sort-by-date
+                                      gnus-thread-sort-by-total-score)
+        gnus-use-adaptive-scoring '(word line)
+        gnus-adaptive-word-length-limit 5
+        
         ; http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines
         gnus-user-date-format-alist '(
                                        ((gnus-seconds-today) . "Today, %H:%M")
@@ -1937,10 +1944,6 @@ news.
 
         gnus-parameters '(
                            ("work"
-                             ; @see http://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html
-                             ;; press 'E' to expire email
-  ;                           (expiry-wait 90)
-  ;                           (expiry-target "nnimap+work:Trash")
                              (posting-style
                                (gcc "nnimap+work:Sent")
                                (address sf/email-work))
