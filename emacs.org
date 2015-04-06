@@ -445,6 +445,11 @@ that discuss exporting.
 This section defines all the packages I use.  It installs (if needed)
 and configures them per my usage.  Sections will come and go.
 
+[[https://github.com/emacs-tw][emacs-tw]] has an interesting page, titled [[https://github.com/emacs-tw/awesome-emacs][awesome emacs]], that organizes
+different packages available for Emacs by subject.  This can be a useful
+resource when looking for specific functionality or to check in on
+occasionally.
+
 *** Emacs vi emulation
 
 I have too much Vim muscle memory to let go of the keybindings.  [[https://gitorious.org/evil/pages/Home][evil]]
