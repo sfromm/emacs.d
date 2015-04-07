@@ -215,6 +215,7 @@ little easier.
 #+BEGIN_SRC emacs-lisp
   (defun sf/update-packages ()
     "update all installed packages"
+    (interactive)
     (save-window-excursion
       (package-list-packages t)
       (package-menu-mark-upgrades)
