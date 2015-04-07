@@ -224,6 +224,21 @@ little easier.
     )
 #+END_SRC
 
+If using Emacs in server mode, the following function wraps things to do
+when creating a frame.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/look-feel ()
+    "Set up look and feel"
+    (interactive)
+    (when (display-graphic-p)
+      (sf/font-update)
+      (tool-bar-mode -1)
+      (scroll-bar-mode -1)
+      (nyan-mode)
+      (load-theme sf/gui-theme t))
+    )
+#+END_SRC
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
@@ -1102,6 +1117,31 @@ Lastly, enable *undo-tree-mode*.  You can visualize the changes with
     )
 #+END_SRC
 
+*** Themes
+
+This installs and enables an Emacs theme.  I try out different themes on
+a regular basis, but have been partial to [[http://ethanschoonover.com/solarized][Solarized]] for a long time.
+More about Emacs themes can be read in the manual on [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Themes.html][custom-themes]].
+This defines the default theme, which is then loaded below.
+
+#+BEGIN_SRC emacs-lisp
+  (dolist (p '(gruvbox-theme leuven-theme material-theme
+               naquadah-theme solarized-theme
+               color-theme-sanityinc-tomorrow
+               spacegray-theme ample-theme
+               professional-theme tronesque-theme))
+    (progn (sf/package-install p)))
+   (defvar sf/gui-theme 'leuven "Preferred graphics theme") 
+#+END_SRC
+
+More information about themes can be found at EmacsWiki:
+
+http://www.emacswiki.org/emacs/ColorTheme
+
+This includes installing a theme for one buffer (=M-x
+color-theme-buffer-local=) or for a specific frame.  You can also toggle
+between day/night (light/dark) themes.
+
 *** Appearance
 
 A few things when in graphical mode:
@@ -1113,11 +1153,7 @@ A few things when in graphical mode:
   (sf/package-install 'nyan-mode)
   (sf/package-install 'rainbow-mode)
   (when (display-graphic-p)
-    (tool-bar-mode -1)
-  ;  (set-scroll-bar-mode 'right)
-    (scroll-bar-mode -1)
-    (nyan-mode)
-    )
+    (sf/look-feel))
 #+END_SRC
 
 Activate syntax highlighting.  See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][Font Lock]] in the Emacs manual.
@@ -1139,46 +1175,21 @@ and the time.
   (display-battery-mode)
 #+END_SRC
 
-**** TODO Use ~after-make-frame-functions~ if using emacsclient
+**** DONE Use ~after-make-frame-functions~ if using emacsclient
+     CLOSED: [2015-04-06 Mon 20:10]
 
 If I start Emacs via ~emacs --server~, I still want the frame to have
 the right look when I invoke =emacsclient=.  Something like:
 
-#+BEGIN_EXAMPLE
-(if (daemonp)
-  (add-hook 'after-make-frame-functions
-    (lambda (frame)
-      (select-frame frame)
-      (load-theme foo))))
-#+END_EXAMPLE
-
-Another option with ~defadvice~: http://www.emacswiki.org/emacs/SettingFrameColorsForEmacsClient
-
-*** Themes
-
-This installs and enables an Emacs theme.  I try out different themes on
-a regular basis, but have been partial to [[http://ethanschoonover.com/solarized][Solarized]] for a long time.
-More about Emacs themes can be read in the manual on [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Themes.html][custom-themes]].
-This only loads the theme if there is graphical display present.
-
 #+BEGIN_SRC emacs-lisp
-  (dolist (p '(gruvbox-theme leuven-theme material-theme
-               naquadah-theme solarized-theme
-               color-theme-sanityinc-tomorrow
-               spacegray-theme ample-theme
-               professional-theme tronesque-theme))
-    (progn (sf/package-install p)))
-  (when (display-graphic-p)
-    (load-theme 'leuven t))
+  (if (daemonp)
+    (add-hook 'after-make-frame-functions
+      (lambda (frame)
+        (select-frame frame)
+        (sf/look-feel))
+      )
+    )
 #+END_SRC
-
-More information about themes can be found at EmacsWiki:
-
-http://www.emacswiki.org/emacs/ColorTheme
-
-This includes installing a theme for one buffer (=M-x
-color-theme-buffer-local=) or for a specific frame.  You can also toggle
-between day/night (light/dark) themes.
 
 *** Fonts
 
