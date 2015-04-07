@@ -225,21 +225,6 @@ little easier.
     )
 #+END_SRC
 
-If using Emacs in server mode, the following function wraps things to do
-when creating a frame.
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/look-feel ()
-    "Set up look and feel"
-    (interactive)
-    (when (display-graphic-p)
-      (sf/font-update)
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (nyan-mode)
-      (load-theme sf/gui-theme t))
-    )
-#+END_SRC
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
@@ -1194,10 +1179,27 @@ will increase, decrease, and reset the font size.
 
 **** General appearance items
 
+If using Emacs in server mode, the following function wraps things to do
+when creating a frame.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/look-feel ()
+    "Set up look and feel"
+    (interactive)
+    (when (display-graphic-p)
+      (sf/font-update)
+      (tool-bar-mode -1)
+      (scroll-bar-mode -1)
+      (nyan-mode)
+      (load-theme sf/gui-theme t))
+    )
+#+END_SRC
+
 A few things when in graphical mode:
 - Disable the toolbar and scroll bar.
 - Enable [[http://www.nyan.cat/][Nyan Cat]] [[https://github.com/TeMPOraL/nyan-mode][nyan mode]]!
 - Install [[https://julien.danjou.info/projects/emacs-packages][rainbow mode]] to /colorize color names in buffers/.
+- Run ~sf/look-feel~.
 
 #+BEGIN_SRC emacs-lisp
   (sf/package-install 'nyan-mode)
