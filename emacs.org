@@ -1118,7 +1118,9 @@ Lastly, enable *undo-tree-mode*.  You can visualize the changes with
     )
 #+END_SRC
 
-*** Themes
+*** Appearance
+
+**** Themes
 
 This installs and enables an Emacs theme.  I try out different themes on
 a regular basis, but have been partial to [[http://ethanschoonover.com/solarized][Solarized]] for a long time.
@@ -1143,7 +1145,54 @@ This includes installing a theme for one buffer (=M-x
 color-theme-buffer-local=) or for a specific frame.  You can also toggle
 between day/night (light/dark) themes.
 
-*** Appearance
+**** Fonts
+
+This sets up the font and size when in graphical mode.  For awhile, I've
+been comfortable with _Inconsolata_.  An alternative to this is _DejaVu
+Sans Mono_.
+
+This is taken from [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html#sec-11-3][C3F]] section on fonts.
+
+This used to bind *C-=* to *sf/font-size-increase* and *C--* to
+*sf/font-size-decrease*.  With /Emacs-24.4/, this didn't work anymore.
+While it would be prudent to investigate why, I discovered that *C-x
+C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
+will increase, decrease, and reset the font size.
+
+#+BEGIN_SRC emacs-lisp
+  (defconst sf/font-base "DejaVu Sans Mono" "Preferred font")
+  (defvar sf/font-size 10 "Preferred font size")
+  (defun sf/font-ok-p ()
+    "Is configured font valid?"
+    (interactive)
+    (member sf/font-base (font-family-list)))
+  (defun sf/font-name ()
+    "Compute font name and size string"
+    (interactive)
+    (let* ((size (number-to-string sf/font-size))
+            (name (concat sf/font-base "-" size)))
+      name))
+  (defun sf/font-size-increase ()
+    "Increase font size"
+    (interactive)
+    (setq sf/font-size (+ sf/font-size 1))
+    (sf/font-update))
+  (defun sf/font-size-decrease ()
+    "Decrease font size"
+    (interactive)
+    (setq sf/font-size (- sf/font-size 1))
+    (sf/font-update))
+  (defun sf/font-update ()
+    "Update font configuration"
+    (interactive)
+    (if (sf/font-ok-p)
+      (progn
+        (message "Setting font to: %s" (sf/font-name))
+        (set-default-font (sf/font-name)))))
+  (sf/font-update)
+#+END_SRC
+
+**** General appearance items
 
 A few things when in graphical mode:
 - Disable the toolbar and scroll bar.
@@ -1190,52 +1239,6 @@ the right look when I invoke =emacsclient=.  Something like:
         (sf/look-feel))
       )
     )
-#+END_SRC
-
-*** Fonts
-
-Lastly, let's set the font and size.  For awhile, I've been comfortable
-with _Inconsolata_.  An alternative to this is _DejaVu Sans Mono_.
-
-This is taken from [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html#sec-11-3][C3F]] section on fonts.
-
-This used to bind *C-=* to *sf/font-size-increase* and *C--* to
-*sf/font-size-decrease*.  With /Emacs-24.4/, this didn't work anymore.
-While it would be prudent to investigate why, I discovered that *C-x
-C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
-will increase, decrease, and reset the font size.
-
-#+BEGIN_SRC emacs-lisp
-  (defconst sf/font-base "DejaVu Sans Mono" "Preferred font")
-  (defvar sf/font-size 10 "Preferred font size")
-  (defun sf/font-ok-p ()
-    "Is configured font valid?"
-    (interactive)
-    (member sf/font-base (font-family-list)))
-  (defun sf/font-name ()
-    "Compute font name and size string"
-    (interactive)
-    (let* ((size (number-to-string sf/font-size))
-            (name (concat sf/font-base "-" size)))
-      name))
-  (defun sf/font-size-increase ()
-    "Increase font size"
-    (interactive)
-    (setq sf/font-size (+ sf/font-size 1))
-    (sf/font-update))
-  (defun sf/font-size-decrease ()
-    "Decrease font size"
-    (interactive)
-    (setq sf/font-size (- sf/font-size 1))
-    (sf/font-update))
-  (defun sf/font-update ()
-    "Update font configuration"
-    (interactive)
-    (if (sf/font-ok-p)
-      (progn
-        (message "Setting font to: %s" (sf/font-name))
-        (set-default-font (sf/font-name)))))
-  (sf/font-update)
 #+END_SRC
 
 *** Behavior
