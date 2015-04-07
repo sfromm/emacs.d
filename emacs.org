@@ -1910,22 +1910,27 @@ news.
 
 #+BEGIN_SRC emacs-lisp
   (use-package gnus
-    :disabled t
     :commands gnus
     :init
     (progn
       (require 'nnir)
       (setq gnus-select-method '(nntp "news.gmane.org"))
       ;; http://www.gnus.org/manual/gnus_397.html
-      (add-to-list 'gnus-secondary-select-methods
-        '(nnimap "work"
-           (nnimap-address sf/nnimap-address)
-           (nnimap-server-port 993)
-           (nnimap-stream tls)
-           (nnimap-authinfo-file "~/.authinfo.gpg")
-           (nnir-search-engine imap)
-           )
-        )
+      ;; use backtick to evaluate ,-prefixed expressions
+      (setq gnus-secondary-select-methods `((nnimap "work"
+                                               (nnimap-address ,sf/nnimap-work-address)
+                                                (nnimap-server-port 993)
+                                                (nnimap-stream tls)
+                                                (nnimap-inbox "INBOX")
+                                                (nnimap-authinfo-file "~/.authinfo.gpg")
+                                                (nnir-search-engine imap))
+                                              (nnimap "personal"
+                                                (nnimap-address ,sf/nnimap-personal-address)
+                                                (nnimap-server-port 993)
+                                                (nnimap-stream tls)
+                                                (nnimap-inbox "INBOX")
+                                                (nnimap-authinfo-file "~/.authinfo.gpg")
+                                                (nnir-search-engine imap))))
       (setq gnus-agent t
         gnus-gcc-mark-as-read t
         gnus-message-archive-group "Sent"
