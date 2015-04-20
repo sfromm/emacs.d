@@ -590,47 +590,6 @@ via =emacsclient=.  In general, be sure to use =emacsclient -n= tells
   (unless (server-running-p) (server-start))
 #+END_SRC
 
-*** Helm
-    
-[[https://github.com/emacs-helm/helm][Helm]] is an incremental completion and selectio narrowing framework for
-Emacs.  It helps narrow your choices when searching for files, buffers,
-commands, et cetera.
-
-- [[http://tuhdo.github.io/helm-intro.html][Helm: A Package in a league of its own]]
-
-| Keybinding | Command                           |
-|------------+-----------------------------------|
-| C-c ?      | Display help when in Helm session |
-|            |                                   | 
-
-The following rebinds *C-x c* to *C-c h* because the former is too close
-to the command *C-x C-c*, *save-buffers-kill-terminal*.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package helm
-    :ensure helm
-    :diminish helm-mode
-    :init
-    (progn
-      (require 'helm-config)
-      (setq 
-        helm-ff-skip-boring-files t
-        helm-split-window-in-side-p t
-        helm-ff-file-name-history-use-recentf t)
-      (global-set-key (kbd "C-c h") 'helm-command-prefix)
-      (global-unset-key (kbd "C-x c"))
-      (helm-mode 1)
-      (helm-autoresize-mode t))
-    :config
-      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-    :bind (("M-x" . helm-M-x)
-            ("C-x C-f" . helm-find-files)
-            ("<f7>" . helm-recentf)
-            ("C-x b" . helm-mini))
-    )
-
-#+END_SRC
-
 *** Hydra - Making Emacs bindings stick around
 
 [[https://github.com/abo-abo/hydra][Hydra]] is a Emacs package that can be used to tie related commands into a
@@ -649,65 +608,6 @@ Let's give it a shot.
   (use-package hydra
     :ensure t)
 #+END_SRC
-
-*** IDO
-
-A first crack at using [[http://www.emacswiki.org/InteractivelyDoThings][IDO]], aka /Interactively Do Things/.  Of
-particular note, *ido-vertical-mode* is enabled again.
-
-A few handy key-bindings when using IDO:
-
-| Keybinding | Command                                       |
-|------------+-----------------------------------------------|
-| C-n        | move next through list                        |
-| C-p        | move to previous in list                      |
-| Tab        | display possible completion in buffer         |
-| RET        | go down inside the directory in front of list |
-| backspace  | go up to parent directory                     |
-| //         | go to root directory                          |
-| ~/         | go to home directory                          |
-| C-f        | fall back to find file                        |
-| C-d        | enter Dired for directory                     |
-| C-j        | create new file named with text you entered   |
-| C-b        | go back to buffer selection mode              |
-
-[2015-02-09 Mon]: I disabled *ido* in favor of *helm*.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package ido
-    :disabled t
-    :init
-    (progn
-      (use-package ido-vertical-mode
-        :ensure t
-        :disabled t
-        :init (ido-vertical-mode 1))
-      (use-package smex
-        :ensure smex
-        :disabled t
-        :init (smex-initialize)
-        :bind ("M-x" . smex))
-      (use-package flx-ido
-        :ensure flx-ido
-        :disabled t
-        :init (flx-ido-mode 1))
-      (ido-mode 1)
-      (ido-everywhere t)
-      (setq
-        ido-enable-flex-matching t
-        ido-create-new-buffer 'always
-        ido-use-faces nil
-        ido-use-filename-at-point nil
-        ido-auto-merge-work-directories-length 0))
-    :bind (("<f7>" . recentf-open-files)
-            ("C-x b" . ido-switch-buffer))
-    )
-#+END_SRC
-
-Some possibly useful references:
-- [[http://www.emacswiki.org/emacs/InteractivelyDoThings][EmacsWiki IDO]]
-- [[http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/][Mastering Emacs: Introduction to IDO]]
-- [[http://ergoemacs.org/emacs/emacs_buffer_switching.html][ErgoEmacs: Buffer switching]]
 
 *** Instant messaging: jabber & irc
 
@@ -900,6 +800,127 @@ One way to get a fancy modeline.  Disabled for now.
     :disabled t
     :ensure t
     :init (powerline-default-theme))
+#+END_SRC
+
+*** Searching and Completion
+
+**** Helm
+    
+[[https://github.com/emacs-helm/helm][Helm]] is an incremental completion and selectio narrowing framework for
+Emacs.  It helps narrow your choices when searching for files, buffers,
+commands, et cetera.
+
+- [[http://tuhdo.github.io/helm-intro.html][Helm: A Package in a league of its own]]
+
+| Keybinding | Command                           |
+|------------+-----------------------------------|
+| C-c ?      | Display help when in Helm session |
+|            |                                   | 
+
+The following rebinds *C-x c* to *C-c h* because the former is too close
+to the command *C-x C-c*, *save-buffers-kill-terminal*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :ensure helm
+    :diminish helm-mode
+    :init
+    (progn
+      (require 'helm-config)
+      (setq 
+        helm-ff-skip-boring-files t
+        helm-split-window-in-side-p t
+        helm-ff-file-name-history-use-recentf t)
+      (global-set-key (kbd "C-c h") 'helm-command-prefix)
+      (global-unset-key (kbd "C-x c"))
+      (helm-mode 1)
+      (helm-autoresize-mode t))
+    :config
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    :bind (("M-x" . helm-M-x)
+            ("C-x C-f" . helm-find-files)
+            ("<f7>" . helm-recentf)
+            ("C-x b" . helm-mini))
+    )
+
+#+END_SRC
+
+**** IDO
+
+A first crack at using [[http://www.emacswiki.org/InteractivelyDoThings][IDO]], aka /Interactively Do Things/.  Of
+particular note, *ido-vertical-mode* is enabled again.
+
+A few handy key-bindings when using IDO:
+
+| Keybinding | Command                                       |
+|------------+-----------------------------------------------|
+| C-n        | move next through list                        |
+| C-p        | move to previous in list                      |
+| Tab        | display possible completion in buffer         |
+| RET        | go down inside the directory in front of list |
+| backspace  | go up to parent directory                     |
+| //         | go to root directory                          |
+| ~/         | go to home directory                          |
+| C-f        | fall back to find file                        |
+| C-d        | enter Dired for directory                     |
+| C-j        | create new file named with text you entered   |
+| C-b        | go back to buffer selection mode              |
+
+[2015-02-09 Mon]: I disabled *ido* in favor of *helm*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ido
+    :disabled t
+    :init
+    (progn
+      (use-package ido-vertical-mode
+        :ensure t
+        :disabled t
+        :init (ido-vertical-mode 1))
+      (use-package flx-ido
+        :ensure flx-ido
+        :disabled t
+        :init (flx-ido-mode 1))
+      (ido-mode 1)
+      (ido-everywhere t)
+      (setq
+        ido-enable-flex-matching t
+        ido-create-new-buffer 'always
+        ido-use-faces nil
+        ido-use-filename-at-point nil
+        ido-auto-merge-work-directories-length 0))
+    :bind (("<f7>" . recentf-open-files)
+            ("C-x b" . ido-switch-buffer))
+    )
+#+END_SRC
+
+Some possibly useful references:
+- [[http://www.emacswiki.org/emacs/InteractivelyDoThings][EmacsWiki IDO]]
+- [[http://www.masteringemacs.org/articles/2010/10/10/introduction-to-ido-mode/][Mastering Emacs: Introduction to IDO]]
+- [[http://ergoemacs.org/emacs/emacs_buffer_switching.html][ErgoEmacs: Buffer switching]]
+
+**** Smex
+
+*Smex* is a ~M-x~ enhancement to recently and most frequently used
+ commands.  It is typically used with *ido*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smex
+    :ensure smex
+    :disabled t
+    :init (smex-initialize)
+    :bind ("M-x" . smex))
+#+END_SRC
+
+**** Swiper
+
+[[https://github.com/abo-abo/swiper][swiper]] gives you an overview as you search for a regex.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package swiper
+    :ensure t
+    :bind (("C-s" . swiper))
+    )
 #+END_SRC
 
 *** Terminals
