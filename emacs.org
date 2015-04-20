@@ -630,6 +630,7 @@ necessary configuration.
         jabber-backlog-number 40
         jabber-backlog-days 30
         jabber-history-dir "~/.local/share/logs/jabber"
+        jabber-vcard-avatars-retrieve t ; automatically download vcard avatars
         jabber-alert-info-message-hooks (quote (jabber-info-libnotify jabber-info-echo jabber-info-display))
         jabber-alert-message-hooks (quote (jabber-message-notifications jabber-message-echo jabber-message-scroll))
         jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
