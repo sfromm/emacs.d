@@ -624,6 +624,7 @@ necessary configuration.
     (progn
       (setq 
         jabber-account-list sf/jabber-account-alist
+        jabber-auto-reconnect t  ; reconnect automatically
         jabber-history-enabled t ; enable logging
         jabber-use-global-history nil
         jabber-backlog-number 40
