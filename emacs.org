@@ -825,6 +825,7 @@ to the command *C-x C-c*, *save-buffers-kill-terminal*.
 #+BEGIN_SRC emacs-lisp
   (use-package helm
     :ensure helm
+    :disabled t
     :diminish helm-mode
     :init
     (progn
@@ -920,8 +921,15 @@ Some possibly useful references:
 
 #+BEGIN_SRC emacs-lisp
   (use-package swiper
-    :ensure t
-    :bind (("C-s" . swiper))
+    :ensure swiper
+    :init
+    (progn
+      (use-package counsel :ensure t)
+      (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
+      (ivy-mode 1)
+      )
+    :bind (("C-s" . swiper)
+            ("<f7>" . recentf-open-files))
     )
 #+END_SRC
 
