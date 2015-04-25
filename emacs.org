@@ -768,6 +768,10 @@ navigating a file's history in [[http://git-scm.com/][git]].
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
+    :init
+    (progn
+      (setq magit-completing-read-function 'ivy-completing-read)
+      )
     :commands magit-status
     :bind ("C-x g" . magit-status))
   (sf/package-install 'git-timemachine)
@@ -910,7 +914,6 @@ Some possibly useful references:
 #+BEGIN_SRC emacs-lisp
   (use-package smex
     :ensure smex
-    :disabled t
     :init (smex-initialize)
     :bind ("M-x" . smex))
 #+END_SRC
