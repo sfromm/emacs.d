@@ -3,7 +3,7 @@
 #+OPTIONS: toc:4 h:4
 
 * Emacs Configuration
-
+  
 ** About this file
 <<babel-init>>
 
@@ -914,8 +914,7 @@ Some possibly useful references:
 #+BEGIN_SRC emacs-lisp
   (use-package smex
     :ensure smex
-    :init (smex-initialize)
-    :bind ("M-x" . smex))
+    :init (setq smex-completion-method 'ivy))
 #+END_SRC
 
 **** Swiper
@@ -933,6 +932,17 @@ Some possibly useful references:
       )
     :bind (("C-s" . swiper)
             ("<f7>" . recentf-open-files))
+    )
+#+END_SRC
+
+**** Finding files
+
+[[https://github.com/technomancy/find-file-in-project][find-file-in-project]] helps find files in a project ... quickly.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package find-file-in-project
+    :ensure t
+    :bind ("C-c f" . find-file-in-project)
     )
 #+END_SRC
 
