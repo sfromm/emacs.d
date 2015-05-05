@@ -1795,7 +1795,6 @@ $ mu index --maildir ~/Maildir
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -1809,14 +1808,7 @@ $ mu index --maildir ~/Maildir
            ("date:today..now" "Today's messages" ?t)
            ("date:7d..now" "Last 7 days" ?w)
            ("mime:text/calendar" "Meeting invites" ?c)
-           ("mime:image/*" "Messages with images" ?p)
-           ("from:cisco.com OR to:cisco.com" "Cisco" ?i)
-           ("from:level3.com OR to:level3.com" "Level3" ?l )
-           ("from:comcast.com OR to:comcast.com" "Comcast" ?C)
-           ("from:centurylink.com OR to:centurylink.com" "Centurylink" ?L)
-           ("from:ftr.com OR to:ftr.com" "Frontier" ?F)
-           ("from:Internet2" "Internet2" ?I)
-           ("from:lsnetworks.net OR to:lsnetworks.net" "LSN" ?Z))
+           ("mime:image/*" "Messages with images" ?p))
         mu4e-compose-signature-auto-include nil
         mu4e-view-scroll-to-next nil     ;; do not advance to next message when scolling
         mu4e-sent-folder   "/.Sent"       ;; folder for sent messages
@@ -1825,12 +1817,12 @@ $ mu index --maildir ~/Maildir
         mu4e-refile-folder "/.Archives")  ;; saved messages
       (when (not (string= system-name sf/work-workstation))
         (setq
-          mu4e-get-mail-command "offlineimap"
-          mu4e-maildir       "~/Maildir"   ;; top-level Maildir
-          mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
-          mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
-          mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-          mu4e-refile-folder "/Work/Archives")   ;; saved messages
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-maildir       "~/Mail"   ;; top-level Maildir
+          mu4e-sent-folder   "/Personal/Sent"       ;; folder for sent messages
+          mu4e-drafts-folder "/Personal/Drafts"     ;; unfinished messages
+          mu4e-trash-folder  "/Personal/Trash"      ;; trashed messages
+          mu4e-refile-folder "/Personal/Archives")   ;; saved messages
         (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account))
       )
     )
