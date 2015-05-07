@@ -1700,9 +1700,10 @@ Define various keybindings.
         notmuch-saved-searches 
         '(
            (:name "inbox"    :key "i" :query "tag:inbox")
-           (:name "today"    :key "t" :query "date:today..now and not tag:archive")
-           (:name "7 days"   :key "7" :query "date:7d..now and not tag:archive")
-           (:name "announce" :key "a" :query "tag:announce and not tag:archive and tag:unread")
+           (:name "flagged"  :key "f" :query "tag:flagged")
+           (:name "today"    :key "t" :query "date:today..now and not tag:archive and not tag:sent")
+           (:name "7 days"   :key "7" :query "date:7d..now and not tag:archive and not tag:sent")
+           (:name "announce" :key "a" :query "tag:announce and not tag:archive")
            (:name "reports"  :key "r" :query "tag:reports")
            (:name "lists"    :key "l" :query "tag:lists and not tag:archive")
            (:name "noc"      :key "n" :query "tag:noc and not tag:archive")
@@ -1731,7 +1732,7 @@ Define various keybindings.
           (interactive)
           (notmuch-search-tag (list "+trash" "-inbox" "-unread"))
           (notmuch-search-next-thread )))
-      (define-key notmuch-show-mode-map (kbd "j")
+      (define-key notmuch-show-mode-map (kbd "J")
         (lambda ()
           "mark message as junk"
           (interactive)
