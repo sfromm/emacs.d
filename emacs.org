@@ -178,7 +178,7 @@ Save all buffers and then run =depot-sync.sh=.
     (progn
       (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
       (save-some-buffers t)
-      ; (with-temp-buffer (async-shell-command "depot-sync.sh" t))
+      (with-temp-buffer (async-shell-command "depot-sync.sh" t))
       ))
 #+END_SRC
 
