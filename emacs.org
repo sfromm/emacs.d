@@ -567,6 +567,7 @@ other news-reading utility.
            ("http://mbork.pl/?action=rss" emacs )
            ("http://www.howardism.org/index.xml" emacs )
            ("http://kitchingroup.cheme.cmu.edu/blog/feed/atom/" emacs )
+           ("http://sachachua.com/blog/feed" emacs )
            ("http://planetsysadmin.com/atom.xml" devops)
            ("http://planet.fedoraproject.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
@@ -922,7 +923,7 @@ Some possibly useful references:
     :init (setq smex-completion-method 'ivy))
 #+END_SRC
 
-**** Swiper
+**** Ivy, Avy, and Swiper
 
 [[https://github.com/abo-abo/swiper][swiper]] gives you an overview as you search for a regex.
 
@@ -937,6 +938,16 @@ Some possibly useful references:
       )
     :bind (("C-s" . swiper)
             ("<f7>" . recentf-open-files))
+    )
+#+END_SRC
+
+[[https://github.com/abo-abo/avy][avy]] is a package for jumping to visible text using a char-based decision
+tree.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind ("M-g g" . avy-goto-line)
     )
 #+END_SRC
 
