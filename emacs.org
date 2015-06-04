@@ -938,9 +938,9 @@ Some possibly useful references:
       (use-package counsel :ensure t)
       (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
       (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
       )
-    :bind (("C-s" . swiper)
-            ("<f7>" . recentf-open-files))
+    :bind ("C-s" . swiper)
     )
 #+END_SRC
 
@@ -1444,13 +1444,20 @@ open.  When you call =recentf-open-files=, it will present a numbered
 list and you can then select the file to open.  [[http://ergoemacs.org/][ErgoEmacs]] also discusses
 how to configure [[http://ergoemacs.org/emacs/emacs_recentf.html][recentf-mode]].
 
-The following enables =recentf-mode= and binds *F7* to =helm-recentf=.
+The following enables =recentf-mode= and binds *F7* to =ivy-recentf=.
 It also limits the maximum number of items in the =recentf= menu.
 
 #+BEGIN_SRC emacs-lisp
-  (recentf-mode t)
-  (setq recentf-max-menu-items 25)
-  (global-set-key (kbd "<f7>") 'helm-recentf)
+  (use-package recentf
+    :init
+    (progn
+      (setq
+        recentf-max-menu-items 50
+        recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG")
+        )
+      )
+    :bind ("<f7>" . ivy-recentf)
+    )
 #+END_SRC
 
 **** Helpers
