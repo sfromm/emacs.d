@@ -481,7 +481,7 @@ it makes sense.
       (evil-mode 1))
     :config
     (progn
-      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode ))
+      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode ))
         (evil-set-initial-state mode 'emacs))
       ))
 #+END_SRC
@@ -580,7 +580,8 @@ other news-reading utility.
            ("http://xkcd.com/atom.xml" comics fun)
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
-           ))
+           )
+        url-queue-timeout 30)
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
       ))
