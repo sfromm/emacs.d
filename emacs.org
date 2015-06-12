@@ -1411,7 +1411,9 @@ jumpy.  There are a couple references:
   scroll-preserve-screen-position 1
   mouse-wheel-follow-mouse 't ;; scroll window under mouse
   mouse-wheel-progressive-speed nil     ;;  don't accelerate scrolling
-  mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  mouse-wheel-scroll-amount '(1 ((shift) . 5)
+                                    ((control)))
+)
 #+END_SRC
 
 Autoselect the window with the mouse pointer.  This is effectively
