@@ -1200,9 +1200,9 @@ This defines the default theme, which is then loaded below.
                naquadah-theme solarized-theme
                color-theme-sanityinc-tomorrow
                spacegray-theme ample-theme
-               professional-theme tronesque-theme))
+               professional-theme material-theme))
     (progn (sf/package-install p)))
-   (defvar sf/gui-theme 'leuven "Preferred graphics theme") 
+   (defvar sf/gui-theme 'material "Preferred graphics theme") 
 #+END_SRC
 
 More information about themes can be found at EmacsWiki:
