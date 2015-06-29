@@ -1791,6 +1791,12 @@ Define various keybindings.
           "star message"
           (interactive)
           (notmuch-show-add-tag (list "+flagged"))))
+      (define-key notmuch-show-mode-map (kbd "b")
+        (lambda (&optional address)
+          "Bounce the current message"
+          (interactive "sBounce to: ")
+          (notmuch-show-view-raw-message)
+          (message-resend address)))
       (define-key notmuch-search-mode-map (kbd "F")
         (lambda ()
           "star thread"
