@@ -782,7 +782,7 @@ navigating a file's history in [[http://git-scm.com/][git]].
       (setq
         magit-completing-read-function 'ivy-completing-read
         magit-last-seen-setup-instructions "1.4.0")
-      (dolist (mode '(magit-mode magit-popup-mode))
+      (dolist (mode '(magit-mode magit-popup-mode magit-diff-mode))
         (evil-set-initial-state mode 'emacs))
       )
     :commands magit-status
