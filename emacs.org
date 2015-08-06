@@ -24,7 +24,7 @@ sources, including (in no particular order):
 - [[https://github.com/howardabrams/dot-files][Howard Abrams]]
 - [[https://github.com/jd/emacs.d][Julien Danjou]]
 - [[https://github.com/joedicastro/dotfiles/tree/master/emacs][Joe Di Castro]]
-- [[http://org.rix.si/][Ryan Rix]]'s [[http://doc.rix.si/org/fsem.html][Hardcore Freestyle Emacs]]
+- [[http://org.rix.si/][Ryan Rix]]'s [[http://doc.rix.si/org/fsem.html][Hardcore Freestyle Emacs]] ([[http://fort.kickass.systems:10082/cgit/personal/rrix/pub/fsem.git/tree/fsem.org][org source]])
 
 Embedding Emacs configuration in *org-mode* is heavily inspired by the
 ideas in [[http://en.wikipedia.org/wiki/Literate_programming][Literate Programming]].
@@ -1827,6 +1827,7 @@ this is influenced by:
 - [[http://www.cataclysmicmutation.com/2010/11/multiple-gmail-accounts-in-gnus/][Multiple GMail Accounts in Gnus]]
 - [[http://blog.binchen.org/posts/notes-on-using-gnus.html][Practical guide to use Gnus with Gmail]]
 - [[http://qsdfgh.com/articles/2014/08/11/gnus-configuration-example.html][QSDFGH Gnus configuration example]]
+- [[https://github.com/kensanata/ggg][Gnus, Gmail, GPG]]
 
 A note regarding terminology:  Gnus uses the term /archiving/ to
 describe the method for storing mail you send. 
@@ -1847,27 +1848,17 @@ methods, which happens to be IMAP.
 Since I'm breaking this up into lots of parts, the paren matching will
 be a bit weird.
 
-Let's configure ~gnus~ when the command is run.  Pull in [[http://www.gnu.org/software/emacs/manual/html_node/gnus/nnir.html][nnir]] to enable
-search on *Gnus* backends.  Then, enable the /gnus-registry/.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package gnus
-    :commands gnus
-    :init
-    (progn
-      (require 'nnir)
-      (gnus-registry-initialize)
-#+END_SRC
-
 Set default =gnus-select-method= to ~nil~.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-select-method
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq gnus-select-method '(nntp "news.gmane.org"))
 #+END_SRC
 
 Go ahead and define /marks/ for the GUI.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-marks
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-score-over-mark   ?↑
     gnus-score-below-mark  ?↓
@@ -1887,6 +1878,7 @@ Go ahead and define /marks/ for the GUI.
 
 Set more marks related to threading.
 
+#+NAME: gnus-thread-tree
 #+BEGIN_SRC emacs-lisp
   (setq
     gnus-sum-thread-tree-indent          " "
@@ -1901,17 +1893,19 @@ Set more marks related to threading.
 Set the /archive/ group to ~Sent~.  For more information, see [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Archived-Messages.html][Archived
 messages]].  Also automatically mark sent messages as /read/.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-archive
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-gcc-mark-as-read t
     gnus-message-archive-group "Sent")
 #+END_SRC
 
-Define date format for successively older articles, the [[http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines][summary line
-format]], and how to sort threads.  While not done here, one can also
-configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specification][group line format]].
+Define date format for successively older articles, the [[http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines][summary line]]
+format, and how to sort threads.  While not done here, one can also
+configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specification][group line]] format.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-format
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-user-date-format-alist '(
                                    ((gnus-seconds-today) . "Today, %H:%M")
@@ -1927,7 +1921,8 @@ configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specificatio
 
 Other odds and ends.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-odds-ends
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-agent t
     gnus-fetch-old-headers 'some 
@@ -1944,7 +1939,8 @@ Other odds and ends.
 Here, I configure the /secondary/ accounts.  In fact, these are the main
 accounts in use.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: gnus-secondary-select
+#+BEGIN_SRC emacs-lisp :tangle no
   ;; use backtick to evaluate ,-prefixed expressions
   (setq gnus-secondary-select-methods
     `((nnimap "work"
@@ -1976,12 +1972,34 @@ accounts in use.
 
 Add a hook for [[http://www.gnus.org/manual/big-gnus.html#Group-Topics][topics]] when in group mode.  And a hook for updating
 scores.
- 
-#+BEGIN_SRC emacs-lisp
+
+#+NAME: gnus-hooks 
+#+BEGIN_SRC emacs-lisp :tangle no
   (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
   (add-hook 'gnus-summary-exit-hook 'gnus-summary-bubble-group)
-  )
-)
+#+END_SRC
+
+Let's finally configure ~gnus~ when the command is run.  Pull in [[http://www.gnu.org/software/emacs/manual/html_node/gnus/nnir.html][nnir]] to enable
+search on *Gnus* backends.  Then, enable the /gnus-registry/ and finally
+pull in all the above pieces.
+
+#+BEGIN_SRC emacs-lisp :noweb yes
+  (use-package gnus
+    :commands gnus
+    :init
+    (progn
+      (require 'nnir)
+      (gnus-registry-initialize)
+      <<gnus-select-methods>>
+      <<gnus-marks>>
+      <<gnus-thread-tree>>
+      <<gnus-archive>>
+      <<gnus-format>>
+      <<gnus-odds-ends>>
+      <<gnus-secondary-select>>
+      <<gnus-hooks>>
+      )
+    )
 #+END_SRC
 
 Lastly, the following will configure adaptive scoring.  This is
