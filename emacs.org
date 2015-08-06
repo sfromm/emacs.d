@@ -1479,7 +1479,7 @@ Define a hydra to start/switch between applications.
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
-      ("s" ansi-term "shell")
+      ("s" eshell "shell")
       )
     )
 #+END_SRC
