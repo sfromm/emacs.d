@@ -1826,7 +1826,7 @@ this is influenced by:
 
 - [[http://www.cataclysmicmutation.com/2010/11/multiple-gmail-accounts-in-gnus/][Multiple GMail Accounts in Gnus]]
 - [[http://blog.binchen.org/posts/notes-on-using-gnus.html][Practical guide to use Gnus with Gmail]]
-- https://github.com/pierre-lecocq/qsdfgh.com/blob/master/articles/gnus-configuration-example.org
+- [[http://qsdfgh.com/articles/2014/08/11/gnus-configuration-example.html][QSDFGH Gnus configuration example]]
 
 A note regarding terminology:  Gnus uses the term /archiving/ to
 describe the method for storing mail you send. 
@@ -1838,15 +1838,17 @@ This enables searching of IMAP based accounts.
 
 Highlights on miscellaneous points from the manual:
 
-- [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Archived-Messages.html][Archived messages]] (aka the Sent mail folder)
 - [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][Expiring mail]]
 
 Accounts and other sources of reading material.  The first sets the
 default method for fetching articles.  This also sets /secondary/
 methods, which happens to be IMAP.
 
-Generally speaking, it is hard for me to get past treating email as
-news.
+Since I'm breaking this up into lots of parts, the paren matching will
+be a bit weird.
+
+Let's configure ~gnus~ when the command is run.  Pull in [[http://www.gnu.org/software/emacs/manual/html_node/gnus/nnir.html][nnir]] to enable
+search on *Gnus* backends.  Then, enable the /gnus-registry/.
 
 #+BEGIN_SRC emacs-lisp
   (use-package gnus
@@ -1854,69 +1856,154 @@ news.
     :init
     (progn
       (require 'nnir)
-      (setq gnus-select-method '(nntp "news.gmane.org"))
-      ;; http://www.gnus.org/manual/gnus_397.html
-      ;; use backtick to evaluate ,-prefixed expressions
-      (setq gnus-secondary-select-methods `((nnimap "work"
-                                               (nnimap-address ,sf/nnimap-work-address)
-                                                (nnimap-server-port 993)
-                                                (nnimap-stream tls)
-                                                (nnimap-inbox "INBOX")
-                                                (nnimap-authinfo-file "~/.authinfo.gpg")
-                                                (nnir-search-engine imap))
-                                              (nnimap "personal"
-                                                (nnimap-address ,sf/nnimap-personal-address)
-                                                (nnimap-server-port 993)
-                                                (nnimap-stream tls)
-                                                (nnimap-inbox "INBOX")
-                                                (nnimap-authinfo-file "~/.authinfo.gpg")
-                                                (nnir-search-engine imap))))
-      (setq gnus-agent t
-        gnus-gcc-mark-as-read t
-        gnus-message-archive-group "Sent"
-        gnus-sum-thread-tree-indent          " "
-        gnus-sum-thread-tree-single-indent   "◎ "
-        gnus-sum-thread-tree-root            "● "
-        gnus-sum-thread-tree-false-root      "☆"
-        gnus-sum-thread-tree-vertical        "│"
-        gnus-sum-thread-tree-leaf-with-other "├─► "
-        gnus-sum-thread-tree-single-leaf     "╰─► "
-        gnus-single-article-buffer nil
-        gnus-summary-display-arrow t
-  ;      gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
-                                          ;      gnus-thread-ignore-subject t
-        gnus-activate-level 2
-        gnus-thread-sort-functions '(gnus-thread-sort-by-subject
-                                      gnus-thread-sort-by-date
-                                      gnus-thread-sort-by-total-score)
-        gnus-use-adaptive-scoring '(word line)
-        gnus-adaptive-word-length-limit 5
-        
-        ; http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines
-        gnus-user-date-format-alist '(
-                                       ((gnus-seconds-today) . "Today, %H:%M")
-                                       ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
-                                       (604800 . "%A %H:%M") ;;that's one week
-                                       ((gnus-seconds-month) . "%A %d")
-                                       ((gnus-seconds-year) . "%B %d")
-                                       (t . "%B %d '%y"))
-        gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B%s%)\n"
+      (gnus-registry-initialize)
+#+END_SRC
 
-        gnus-parameters '(
-                           ("work"
-                             (posting-style
-                               (gcc "nnimap+work:Sent")
-                               (address sf/email-work))
-                             (expiry-wait . never)
-                             (display . all))
-                           )
-        )
-      ; http://www.gnus.org/manual/big-gnus.html#Group-Topics
-      (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-      )
+Set default =gnus-select-method= to ~nil~.
+
+#+BEGIN_SRC emacs-lisp
+  (setq gnus-select-method '(nntp "news.gmane.org"))
+#+END_SRC
+
+Go ahead and define /marks/ for the GUI.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gnus-score-over-mark   ?↑
+    gnus-score-below-mark  ?↓
+    gnus-ticked-mark       ?⚑
+    gnus-dormant-mark      ?⚐
+    gnus-expirable-mark    ?♻
+    gnus-read-mark         ?✓
+    gnus-del-mark          ?✗
+    gnus-killed-mark       ?☠
+    gnus-replied-mark      ?⟲
+    gnus-forwarded-mark    ?⤳
+    gnus-cached-mark       ?☍
+    gnus-recent-mark       ?★
+    gnus-unseen-mark       ?✩
+    gnus-unread-mark       ?✉)
+#+END_SRC
+
+Set more marks related to threading.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gnus-sum-thread-tree-indent          " "
+    gnus-sum-thread-tree-single-indent   "◎ "
+    gnus-sum-thread-tree-root            "● "
+    gnus-sum-thread-tree-false-root      "☆"
+    gnus-sum-thread-tree-vertical        "│"
+    gnus-sum-thread-tree-leaf-with-other "├─► "
+    gnus-sum-thread-tree-single-leaf     "╰─► " )
+#+END_SRC
+
+Set the /archive/ group to ~Sent~.  For more information, see [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Archived-Messages.html][Archived
+messages]].  Also automatically mark sent messages as /read/.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gnus-gcc-mark-as-read t
+    gnus-message-archive-group "Sent")
+#+END_SRC
+
+Define date format for successively older articles, the [[http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines][summary line
+format]], and how to sort threads.  While not done here, one can also
+configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specification][group line format]].
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gnus-user-date-format-alist '(
+                                   ((gnus-seconds-today) . "Today, %H:%M")
+                                   ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
+                                   (604800 . "%A %H:%M") ;;that's one week
+                                   ((gnus-seconds-month) . "%A %d")
+                                   ((gnus-seconds-year) . "%B %d")
+                                   (t . "%B %d '%y") )
+    gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B%s%)\n"
+    gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date)
     )
-    
+#+END_SRC
 
+Other odds and ends.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    gnus-agent t
+    gnus-fetch-old-headers 'some 
+    gnus-single-article-buffer nil
+    gnus-message-replysign t
+    gnus-message-replyencrypt t
+    gnus-summary-display-arrow t
+    gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
+    gnus-activate-level 2
+    mm-inline-text-html-with-images t
+    mm-text-html-renderer 'shr)
+#+END_SRC
+
+Here, I configure the /secondary/ accounts.  In fact, these are the main
+accounts in use.
+
+#+BEGIN_SRC emacs-lisp
+  ;; use backtick to evaluate ,-prefixed expressions
+  (setq gnus-secondary-select-methods
+    `((nnimap "work"
+        (nnimap-address ,sf/nnimap-work-address)
+        (nnimap-server-port 993)
+        (nnimap-stream ssl)
+        (nnir-search-engine imap)
+        (nnimap-list-pattern ("INBOX"))
+        (nnimap-inbox ("INBOX"))
+        (nnimap-split-methods 'nnimap-split-fancy)
+        (nnimap-split-fancy (|
+                              "INBOX")))
+       (nnimap "personal"
+         (nnimap-address ,sf/nnimap-personal-address)
+         (nnimap-server-port 993)
+         (nnimap-stream ssl)
+         (nnir-search-engine imap)
+         (nnimap-list-pattern ("INBOX"))
+         (nnimap-inbox ("INBOX"))
+         (nnimap-inbox ("INBOX"))
+         (nnimap-split-fancy (|
+                               (: gnus-registry-split-fancy-with-parent)
+                               (from ".*@facebookmail.com.*" "INBOX.social")
+                               (from ".*@twitter.com.*" "INBOX.social")
+                               "INBOX")))
+       )
+    )
+#+END_SRC
+
+Add a hook for [[http://www.gnus.org/manual/big-gnus.html#Group-Topics][topics]] when in group mode.  And a hook for updating
+scores.
+ 
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+  (add-hook 'gnus-summary-exit-hook 'gnus-summary-bubble-group)
+  )
+)
+#+END_SRC
+
+Lastly, the following will configure adaptive scoring.  This is
+presently disabled, but preserved in case I want to go this route.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq
+    gnus-use-adaptive-scoring '(word line)
+    gnus-adaptive-word-length-limit 5
+    gnus-adaptive-word-no-group-words t
+    gnus-default-adaptive-score-alist '((gnus-unread-mark)
+                                         (gnus-ticked-mark (from 4))
+                                         (gnus-dormant-mark (from 5))
+                                         (gnus-del-mark (from -4) (subject -1))
+                                         (gnus-read-mark (from 4) (subject 2))
+                                         (gnus-expirable-mark (from -1) (subject -1))
+                                         (gnus-killed-mark (from -1) (subject -3))
+                                         (gnus-kill-file-mark)
+                                         (gnus-ancient-mark)
+                                         (gnus-low-score-mark)
+                                         (gnus-catchup-mark (from -1) (subject -1)))
+    )
 #+END_SRC
 
 **** Group buffer
