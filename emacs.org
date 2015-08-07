@@ -1897,6 +1897,7 @@ messages]].  Also automatically mark sent messages as /read/.
 #+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-gcc-mark-as-read t
+    gnus-message-archive-method "nnimap"
     gnus-message-archive-group "Sent")
 #+END_SRC
 
@@ -1927,6 +1928,7 @@ Other odds and ends.
     gnus-agent t
     gnus-fetch-old-headers 'some 
     gnus-single-article-buffer nil
+    gnus-use-full-window nil
     gnus-message-replysign t
     gnus-message-replyencrypt t
     gnus-summary-display-arrow t
@@ -1954,6 +1956,7 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
         (nnimap-inbox ("INBOX"))
         (nnimap-split-methods 'nnimap-split-fancy)
         (nnimap-split-fancy (|
+                              (: gnus-registry-split-fancy-with-parent)
                               "INBOX")))
        (nnimap "personal"
          (nnimap-address ,sf/nnimap-personal-address)
@@ -1973,11 +1976,13 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
   (setq gnus-parameters `(
                            ("work"
                              (posting-style
+                               (gcc "nnimap+work:Sent")
                                (address ,sf/email-work)
                                (signature-file "~/.signature")
                                ))
                            ("personal"
                              (posting-style
+                               (gcc "nnimap+personal:[Gmail]/Sent Mail")
                                (address ,sf/email-personal)
                                (signature ,user-full-name)
                                ))
