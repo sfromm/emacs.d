@@ -1852,7 +1852,7 @@ Set default =gnus-select-method= to ~nil~.
 
 #+NAME: gnus-select-method
 #+BEGIN_SRC emacs-lisp :tangle no
-  (setq gnus-select-method '(nntp "news.gmane.org"))
+  (setq gnus-select-method '(nnnil ""))
 #+END_SRC
 
 Go ahead and define /marks/ for the GUI.
