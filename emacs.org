@@ -1939,6 +1939,8 @@ Other odds and ends.
 Here, I configure the /secondary/ accounts.  In fact, these are the main
 accounts in use.
 
+This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-Parameters.html][group parameters]] for [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html#Posting-Styles][posting styles]].
+
 #+NAME: gnus-secondary-select
 #+BEGIN_SRC emacs-lisp :tangle no
   ;; use backtick to evaluate ,-prefixed expressions
@@ -1968,6 +1970,18 @@ accounts in use.
                                "INBOX")))
        )
     )
+  (setq gnus-parameters `(
+                           ("work"
+                             (posting-style
+                               (address ,sf/email-work)
+                               (signature-file "~/.signature")
+                               ))
+                           ("personal"
+                             (posting-style
+                               (address ,sf/email-personal)
+                               (signature ,user-full-name)
+                               ))
+                           ))
 #+END_SRC
 
 Add a hook for [[http://www.gnus.org/manual/big-gnus.html#Group-Topics][topics]] when in group mode.  And a hook for updating
