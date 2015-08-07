@@ -1920,6 +1920,36 @@ configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specificatio
     )
 #+END_SRC
 
+Pull in icalendar support.
+
+#+NAME: gnus-icalendar
+#+BEGIN_SRC emacs-lisp :tangle no
+(require 'gnus-icalendar)
+(gnus-icalendar-setup)
+#+END_SRC
+
+Redefine some keybindings here to what makes sense for me.
+
+#+NAME: gnus-define-keys
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun sf/email-trash ()
+    "Trash the current or marked emails"
+    (interactive)
+    (gnus-summary-move-article nil "nnimap+work:Trash"))
+  (defun sf/email-archive ()
+    "Archive the current or marked emails"
+    (interactive)
+    (gnus-summary-move-article nil "nnimap+work:Archives"))
+  (define-key gnus-summary-mode-map (kbd "d") 'sf/email-trash)
+  (define-key gnus-summary-mode-map (kbd "a") 'sf/email-archive)
+  (define-key gnus-summary-mode-map (kbd "r") 'gnus-summary-reply-with-original)
+  (define-key gnus-summary-mode-map (kbd "R") 'gnus-summary-wide-reply-with-original)
+  (define-key gnus-summary-mode-map (kbd "f") 'gnus-summary-mail-forward)
+  (define-key gnus-article-mode-map (kbd "r") 'gnus-summary-reply-with-original)
+  (define-key gnus-article-mode-map (kbd "R") 'gnus-summary-wide-reply-with-original)
+  (define-key gnus-article-mode-map (kbd "f") 'gnus-summary-mail-forward)
+#+END_SRC
+
 Other odds and ends.
 
 #+NAME: gnus-odds-ends
@@ -1935,7 +1965,9 @@ Other odds and ends.
     gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
     gnus-activate-level 2
     mm-inline-text-html-with-images t
-    mm-text-html-renderer 'shr)
+    mm-text-html-renderer 'shr
+    shr-color-visible-luminance-min 60
+    )
 #+END_SRC
 
 Here, I configure the /secondary/ accounts.  In fact, these are the main
@@ -1957,6 +1989,11 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
         (nnimap-split-methods 'nnimap-split-fancy)
         (nnimap-split-fancy (|
                               (: gnus-registry-split-fancy-with-parent)
+                              (from ".*Internet2.*" "ops.internet2")
+                              (from ".*NTS Nagios.*" "ops.nts")
+                              (from "rancid@" "ops.rancid")
+                              ("Subject" ".*rkhunter.*" "ops.ids")
+                              ("Subject" ".*AIDE.*" "ops.ids")
                               "INBOX")))
        (nnimap "personal"
          (nnimap-address ,sf/nnimap-personal-address)
@@ -1975,12 +2012,15 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
     )
   (setq gnus-parameters `(
                            ("work"
+                             (display . all)
+                             (expiry-wait . never)
                              (posting-style
                                (gcc "nnimap+work:Sent")
                                (address ,sf/email-work)
                                (signature-file "~/.signature")
                                ))
                            ("personal"
+                             (expiry-wait . never)
                              (posting-style
                                (gcc "nnimap+personal:[Gmail]/Sent Mail")
                                (address ,sf/email-personal)
@@ -2009,6 +2049,7 @@ pull in all the above pieces.
     (progn
       (require 'nnir)
       (gnus-registry-initialize)
+      <<gnus-icalendar>>
       <<gnus-select-method>>
       <<gnus-marks>>
       <<gnus-thread-tree>>
@@ -2017,6 +2058,7 @@ pull in all the above pieces.
       <<gnus-odds-ends>>
       <<gnus-secondary-select>>
       <<gnus-hooks>>
+      <<gnus-define-keys>>
       )
     )
 #+END_SRC
