@@ -1879,7 +1879,7 @@ Go ahead and define /marks/ for the GUI.
 Set more marks related to threading.
 
 #+NAME: gnus-thread-tree
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-sum-thread-tree-indent          " "
     gnus-sum-thread-tree-single-indent   "◎ "
@@ -2004,7 +2004,7 @@ pull in all the above pieces.
     (progn
       (require 'nnir)
       (gnus-registry-initialize)
-      <<gnus-select-methods>>
+      <<gnus-select-method>>
       <<gnus-marks>>
       <<gnus-thread-tree>>
       <<gnus-archive>>
