@@ -575,7 +575,6 @@ other news-reading utility.
            ("http://planet.freedesktop.org/rss20.xml" linux )
            ("http://devopsreactions.tumblr.com/rss" devops fun)
            ("http://feeds.networklore.com/Networklore" netops )
-           ("http://packetpushers.net/category/blogs/feed/" netops)
            ("http://etherealmind.com/feed/" netops)
            ("http://www.humansofnewyork.com/rss" fun)
            ("http://xkcd.com/atom.xml" comics fun)
