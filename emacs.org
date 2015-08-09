@@ -2014,6 +2014,7 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
                            ("work"
                              (display . all)
                              (expiry-wait . never)
+                             (gcc-self . "nnimap+work:Sent")
                              (posting-style
                                (gcc "nnimap+work:Sent")
                                (address ,sf/email-work)
@@ -2021,6 +2022,7 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
                                ))
                            ("personal"
                              (expiry-wait . never)
+                             (gcc-self . "nnimap+personal:[Gmail]Sent Mail")
                              (posting-style
                                (gcc "nnimap+personal:[Gmail]/Sent Mail")
                                (address ,sf/email-personal)
