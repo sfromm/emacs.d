@@ -1474,7 +1474,7 @@ Define a hydra to start/switch between applications.
     (kbd "<f9>")
     (defhydra hydra-app-selector (:color blue)
       "application"
-      ("e" notmuch "email")
+      ("e" gnus "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
