@@ -496,8 +496,8 @@ it makes sense.
   (use-package bbdb
     :init
     (progn
-      (bbdb-initialize 'gnus 'message)
-      (setq bbdb-file (concat user-emacs-directory "/user/bbdb"))
+      (bbdb-initialize 'message)
+      (setq bbdb-file (concat user-emacs-directory "user/bbdb"))
       (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
       (bbdb-insinuate-message)
       (add-hook 'bbdb-change-hook 'bbdb-timestamp)
