@@ -488,16 +488,23 @@ it makes sense.
 
 *** BBDB
 
-BBDB, the Big-Brother Database.  As noted elsewhere, I use *org-contacts*.
+[[http://bbdb.sourceforge.net/bbdb.html][BBDB]], the Big-Brother Database.  Useful resources: [[http://www.emacswiki.org/emacs/CategoryBbdb][emacswiki]] and [[http://sachachua.com/blog/category/geek/emacs/bbdb/][Chua]].
 
 #+BEGIN_SRC emacs-lisp
+  (dolist (p '(bbdb bbdb-ext bbdb-vcard))
+    (progn (sf/package-install p)))
   (use-package bbdb
-    :disabled t
     :init
     (progn
-      (bbdb-initialize)
+      (bbdb-initialize 'gnus 'message)
+      (setq bbdb-file (concat user-emacs-directory "/user/bbdb"))
+      (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+      (bbdb-insinuate-message)
+      (add-hook 'bbdb-change-hook 'bbdb-timestamp)
+      (add-hook 'bbdb-create-hook 'bbdb-creation-date)
       )
     )
+
 #+END_SRC
 
 *** Bookmarks
@@ -1474,7 +1481,7 @@ Define a hydra to start/switch between applications.
     (kbd "<f9>")
     (defhydra hydra-app-selector (:color blue)
       "application"
-      ("e" gnus "email")
+      ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
@@ -1923,8 +1930,8 @@ Pull in icalendar support.
 
 #+NAME: gnus-icalendar
 #+BEGIN_SRC emacs-lisp :tangle no
-(require 'gnus-icalendar)
-(gnus-icalendar-setup)
+;(require 'gnus-icalendar)
+;(gnus-icalendar-setup)
 #+END_SRC
 
 Redefine some keybindings here to what makes sense for me.
@@ -1993,9 +2000,6 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
                               (from "rancid@"             "ops.rancid")
                               ("Subject" ".*rkhunter.*"   "ops.ids")
                               ("Subject" ".*AIDE.*"       "ops.ids")
-                              (any ".*hunterfiber.com.*"     "vendor.hunter")
-                              (any ".*huntertelephone.com.*" "vendor.hunter") 
-                              (any ".*comcast.com.*"         "vendor.comcast")
                               "INBOX")))
        (nnimap "personal"
          (nnimap-address ,sf/nnimap-personal-address)
@@ -2119,3 +2123,5 @@ loaded.
 #+BEGIN_SRC emacs-lisp
 (message "%s" "Finished loading config")
 #+END_SRC
+
+
