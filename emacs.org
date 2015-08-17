@@ -576,7 +576,7 @@ other news-reading utility.
            ("http://sachachua.com/blog/feed" emacs )
            ("https://www.masteringemacs.org/feed" emacs )
            ("http://planetsysadmin.com/atom.xml" devops)
-           ("http://planet.fedoraproject.org/atom.xml" linux fedora)
+           ("http://fedoraplanet.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
            ("http://kernelplanet.org/rss20.xml" linux )
            ("http://planet.freedesktop.org/rss20.xml" linux )
