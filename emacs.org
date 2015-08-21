@@ -822,7 +822,6 @@ One way to get a fancy modeline.  Disabled for now.
 
 #+BEGIN_SRC emacs-lisp
   (use-package powerline
-    :disabled t
     :ensure t
     :init (powerline-default-theme))
 #+END_SRC
@@ -1283,14 +1282,12 @@ when creating a frame.
       (sf/font-update)
       (tool-bar-mode -1)
       (scroll-bar-mode -1)
-      (nyan-mode)
       (load-theme sf/gui-theme t))
     )
 #+END_SRC
 
 A few things when in graphical mode:
 - Disable the toolbar and scroll bar.
-- Enable [[http://www.nyan.cat/][Nyan Cat]] [[https://github.com/TeMPOraL/nyan-mode][nyan mode]]!
 - Install [[https://julien.danjou.info/projects/emacs-packages][rainbow mode]] to /colorize color names in buffers/.
 - Run ~sf/look-feel~.
 
