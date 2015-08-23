@@ -2113,6 +2113,17 @@ of it as emails in a folder.  Type *SPACE* to view the currently
 selected article.  Type *=* (*gnus-summary-expand-window*) to close the
 article view and only display the summary.
 
+**** Splitting
+
+[[https://www.gnu.org/software/emacs/manual/html_node/gnus/Splitting-Mail.html][Splitting mail]] is taking incoming mail and filtering it out to different
+groups (aka folders).  There's also [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Fancy-Mail-Splitting.html#Fancy-Mail-Splitting][fancy mail splitting]].
+
+To assist with debugging splitting, you can use the command =M-x
+nnmail-split-history=.  This will show you where the previous mail split
+put messages.  There's also the command =gnus-summary-respool-trace=
+command to see what re-spooling of messages would do.  There are other
+[[https://www.gnu.org/software/emacs/manual/html_node/gnus/Mail-Group-Commands.html][mail group]] commands that may be of interest.
+
 ** Le Fin
 
 The end.  Send a message so that the user knows it has been completely
