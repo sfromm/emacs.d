@@ -12,10 +12,10 @@ kept organized with *org-mode*. It is inspired from a variety of
 sources, including (in no particular order):
 
 - [[http://sachachua.com/blog/][Sacha Chua]]'s [[http://sachac.github.io/.emacs.d/Sacha.html][emacs configuration]]
+- [[http://doc.norang.ca/org-mode.html][Bernt Hansen (norang.ca) Org Mode]] (Organize Your Life in Plain Text)
 - [[http://eschulte.github.io/emacs24-starter-kit/][Emacs Starter Kit]]
 - [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][Creation and conservation of computer files]], and later [[https://github.com/grettke/home/blob/master/ALEC.org][ALEC]]
 - [[http://kitchingroup.cheme.cmu.edu/blog/][John Kitchin]]'s [[https://github.com/jkitchin/jmax][emacs configuration]]
-- [[http://doc.norang.ca/org-mode.html][Bernt Hansen (norang.ca) Org Mode]] (Organize Your Life in Plain Text)
 - [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB (EmacsWiki)]]
 - [[http://bzg.fr/emacs.html][Bastien Guerry]]
 - [[https://github.com/larstvei/dot-emacs][Lars Tveito]]
@@ -266,12 +266,6 @@ http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
 taking notes, tracking projects and todo items, and other miscellaneous
 items.
 
-First, install the latest and greatest.
-
-#+BEGIN_SRC emacs-lisp
-(sf/package-install 'org-plus-contrib)
-#+END_SRC
-
 The following does lots of things:
 
 - Enable spell-check when in *org-mode*.
@@ -291,6 +285,7 @@ The following does lots of things:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org
+    :ensure org-plus-contrib
     :init
     (progn
       (add-hook 'org-mode-hook 'turn-on-auto-fill)
