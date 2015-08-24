@@ -1467,18 +1467,20 @@ It also limits the maximum number of items in the =recentf= menu.
 
 **** Helpers
 
-Define a hydra to start/switch between applications.
+Define a hydra to start/switch to applications or trigger miscellaneous actions.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key
     (kbd "<f9>")
-    (defhydra hydra-app-selector (:color blue)
-      "application"
+    (defhydra hydra-app-selector (:color blue
+                                   :columns 5)
+      "Action"
       ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
       ("s" eshell "shell")
+      ("p" org-pomodoro "org-pomodoro")
       )
     )
 #+END_SRC
