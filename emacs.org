@@ -545,7 +545,8 @@ opportunities to familiarize myself with *ediff*, but the following
 kinda-sorta helps.
 
 #+BEGIN_SRC emacs-lisp
-(setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 #+END_SRC
 
 *** Elfeed
@@ -976,11 +977,28 @@ References on the subject of running terminals in Emacs:
 
 - [[http://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs]]
 
-Pull in *multi-term* and set *bash* as the default shell.
+Set default shell to =bash=, make sure the initial state is =emacs= and
+then provide helper function to launch =ansi-term=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq explicit-shell-file-name "/bin/bash")
+  (evil-set-initial-state 'term-mode 'emacs)
+  (defun sf/terminal ()
+    "Switch to terminal; launch if non-existent"
+    (interactive)
+    (if (get-buffer "*ansi-term*")
+      (switch-to-buffer "*ansi-term*")
+      (ansi-term "/bin/bash"))
+    (get-buffer-process "*ansi-term*"))
+#+END_SRC
+
+At one time, I looked at =multi-term= as a way to have multiple
+terminals.
 
 #+BEGIN_SRC emacs-lisp
   (use-package multi-term
     :ensure t
+    :disabled t
     :init
     (setq multi-term-program "/bin/bash")
     )
@@ -1479,7 +1497,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
-      ("s" eshell "shell")
+      ("s" sf/terminal "shell")
       ("p" org-pomodoro "org-pomodoro")
       )
     )
