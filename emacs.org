@@ -64,7 +64,6 @@ Remember to keep this simple.  :-)
 
 #+BEGIN_SRC emacs-lisp  :tangle no
 (require 'package
-(package-initialize t)
 (require 'org)
 (require 'ob-tangle)
 
