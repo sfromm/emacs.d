@@ -63,7 +63,8 @@ First thing's first: a base config is needed in =~/.emacs.d/init.el=.
 Remember to keep this simple.  :-)
 
 #+BEGIN_SRC emacs-lisp  :tangle no
-(require 'package
+(package-initialize)
+(require 'package)
 (require 'org)
 (require 'ob-tangle)
 
