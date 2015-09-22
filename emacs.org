@@ -419,6 +419,7 @@ This defines which languages are enabled for evaluation by org-babel.
       (python . t)
       (ruby . t)
       (sh . t)
+      (calc . t)
      ))
 #+END_SRC
 
@@ -2024,8 +2025,8 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
          (nnimap-split-methods 'nnimap-split-fancy)
          (nnimap-split-fancy (|
                                (: gnus-registry-split-fancy-with-parent)
-                               (from ".*@facebookmail.com.*" "INBOX.social")
-                               (from ".*@twitter.com.*" "INBOX.social")
+                               (from ".*@facebookmail.com.*" "social")
+                               (from ".*@twitter.com.*" "social")
                                "INBOX")))
        )
     )
