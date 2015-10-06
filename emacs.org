@@ -1504,6 +1504,15 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     )
 #+END_SRC
 
+A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/the-best-way-to-type-__/371351/][existential shrug]].
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/shrug ()
+  "Shrug emoji"
+  (interactive)
+  (insert "¯\_(ツ)_/¯"))
+#+END_SRC
+
 ** Programming and Editing
 
 *** Basics
