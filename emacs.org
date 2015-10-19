@@ -793,24 +793,14 @@ navigating a file's history in [[http://git-scm.com/][git]].
   (sf/package-install 'git-timemachine)
 #+END_SRC
 
-*** Music with EMMS
+*** Music 
 
-[[https://www.gnu.org/software/emms/manual/index.html][EMMS]] is a multimedia system for Emacs.  I only want it as a way to
-interact with [[http://www.musicpd.org/][MPD]].  I commented the blob out, but left it here for
-posterity.  Work needed includes: key-bindings and browser-mode.
+[[https://github.com/pft/mingus][Mingus]] is a frontend for Emacs to the Music Player Daemon (MPD).  The
+says it is meant to resemble /ncmpc/.
 
 #+BEGIN_SRC emacs-lisp
-  ;; (require 'emms-setup)
-  ;; (require 'emms-player-mpd)
-  ;; (require 'emms-playing-time)
-  ;; (require 'emms-playlist-mode)
-  ;; (emms-playing-time 1)
-  ;; (setq
-  ;;   emms-player-mpd-server-name "localhost"
-  ;;   emms-player-mpd-music-directory "~/mpd/Music"
-  ;; )
-  ;; (add-to-list 'emms-player-list 'emms-player-mpd)
-  ;; (add-to-list 'emms-info-functions 'emms-info-mpd)
+(use-package mingus
+  :ensure t)
 #+END_SRC
 
 *** Powerline
@@ -1498,6 +1488,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" jabber-connect-all "jabber")
+      ("m" mingus "music")
       ("s" sf/terminal "shell")
       ("p" org-pomodoro "org-pomodoro")
       )
