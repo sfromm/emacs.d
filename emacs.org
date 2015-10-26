@@ -783,6 +783,7 @@ navigating a file's history in [[http://git-scm.com/][git]].
     :init
     (progn
       (setq
+        magit-push-always-verify nil
         magit-completing-read-function 'ivy-completing-read
         magit-last-seen-setup-instructions "1.4.0")
       (dolist (mode '(magit-mode magit-popup-mode magit-diff-mode))
