@@ -804,6 +804,42 @@ says it is meant to resemble /ncmpc/.
   :ensure t)
 #+END_SRC
 
+*** Nyan
+Because I find the [[http://www.nyan.cat/][Nyan Cat]] amusing …
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'nyan-mode)
+  (use-package zone-nyan
+    :ensure t
+    :init
+    (progn (setq zone-programs [zone-nyan]) )
+    )
+#+END_SRC
+
+*** Paradox
+[[https://github.com/Malabarba/paradox][Paradox]] is a nice front-end to Emacs' package menu.  Among some of the
+handy features:
+
+| Shortcut | Action                           |
+|----------+----------------------------------|
+| v        | Visit package homepage           |
+| l        | View list of recent commits      |
+| f r      | Filter by regexp                 |
+| f u      | Filter by packages with upgrades |
+| f k      | Filter by keyword                |
+
+#+BEGIN_SRC emacs-lisp
+  (use-package paradox
+    :ensure t
+    :init
+    (progn
+      (setq paradox-execute-asynchronously t)
+      (dolist (mode '(paradox-menu-mode paradox-commit-list-mode))
+        (evil-set-initial-state mode 'emacs))
+      )
+    )
+#+END_SRC
+
 *** Powerline
 
 One way to get a fancy modeline.  Disabled for now.
