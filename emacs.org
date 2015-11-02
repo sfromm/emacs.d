@@ -1541,6 +1541,10 @@ A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/
   (insert "¯\_(ツ)_/¯"))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun sf/glare () "Glare emoji" (interactive) (insert "ಠ_ಠ"))
+#+END_SRC
+
 ** Programming and Editing
 
 *** Basics
