@@ -1333,7 +1333,6 @@ A few things when in graphical mode:
 - Run ~sf/look-feel~.
 
 #+BEGIN_SRC emacs-lisp
-  (sf/package-install 'nyan-mode)
   (sf/package-install 'rainbow-mode)
   (when (display-graphic-p)
     (sf/look-feel))
@@ -1527,7 +1526,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("j" jabber-connect-all "jabber")
       ("m" mingus "music")
       ("s" sf/terminal "shell")
-      ("p" org-pomodoro "org-pomodoro")
+      ("p" paradox-list-packages "packages")
       )
     )
 #+END_SRC
