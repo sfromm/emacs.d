@@ -1537,7 +1537,7 @@ A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/
 (defun sf/shrug ()
   "Shrug emoji"
   (interactive)
-  (insert "¯\_(ツ)_/¯"))
+  (insert "¯\\_(ツ)_/¯"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
