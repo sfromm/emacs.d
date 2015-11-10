@@ -226,6 +226,16 @@ little easier.
     )
 #+END_SRC
 
+Via http://ergoemacs.org/emacs/elisp_read_file_content.html:
+
+#+BEGIN_SRC emacs-lisp
+  (defun get-string-from-file (path)
+    "Return file content of path"
+    (with-temp-buffer
+      (insert-file-contents path)
+      (buffer-string)))
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
@@ -1771,6 +1781,66 @@ This is a mode to run [[http://offlineimap.org/][offlineimap]] from.
 #+BEGIN_SRC emacs-lisp
   (use-package offlineimap
     :ensure t)
+#+END_SRC
+
+*** mu4e
+
+[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is an emacs-based email client that uses [[http://www.djcbsoftware.nl/code/mu/][mu]] as its backend.
+
+The following function facilitates sending email from multiple accounts.
+
+#+BEGIN_SRC emacs-lisp
+  (defun my-mu4e-set-account ()
+    "Set the account for composing a message."
+    (let* ((account
+             (if mu4e-compose-parent-message
+               (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                 (string-match "/\\(.*?\\)/" maildir)
+                 (match-string 1 maildir))
+               (completing-read (format "Compose with account: (%s) "
+                                  (mapconcat #'(lambda (var) (car var))
+                                    sf/mu4e-account-alist  "/"))
+                 (mapcar #'(lambda (var) (car var)) sf/mu4e-account-alist )
+                 nil t nil nil (caar sf/mu4e-account-alist ))))
+            (account-vars (cdr (assoc account sf/mu4e-account-alist ))))
+      (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+          account-vars)
+        (error "No email account found"))))
+#+END_SRC
+
+What follows is the bulk of the configuration for mu4e.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e
+    :config
+    (progn
+      (require 'mu4e-contrib)
+      (setq
+        mu4e-attachment-dir "~/Downloads"
+        mu4e-html2text-command 'mu4e-shr2text
+        mu4e-use-fancy-chars t
+        mu4e-bookmarks
+         '(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+           ("date:today..now" "Today's messages" ?t)
+           ("date:7d..now" "Last 7 days" ?w)
+           ("mime:text/calendar" "Meeting invites" ?c)
+           ("mime:image/*" "Messages with images" ?p))
+        mu4e-maildir (expand-file-name "~/.mail")
+        mu4e-compose-signature-auto-include t
+        mu4e-get-mail-command "offlineimap"
+        mu4e-update-interval 120
+        mu4e-view-scroll-to-next nil     ;; do not advance to next message when scolling
+        mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
+        mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
+        mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
+        mu4e-refile-folder "/Work/Archive")  ;; saved messages
+      (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
+        (evil-set-initial-state mode 'emacs))
+      )
+    )
 #+END_SRC
 
 *** notmuch
