@@ -1712,6 +1712,7 @@ The following configures default SMTP settings for =smtpmail=.
 #+BEGIN_SRC emacs-lisp
   (setq
     smtpmail-stream-type 'ssl
+    smtpmail-default-smtp-server sf/smtp-server
     smtpmail-smtp-server sf/smtp-server
     smtpmail-smtp-service 465
     smtpmail-smtp-user sf/smtp-user
@@ -1825,20 +1826,43 @@ What follows is the bulk of the configuration for mu4e.
          '(("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
            ("date:today..now" "Today's messages" ?t)
            ("date:7d..now" "Last 7 days" ?w)
+           ("flag:flagged" "Flagged" ?f)
            ("mime:text/calendar" "Meeting invites" ?c)
            ("mime:image/*" "Messages with images" ?p))
         mu4e-maildir (expand-file-name "~/.mail")
         mu4e-compose-signature-auto-include t
         mu4e-get-mail-command "offlineimap"
-        mu4e-update-interval 120
-        mu4e-view-scroll-to-next nil     ;; do not advance to next message when scolling
+        mu4e-update-interval 300              ;; check for updates every 5 min
+        mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder "/Work/Archive")  ;; saved messages
+        mu4e-refile-folder "/Work/Archive")   ;; saved messages
       (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
+      (defun sf/mu4e-forward-as-attachment ()
+        "Forward message as an attachment"
+        (interactive)
+        (let ((subject (plist-get (mu4e-message-at-point t) :subject))
+               (path (plist-get (mu4e-message-at-point t) :path)))
+          (mu4e-compose 'new)
+          (unless (file-exists-p path)
+            (mu4e-warn "Message file not found"))
+          (mml-attach-file
+            path
+            "message/rfc822"
+            (or subject "No subject")
+            "attachment")
+          (when (message-goto-subject)
+            (message-delete-line))
+          (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
+          )
+        )
+      (define-key mu4e-headers-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
+      (define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-refile)
+      (define-key mu4e-view-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
+      (define-key mu4e-view-mode-map (kbd "y") 'mu4e-view-mark-for-refile)
       )
     )
 #+END_SRC
@@ -1865,6 +1889,7 @@ Define various keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
+    :disabled t
     :ensure notmuch
     :init
     (progn
