@@ -1310,13 +1310,21 @@ will increase, decrease, and reset the font size.
     (interactive)
     (setq sf/font-size (- sf/font-size 1))
     (sf/font-update))
+  (defun sf/set-emoji-font ()
+    "Set emoji font properly"
+    (interactive)
+    (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend)
+    )
   (defun sf/font-update ()
     "Update font configuration"
     (interactive)
     (if (sf/font-ok-p)
       (progn
         (message "Setting font to: %s" (sf/font-name))
-        (set-default-font (sf/font-name)))))
+        (set-default-font (sf/font-name))
+        )
+      )
+    )
   (sf/font-update)
 #+END_SRC
 
@@ -1331,6 +1339,7 @@ when creating a frame.
     (interactive)
     (when (display-graphic-p)
       (sf/font-update)
+      (sf/set-emoji-font)
       (tool-bar-mode -1)
       (scroll-bar-mode -1)
       (load-theme sf/gui-theme t))
