@@ -236,6 +236,33 @@ Via http://ergoemacs.org/emacs/elisp_read_file_content.html:
       (buffer-string)))
 #+END_SRC
 
+The following function sets the =GPG_AGENT_INFO= environment variable.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/set-gpg-env ()
+    "Set GPG_AGENT_INFO environmental variable"
+    (interactive)
+    (setenv "GPG_AGENT_INFO" (concat
+                               (expand-file-name "~/.gnupg/S.gpg-agent")
+                               ":"
+                               (replace-regexp-in-string "\n$" ""
+                                 (shell-command-to-string "pgrep gpg-agent"))
+                               ":1")
+      )
+    )
+#+END_SRC
+
+This is a helper function to call all functions that set an environment
+variable.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/set-env-vars ()
+    "Helper function to set environmental variables"
+    (interactive)
+    (sf/set-gpg-env)
+    )
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
