@@ -2057,10 +2057,6 @@ This enables searching of IMAP based accounts.
 (require 'nnir)
 #+END_SRC
 
-Highlights on miscellaneous points from the manual:
-
-- [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][Expiring mail]]
-
 Accounts and other sources of reading material.  The first sets the
 default method for fetching articles.  This also sets /secondary/
 methods, which happens to be IMAP.
@@ -2129,13 +2125,13 @@ configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specificatio
 #+BEGIN_SRC emacs-lisp :tangle no
   (setq
     gnus-user-date-format-alist '(
-                                   ((gnus-seconds-today) . "Today, %H:%M")
-                                   ((+ 86400 (gnus-seconds-today)) . "Yesterday, %H:%M")
-                                   (604800 . "%A %H:%M") ;;that's one week
-                                   ((gnus-seconds-month) . "%A %d")
+                                   ((gnus-seconds-today) . "Today %H:%M")
+                                   ((+ 86400 (gnus-seconds-today)) . "Yest. %H:%M")
+                                   (604800 . "%a %H:%M") ;;that's one week
+                                   ((gnus-seconds-month) . "%a %d")
                                    ((gnus-seconds-year) . "%B %d")
                                    (t . "%B %d '%y") )
-    gnus-summary-line-format "%U%R%z %(%&user-date;  %-15,15f  %B%s%)\n"
+    gnus-summary-line-format "%U%R%z% %(%11,11&user-date;  %-15,15f  %B%s%)\n"
     gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date)
     )
 #+END_SRC
@@ -2159,7 +2155,7 @@ Redefine some keybindings here to what makes sense for me.
   (defun sf/email-archive ()
     "Archive the current or marked emails"
     (interactive)
-    (gnus-summary-move-article nil "nnimap+work:Archives"))
+    (gnus-summary-move-article nil "nnimap+work:Archive"))
   (define-key gnus-summary-mode-map (kbd "d") 'sf/email-trash)
   (define-key gnus-summary-mode-map (kbd "a") 'sf/email-archive)
   (define-key gnus-summary-mode-map (kbd "r") 'gnus-summary-reply-with-original)
@@ -2188,16 +2184,15 @@ Other odds and ends.
     mm-text-html-renderer 'shr
     shr-color-visible-luminance-min 60
     )
+  (require 'gnus-gravatar)
 #+END_SRC
 
 Here, I configure the /secondary/ accounts.  In fact, these are the main
 accounts in use.
 
-This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-Parameters.html][group parameters]] for [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html#Posting-Styles][posting styles]].
-
 #+NAME: gnus-secondary-select
 #+BEGIN_SRC emacs-lisp :tangle no
-  ;; use backtick to evaluate ,-prefixed expressions
+    ;; use backtick to evaluate ,-prefixed expressions
   (setq gnus-secondary-select-methods
     `((nnimap "work"
         (nnimap-address ,sf/nnimap-work-address)
@@ -2206,15 +2201,7 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
         (nnir-search-engine imap)
         (nnimap-list-pattern ("INBOX"))
         (nnimap-inbox ("INBOX"))
-        (nnimap-split-methods 'nnimap-split-fancy)
-        (nnimap-split-fancy (|
-                              (: gnus-registry-split-fancy-with-parent)
-                              (from ".*Internet2.*"       "ops.internet2")
-                              (from ".*NTS Nagios.*"      "ops.nts")
-                              (from "rancid@"             "ops.rancid")
-                              ("Subject" ".*rkhunter.*"   "ops.ids")
-                              ("Subject" ".*AIDE.*"       "ops.ids")
-                              "INBOX")))
+        )
        (nnimap "personal"
          (nnimap-address ,sf/nnimap-personal-address)
          (nnimap-server-port 993)
@@ -2222,34 +2209,61 @@ This also sets [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-P
          (nnir-search-engine imap)
          (nnimap-list-pattern ("INBOX"))
          (nnimap-inbox ("INBOX"))
-         (nnimap-split-methods 'nnimap-split-fancy)
-         (nnimap-split-fancy (|
-                               (: gnus-registry-split-fancy-with-parent)
-                               (from ".*@facebookmail.com.*" "social")
-                               (from ".*@twitter.com.*" "social")
-                               "INBOX")))
+         )
        )
     )
-  (setq gnus-parameters `(
+#+END_SRC
+
+The following section has a lot going on.  It uses [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-Parameters.html][group parameters]] for
+[[http://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html#Posting-Styles][posting styles]] and [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][expiring mail]].
+
+#+NAME: gnus-group-parameters
+#+BEGIN_SRC emacs-lisp :tangle no
+  (defun sf/personal-expiry-target (group)
+    "Expire email in personal account"
+    (setq nnmail-fancy-expiry-targets sf/personal-expiry-targets)
+    (nnmail-fancy-expiry-target group)
+    )
+  (defun sf/work-expiry-target (group)
+    "Expire email in work account"
+    (setq nnmail-fancy-expiry-targets sf/work-expiry-targets)
+    (nnmail-fancy-expiry-target group)
+    )
+  (setq gnus-parameters '(
                            ("work"
                              (display . all)
                              (expiry-wait . never)
                              (gcc-self . "nnimap+work:Sent")
                              (posting-style
                                (gcc "nnimap+work:Sent")
-                               (address ,sf/email-work)
+                               `(address ,sf/email-work)
                                (signature-file "~/.signature")
                                ))
-                           ("personal"
-                             (expiry-wait . never)
+                           ("work:INBOX"
+                              (display . all)
+                              (expiry-target . sf/work-expiry-target)
+                              (expiry-wait . 7)
+                              )
+                           ("work:Archive"
+                              (display . all)
+                              (expiry-target . never)
+                              )
+                           ("personal.*"
                              (gcc-self . "nnimap+personal:[Gmail]Sent Mail")
                              (posting-style
                                (gcc "nnimap+personal:[Gmail]/Sent Mail")
-                               (address ,sf/email-personal)
-                               (signature ,user-full-name)
-                               ))
-                           ))
-#+END_SRC
+                               `(address ,sf/email-personal)
+                               `(signature ,user-full-name)
+                               )
+                             )
+                           ("personal:INBOX"
+                              (display . all)
+                              (expiry-target . sf/personal-expiry-target)
+                              (expiry-wait . 7)
+                              )
+                           )
+    )
+#+End_SRC
 
 Add a hook for [[http://www.gnus.org/manual/big-gnus.html#Group-Topics][topics]] when in group mode.  And a hook for updating
 scores.
@@ -2261,7 +2275,7 @@ scores.
 #+END_SRC
 
 Let's finally configure ~gnus~ when the command is run.  Pull in [[http://www.gnu.org/software/emacs/manual/html_node/gnus/nnir.html][nnir]] to enable
-search on *Gnus* backends.  Then, enable the /gnus-registry/ and finally
+search on *Gnus* backends.  Then, enable the [[https://www.gnu.org/software/emacs/manual/html_node/gnus/The-Gnus-Registry.html][Gnus Registry]] and finally
 pull in all the above pieces.
 
 #+BEGIN_SRC emacs-lisp :noweb yes
@@ -2279,6 +2293,7 @@ pull in all the above pieces.
       <<gnus-format>>
       <<gnus-odds-ends>>
       <<gnus-secondary-select>>
+      <<gnus-group-parameters>>
       <<gnus-hooks>>
       <<gnus-define-keys>>
       )
