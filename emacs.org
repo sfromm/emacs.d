@@ -1898,6 +1898,7 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-get-mail-command "offlineimap"
         mu4e-update-interval 300              ;; check for updates every 5 min
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
+        mu4e-view-show-images t               ;; show images inline
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
