@@ -514,7 +514,7 @@ it makes sense.
       (evil-mode 1))
     :config
     (progn
-      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode ))
+      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode special-mode ))
         (evil-set-initial-state mode 'emacs))
       ))
 #+END_SRC
