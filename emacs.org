@@ -611,6 +611,7 @@ other news-reading utility.
            ("http://sachachua.com/blog/feed" emacs )
            ("https://www.masteringemacs.org/feed" emacs )
            ("http://planetsysadmin.com/atom.xml" devops)
+           ("https://feeds.feedburner.com/sysadvent" devops)
            ("http://fedoraplanet.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
            ("http://kernelplanet.org/rss20.xml" linux )
