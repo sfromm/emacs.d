@@ -242,6 +242,7 @@ The following function sets the =GPG_AGENT_INFO= environment variable.
   (defun sf/set-gpg-env ()
     "Set GPG_AGENT_INFO environmental variable"
     (interactive)
+    (setenv "GPG_TTY" (terminal-name))
     (setenv "GPG_AGENT_INFO" (concat
                                (expand-file-name "~/.gnupg/S.gpg-agent")
                                ":"
