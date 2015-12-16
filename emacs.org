@@ -264,6 +264,28 @@ variable.
     )
 #+END_SRC
 
+A series of functions from [[https://github.com/magnars/.emacs.d/blob/master/defuns/buffer-defuns.el][Magnars' buffer-defuns.el]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun untabify-buffer ()
+    "Remove tabs from buffer"
+    (interactive)
+    (untabify (point-min) (point-max))
+    )
+  (defun indent-buffer ()
+    "Indent buffer"
+    (interactive)
+    (indent-region (point-min) (point-max))
+    )
+  (defun cleanup-buffer ()
+    "Clean up whitespace in a buffer"
+    (interactive)
+    (untabify-buffer)
+    (delete-trailing-whitespace)
+    (indent-buffer)
+    )
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
