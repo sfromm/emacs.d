@@ -1904,6 +1904,7 @@ What follows is the bulk of the configuration for mu4e.
                           ("date:today..now" "Today's messages" ?t)
                           ("date:7d..now" "Last 7 days" ?w)
                           ("flag:flagged" "Flagged" ?f)
+                          ("flag:attach" "Messages with attachments" ?a)
                           ("mime:text/calendar" "Meeting invites" ?c)
                           ("mime:image/*" "Messages with images" ?p)
                           )
