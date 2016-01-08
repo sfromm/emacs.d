@@ -2010,14 +2010,15 @@ Define various keybindings.
         notmuch-show-part-button-default-action 'notmuch-show-view-part
         notmuch-saved-searches 
         '(
-           (:name "inbox"    :key "i" :query "tag:inbox")
-           (:name "flagged"  :key "f" :query "tag:flagged")
-           (:name "today"    :key "t" :query "date:today..now and not tag:archive and not tag:sent")
-           (:name "7 days"   :key "7" :query "date:7d..now and not tag:archive and not tag:sent")
-           (:name "announce" :key "a" :query "tag:announce and not tag:archive")
-           (:name "reports"  :key "r" :query "tag:reports")
-           (:name "lists"    :key "l" :query "tag:lists and not tag:archive")
-           (:name "noc"      :key "n" :query "tag:noc and not tag:archive")
+           (:name "inbox"      :key "i" :query "tag:inbox")
+           (:name "flagged"    :key "f" :query "tag:flagged")
+           (:name "today"      :key "t" :query "date:today..now and not tag:archive and not tag:sent")
+           (:name "7 days"     :key "7" :query "date:7d..now and not tag:archive and not tag:sent")
+           (:name "announce"   :key "a" :query "tag:announce and not tag:archive")
+           (:name "reports"    :key "r" :query "tag:reports")
+           (:name "lists"      :key "l" :query "tag:lists and not tag:archive")
+           (:name "noc"        :key "n" :query "tag:noc and not tag:archive")
+           (:name "attachment" :key "A" :query "tag:attachment")
            )
         )
       (when (not (string= system-name sf/work-workstation))
