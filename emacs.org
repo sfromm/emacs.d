@@ -1896,7 +1896,7 @@ What follows is the bulk of the configuration for mu4e.
     (progn
       (require 'mu4e-contrib)
       (setq
-        mu4e-attachment-dir "~/Downloads"
+        mu4e-attachment-dir "~/Download"
         mu4e-html2text-command 'mu4e-shr2text
         mu4e-use-fancy-chars t
         mu4e-bookmarks '(
