@@ -1600,7 +1600,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" mu4e "email")
+      ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
@@ -1902,6 +1902,7 @@ What follows is the bulk of the configuration for mu4e.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
+    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -2007,7 +2008,6 @@ Define various keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
-    :disabled t
     :ensure notmuch
     :init
     (progn
