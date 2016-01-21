@@ -2013,7 +2013,7 @@ Define various keybindings.
     (progn
       (setq
         gnus-inhibit-images t
-        notmuch-archive-tags '("-inbox" "-unread" "+archive")
+        notmuch-archive-tags '("-inbox" "-unread" "-trash" "+archive")
         notmuch-crypto-process-mime t
         notmuch-fcc-dirs sf/notmuch-fcc-dirs
         notmuch-hello-thousands-separator ","
