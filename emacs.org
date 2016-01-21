@@ -1851,7 +1851,13 @@ This is a mode to run [[http://offlineimap.org/][offlineimap]] from.
 
 #+BEGIN_SRC emacs-lisp
   (use-package offlineimap
-    :ensure t)
+    :ensure t
+    :init
+    (progn
+      (dolist (mode '(offlineimap-mode))
+        (evil-set-initial-state mode 'emacs))
+      )
+    )
 #+END_SRC
 
 *** mu4e
