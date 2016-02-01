@@ -1093,6 +1093,25 @@ tree.
     )
 #+END_SRC
 
+*** Snippets
+
+[[https://github.com/capitaomorte/yasnippet][Yasnippet]] is a template system for Emacs.  You type an abbreviation and
+yasnippet will automatically expand it into the template.  The
+[[https://capitaomorte.github.io/yasnippet/][documentation]] is online.
+
+To go with yasnippet, you may want to consider installing
+[[https://github.com/AndreaCrotti/yasnippet-snippets][yasnippet-snippets]], a collection of snippets for different modes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :diminish yasnippet-mode
+    :init
+    (progn
+      (yas-global-mode 1)
+      )
+    )
+#+END_SRC
 *** Terminals
 
 References on the subject of running terminals in Emacs:
