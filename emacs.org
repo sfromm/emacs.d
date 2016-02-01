@@ -264,6 +264,29 @@ variable.
     )
 #+END_SRC
 
+This helps with aligning code (or other text) by whitespace, taken from
+[[http://pragmaticemacs.com/emacs/aligning-text/][Ben Maughn]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/align-whitespace (start end)
+    "Align columns by whitespace"
+    (interactive "r")
+    (align-regexp start end "\\(\\s-*\\)\\s-" 1 0 t)
+    )
+#+END_SRC
+
+And another one from [[http://pragmaticemacs.com/emacs/join-line-to-following-line/][Ben Maughn]], join current line to the following
+line.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/join-next-line ()
+    "Join the next line with the current line."
+    (interactive)
+    (join-line -1)
+    )
+  (global-set-key (kbd "C-j") 'sf/join-next-line)
+#+END_SRC
+
 A series of functions from [[https://github.com/magnars/.emacs.d/blob/master/defuns/buffer-defuns.el][Magnars' buffer-defuns.el]].
 
 #+BEGIN_SRC emacs-lisp
