@@ -1195,7 +1195,7 @@ Keybindings of interest:
     :config
     (progn
       (setq
-        twittering-icon-mode nil
+        twittering-icon-mode 1
         twittering-use-master-password t
         twittering-private-info-file "~/.emacs.d/user/twittering-mode.gpg"
         )
