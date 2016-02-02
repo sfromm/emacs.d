@@ -284,7 +284,7 @@ line.
     (interactive)
     (join-line -1)
     )
-  (global-set-key (kbd "C-j") 'sf/join-next-line)
+  (global-set-key (kbd "M-j") 'sf/join-next-line)
 #+END_SRC
 
 A series of functions from [[https://github.com/magnars/.emacs.d/blob/master/defuns/buffer-defuns.el][Magnars' buffer-defuns.el]].
