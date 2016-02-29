@@ -734,6 +734,8 @@ necessary configuration.
         )
       (dolist (mode '(jabber-chat-mode jabber-roster-mode))
         (evil-set-initial-state mode 'emacs))
+      (dolist (hook '(jabber-chat-mode-hook jabber-roster-mode-hook))
+        (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t))))
       (add-hook 'jabber-post-connect-hooks 'jabber-autoaway-start)
       (defun sf/jabber-start-or-switch ()
         "Connect to Jabber services"
@@ -1109,10 +1111,11 @@ To go with yasnippet, you may want to consider installing
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
-    :diminish yasnippet-mode
+    :diminish yasnippet-minor-mode
     :init
     (progn
       (yas-global-mode 1)
+      (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t)))
       )
     )
 #+END_SRC
