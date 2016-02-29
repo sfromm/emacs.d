@@ -1068,7 +1068,10 @@ Some possibly useful references:
       (ivy-mode 1)
       (setq ivy-use-virtual-buffers t)
       )
-    :bind ("C-s" . swiper)
+    :bind (
+            ("C-s" . swiper)
+            ("C-c f" . counsel-git)
+            )
     )
 #+END_SRC
 
