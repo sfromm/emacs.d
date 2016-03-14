@@ -464,26 +464,32 @@ the normal org-mode /clock-in/ and /clock-out/ functions.  These are
 normally *org-clock-in* and *org-clock-out*.
 
 #+BEGIN_SRC emacs-lisp
-  (sf/package-install 'org-pomodoro)
-  (global-set-key (kbd "C-c C-x C-i") 'org-pomodoro)
-  (global-set-key (kbd "C-c C-x C-o") 'org-pomodoro)
-  (defun sf/notify-pomodoro (title message)
-    (notifications-notify
-      :title title
-      :body message
-      :urgency 'low))
-
-  (add-hook 'org-pomodoro-finished-hook
-    (lambda ()
-      (sf/notify-pomodoro "Pomodoro completed" "Time for a break")))
-
-  (add-hook 'org-pomodoro-break-finished-hook
-    (lambda ()
-      (sf/notify-pomodoro "Break completed" "Ready for another?")))
-
-  (add-hook 'org-pomodoro-long-break-finished-hook
-    (lambda ()
-      (sf/notify-pomodoro "Long break completed" "Ready for another?")))
+  (use-package org-pomodoro
+    :ensure t
+    :init
+    (progn
+      (setq
+        org-pomodoro-audio-player "/usr/bin/mpv"
+        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/drip.ogg"
+        )
+      (defun sf/notify-pomodoro (title message)
+        (notifications-notify
+          :title title
+          :body message
+          :urgency 'low))
+      (add-hook 'org-pomodoro-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Pomodoro completed" "Time for a break")))
+      (add-hook 'org-pomodoro-break-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Break completed" "Ready for another?")))
+      (add-hook 'org-pomodoro-long-break-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Long break completed" "Ready for another?")))
+      )
+    :bind (("C-c C-x C-i" . org-pomodoro)
+            ("C-c C-x C-o" . org-pomodoro))
+    )
 #+END_SRC
 
 *** Babel mode
