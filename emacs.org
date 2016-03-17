@@ -1876,9 +1876,11 @@ email-related.
 
 *** Multiple identities
 
-One day, perhaps, I will want to use multiple accounts (ie. identities)
-when sending email via Emacs.  Much of this was taken from [[http://notmuchmail.org/emacstips/#index17h2][notmuch
-emacstips]].  You can find =gnus-alias.el= on [[http://www.emacswiki.org/emacs/gnus-alias.el][emacswiki]].
+I'm using =gnus-alias.el= to manage multiple accounts (aka identities)
+for sending email via Emacs.  A good portion of this is based on
+[[http://notmuchmail.org/emacstips/#index17h2][notmuch emacstips]].  You can find =gnus-alias.el= on [[http://www.emacswiki.org/emacs/gnus-alias.el][emacswiki]] (source)
+and ([[https://www.emacswiki.org/emacs/GnusAlias][documentation]]).  This is particularly helpful when you need to set
+=X-Message-SMTP-Method= for per account SMTP servers (see [[https://gnu.org/software/emacs/manual/html_node/message/Mail-Variables.html#Mail-Variables][documentation]]).
 
 =gnus-alias-identity= takes a lot of arguments.  They are briefly
 described below.
@@ -1898,7 +1900,18 @@ described below.
 #+END_EXAMPLE
 
 #+BEGIN_SRC emacs-lisp
-(setq gnus-alias-identity-alist sf/gnus-alias-alist)
+  (use-package gnus-alias
+    :ensure t
+    :init
+    (progn
+      (setq
+        gnus-alias-default-identity "work"
+        gnus-alias-identity-alist sf/gnus-alias-alist
+        gnus-alias-identity-rules sf/gnus-alias-identity-rules
+        )
+      (add-hook 'message-setup-hook 'gnus-alias-determine-identity)
+      )
+    )
 #+END_SRC
 
 *** offlineimap
