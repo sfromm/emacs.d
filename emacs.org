@@ -727,11 +727,12 @@ necessary configuration.
       (setq 
         jabber-account-list sf/jabber-account-alist
         jabber-auto-reconnect t  ; reconnect automatically
+        jabber-history-dir "~/.local/share/logs/jabber"
         jabber-history-enabled t ; enable logging
+        jabber-history-muc-enabled t
         jabber-use-global-history nil
         jabber-backlog-number 40
         jabber-backlog-days 30
-        jabber-history-dir "~/.local/share/logs/jabber"
         jabber-chat-buffer-show-avatar t ; show avatar in chat buffer
         jabber-vcard-avatars-retrieve t ; automatically download vcard avatars
         jabber-alert-info-message-hooks (quote (jabber-info-libnotify jabber-info-echo jabber-info-display))
