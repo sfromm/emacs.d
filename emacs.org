@@ -2148,6 +2148,11 @@ Define various keybindings.
           "star message"
           (interactive)
           (notmuch-show-add-tag (list "+flagged"))))
+      (define-key notmuch-show-mode-map (kbd "M")
+        (lambda ()
+          "mute message"
+          (interactive)
+          (notmuch-show-add-tag (list "+mute"))))
       (define-key notmuch-show-mode-map (kbd "b")
         (lambda (&optional address)
           "Bounce the current message"
@@ -2159,6 +2164,11 @@ Define various keybindings.
           "star thread"
           (interactive)
           (notmuch-search-tag (list "+flagged"))))
+      (define-key notmuch-search-mode-map (kbd "M")
+        (lambda ()
+          "mute thread"
+          (interactive)
+          (notmuch-search-tag (list "+mute"))))
       (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
       (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
       (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer)
