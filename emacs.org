@@ -1091,7 +1091,10 @@ tree.
 #+BEGIN_SRC emacs-lisp
   (use-package avy
     :ensure t
-    :bind ("M-g g" . avy-goto-line)
+    :bind (
+            ("M-g g" . avy-goto-line)
+            ("M-s" . avy-goto-word-1)
+            )
     )
 #+END_SRC
 
