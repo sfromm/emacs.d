@@ -1992,7 +1992,8 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-bookmarks '(
                           ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                           ("date:today..now" "Today's messages" ?t)
-                          ("date:7d..now" "Last 7 days" ?w)
+                          ("date:3d..now" "Last 3 days" ?3)
+                          ("date:7d..now" "Last 7 days" ?7)
                           ("flag:flagged" "Flagged" ?f)
                           ("flag:attach" "Messages with attachments" ?a)
                           ("mime:text/calendar" "Meeting invites" ?c)
@@ -2010,7 +2011,8 @@ What follows is the bulk of the configuration for mu4e.
                              )
         mu4e-maildir (expand-file-name "~/.mail")
         mu4e-compose-signature-auto-include t
-        mu4e-get-mail-command "offlineimap"
+        mu4e-get-mail-command "mbsync -a"
+        mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
         mu4e-update-interval 300              ;; check for updates every 5 min
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-view-show-images t               ;; show images inline
