@@ -2023,11 +2023,28 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder "/Work/Archive"    ;; saved messages
+        mu4e-refile-folder 'sf/mu4e-refile-folder
         )
       (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
+      (defun sf/mu4e-refile-folder (msg)
+        "set the refile folder for MSG"
+        (let ((maildir (mu4e-message-field msg :maildir))
+               folder)
+          (cond
+            ((string-match "Work" maildir)
+              (setq folder (or (catch 'found
+                                 (dolist (contact sf/mu4e-refile-alist)
+                                   (if (mu4e-message-contact-field-matches
+                                         msg '(:to :from :cc :bcc) (car contact))
+                                     (throw 'found (cdr contact)))))
+                             "/Work/Archive")))
+            ((string-match "Personal" maildir)
+              (setq folder "/Personal/Archive"))
+            )
+          folder)
+        )
       (defun sf/mu4e-forward-as-attachment ()
         "Forward message as an attachment"
         (interactive)
