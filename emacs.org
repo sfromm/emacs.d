@@ -1660,7 +1660,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" notmuch "email")
+      ("e" mu4e "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
@@ -1981,7 +1981,6 @@ What follows is the bulk of the configuration for mu4e.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -1995,9 +1994,11 @@ What follows is the bulk of the configuration for mu4e.
                           ("date:3d..now" "Last 3 days" ?3)
                           ("date:7d..now" "Last 7 days" ?7)
                           ("flag:flagged" "Flagged" ?f)
-                          ("flag:attach" "Messages with attachments" ?a)
+                          ("maildir:/Personal/* AND NOT maildir:/Personal/Sent AND NOT maildir:/Personal/Trash" "Personal" ?p)
+                          ("maildir:/Work/* AND NOT maildir:/Work/Sent AND NOT maildir:/Work/Trash" "Work" ?w)
+                          ("maildir:/Work/Archive* OR maildir:/Personal/Archive" "Archive" ?a)
+                          ("flag:attach" "Messages with attachments" ?A)
                           ("mime:text/calendar" "Meeting invites" ?c)
-                          ("mime:image/*" "Messages with images" ?p)
                           )
         mu4e-headers-actions '(
                                ("capture message" . mu4e-action-capture-message)
@@ -2017,6 +2018,7 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-view-show-images t               ;; show images inline
         mu4e-view-show-addresses t            ;; always show full email address
+        mu4e-completing-read 'ivy-completing-read
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
@@ -2090,6 +2092,7 @@ Define various keybindings.
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
     :ensure notmuch
+    :disabled t
     :init
     (progn
       (setq
