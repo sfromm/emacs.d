@@ -1993,9 +1993,9 @@ What follows is the bulk of the configuration for mu4e.
                           ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                           ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
                           ("flag:flagged" "Flagged" ?f)
-                          ("date:today..now" "Today's messages" ?t)
-                          ("date:3d..now AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 3 days" ?3)
-                          ("date:7d..now AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 7 days" ?7)
+                          ("date:today..now AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Today's messages" ?t)
+                          ("date:3d..now    AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 3 days" ?3)
+                          ("date:7d..now    AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 7 days" ?7)
                           ("maildir:/Personal/* AND NOT ( maildir:/Personal/Spam OR maildir:/Personal/Trash )" "Personal" ?p)
                           ("maildir:/Work/*     AND NOT ( maildir:/Work/Spam OR maildir:/Work/Trash )" "Work" ?w)
                           ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
@@ -2026,6 +2026,8 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder 'sf/mu4e-refile-folder
         )
+      (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
       (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
