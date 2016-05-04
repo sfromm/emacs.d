@@ -1934,21 +1934,6 @@ described below.
     )
 #+END_SRC
 
-*** offlineimap
-
-This is a mode to run [[http://offlineimap.org/][offlineimap]] from.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package offlineimap
-    :ensure t
-    :init
-    (progn
-      (dolist (mode '(offlineimap-mode))
-        (evil-set-initial-state mode 'emacs))
-      )
-    )
-#+END_SRC
-
 *** mu4e
 
 [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is an emacs-based email client that uses [[http://www.djcbsoftware.nl/code/mu/][mu]] as its backend.
