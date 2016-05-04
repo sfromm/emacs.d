@@ -1812,6 +1812,18 @@ for composing email.
   )
 #+END_SRC
 
+*** Message mode
+
+Set up some message-mode items that other modes will inherit.
+
+#+BEGIN_SRC emacs-lisp
+  (setq
+    mm-inline-text-html-with-images t
+    mm-text-html-renderer 'shr
+    shr-color-visible-luminance-min 60
+    )
+#+END_SRC
+
 *** Sending email
 
 Send email via SMTP instead of using a local sendmail binary.
