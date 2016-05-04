@@ -358,7 +358,11 @@ The following does lots of things:
   _org-agenda_ buffer but not refresh it.  You need to manually refresh
   it by hand with _r_ or _g_.
 - Define where to capture notes (=org-default-notes-file=) and the
-  templates to use (=org-capture-templates=).
+  templates to use (=org-capture-templates=).  For templates, see the
+  following:
+  - http://orgmode.org/manual/Capture-templates.html
+  - http://orgmode.org/manual/Template-elements.html
+  - http://orgmode.org/manual/Template-expansion.html
 - Note when a task is rescheduled.
 - This defines some basics like where and what files with
   =org-agenda-files=.
@@ -386,7 +390,9 @@ The following does lots of things:
         org-agenda-files (list
                            (concat org-directory "/journal.org")
                            (concat org-directory "/work.org")
-                           (concat org-directory "/personal.org"))
+                           (concat org-directory "/personal.org")
+                           (concat org-directory "/todo.org")
+                           )
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
         org-capture-templates '(
@@ -394,6 +400,8 @@ The following does lots of things:
                                    "* %?%U\n")
                                  ("l" "Student log" entry (file (concat org-directory "/student.org"))
                                    "** %U %^{Name} %^{In|Out} %?")
+                                 ("t" "To do" entry (file+headline (concat org-directory "/todo.org") "Tasks")
+                                   "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                  )
         org-file-apps (quote ((auto-mode . emacs)
                                ("\\.doc\\'" . "ooffice %s")
@@ -1985,6 +1993,7 @@ What follows is the bulk of the configuration for mu4e.
     :config
     (progn
       (require 'mu4e-contrib)
+      (require 'org-mu4e)
       (setq
         mu4e-attachment-dir "~/Download"
         mu4e-html2text-command 'mu4e-shr2text
