@@ -1684,6 +1684,10 @@ A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/
 (defun sf/glare () "Glare emoji" (interactive) (insert "ಠ_ಠ"))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun sf/table-flip () "Table fip emoji" (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
+#+END_SRC
+
 ** Programming and Editing
 
 *** Basics
