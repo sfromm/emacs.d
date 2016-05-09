@@ -756,7 +756,7 @@ necessary configuration.
       (defun sf/jabber-start-or-switch ()
         "Connect to Jabber services"
         (interactive)
-        (when (get-buffer "*-jabber-roster-*")
+        (unless (get-buffer "*-jabber-roster-*")
           (jabber-connect-all))
         (if (or nil jabber-activity-jids)
           (jabber-activity-switch-to)
