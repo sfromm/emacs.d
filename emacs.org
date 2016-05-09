@@ -1998,6 +1998,14 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-attachment-dir "~/Download"
         mu4e-html2text-command 'mu4e-shr2text
         mu4e-use-fancy-chars t
+        mu4e-maildir-shortcuts '(
+                                  ("/Work/INBOX" . ?i)
+                                  ("/Personal/INBOX" . ?I)
+                                  ("/Work/Archive" . ?a)
+                                  ("/Personal/Archive" . ?A)
+                                  ("/Work/Trash" . ?t)
+                                  ("/Personal/Trash" . ?T)
+                                  )
         mu4e-bookmarks '(
                           ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                           ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
@@ -2035,6 +2043,8 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder 'sf/mu4e-refile-folder
         )
+      (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
+        (evil-set-initial-state mode 'emacs))
       (when (fboundp 'imagemagick-register-types)
         (imagemagick-register-types))
       (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
