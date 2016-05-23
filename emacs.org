@@ -1344,7 +1344,7 @@ On Emacs 21 or later, you can instruct Emacs to make the script
 executable when saving.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook 'executable-make-buffer-executable-if-script-p)
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 #+END_SRC
 
 With Emacs 24.4, the following will allow you to use the
