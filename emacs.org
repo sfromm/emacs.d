@@ -1672,6 +1672,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
+      ("g" magit-status "magit")
       ("m" mingus "music")
       ("s" sf/terminal "shell")
       ("p" paradox-list-packages "packages")
@@ -1859,6 +1860,7 @@ Enable certain modes for *message-mode*:
 #+BEGIN_SRC emacs-lisp
   (add-hook 'message-mode-hook 'footnote-mode)
   (add-hook 'message-mode-hook 'turn-on-flyspell)
+  (add-hook 'message-mode-hook #'yas-minor-mode)
 #+END_SRC
 
 The following configures default SMTP settings for =smtpmail=.
@@ -2017,6 +2019,7 @@ What follows is the bulk of the configuration for mu4e.
                           ("maildir:/Work/*     AND NOT ( maildir:/Work/Spam OR maildir:/Work/Trash )" "Work" ?w)
                           ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
                           ("flag:attach" "Messages with attachments" ?A)
+                          ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                           ("mime:text/calendar" "Meeting invites" ?c)
                           )
         mu4e-headers-actions '(
@@ -2086,8 +2089,7 @@ What follows is the bulk of the configuration for mu4e.
           )
         )
       (defun sf/mu4e-bounce-message (address)
-        "Bounce message at point to a recipient.
-See https://github.com/djcb/mu/pull/449/files"
+        "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
         (interactive "sBounce to: ")
         (let ((path (plist-get (mu4e-message-at-point t) :path)))
           (unless (and path (file-readable-p path))
