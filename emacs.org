@@ -1997,6 +1997,11 @@ The following function facilitates sending email from multiple accounts.
 
 What follows is the bulk of the configuration for mu4e.
 
+Of particular note, this now uses /contexts/ to handle changing between
+a set of settings in /mu4e/.  This is primarily to handle switching
+between different email accounts and smtp servers.  For more
+information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
+
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
     :config
@@ -2052,12 +2057,12 @@ What follows is the bulk of the configuration for mu4e.
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder 'sf/mu4e-refile-folder
+        mu4e-contexts sf/mu4e-contexts
         )
       (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
       (when (fboundp 'imagemagick-register-types)
         (imagemagick-register-types))
-      (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
       (defun sf/mu4e-refile-folder (msg)
