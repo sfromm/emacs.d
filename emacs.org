@@ -2044,6 +2044,46 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                              ("view as pdf"     . mu4e-action-view-as-pdf)
                              ("show thread"     . mu4e-action-show-thread)
                              )
+        mu4e-contexts `(
+                         ,(make-mu4e-context
+                            :name "Work"
+                            :enter-func (lambda () (mu4e-message "Switch to Work context"))
+                            :match-func (lambda (msg)
+                                          (when msg
+                                            (mu4e-message-contact-field-matches msg
+                                              :to sf/email-work)))
+                                   :vars `(
+                                            (user-mail-address . ,sf/email-work)
+                                            (mu4e-sent-folder . "/Work/Sent")
+                                            (mu4e-drafts-folder . "/Work/Drafts")
+                                            (mu4e-trash-folder . "/Work/Trash")
+                                            (mu4e-compose-signature . (get-string-from-file (expand-file-name "~/.signature")))
+                                            (smtpmail-smtp-user . ,sf/smtp-user-work)
+                                            (smtpmail-smtp-server . ,sf/smtp-server-work)
+                                            (smtpmail-stream-type . ssl)
+                                            (smtpmail-smtp-service . 465)
+                                            )
+                                   )
+                                ,(make-mu4e-context
+                                   :name "Personal"
+                                   :enter-func (lambda () (mu4e-message "Switch to Personal context"))
+                                   :match-func (lambda (msg)
+                                                 (when msg
+                                                   (mu4e-message-contact-field-matches msg
+                                                     :to sf/email-personal)))
+                                   :vars `(
+                                            (user-mail-address . ,sf/email-personal)
+                                            (mu4e-sent-folder . "/Personal/Sent")
+                                            (mu4e-drafts-folder . "/Personal/Drafts")
+                                            (mu4e-trash-folder . "/Personal/Trash")
+                                            (mu4e-compose-signature . user-full-name)
+                                            (smtpmail-smtp-user . ,sf/smtp-user-personal)
+                                            (smtpmail-smtp-server . ,sf/smtp-server-personal)
+                                            (smtpmail-stream-type . ssl)
+                                            (smtpmail-smtp-service . 465)
+                                            )
+                                   )
+                         )
         mu4e-maildir (expand-file-name "~/.mail")
         mu4e-compose-signature-auto-include t
         mu4e-get-mail-command "mbsync -a"
@@ -2057,7 +2097,6 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder 'sf/mu4e-refile-folder
-        mu4e-contexts sf/mu4e-contexts
         )
       (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
