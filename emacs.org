@@ -1875,10 +1875,10 @@ The following configures default SMTP settings for =smtpmail=.
 #+BEGIN_SRC emacs-lisp
   (setq
     smtpmail-stream-type 'ssl
-    smtpmail-default-smtp-server sf/smtp-server
-    smtpmail-smtp-server sf/smtp-server
+    smtpmail-default-smtp-server sf/smtp-server-work
+    smtpmail-smtp-server sf/smtp-server-work
     smtpmail-smtp-service 465
-    smtpmail-smtp-user sf/smtp-user
+    smtpmail-smtp-user sf/smtp-user-work
     )
 #+END_SRC
 
