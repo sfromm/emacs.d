@@ -2020,16 +2020,19 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                   ("/Work/Trash" . ?t)
                                   ("/Personal/Trash" . ?T)
                                   )
-        mu4e-bookmarks '(
+        mu4e-bookmarks `(
                           ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                           ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
                           ("flag:flagged" "Flagged" ?f)
                           ("date:today..now AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Today's messages" ?t)
                           ("date:3d..now    AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 3 days" ?3)
                           ("date:7d..now    AND NOT ( maildir:/Personal/Archive OR maildir:/Work/Archive* OR maildir:/Work/Sent OR maildir:/Personal/Sent OR maildir:/Work/Trash OR maildir:/Personal/Trash OR maildir:/Personal/Spam OR maildir:/Work/Spam )" "Last 7 days" ?7)
-                          ("maildir:/Personal/* AND NOT ( maildir:/Personal/Spam OR maildir:/Personal/Trash )" "Personal" ?p)
-                          ("maildir:/Work/*     AND NOT ( maildir:/Work/Spam OR maildir:/Work/Trash )" "Work" ?w)
+                          ("maildir:/Personal/* AND NOT ( maildir:/Personal/Spam OR maildir:/Personal/Trash )" "Personal" ?P)
+                          ("maildir:/Work/*     AND NOT ( maildir:/Work/Spam OR maildir:/Work/Trash )" "Work" ?W)
                           ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
+                          (,sf/mu4e-bookmark-vendors "Vendors" ?v)
+                          (,sf/mu4e-bookmark-providers "Providers" ?p)
+                          (,sf/mu4e-bookmark-ren "Internet2/RENs/Local" ?r)
                           ("flag:attach" "Messages with attachments" ?A)
                           ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                           ("mime:text/calendar" "Meeting invites" ?c)
@@ -2056,6 +2059,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                             (user-mail-address . ,sf/email-work)
                                             (mu4e-sent-folder . "/Work/Sent")
                                             (mu4e-drafts-folder . "/Work/Drafts")
+                                            (mu4e-refile-folder . "/Work/Archive")
                                             (mu4e-trash-folder . "/Work/Trash")
                                             (mu4e-compose-signature . (get-string-from-file (expand-file-name "~/.signature")))
                                             (smtpmail-smtp-user . ,sf/smtp-user-work)
@@ -2075,6 +2079,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                             (user-mail-address . ,sf/email-personal)
                                             (mu4e-sent-folder . "/Personal/Sent")
                                             (mu4e-drafts-folder . "/Personal/Drafts")
+                                            (mu4e-refile-folder . "/Personal/Archive")
                                             (mu4e-trash-folder . "/Personal/Trash")
                                             (mu4e-compose-signature . user-full-name)
                                             (smtpmail-smtp-user . ,sf/smtp-user-personal)
@@ -2096,7 +2101,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder 'sf/mu4e-refile-folder
+        mu4e-refile-folder "/Work/Archive"
         )
       (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
