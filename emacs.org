@@ -1675,7 +1675,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" mu4e "email")
+      ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
@@ -2004,6 +2004,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
+    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -2190,7 +2191,6 @@ Define various keybindings.
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
     :ensure notmuch
-    :disabled t
     :init
     (progn
       (setq
@@ -2216,8 +2216,6 @@ Define various keybindings.
            (:name "bulk"       :key "b" :query "not tag:archive and ( tag:bulk or tag:nts or tag:nms or tag:internet2 )")
            )
         )
-;;      (when (not (string= system-name sf/work-workstation))
-;;        (setq notmuch-command "~/bin/notmuch-remote.sh"))
       (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
       (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
       (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
@@ -2275,6 +2273,18 @@ Define various keybindings.
       (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
       (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
       (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer)
+      (defun sf/notmuch-toggle-remote ()
+        "Toggle whether to use notmuch remotely"
+        (interactive)
+        (if (string= notmuch-command "notmuch")
+          (progn
+            (setq notmuch-command "notmuch-remote.sh")
+            (message "switching to remote notmuch"))
+          (progn
+            (setq notmuch-command "notmuch")
+            (message "switching to local notmuch"))
+          )
+        )
       )
     )
 #+END_SRC
