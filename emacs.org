@@ -1757,11 +1757,11 @@ files.
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
     :ensure t
-    :init
-    (progn
-      (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-      (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-      ))
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+            ("\\.md\\'" . markdown-mode)
+            ("\\.markdown\\'" . markdown-mode))
+    )
 #+END_SRC
 
 *** Python
