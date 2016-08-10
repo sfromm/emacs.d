@@ -443,11 +443,17 @@ The following does lots of things:
     )
 #+END_SRC
 
-Finally, pull in *org-git-link* to reference git links.  More
+Pull in *org-git-link* to reference git links.  More
 information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-git-link)
+#+END_SRC
+
+Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js/][reveal.js]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-reveal)
 #+END_SRC
 
 *** Contacts
