@@ -2208,6 +2208,7 @@ Define various keybindings.
            (:name "today"      :key "t" :query "date:today..now and not tag:archive and not tag:sent")
            (:name "3 days"     :key "3" :query "date:3d..now and not tag:archive and not tag:sent")
            (:name "7 days"     :key "7" :query "date:7d..now and not tag:archive and not tag:sent")
+           (:name "needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
            (:name "announce"   :key "a" :query "tag:announce and not tag:archive")
            (:name "reports"    :key "r" :query "tag:reports")
            (:name "lists"      :key "l" :query "tag:lists and not tag:archive")
