@@ -309,6 +309,18 @@ A series of functions from [[https://github.com/magnars/.emacs.d/blob/master/def
     )
 #+END_SRC
 
+A helper for tangling an arbitrary file.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/tangle-file (file)
+    "Given an 'org-mode' FILE, tangle the source code"
+    (interactive "fOrg File: ")
+    (find-file file)
+    (org-babel-tangle)
+    (kill-buffer)
+    )
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
