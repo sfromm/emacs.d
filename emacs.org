@@ -441,6 +441,11 @@ The following does lots of things:
                              (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
                              (sequence "|" "CANCELLED(c)")
                              )
+        org-publish-project-alist '(
+                                     ("public"
+                                       :base-directory "~/depot/doc/org"
+                                       :publishing-directory "~/Documents")
+                                     )
         )
       (org-load-modules-maybe t)
       )
