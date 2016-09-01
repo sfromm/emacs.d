@@ -242,12 +242,14 @@ The following function sets the =GPG_AGENT_INFO= environment variable.
     "Set GPG_AGENT_INFO environmental variable"
     (interactive)
     (setenv "GPG_TTY" (terminal-name))
-    (setenv "GPG_AGENT_INFO" (concat
-                               (expand-file-name "~/.gnupg/S.gpg-agent")
-                               ":"
-                               (replace-regexp-in-string "\n$" ""
-                                 (shell-command-to-string "pgrep gpg-agent"))
-                               ":1")
+    (setenv "GPG_AGENT_INFO"
+      (concat (if (file-exists-p (concat "/run/user/" (number-to-string (user-real-uid)) "/gnupg/S.gpg-agent"))
+                (concat "/run/user/" (number-to-string (user-real-uid)) "/gnupg/S.gpg-agent")
+                (expand-file-name "~/.gnupg/S.gpg-agent"))
+        ":"
+        (replace-regexp-in-string "\n$" ""
+          (shell-command-to-string "pgrep gpg-agent"))
+        ":1")
       )
     )
 #+END_SRC
