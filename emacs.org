@@ -322,6 +322,15 @@ A helper for tangling an arbitrary file.
     )
 #+END_SRC
 
+Twiddle the luminance for emails.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/twiddle-luminance (value)
+    "Twiddle the luminance value"
+    (interactive "nLuminance: ")
+    (setq shr-color-visible-luminance-min value)
+    )
+#+END_SRC
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
