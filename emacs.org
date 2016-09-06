@@ -1205,6 +1205,24 @@ terminals.
     )
 #+END_SRC
 
+**** Eshell
+
+- https://www.gnu.org/software/emacs/manual/html_mono/eshell.html
+- https://www.masteringemacs.org/article/complete-guide-mastering-eshell
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eshell
+    :commands eshell
+    :init (setq eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish")
+            eshell-visual-subcommands '(("git" "log" "diff" "show"))
+            )
+    )
+  (use-package eshell-git-prompt
+    :ensure t
+    :config (eshell-git-prompt-use-theme 'powerline)
+    )
+#+END_SRC
+
 *** Tmux integration
 
 [[https://github.com/syohex/emacs-emamux][Emamux]] allows you to interact with tmux from Emacs.  Should be
