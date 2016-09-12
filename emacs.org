@@ -1805,6 +1805,11 @@ A default offset of 2 seems to make sense for lisp.
 Help Emacs grok when to trigger /markdown-mode/ when editing certain
 files.
 
+This contains some helpers for creating tables in Github-Flavored
+Markdown (GFM) with /orgtbl-mode/.  To convert to a GFM table, use *C-c
+C-c* to create (or update) the table.  This was taken from [[http://emacs.stackexchange.com/questions/4276/correct-markdown-format-tables-with-orgtbl-mode][this]]
+stackexchange.
+
 #+BEGIN_SRC emacs-lisp
   (use-package markdown-mode
     :ensure t
@@ -1812,6 +1817,29 @@ files.
     :mode (("README\\.md\\'" . gfm-mode)
             ("\\.md\\'" . markdown-mode)
             ("\\.markdown\\'" . markdown-mode))
+    :init
+    (defun orgtbl-to-gfm (table params)
+    "Convert the Orgtbl mode TABLE to GitHub Flavored Markdown."
+    (let* ((alignment (mapconcat (lambda (x) (if x "|--:" "|---"))
+                     org-table-last-alignment ""))
+       (params2
+        (list
+         :splice t
+         :hline (concat alignment "|")
+         :lstart "| " :lend " |" :sep " | ")))
+      (orgtbl-to-generic table (org-combine-plists params2 params))))
+    (defun sf/insert-org-to-md-table (table-name)
+      "Helper function to create markdown and orgtbl boilerplate"
+      (interactive "*sEnter table name: ")
+      (insert "<!---
+  ,#+ORGTBL: SEND " table-name " orgtbl-to-gfm
+
+  -->
+  <!--- BEGIN RECEIVE ORGTBL " table-name " -->
+  <!--- END RECEIVE ORGTBL " table-name " -->")
+      (previous-line)
+      (previous-line)
+      (previous-line))
     )
 #+END_SRC
 
