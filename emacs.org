@@ -1212,14 +1212,25 @@ terminals.
 
 #+BEGIN_SRC emacs-lisp
   (use-package eshell
-    :commands eshell
-    :init (setq eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish")
-            eshell-visual-subcommands '(("git" "log" "diff" "show"))
-            )
-    )
-  (use-package eshell-git-prompt
-    :ensure t
-    :config (eshell-git-prompt-use-theme 'powerline)
+    :commands (eshell eshell-command)
+    :preface
+    (use-package eshell-git-prompt
+      :ensure t
+      :config (eshell-git-prompt-use-theme 'powerline)
+      )
+    (use-package em-unix
+      :defer t
+      :config
+      (unintern 'eshell/su nil)
+      (unintern 'eshell/sudo nil))
+    :init
+    (progn
+      (setq
+        eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish")
+        eshell-visual-subcommands '(("git" "log" "diff" "show"))
+        )
+      (evil-set-initial-state 'eshell-mode 'emacs)
+      )
     )
 #+END_SRC
 
