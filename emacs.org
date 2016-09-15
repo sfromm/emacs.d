@@ -940,6 +940,37 @@ navigating a file's history in [[http://git-scm.com/][git]].
   (sf/package-install 'git-timemachine)
 #+END_SRC
 
+*** Mode line
+
+There are lots of fancy ways of decorating the modeline, including
+[[https://github.com/milkypostman/powerline][powerline]] and [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]].  This uses the latter.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-mode-line
+    :commands sml/setup
+    :demand t
+    :ensure t
+    :init
+    (setq sml/theme 'respectful
+      sml/shorten-directory t
+      sml/shorten-modes t)
+    :config
+    (sml/setup)
+    )
+#+END_SRC
+
+**** Nyan
+ Because I find the [[http://www.nyan.cat/][Nyan Cat]] amusing …
+
+ #+BEGIN_SRC emacs-lisp
+   (sf/package-install 'nyan-mode)
+   (use-package zone-nyan
+     :ensure t
+     :init
+     (progn (setq zone-programs [zone-nyan]) )
+     )
+ #+END_SRC
+
 *** Music 
 
 [[https://github.com/pft/mingus][Mingus]] is a frontend for Emacs to the Music Player Daemon (MPD).  The
@@ -948,18 +979,6 @@ says it is meant to resemble /ncmpc/.
 #+BEGIN_SRC emacs-lisp
 (use-package mingus
   :ensure t)
-#+END_SRC
-
-*** Nyan
-Because I find the [[http://www.nyan.cat/][Nyan Cat]] amusing …
-
-#+BEGIN_SRC emacs-lisp
-  (sf/package-install 'nyan-mode)
-  (use-package zone-nyan
-    :ensure t
-    :init
-    (progn (setq zone-programs [zone-nyan]) )
-    )
 #+END_SRC
 
 *** Paradox
@@ -984,16 +1003,6 @@ handy features:
         (evil-set-initial-state mode 'emacs))
       )
     )
-#+END_SRC
-
-*** Powerline
-
-One way to get a fancy modeline.  Disabled for now.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :ensure t
-    :init (powerline-default-theme))
 #+END_SRC
 
 *** Searching and Completion
