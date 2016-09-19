@@ -2330,14 +2330,14 @@ Define various keybindings.
         (lambda ()
           "mark message for trash"
           (interactive)
-          (notmuch-show-add-tag '("+trash" "-inbox" "-unread"))
+          (notmuch-show-add-tag '("+trash" "-inbox" "-unread" "-archive"))
           (unless (notmuch-show-next-open-message)
             (notmuch-show-next-thread t))))
       (define-key notmuch-search-mode-map (kbd "d")
         (lambda ()
           "mark message for trash"
           (interactive)
-          (notmuch-search-tag (list "+trash" "-inbox" "-unread"))
+          (notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))
           (notmuch-search-next-thread )))
       (define-key notmuch-show-mode-map (kbd "J")
         (lambda ()
