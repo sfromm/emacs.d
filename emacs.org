@@ -471,6 +471,13 @@ Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js
 (use-package ox-reveal)
 #+END_SRC
 
+Pull in *ox-twbs* for orgmode export to twitter bootstrap.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-twbs
+    :ensure t)
+#+END_SRC
+
 *** Contacts
 
 Instead of tinkering with *BBDB*, which seemed to require more energy
