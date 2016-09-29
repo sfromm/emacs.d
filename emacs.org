@@ -318,6 +318,21 @@ Twiddle the luminance for emails.
     (setq shr-color-visible-luminance-min value)
     )
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (require 'dbus)
+  (defun sf/network-online? ()
+    "Check if we have a working network connection"
+    (interactive)
+    (let ((nm-service "org.freedesktop.NetworkManager")
+           (nm-path "/org/freedesktop/NetworkManager")
+           (nm-interface "org.freedesktop.NetworkManager")
+           (nm-state-connected-global 70))
+      (eq (dbus-get-property :system
+            nm-service nm-path nm-interface "State")
+        nm-state-connected-global)
+      ))
+#+END_SRC
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
