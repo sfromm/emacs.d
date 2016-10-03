@@ -1,6 +1,5 @@
 #+TITLE: Emacs configuration
 #+AUTHOR: Stephen Fromm
-#+OPTIONS: toc:4 h:4
 
 * Emacs Configuration
   
@@ -307,18 +306,6 @@ A series of functions from [[https://github.com/magnars/.emacs.d/blob/master/def
     (untabify-buffer)
     (delete-trailing-whitespace)
     (indent-buffer)
-    )
-#+END_SRC
-
-A helper for tangling an arbitrary file.
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/tangle-file (file)
-    "Given an 'org-mode' FILE, tangle the source code"
-    (interactive "fOrg File: ")
-    (find-file file)
-    (org-babel-tangle)
-    (kill-buffer)
     )
 #+END_SRC
 
@@ -2731,4 +2718,5 @@ loaded.
 (message "%s" "Finished loading config")
 #+END_SRC
 
-
+#+PROPERTY: tangle ~/.emacs.d/emacs.el
+#+OPTIONS: toc:4 h:4
