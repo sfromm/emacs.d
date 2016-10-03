@@ -1,10 +1,28 @@
-;;; build - Tangle all org-babel files to their configy-goodness
-;;;
-;;; The goal is that this can be pulled in by emacs from the CLI
-;;; tangle out all the relevant dot-files.  This then can be called
-;;; by make or something similar.
-;;;
-;;; Invocation:  emacs --batch --load ~/.emacs.d/build.el
+;; build - Tangle all org-babel files to their configy-goodness
+;;
+;; Written by Stephen Fromm <sfromm gmail com>
+;; (C) 2016 Stephen Fromm
+;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+;; 02110-1301, USA.
+;;
+;; The goal is that this can be pulled in by emacs from the CLI
+;; tangle out all the relevant dot-files.  This then can be called
+;; by make or something similar.
+;;
+;; Invocation:  emacs --batch --load ~/.emacs.d/build.el
 
 (require 'org)       ;; org-mode
 (require 'ob)        ;; org-mode export
