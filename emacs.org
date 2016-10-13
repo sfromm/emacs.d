@@ -2468,6 +2468,14 @@ to open a group so that t will show all messages (old and new).
                               (total-expire . t)
                               (expiry-wait . 90)
                               (expiry-target . "nnimap+Work:Trash"))
+                            ("Work:lists"
+                              (total-expire . t)
+                              (expiry-wait . 90)
+                              (expiry-target . "nnimap+Work:Trash"))
+                            ("Work:ops"
+                              (total-expire . t)
+                              (expiry-wait . 7)
+                              (expiry-target . sf/work-expiry-target))
                             ("Personal:INBOX"
                               (display . all))
                               ;(expiry-target . sf/personal-expiry-target)
