@@ -37,7 +37,8 @@
 
 (defun sf/tangle-dot-emacs ()
   "Tangle Emacs configuration from org-babel"
-  (sf/tangle-file "~/.emacs.d/emacs.org"))
+  (sf/tangle-file "~/.emacs.d/emacs.org")
+  (sf/tangle-file "~/depot/etc/emacs.d/private.org"))
 
 (defun sf/tangle-dot-files ()
   "Tangle dot files from org-babel"
