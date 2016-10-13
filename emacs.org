@@ -1933,42 +1933,27 @@ for composing email.
 
 #+BEGIN_SRC emacs-lisp
   (setq
-    mail-user-agent 'message-user-agent
+    mail-user-agent 'gnus-user-agent
     mail-from-style 'angles
   )
 #+END_SRC
 
 *** Message mode
 
-Set up some message-mode items that other modes will inherit.
-
-#+BEGIN_SRC emacs-lisp
-  (setq
-    mm-inline-text-html-with-images t
-    mm-text-html-renderer 'shr
-    shr-color-visible-luminance-min 60
-    )
-#+END_SRC
-
-*** Sending email
-
-Send email via SMTP instead of using a local sendmail binary.
-
-#+BEGIN_SRC emacs-lisp
-(setq message-send-mail-function 'smtpmail-send-it)
-#+END_SRC
-
 Set up =message-mode=.  This will kill the buffer after sending an email
 and set preferences for message citation and how to forward an
 email. For more on configuring Emacs =message-mode=, see the [[https://www.gnu.org/software/emacs/manual/html_mono/message.html][manual]].
+Use SMTP for sending email instead of a local sendmail binary.
 
 #+BEGIN_SRC emacs-lisp
-  (setq message-kill-buffer-on-exit t
+  (setq
+    message-kill-buffer-on-exit t
     message-citation-line-format "On %a, %Y-%m-%d at %T %z, %N wrote:"
     message-citation-line-function (quote message-insert-formatted-citation-line)
     message-make-forward-subject-function (quote message-forward-subject-fwd)
     message-signature t
     message-signature-file "~/.signature"
+    message-send-mail-function 'smtpmail-send-it
     )
 #+END_SRC
 
@@ -1979,6 +1964,8 @@ Enable certain modes for *message-mode*:
   (add-hook 'message-mode-hook 'turn-on-flyspell)
   (add-hook 'message-mode-hook #'yas-minor-mode)
 #+END_SRC
+
+*** Sending email
 
 The following configures default SMTP settings for =smtpmail=.
 
@@ -1998,7 +1985,7 @@ Be sure to use an encrypted /authinfo/ file.
 (setq smtpmail-auth-credentials "~/.authinfo.gpg")
 #+END_SRC
 
-Use /dired/ to attach files to /notmuch/ messages.  
+Use /dired/ to attach files to messages.
 
 #+BEGIN_SRC emacs-lisp
 (require 'gnus-dired)
@@ -2048,6 +2035,7 @@ described below.
 
 #+BEGIN_SRC emacs-lisp
   (use-package gnus-alias
+    :disabled t
     :ensure t
     :init
     (progn
@@ -2304,7 +2292,6 @@ Define various keybindings.
     :init
     (progn
       (setq
-        gnus-inhibit-images t
         notmuch-archive-tags '("-inbox" "-unread" "-trash" "+archive")
         notmuch-crypto-process-mime t
         notmuch-fcc-dirs sf/notmuch-fcc-dirs
@@ -2406,7 +2393,7 @@ Last, but not least, enable linking to messages from org-mode.
   (use-package org-notmuch)
 #+END_SRC
 
-*** gnus
+*** Gnus
 
 [[http://www.gnus.org/manual/gnus_toc.html][Gnus]] is a built-in message reader for Emacs.  It supports reading and
 composing both mail and news.  The [[http://www.gnus.org/manual/gnus_toc.html][manual]] is available online.  There
@@ -2414,290 +2401,342 @@ are lots and lots of posts online about configuring *Gnus*.  Much of
 this is influenced by:
 
 - [[http://www.cataclysmicmutation.com/2010/11/multiple-gmail-accounts-in-gnus/][Multiple GMail Accounts in Gnus]]
-- [[http://blog.binchen.org/posts/notes-on-using-gnus.html][Practical guide to use Gnus with Gmail]]
+- [[https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org][Practical guide to use Gnus with Gmail]]
 - [[http://qsdfgh.com/articles/2014/08/11/gnus-configuration-example.html][QSDFGH Gnus configuration example]]
 - [[https://github.com/kensanata/ggg][Gnus, Gmail, GPG]]
 
-A note regarding terminology:  Gnus uses the term /archiving/ to
-describe the method for storing mail you send. 
+A note regarding terminology: Gnus uses the term /archiving/ to describe
+the method for storing mail you send.
 
-This enables searching of IMAP based accounts.
-#+BEGIN_SRC emacs-lisp
-(require 'nnir)
-#+END_SRC
+There is a lot to digest in the configuration below:
 
-Accounts and other sources of reading material.  The first sets the
-default method for fetching articles.  This also sets /secondary/
-methods, which happens to be IMAP.
+- There is documentation on how to configure the [[http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines][summary line]] fand [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specification][group line]] format.
+- Accounts are configured via =gnus-secondary-select-method=.  The
+  default is ~nil~.
+- [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html][Posting styles]] are discuss what =gnus-posting-sytles= hopes to accomplish.
+- There is also  [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-Parameters.html][group parameters]] for [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html#Posting-Styles][posting styles]] and [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][expiring mail]].
+- Enable the [[https://www.gnu.org/software/emacs/manual/html_node/gnus/The-Gnus-Registry.html][Gnus Registry]] and finally pull in all the above pieces.
 
-Since I'm breaking this up into lots of parts, the paren matching will
-be a bit weird.
+~gnus~, by default, will only show new emails.  You should use =C-u RET=
+to open a group so that t will show all messages (old and new).
 
-Set default =gnus-select-method= to ~nil~.
-
-#+NAME: gnus-select-method
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq gnus-select-method '(nnnil ""))
-#+END_SRC
-
-Go ahead and define /marks/ for the GUI.
-
-#+NAME: gnus-marks
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-score-over-mark   ?↑
-    gnus-score-below-mark  ?↓
-    gnus-ticked-mark       ?⚑
-    gnus-dormant-mark      ?⚐
-    gnus-expirable-mark    ?♻
-    gnus-read-mark         ?✓
-    gnus-del-mark          ?✗
-    gnus-killed-mark       ?☠
-    gnus-replied-mark      ?⟲
-    gnus-forwarded-mark    ?⤳
-    gnus-cached-mark       ?☍
-    gnus-recent-mark       ?★
-    gnus-unseen-mark       ?✩
-    gnus-unread-mark       ?✉)
-#+END_SRC
-
-Set more marks related to threading.
-
-#+NAME: gnus-thread-tree
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-sum-thread-tree-indent          " "
-    gnus-sum-thread-tree-single-indent   "◎ "
-    gnus-sum-thread-tree-root            "● "
-    gnus-sum-thread-tree-false-root      "☆"
-    gnus-sum-thread-tree-vertical        "│"
-    gnus-sum-thread-tree-leaf-with-other "├─► "
-    gnus-sum-thread-tree-single-leaf     "╰─► " )
-#+END_SRC
-
-Set the /archive/ group to ~Sent~.  For more information, see [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Archived-Messages.html][Archived
-messages]].  Also automatically mark sent messages as /read/.
-
-#+NAME: gnus-archive
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-gcc-mark-as-read t
-    gnus-message-archive-method "nnimap"
-    gnus-message-archive-group "Sent")
-#+END_SRC
-
-Define date format for successively older articles, the [[http://www.gnus.org/manual/big-gnus.html#Summary-Buffer-Lines][summary line]]
-format, and how to sort threads.  While not done here, one can also
-configure the [[http://www.gnus.org/manual/big-gnus.html#Group-Line-Specification][group line]] format.
-
-#+NAME: gnus-format
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-user-date-format-alist '(
-                                   ((gnus-seconds-today) . "Today %H:%M")
-                                   ((+ 86400 (gnus-seconds-today)) . "Yest. %H:%M")
-                                   (604800 . "%a %H:%M") ;;that's one week
-                                   ((gnus-seconds-month) . "%a %d")
-                                   ((gnus-seconds-year) . "%B %d")
-                                   (t . "%B %d '%y") )
-    gnus-summary-line-format "%U%R%z% %(%11,11&user-date;  %-15,15f  %B%s%)\n"
-    gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date)
-    )
-#+END_SRC
-
-Pull in icalendar support.
-
-#+NAME: gnus-icalendar
-#+BEGIN_SRC emacs-lisp :tangle no
-;(require 'gnus-icalendar)
-;(gnus-icalendar-setup)
-#+END_SRC
-
-Redefine some keybindings here to what makes sense for me.
-
-#+NAME: gnus-define-keys
-#+BEGIN_SRC emacs-lisp :tangle no
-  (defun sf/email-trash ()
-    "Trash the current or marked emails"
-    (interactive)
-    (gnus-summary-move-article nil "nnimap+work:Trash"))
-  (defun sf/email-archive ()
-    "Archive the current or marked emails"
-    (interactive)
-    (gnus-summary-move-article nil "nnimap+work:Archive"))
-  (define-key gnus-summary-mode-map (kbd "d") 'sf/email-trash)
-  (define-key gnus-summary-mode-map (kbd "a") 'sf/email-archive)
-  (define-key gnus-summary-mode-map (kbd "r") 'gnus-summary-reply-with-original)
-  (define-key gnus-summary-mode-map (kbd "R") 'gnus-summary-wide-reply-with-original)
-  (define-key gnus-summary-mode-map (kbd "f") 'gnus-summary-mail-forward)
-  (define-key gnus-article-mode-map (kbd "r") 'gnus-summary-reply-with-original)
-  (define-key gnus-article-mode-map (kbd "R") 'gnus-summary-wide-reply-with-original)
-  (define-key gnus-article-mode-map (kbd "f") 'gnus-summary-mail-forward)
-#+END_SRC
-
-Other odds and ends.
-
-#+NAME: gnus-odds-ends
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-agent t
-    gnus-fetch-old-headers 'some 
-    gnus-single-article-buffer nil
-    gnus-use-full-window nil
-    gnus-message-replysign t
-    gnus-message-replyencrypt t
-    gnus-summary-display-arrow t
-    gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
-    gnus-activate-level 2
-    mm-inline-text-html-with-images t
-    mm-text-html-renderer 'shr
-    shr-color-visible-luminance-min 60
-    )
-  (require 'gnus-gravatar)
-#+END_SRC
-
-Here, I configure the /secondary/ accounts.  In fact, these are the main
-accounts in use.
-
-#+NAME: gnus-secondary-select
-#+BEGIN_SRC emacs-lisp :tangle no
-    ;; use backtick to evaluate ,-prefixed expressions
-  (setq gnus-secondary-select-methods
-    `((nnimap "work"
-        (nnimap-address ,sf/nnimap-work-address)
-        (nnimap-server-port 993)
-        (nnimap-stream ssl)
-        (nnir-search-engine imap)
-        (nnimap-list-pattern ("INBOX"))
-        (nnimap-inbox ("INBOX"))
-        )
-       (nnimap "personal"
-         (nnimap-address ,sf/nnimap-personal-address)
-         (nnimap-server-port 993)
-         (nnimap-stream ssl)
-         (nnir-search-engine imap)
-         (nnimap-list-pattern ("INBOX"))
-         (nnimap-inbox ("INBOX"))
+ #+BEGIN_SRC emacs-lisp 
+   (use-package gnus
+     :commands gnus
+     :init
+     (progn
+       (require 'nnir)
+       (gnus-registry-initialize)
+       (setq
+         gnus-select-method '(nnnil "")
+         gnus-secondary-select-methods
+         `((nnimap "Work"
+             (nnimap-stream shell)
+             (nnimap-shell-program "/usr/libexec/dovecot/imap -o mail_location=maildir:~/.mail/Work:INBOX=~/.mail/Work/INBOX:LAYOUT=fs")
+             (nnir-search-engine imap)
+             )
+            (nnimap "Personal"
+              (nnimap-stream shell)
+              (nnimap-shell-program "/usr/libexec/dovecot/imap -o mail_location=maildir:~/.mail/Personal:INBOX=~/.mail/Personal/INBOX:LAYOUT=fs")
+              (nnir-search-engine imap)
+              )
+            )
+         gnus-parameters '(
+                            ("Work.*"
+                              (display . all)
+                              (gcc-self . "nnimap+Work:Sent")
+                              (posting-style
+                                (gcc "nnimap+Work:Sent")
+                                (address "stephenf@nero.net")
+                                (signature-file "~/.signature")))
+                            ("Personal.*"
+                              (display . all)
+                              (gcc-self . "nnimap+Personal:Sent")
+                              (posting-style
+                                (gcc "nnimap+Personal:Sent")
+                                (address sf/email-personal)
+                                (signature user-full-name)
+                                ("X-Message-SMTP-Method" "smtp smtp.gmail.com 465 sfromm")))
+                            ("Work:INBOX"
+                              (display . all)
+                              ; (expiry-target . sf/work-expiry-target)
+                              ; (expiry-wait . 7)
+                              )
+                            ("Work:Archive"
+                              (display . all))
+                            ("Work:announce"
+                              (total-expire . t)
+                              (expiry-wait . 90)
+                              (expiry-target . "nnimap+Work:Trash"))
+                            ("Personal:INBOX"
+                              (display . all))
+                              ;(expiry-target . sf/personal-expiry-target)
+                              ;(expiry-wait . 7)
+                            )
          )
+       (require 'gnus-gravatar)
+       (require 'gnus-icalendar)
+       (gnus-icalendar-setup)
+       (setq
+         gnus-agent nil
+         gnus-directory (expand-file-name (concat user-emacs-directory "user/gnus"))
+         gnus-home-directory gnus-directory
+         gnus-read-newsrc-file nil
+         gnus-save-newsrc-file nil
+         gnus-always-read-dribble-file t
+         gnus-gcc-mark-as-read t
+         gnus-message-archive-method '(nnimap "Work")
+         gnus-message-archive-group "nnimap+Work:Sent"
+         gnus-use-full-window nil
+         gnus-message-replysign t
+         gnus-message-replyencrypt t
+         gnus-activate-level 2
+         gnus-subscribe-newsgroup-method 'gnus-subscribe-alphabetically
+         mm-inline-text-html-with-images t
+         mm-text-html-renderer 'shr
+         shr-color-visible-distance-min 10
+         shr-color-visible-luminance-min 60
+         gnus-buttonized-mime-types
+         '("multipart/alternative" "multipart/encrypted" "multipart/signed")
+
+         gnus-visible-headers (mapcar  #'(lambda (header) (format "^%s:" header))
+                                (split-string (mapconcat 'identity
+                                                '("From Organization Subject Newsgroups"
+                                                   "To Cc Reply-To Followup-To Mail-Followup-To"
+                                                   "Thread-Topic"
+                                                   "X-Mailer X-Newsreader"
+                                                   "User-Agent X-Posting-Agent"
+                                                   "X-Spam-Level" "Date") " ")))
+         nnmail-extra-headers '(To Cc Newsgroups Content-Type Thread-Topic Thread-Index)
+         )
+       (require 'epg)
+       (setq
+         mml2015-use 'epg
+         mm-verify-option 'always
+         mm-decrypt-option 'always
+         mml2015-encrypt-to-self t
+         mml2015-always-trust nil
+         mml2015-cache-passphrase t
+         mml2015-sign-with-sender t
+         gnus-message-replyencrypt t
+         gnus-message-replysign t
+         gnus-message-replysignencrypted t
+         gnus-treat-x-pgp-sig t
+         mm-decrypt-option 'always
+         mm-sign-option nil ;; mm-sign-option 'guided
+         )
+       (setq
+         gnus-score-over-mark   ?↑
+         gnus-score-below-mark  ?↓
+         gnus-ticked-mark       ?⚑
+         gnus-dormant-mark      ?⚐
+         gnus-expirable-mark    ?♻
+         gnus-read-mark         ?✓
+         gnus-del-mark          ?✗
+         gnus-killed-mark       ?☠
+         gnus-replied-mark      ?⟲
+         gnus-forwarded-mark    ?⤳
+         gnus-cached-mark       ?☍
+         gnus-recent-mark       ?★
+         gnus-unseen-mark       ?✩
+         gnus-unread-mark       ?✉)
+       (setq
+         gnus-sum-thread-tree-indent          " "
+         gnus-sum-thread-tree-single-indent   "◎ "
+         gnus-sum-thread-tree-root            "● "
+         gnus-sum-thread-tree-false-root      "☆"
+         gnus-sum-thread-tree-vertical        "│"
+         gnus-sum-thread-tree-leaf-with-other "├─► "
+         gnus-sum-thread-tree-single-leaf     "╰─► " 
+         gnus-summary-newsgroup-prefix        "⇶"
+         gnus-fetch-old-headers               'some
+         gnus-summary-make-false-root         'empty  ; add empty node when needing a root nod
+         gnus-summary-make-false-root-always  nil     ; only if necessary
+         gnus-summary-display-arrow           t 
+         gnus-summary-thread-gathering-function 'gnus-gather-threads-by-references
+         gnus-thread-hide-subtree             nil     ; expand threads
+         gnus-build-sparse-threads            'some   ; fetch some threads to get better threads
+         gnus-single-article-buffer           t)      ; no more than one buffer per article
+       (setq
+         gnus-user-date-format-alist '(
+                                        ((gnus-seconds-today) . "Today %H:%M")
+                                        ((+ 86400 (gnus-seconds-today)) . "Yest. %H:%M")
+                                        (604800 . "%a %H:%M") ;;that's one week
+                                        ((gnus-seconds-month) . "%a %d")
+                                        ((gnus-seconds-year) . "%B %d")
+                                        (t . "%B %d '%y") )
+         gnus-summary-line-format (concat
+                                    "%z%U%R "
+                                    "%~(max-right 17)~(pad-right 17)&user-date;  "
+                                    "%~(max-right 20)~(pad-right 20)f "
+                                    "%B%s\n")
+         gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date)
+         gnus-group-line-format "%ue%uM %S%p %P%5y:%B%(%g%)%O\n"
+         gnus-topic-line-format "%i〜 %(%{%n%}%) 〜  %v\n"
+         )
+
+       (defun sf/personal-expiry-target (group)
+         "Expire email in personal account"
+         (setq nnmail-fancy-expiry-targets sf/personal-expiry-targets)
+         (nnmail-fancy-expiry-target group)
+         )
+       (defun sf/work-expiry-target (group)
+         "Expire email in work account"
+         (setq nnmail-fancy-expiry-targets sf/work-expiry-targets)
+         (nnmail-fancy-expiry-target group)
+         )
+       (defvar *mbsync-process* nil)
+       (add-hook 'gnus-get-new-news-hook
+         (defun sf/run-mbsync ()
+           (unless (process-live-p *mbsync-process*)
+             (setq *mbsync-process* (start-process "mbsync"
+                                      (with-current-buffer
+                                        (get-buffer-create "*mbsync*")
+                                        (buffer-disable-undo)
+                                        (erase-buffer)
+                                        (current-buffer))
+                                      "nice"
+                                      (executable-find "mbsync") "-a" "-V")
+               )
+             )
+           )
+         )
+
+       (add-hook 'message-sent-hook 'gnus-score-followup-thread)
+
+       (add-hook 'gnus-summary-exit-hook 'gnus-summary-bubble-group)
+
+       (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+
+       (add-hook 'gnus-after-getting-new-news-hook 'gnus-notifications)
+
+       (add-hook 'gnus-after-getting-new-news-hook 'gnus-group-find-new-groups)
+
+       (add-hook 'gnus-after-getting-new-news-hook
+         (defun sf/gnus-sort-groups-after-new-news ()
+           (gnus-group-sort-groups gnus-group-sort-function)))
+
+       (defun gnus-user-format-function-@ (header)
+         "Display @ for message with attachment in summary line.
+          You need to add `Content-Type' to `nnmail-extra-headers' and
+          `gnus-extra-headers', see Info node `(gnus)To From Newsgroups'."
+         (let ((case-fold-search t)
+                (ctype (or (cdr (assq 'Content-Type (mail-header-extra header)))
+                         "text/plain"))
+                (indicator " "))
+           (when (string-match "^multipart/mixed" ctype)
+             (setq indicator "@"))
+           indicator))
+
+       (defun gnus-user-format-function-e (dummy)
+         "Display the unread mark in group line"
+         (char-to-string gnus-unread-mark))
+
+       (defun gnus-user-format-function-M (dummy)
+         "Display the ticked mark in group line"
+         (char-to-string gnus-ticked-mark))
+
+       (defun sf/newsgroup-prefix (grp)
+         "Return prefix of gnus newsgroup name"
+         (concat (car (split-string grp ":")) ":"))
+
+       (defun sf/email-trash ()
+         "Trash the current or marked emails"
+         (interactive)
+         (gnus-summary-move-article nil (concat (sf/newsgroup-prefix gnus-newsgroup-name) "Trash"))
+         (gnus-summary-next-article))
+
+       (defun sf/email-archive ()
+         "Archive the current or marked emails"
+         (interactive)
+         (gnus-summary-move-article nil (concat (sf/newsgroup-prefix gnus-newsgroup-name) "Archive"))
+         (gnus-summary-next-article))
+
+       (define-key gnus-summary-mode-map (kbd "d") 'sf/email-trash)
+       (define-key gnus-summary-mode-map (kbd "a") 'sf/email-archive)
+       (define-key gnus-summary-mode-map (kbd "r") 'gnus-summary-reply-with-original)
+       (define-key gnus-summary-mode-map (kbd "R") 'gnus-summary-wide-reply-with-original)
+       (define-key gnus-summary-mode-map (kbd "f") 'gnus-summary-mail-forward)
        )
-    )
-#+END_SRC
-
-The following section has a lot going on.  It uses [[http://www.gnu.org/software/emacs/manual/html_node/gnus/Group-Parameters.html][group parameters]] for
-[[http://www.gnu.org/software/emacs/manual/html_node/gnus/Posting-Styles.html#Posting-Styles][posting styles]] and [[https://www.gnu.org/software/emacs/manual/html_node/gnus/Expiring-Mail.html#Expiring-Mail][expiring mail]].
-
-#+NAME: gnus-group-parameters
-#+BEGIN_SRC emacs-lisp :tangle no
-  (defun sf/personal-expiry-target (group)
-    "Expire email in personal account"
-    (setq nnmail-fancy-expiry-targets sf/personal-expiry-targets)
-    (nnmail-fancy-expiry-target group)
-    )
-  (defun sf/work-expiry-target (group)
-    "Expire email in work account"
-    (setq nnmail-fancy-expiry-targets sf/work-expiry-targets)
-    (nnmail-fancy-expiry-target group)
-    )
-  (setq gnus-parameters '(
-                           ("work"
-                             (display . all)
-                             (expiry-wait . never)
-                             (gcc-self . "nnimap+work:Sent")
-                             (posting-style
-                               (gcc "nnimap+work:Sent")
-                               `(address ,sf/email-work)
-                               (signature-file "~/.signature")
-                               ))
-                           ("work:INBOX"
-                              (display . all)
-                              (expiry-target . sf/work-expiry-target)
-                              (expiry-wait . 7)
-                              )
-                           ("work:Archive"
-                              (display . all)
-                              (expiry-target . never)
-                              )
-                           ("personal.*"
-                             (gcc-self . "nnimap+personal:[Gmail]Sent Mail")
-                             (posting-style
-                               (gcc "nnimap+personal:[Gmail]/Sent Mail")
-                               `(address ,sf/email-personal)
-                               `(signature ,user-full-name)
-                               )
-                             )
-                           ("personal:INBOX"
-                              (display . all)
-                              (expiry-target . sf/personal-expiry-target)
-                              (expiry-wait . 7)
-                              )
-                           )
-    )
-#+End_SRC
-
-Add a hook for [[http://www.gnus.org/manual/big-gnus.html#Group-Topics][topics]] when in group mode.  And a hook for updating
-scores.
-
-#+NAME: gnus-hooks 
-#+BEGIN_SRC emacs-lisp :tangle no
-  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-  (add-hook 'gnus-summary-exit-hook 'gnus-summary-bubble-group)
-#+END_SRC
-
-Let's finally configure ~gnus~ when the command is run.  Pull in [[http://www.gnu.org/software/emacs/manual/html_node/gnus/nnir.html][nnir]] to enable
-search on *Gnus* backends.  Then, enable the [[https://www.gnu.org/software/emacs/manual/html_node/gnus/The-Gnus-Registry.html][Gnus Registry]] and finally
-pull in all the above pieces.
-
-#+BEGIN_SRC emacs-lisp :noweb yes
-  (use-package gnus
-    :commands gnus
-    :init
-    (progn
-      (require 'nnir)
-      (gnus-registry-initialize)
-      <<gnus-icalendar>>
-      <<gnus-select-method>>
-      <<gnus-marks>>
-      <<gnus-thread-tree>>
-      <<gnus-archive>>
-      <<gnus-format>>
-      <<gnus-odds-ends>>
-      <<gnus-secondary-select>>
-      <<gnus-group-parameters>>
-      <<gnus-hooks>>
-      <<gnus-define-keys>>
-      )
-    )
+     )
+   (eval-when-compile
+     (defvar gnus-balloon-face-0)
+     (defvar gnus-balloon-face-1))
+   (use-package gnus-demon
+     :init
+     (progn
+       (gnus-demon-add-handler 'gnus-group-get-new-news 5 t)))
+   (use-package rs-gnus-summary
+     :config
+     (defalias 'gnus-user-format-function-size
+       'rs-gnus-summary-line-message-size)
+     (setq gnus-balloon-face-0 'rs-gnus-balloon-0)
+     (setq gnus-balloon-face-1 'rs-gnus-balloon-1))
+   (use-package bbdb
+     :config
+     (progn
+       (bbdb-initialize 'gnus 'message)
+       (bbdb-mua-auto-update-init 'gnus)
+       (setq
+         bbdb-file (concat user-emacs-directory "user/bbdb")
+         bbdb-mua-pop-up-window-size 2
+         )
+       ))
 #+END_SRC
 
 Lastly, the following will configure adaptive scoring.  This is
 presently disabled, but preserved in case I want to go this route.
 
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq
-    gnus-use-adaptive-scoring '(word line)
-    gnus-adaptive-word-length-limit 5
-    gnus-adaptive-word-no-group-words t
-    gnus-default-adaptive-score-alist '((gnus-unread-mark)
-                                         (gnus-ticked-mark (from 4))
-                                         (gnus-dormant-mark (from 5))
-                                         (gnus-del-mark (from -4) (subject -1))
-                                         (gnus-read-mark (from 4) (subject 2))
-                                         (gnus-expirable-mark (from -1) (subject -1))
-                                         (gnus-killed-mark (from -1) (subject -3))
-                                         (gnus-kill-file-mark)
-                                         (gnus-ancient-mark)
-                                         (gnus-low-score-mark)
-                                         (gnus-catchup-mark (from -1) (subject -1)))
-    )
-#+END_SRC
+ #+BEGIN_SRC emacs-lisp :tangle no
+   (setq
+     gnus-use-adaptive-scoring '(word line)
+     gnus-adaptive-word-length-limit 5
+     gnus-adaptive-word-no-group-words t
+     gnus-default-adaptive-score-alist '((gnus-unread-mark)
+                                          (gnus-ticked-mark (from 4))
+                                          (gnus-dormant-mark (from 5))
+                                          (gnus-del-mark (from -4) (subject -1))
+                                          (gnus-read-mark (from 4) (subject 2))
+                                          (gnus-expirable-mark (from -1) (subject -1))
+                                          (gnus-killed-mark (from -1) (subject -3))
+                                          (gnus-kill-file-mark)
+                                          (gnus-ancient-mark)
+                                          (gnus-low-score-mark)
+                                          (gnus-catchup-mark (from -1) (subject -1)))
+     )
+ #+END_SRC
 
-**** Group buffer
+**** Keyboard shortcuts
 
-Gnus starts in the [[http://www.gnus.org/manual/gnus_15.html#SEC15][group buffer]].  This lists subscribed groups.  For an
-email account, this would be email folders.  Type *L* to see all groups,
-including those with no unread articles.  Type *l* to see only
-subscribed groups with unread articles.  Type *g* to refresh the
-subscribed groups.
+*Group*
+
+Gnus starts in the [[http://www.gnus.org/manual/gnus_11.html#Group-Buffer][group buffer]].  This lists subscribed groups.  For an
+email account, this would be email folders.
+
+| Keybinding | Command                              | Description                             |
+|------------+--------------------------------------+-----------------------------------------|
+| A A        | gnus-group-list-active               | List all groups available from server   |
+| L          | gnus-group-list-all-groups           | List all groups with level ARG or lower |
+| u          | gnus-group-unsubscribe-current-group | Toggle subscription to current GROUP    |
+| t          | gnus-topic-mode                      | Show topics                             |
+| g          | gnus-group-get-new-news              | Get newly arrived articles              |
+
+*Summary*
+
+The [[http://www.gnus.org/manual/gnus_30.html#Summary-Buffer][summary buffer]] displays a line for each article.  You can move
+around, read articles, reply, and so on.
+
+| Keybinding | Command                          | Description                                  |
+|------------+----------------------------------+----------------------------------------------|
+| =          | gnus-summary-expand-window       | Make the summary buffer take up entire frame |
+| n          | gnus-summary-next-unread-article | Select unread article after current one      |
+| p          | gnus-summary-prev-unread-article | Select unread article before current one     |
+| N          | gnus-summary-next-article        | Select article after current one             |
+| P          | gnus-summary-prev-article        | Select article before current one            |
+| / w        | gnus-summary-pop-limit           | Remove search limit                          |
+|            |                                  |                                              |
+
+
 
 **** Server buffer
 
