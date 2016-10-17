@@ -2129,8 +2129,8 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                           ("maildir:/Work/*     AND NOT ( maildir:/Work/Spam OR maildir:/Work/Trash )" "Work" ?W)
                           ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
                           (,sf/mu4e-bookmark-vendors "Vendors" ?v)
-                          (,sf/mu4e-bookmark-providers "Providers" ?p)
-                          (,sf/mu4e-bookmark-ren "Internet2/RENs/Local" ?r)
+                          (,sf/mu4e-bookmark-providers "ISPs" ?p)
+                          (,sf/mu4e-bookmark-ren "ORGs" ?r)
                           ("flag:attach" "Messages with attachments" ?A)
                           ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                           ("mime:text/calendar" "Meeting invites" ?c)
@@ -2157,7 +2157,6 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                             (user-mail-address . ,sf/email-work)
                                             (mu4e-sent-folder . "/Work/Sent")
                                             (mu4e-drafts-folder . "/Work/Drafts")
-                                            (mu4e-refile-folder . "/Work/Archive")
                                             (mu4e-trash-folder . "/Work/Trash")
                                             (mu4e-compose-signature . (get-string-from-file (expand-file-name "~/.signature")))
                                             (smtpmail-smtp-user . ,sf/smtp-user-work)
@@ -2177,7 +2176,6 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                             (user-mail-address . ,sf/email-personal)
                                             (mu4e-sent-folder . "/Personal/Sent")
                                             (mu4e-drafts-folder . "/Personal/Drafts")
-                                            (mu4e-refile-folder . "/Personal/Archive")
                                             (mu4e-trash-folder . "/Personal/Trash")
                                             (mu4e-compose-signature . user-full-name)
                                             (smtpmail-smtp-user . ,sf/smtp-user-personal)
@@ -2200,6 +2198,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder "/Work/Archive"
+        mu4e-refile-folder 'sf/mu4e-refile-folder
         )
       (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
@@ -2208,8 +2207,9 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
       (defun sf/mu4e-refile-folder (msg)
-        "set the refile folder for MSG"
+        "Set the refile folder for MSG"
         (let ((maildir (mu4e-message-field msg :maildir))
+               (subject (mu4e-message-field msg :subject))
                folder)
           (cond
             ((string-match "Work" maildir)
@@ -2222,8 +2222,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
             ((string-match "Personal" maildir)
               (setq folder "/Personal/Archive"))
             )
-          folder)
-        )
+          folder))
       (defun sf/mu4e-forward-as-attachment ()
         "Forward message as an attachment"
         (interactive)
