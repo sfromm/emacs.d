@@ -1933,7 +1933,6 @@ for composing email.
 
 #+BEGIN_SRC emacs-lisp
   (setq
-    mail-user-agent 'gnus-user-agent
     mail-from-style 'angles
   )
 #+END_SRC
@@ -2502,6 +2501,7 @@ to open a group so that t will show all messages (old and new).
          gnus-subscribe-newsgroup-method 'gnus-subscribe-alphabetically
          mm-inline-text-html-with-images t
          mm-text-html-renderer 'shr
+         mail-user-agent 'gnus-user-agent
          shr-color-visible-distance-min 10
          shr-color-visible-luminance-min 60
          gnus-buttonized-mime-types
