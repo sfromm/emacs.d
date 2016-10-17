@@ -16,12 +16,13 @@ sources, including (in no particular order):
 - [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][Creation and conservation of computer files]], and later [[https://github.com/grettke/home/blob/master/ALEC.org][ALEC]]
 - [[http://kitchingroup.cheme.cmu.edu/blog/][John Kitchin]]'s [[https://github.com/jkitchin/jmax][emacs configuration]]
 - [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB (EmacsWiki)]]
-- [[http://bzg.fr/emacs.html][Bastien Guerry]]
+- [[https://github.com/bzg/dotemacs/blob/master/emacs.el][Bastien Guerry]]
 - [[https://github.com/larstvei/dot-emacs][Lars Tveito]]
 - [[https://github.com/purcell/emacs.d][Steve Purcell]]
 - [[http://zeekat.nl/articles/making-emacs-work-for-me.html][Making Emacs work for me]]
 - [[https://github.com/howardabrams/dot-files][Howard Abrams]]
-- [[https://github.com/jd/emacs.d][Julien Danjou]]
+- [[https://github.com/jd/emacs.d][Julien Danmmjou]]
+- [[https://github.com/jwiegley/dot-emacs][John Wiegley]]
 - [[https://github.com/joedicastro/dotfiles/tree/master/emacs][Joe Di Castro]]
 - [[http://org.rix.si/][Ryan Rix]]'s [[http://doc.rix.si/cce/cce.html][Complete Computing Environment]] (formerly [[http://doc.rix.si/org/fsem.html][Hardcore Freestyle Emacs]] [[http://fort.kickass.systems:10082/cgit/personal/rrix/pub/fsem.git/tree/fsem.org][org source]]) 
 
@@ -2457,7 +2458,7 @@ to open a group so that t will show all messages (old and new).
                                 ("X-Message-SMTP-Method" "smtp smtp.gmail.com 465 sfromm")))
                             ("Work:INBOX"
                               (display . all)
-                              ; (expiry-target . sf/work-expiry-target)
+                              (expiry-target . sf/work-expiry-target)
                               ; (expiry-wait . 7)
                               )
                             ("Work:Archive"
