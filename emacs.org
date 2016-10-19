@@ -1970,13 +1970,17 @@ Enable certain modes for *message-mode*:
 The following configures default SMTP settings for =smtpmail=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq
-    smtpmail-stream-type 'ssl
-    smtpmail-default-smtp-server sf/smtp-server-work
-    smtpmail-smtp-server sf/smtp-server-work
-    smtpmail-smtp-service 465
-    smtpmail-smtp-user sf/smtp-user-work
-    )
+  (use-package smtpmail
+    :defer t
+    :config
+    (setq
+      smtpmail-stream-type 'ssl
+      smtpmail-default-smtp-server sf/smtp-server-work
+      smtpmail-smtp-server sf/smtp-server-work
+      smtpmail-smtp-service 465
+      smtpmail-smtp-user sf/smtp-user-work
+      smtpmail-queue-dir (expand-file-name (concat user-emacs-directory "user/queue"))
+      ))
 #+END_SRC
 
 Be sure to use an encrypted /authinfo/ file.
@@ -2186,6 +2190,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                             )
                                    )
                          )
+        mu4e-context-policy 'pick-first
         mu4e-maildir (expand-file-name "~/.mail")
         mu4e-compose-signature-auto-include t
         mu4e-get-mail-command "mbsync -a"
@@ -2264,6 +2269,41 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
       )
     )
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package mu4e-maildirs-extension
+    :ensure t
+    :defer 1
+    :config
+    (progn
+      (mu4e-maildirs-extension)
+      (setq
+        mu4e-maildirs-extension-maildir-separator    "*"
+        mu4e-maildirs-extension-submaildir-separator "✉"
+        mu4e-maildirs-extension-action-text          nil)
+      ))
+#+END_SRC
+
+**** Keyboard shortcuts
+
+*Main View*
+
+| Keybinding | Command | Description                                 |
+|------------+---------+---------------------------------------------|
+| j          |         | Jump to a maildir                           |
+| b          |         | Search using a bookmarked query             |
+| B          |         | Edit an existing bookmark before running it |
+| s          |         | Perform a search for QUERY                  |
+| C          |         | Compose new message                         |
+| U          |         | Get new mail and update index               |
+
+*Headers View*
+
+| Keybinding | Command | Description            |
+|------------+---------+------------------------|
+| n          |         | Go to next message     |
+| p          |         | Go to previous message |
+|            |         |                        |
 
 *** notmuch
 
