@@ -2020,6 +2020,7 @@ Use /dired/ to attach files to messages.
 
 #+BEGIN_SRC emacs-lisp
 (require 'gnus-dired)
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
 
 *** Mutt
@@ -2133,7 +2134,6 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
-    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -2230,6 +2230,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
         mu4e-refile-folder "/Work/Archive"
         mu4e-refile-folder 'sf/mu4e-refile-folder
+        gnus-dired-mail-mode 'mu4e-user-agent
         )
       (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
@@ -2352,6 +2353,7 @@ Define various keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
+    :disabled t
     :ensure notmuch
     :init
     (progn
