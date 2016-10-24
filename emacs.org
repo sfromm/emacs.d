@@ -349,6 +349,26 @@ Twiddle the luminance for emails.
         nm-state-connected-global)
       ))
 #+END_SRC
+
+The following is inspired by Sacha Chua's [[http://sachachua.com/blog/2015/12/scan-bin-turn-scripts-emacs-commands/][post]] on converting shell
+commands into Emacs functions.  I'm not sure I want every shell command
+to be an Emacs command at this time, but I'll enable it for one.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/shell/ip-qry ()
+    "Invoke ip-qry for information"
+    (interactive)
+    (let ((ipqry (concat (getenv "HOME") "/bin/ip-qry.py"))
+           (buffer-name "*ip-qry*")
+           (ipaddr))
+      (if (not (region-active-p))
+        (setq ipaddr (read-string "IP address: "))
+        (setq ipaddr (buffer-substring (region-beginning) (region-end))))
+      (call-process ipqry nil buffer-name t ipaddr)
+      (display-buffer buffer-name 'display-buffer-pop-up-window)))
+
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
