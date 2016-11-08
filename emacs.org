@@ -2238,23 +2238,30 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         (imagemagick-register-types))
       (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
         (evil-set-initial-state mode 'emacs))
+
       (defun sf/mu4e-refile-folder (msg)
-        "Set the refile folder for MSG"
-        (let ((maildir (mu4e-message-field msg :maildir))
-               (subject (mu4e-message-field msg :subject))
-               folder)
-          (cond
-            ((string-match "Work" maildir)
-              (setq folder (or (catch 'found
-                                 (dolist (contact sf/mu4e-refile-alist)
-                                   (if (mu4e-message-contact-field-matches
-                                         msg '(:to :from :cc :bcc) (car contact))
-                                     (throw 'found (cdr contact)))))
-                             "/Work/Archive")))
-            ((string-match "Personal" maildir)
-              (setq folder "/Personal/Archive"))
-            )
-          folder))
+        "Set the refile folder for MSG.  Looks at several alists to evaluate how best to refile."
+        (cond
+          ((string-match "Work" (mu4e-message-field msg :maildir))
+            (cond
+              ((catch 'found
+                 (dolist (subject sf/mu4e-refile-work-by-subject)
+                   (if (string-match (car subject) (mu4e-message-field msg :subject))
+                     (throw 'found (cdr subject))))))
+              ((catch 'found
+                 (dolist (contact sf/mu4e-refile-work-by-contact)
+                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
+                     (throw 'found (cdr contact))))))
+              (t "/Work/Archive")))
+          ((string-match "Personal" (mu4e-message-field msg :maildir))
+            (cond
+              ((catch 'found
+                 (dolist (contact sf/mu4e-refile-personal-by-contact)
+                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
+                     (throw 'found (cdr contact))))))
+              (t "/Personal/Archive")))
+          ))
+
       (defun sf/mu4e-forward-as-attachment ()
         "Forward message as an attachment"
         (interactive)
