@@ -263,7 +263,7 @@ The following function sets the =GPG_AGENT_INFO= environment variable.
                 (expand-file-name "~/.gnupg/S.gpg-agent"))
         ":"
         (replace-regexp-in-string "\n$" ""
-          (shell-command-to-string "pgrep gpg-agent"))
+          (shell-command-to-string (concat "pgrep -u " (number-to-string (user-real-uid)) " gpg-agent")))
         ":1")
       )
     )
