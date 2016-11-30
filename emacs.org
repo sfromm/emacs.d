@@ -594,7 +594,7 @@ This defines which languages are enabled for evaluation by org-babel.
       (perl . t)
       (python . t)
       (ruby . t)
-      (sh . t)
+      (shell . t)
       (calc . t)
      ))
 #+END_SRC
