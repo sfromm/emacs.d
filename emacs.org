@@ -1785,7 +1785,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" mu4e "email")
+      ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
@@ -1981,6 +1981,10 @@ Use SMTP for sending email instead of a local sendmail binary.
     message-signature t
     message-signature-file "~/.signature"
     message-send-mail-function 'smtpmail-send-it
+    mm-text-html-renderer 'shr
+    shr-inhibit-images nil
+    mime-view-text/html-previewer 'shr
+    mm-inline-text-html-with-images t
     )
 #+END_SRC
 
@@ -2134,6 +2138,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
+    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
@@ -2361,7 +2366,6 @@ Define various keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package notmuch
-    :disabled t
     :ensure notmuch
     :init
     (progn
@@ -2374,19 +2378,19 @@ Define various keybindings.
         notmuch-show-part-button-default-action 'notmuch-show-view-part
         notmuch-saved-searches 
         '(
-           (:name "inbox"        :key "i" :query "tag:inbox")
-           (:name "flagged"      :key "f" :query "tag:flagged")
-           (:name "today"        :key "t" :query "date:today..now and not tag:archive and not tag:sent")
-           (:name "3 days"       :key "3" :query "date:3d..now and not tag:archive and not tag:sent")
-           (:name "7 days"       :key "7" :query "date:7d..now and not tag:archive and not tag:sent")
-           (:name "old messages" :key "o" :query "date:..7d and not tag:archive and not tag;sent")
+           (:name "inbox"           :key "i" :query "tag:inbox")
+           (:name "flagged"         :key "f" :query "tag:flagged")
+           (:name "today"           :key "t" :query "date:today..now and not ( tag:archive or tag:sent )")
+           (:name "3 days"          :key "3" :query "date:3d..now and not ( tag:archive or tag:sent )")
+           (:name "7 days"          :key "7" :query "date:7d..now and not ( tag:archive or tag:sent ) ")
+           (:name "old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) ")
            (:name "needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
-           (:name "announce"     :key "a" :query "tag:announce and not tag:archive")
-           (:name "reports"      :key "r" :query "tag:reports")
-           (:name "lists"        :key "l" :query "tag:lists and not tag:archive")
-           (:name "noc"          :key "n" :query "tag:noc and not tag:archive")
-           (:name "attachment"   :key "A" :query "tag:attachment")
-           (:name "bulk"         :key "b" :query "not tag:archive and ( tag:bulk or tag:nts or tag:nms or tag:internet2 )")
+           (:name "announce"        :key "a" :query "tag:announce and not tag:archive")
+           (:name "ops/reports"     :key "r" :query "folder:Work/ops and not tag:archive")
+           (:name "lists"           :key "l" :query "tag:lists and not tag:archive")
+           (:name "noc"             :key "n" :query "tag:noc and not tag:archive")
+           (:name "attachment"      :key "A" :query "tag:attachment")
+           (:name "bulk"            :key "b" :query "tag:bulk")
            )
         )
       (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
