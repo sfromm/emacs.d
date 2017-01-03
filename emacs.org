@@ -2398,7 +2398,7 @@ Define various keybindings.
       (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
       (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
       (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-      (dolist (mode '(notmuch-search notmuch-show notmuch-help notmuch-message-mode))
+      (dolist (mode '(notmuch-search notmuch-show notmuch-tree-mode notmuch-help notmuch-message-mode))
         (evil-set-initial-state mode 'emacs))
       )
     :config
