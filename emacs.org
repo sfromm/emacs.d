@@ -1542,7 +1542,7 @@ C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
 will increase, decrease, and reset the font size.
 
 #+BEGIN_SRC emacs-lisp
-  (defconst sf/font-base "DejaVu Sans Mono" "Preferred font")
+  (defvar sf/font-base "Source Code Pro" "Preferred font")
   (defvar sf/font-size 10 "Preferred font size")
   (defun sf/font-ok-p ()
     "Is configured font valid?"
@@ -1575,7 +1575,9 @@ will increase, decrease, and reset the font size.
     (if (sf/font-ok-p)
       (progn
         (message "Setting font to: %s" (sf/font-name))
-        (set-default-font (sf/font-name))
+        (set-frame-font (sf/font-name))
+        (set-face-attribute 'default nil :font sf/font-base :height 100)
+        (set-face-font 'default sf/font-base)
         )
       )
     )
