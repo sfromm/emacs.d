@@ -451,7 +451,7 @@ The following does lots of things:
                            (concat org-directory "/journal.org")
                            (concat org-directory "/work.org")
                            (concat org-directory "/personal.org")
-                           (concat org-directory "/todo.org")
+                           (concat org-directory "/tasks.org")
                            )
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
@@ -460,7 +460,7 @@ The following does lots of things:
                                    "* %?%U\n")
                                  ("b" "Bookmark" entry (file+headline (concat org-directory "/startpage.org") "Potpourri")
     				     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-                                 ("t" "To do" entry (file+headline (concat org-directory "/todo.org") "Tasks")
+                                 ("t" "To do" entry (file+headline (concat org-directory "/tasks.org") "Tasks")
                                    "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                  )
         org-export-allow-bind-keywords t
