@@ -737,6 +737,18 @@ other news-reading utility.
     :ensure elfeed
     :config
     (progn
+      (defun sf/elfeed-show-starred ()
+        "Show starred elfeed articles"
+        (interactive)
+        (elfeed-search-set-filter "@6-months-ago +starred"))
+
+      (defalias 'sf/elfeed-toggle-starred (elfeed-expose #'elfeed-search-toggle-all 'starred))
+
+      (defface elfeed-search-starred-title-face
+        '((t :foreground "#f77"))
+        "Marks a starred Elfeed entry.")
+      (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
+
       (setq elfeed-feeds
         '(("http://codeascraft.com/feed/" devops)
            ("http://endlessparentheses.com/atom.xml" emacs)
@@ -747,6 +759,7 @@ other news-reading utility.
            ("http://www.howardism.org/index.xml" emacs )
            ("http://kitchingroup.cheme.cmu.edu/blog/feed/atom/" emacs )
            ("http://sachachua.com/blog/feed" emacs )
+           ("http://blog.aaronbieber.com/feed.xml" emacs )
            ("https://www.masteringemacs.org/feed" emacs )
            ("http://planetsysadmin.com/atom.xml" devops)
            ("https://feeds.feedburner.com/sysadvent" devops)
@@ -757,7 +770,6 @@ other news-reading utility.
            ("http://devopsreactions.tumblr.com/rss" devops fun)
            ("http://feeds.networklore.com/Networklore" netops )
            ("http://etherealmind.com/feed/" netops)
-           ("http://www.humansofnewyork.com/rss" fun)
            ("http://xkcd.com/atom.xml" comics fun)
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
@@ -765,7 +777,11 @@ other news-reading utility.
         url-queue-timeout 30)
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
-      ))
+      )
+    :bind (:map elfeed-search-mode-map
+            ("f" . sf/elfeed-toggle-starred)
+            ("F" . sf/elfeed-show-starred))
+    )
 #+END_SRC
 
 *** Emacsclient and server
