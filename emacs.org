@@ -449,9 +449,9 @@ The following does lots of things:
         org-log-reschedule "note"
         org-agenda-files (list
                            (concat org-directory "/journal.org")
+                           (concat org-directory "/tasks.org")
                            (concat org-directory "/work.org")
                            (concat org-directory "/personal.org")
-                           (concat org-directory "/tasks.org")
                            )
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
@@ -737,12 +737,24 @@ other news-reading utility.
     :ensure elfeed
     :config
     (progn
-      (defun sf/elfeed-show-starred ()
+      (defun sf/elfeed-search-starred ()
         "Show starred elfeed articles"
         (interactive)
         (elfeed-search-set-filter "@6-months-ago +starred"))
 
-      (defalias 'sf/elfeed-toggle-starred (elfeed-expose #'elfeed-search-toggle-all 'starred))
+      (defalias 'sf/elfeed-search-toggle-starred (elfeed-expose #'elfeed-search-toggle-all 'starred))
+
+      (defun sf/elfeed-show-toggle-starred ()
+        "Toggle starred tag for elfeed article"
+        (interactive)
+        (sf/elfeed-show-toggle-tag 'starred))
+
+      (defun sf/elfeed-show-toggle-tag (tag)
+        "Toggle tag for elfeed article"
+        (interactive)
+        (if (elfeed-tagged-p tag elfeed-show-entry)
+          (elfeed-show-untag tag)
+          (elfeed-show-tag tag)))
 
       (defface elfeed-search-starred-title-face
         '((t :foreground "#f77"))
@@ -757,7 +769,7 @@ other news-reading utility.
            ("http://pragmaticemacs.com/feed/" emacs)
            ("http://mbork.pl/?action=rss" emacs )
            ("http://www.howardism.org/index.xml" emacs )
-           ("http://kitchingroup.cheme.cmu.edu/blog/feed/atom/" emacs )
+           ("http://feeds.feedburner.com/TheKitchinResearchGroup" emacs )
            ("http://sachachua.com/blog/feed" emacs )
            ("http://blog.aaronbieber.com/feed.xml" emacs )
            ("https://www.masteringemacs.org/feed" emacs )
@@ -779,9 +791,12 @@ other news-reading utility.
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
       )
-    :bind (:map elfeed-search-mode-map
-            ("f" . sf/elfeed-toggle-starred)
-            ("F" . sf/elfeed-show-starred))
+      :bind (
+              :map elfeed-search-mode-map
+              ("f" . sf/elfeed-search-toggle-starred)
+              ("F" . sf/elfeed-search-starred)
+              :map elfeed-show-mode-map
+              ("f" . sf/elfeed-show-toggle-starred) )
     )
 #+END_SRC
 
