@@ -774,6 +774,7 @@ other news-reading utility.
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
            )
+        elfeed-db-directory (concat user-emacs-directory "user/elfeed")
         url-queue-timeout 30)
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
