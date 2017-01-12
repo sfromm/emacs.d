@@ -452,6 +452,7 @@ The following does lots of things:
                            (concat org-directory "/tasks.org")
                            (concat org-directory "/work.org")
                            (concat org-directory "/personal.org")
+                           (concat org-directory "/documentation.org")
                            )
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
@@ -486,6 +487,7 @@ The following does lots of things:
                                      )
         )
       (org-load-modules-maybe t)
+      (evil-set-initial-state 'org-mode 'emacs)
       )
     :bind (("<f8>" . org-cycle-agenda-files)
             ("<f12>" . org-agenda)
@@ -1827,6 +1829,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("m" mingus "music")
       ("s" sf/terminal "shell")
       ("p" paradox-list-packages "packages")
+      ("u" browse-url "open url")
       )
     )
 #+END_SRC
