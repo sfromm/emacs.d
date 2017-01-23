@@ -366,7 +366,46 @@ to be an Emacs command at this time, but I'll enable it for one.
         (setq ipaddr (buffer-substring (region-beginning) (region-end))))
       (call-process ipqry nil buffer-name t ipaddr)
       (display-buffer buffer-name 'display-buffer-pop-up-window)))
+#+END_SRC
 
+This is a helper to export an org-mode table to CSV file.  See:
+https://emacs.stackexchange.com/questions/16640/can-i-export-a-specific-table-in-an-org-file-to-csv-from-the-command-line
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/org-tbl-export (name)
+    "Search for table named `NAME` and export"
+    (interactive "s")
+    (show-all)
+    (push-mark)
+    (goto-char (point-min))
+    (let ((case-fold-search t))
+      (if (search-forward-regexp (concat "#\\+NAME: +" name) nil t)
+        (progn
+          (next-line)
+          (org-table-export (format "%s.csv" name) "orgtbl-to-csv")
+          )
+        )
+      )
+    (pop-mark)
+    )
+
+#+END_SRC
+
+Copy the path to the current file to the clipboard.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/copy-file-name-to-clipboard ()
+    "Copy current buffer file name to the clipboard."
+    (interactive)
+    (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                      (buffer-file-name))))
+      (when filename
+        (kill-new filename)
+        (message "Copied buffer file name '%s' to clipboard." filename)
+        )
+      )
+    )
 #+END_SRC
 
 *** DONE Load encrypted secrets
@@ -2109,7 +2148,6 @@ described below.
 
 #+BEGIN_SRC emacs-lisp
   (use-package gnus-alias
-    :disabled t
     :ensure t
     :init
     (progn
@@ -2423,9 +2461,8 @@ Define various keybindings.
            (:name "7 days"          :key "7" :query "date:7d..now and not ( tag:archive or tag:sent ) ")
            (:name "old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) ")
            (:name "needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
-           (:name "announce"        :key "a" :query "tag:announce and not tag:archive")
-           (:name "ops/reports"     :key "r" :query "folder:Work/ops and not tag:archive")
-           (:name "lists"           :key "l" :query "tag:lists and not tag:archive")
+           (:name "ops/reports"         :key "r" :query "folder:Work/ops and not tag:archive")
+           (:name "announcements/lists" :key "l" :query "( tag:lists or tag:announce ) and not tag:archive")
            (:name "noc"             :key "n" :query "tag:noc and not tag:archive")
            (:name "attachment"      :key "A" :query "tag:attachment")
            (:name "bulk"            :key "b" :query "tag:bulk")
@@ -2448,7 +2485,7 @@ Define various keybindings.
             (notmuch-show-next-thread t))))
       (define-key notmuch-search-mode-map (kbd "d")
         (lambda ()
-          "mark message for trash"
+          "mark thread for trash"
           (interactive)
           (notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))
           (notmuch-search-next-thread )))
@@ -2456,9 +2493,15 @@ Define various keybindings.
         (lambda ()
           "mark message as junk"
           (interactive)
-          (notmuch-show-add-tag (list "+spam" "-inbox" "-unread"))
+          (notmuch-show-add-tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
           (unless (notmuch-show-next-open-message)
             (notmuch-show-next-thread t))))
+      (define-key notmuch-search-mode-map (kbd "J")
+        (lambda ()
+          "mark thread as junk"
+          (interactive)
+          (notmuch-search-tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
+          (notmuch-search-next-thread )))
       (define-key notmuch-show-mode-map (kbd "F")
         (lambda ()
           "star message"
