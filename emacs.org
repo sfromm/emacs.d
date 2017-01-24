@@ -2161,265 +2161,6 @@ described below.
     )
 #+END_SRC
 
-*** mu4e
-
-[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is an emacs-based email client that uses [[http://www.djcbsoftware.nl/code/mu/][mu]] as its backend.
-
-The following function facilitates sending email from multiple accounts.
-
-#+BEGIN_SRC emacs-lisp
-  (defun my-mu4e-set-account ()
-    "Set the account for composing a message."
-    (let* ((account
-             (if mu4e-compose-parent-message
-               (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                 (string-match "/\\(.*?\\)/" maildir)
-                 (match-string 1 maildir))
-               (completing-read (format "Compose with account: (%s) "
-                                  (mapconcat #'(lambda (var) (car var))
-                                    sf/mu4e-account-alist  "/"))
-                 (mapcar #'(lambda (var) (car var)) sf/mu4e-account-alist )
-                 nil t nil nil (caar sf/mu4e-account-alist ))))
-            (account-vars (cdr (assoc account sf/mu4e-account-alist ))))
-      (if account-vars
-        (mapc #'(lambda (var)
-                  (set (car var) (cadr var)))
-          account-vars)
-        (error "No email account found")
-        )
-      )
-    )
-  (defun mu4e-action-show-thread (msg)
-    "Show all messages that are in the same thread as the message
-  at point."
-    (let ((msgid (mu4e-message-field msg :message-id)))
-      (when msgid
-        (let ((mu4e-headers-show-threads t)
-               (mu4e-headers-include-related t))
-          (mu4e-headers-search
-            (format "msgid:%s" msgid)
-            )
-          )
-        )
-      )
-    )
-#+END_SRC
-
-What follows is the bulk of the configuration for mu4e.
-
-Of particular note, this now uses /contexts/ to handle changing between
-a set of settings in /mu4e/.  This is primarily to handle switching
-between different email accounts and smtp servers.  For more
-information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e
-    :disabled t
-    :config
-    (progn
-      (require 'mu4e-contrib)
-      (require 'org-mu4e)
-      (setq
-        mu4e-attachment-dir "~/Download"
-        mu4e-html2text-command 'mu4e-shr2text
-        mu4e-use-fancy-chars t
-        mu4e-maildir-shortcuts '(
-                                  ("/Work/INBOX" . ?i)
-                                  ("/Personal/INBOX" . ?I)
-                                  ("/Work/Archive" . ?a)
-                                  ("/Personal/Archive" . ?A)
-                                  ("/Work/Trash" . ?t)
-                                  ("/Personal/Trash" . ?T)
-                                  )
-        mu4e-bookmarks `(
-                          ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
-                          ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
-                          ("flag:flagged" "Flagged" ?f)
-                          ("date:today..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Today's messages" ?t)
-                          ("date:3d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Last 3 days" ?3)
-                          ("date:7d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Last 7 days" ?7)
-                          ("date:..7d       AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Old email" ?o)
-                          ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
-                          (,sf/mu4e-bookmark-vendors "Vendors" ?v)
-                          (,sf/mu4e-bookmark-providers "ISPs" ?p)
-                          (,sf/mu4e-bookmark-ren "ORGs" ?r)
-                          ("flag:attach" "Messages with attachments" ?A)
-                          ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
-                          ("mime:text/calendar" "Meeting invites" ?c)
-                          )
-        mu4e-headers-actions '(
-                                ("capture message" . mu4e-action-capture-message)
-                                ("show thread"     . mu4e-action-show-thread)
-                                )
-        mu4e-view-actions '(
-                             ("capture message" . mu4e-action-capture-message)
-                             ("tag message"     . mu4e-action-retag-message)
-                             ("view as pdf"     . mu4e-action-view-as-pdf)
-                             ("show thread"     . mu4e-action-show-thread)
-                             )
-        mu4e-contexts `(
-                         ,(make-mu4e-context
-                            :name "Work"
-                            :enter-func (lambda () (mu4e-message "Switch to Work context"))
-                            :match-func (lambda (msg)
-                                          (when msg
-                                            (mu4e-message-contact-field-matches msg
-                                              :to sf/email-work)))
-                                   :vars `(
-                                            (user-mail-address . ,sf/email-work)
-                                            (mu4e-sent-folder . "/Work/Sent")
-                                            (mu4e-drafts-folder . "/Work/Drafts")
-                                            (mu4e-trash-folder . "/Work/Trash")
-                                            (mu4e-compose-signature . (get-string-from-file (expand-file-name "~/.signature")))
-                                            (smtpmail-smtp-user . ,sf/smtp-user-work)
-                                            (smtpmail-smtp-server . ,sf/smtp-server-work)
-                                            (smtpmail-stream-type . ssl)
-                                            (smtpmail-smtp-service . 465)
-                                            )
-                                   )
-                                ,(make-mu4e-context
-                                   :name "Personal"
-                                   :enter-func (lambda () (mu4e-message "Switch to Personal context"))
-                                   :match-func (lambda (msg)
-                                                 (when msg
-                                                   (mu4e-message-contact-field-matches msg
-                                                     :to sf/email-personal)))
-                                   :vars `(
-                                            (user-mail-address . ,sf/email-personal)
-                                            (mu4e-sent-folder . "/Personal/Sent")
-                                            (mu4e-drafts-folder . "/Personal/Drafts")
-                                            (mu4e-trash-folder . "/Personal/Trash")
-                                            (mu4e-compose-signature . user-full-name)
-                                            (smtpmail-smtp-user . ,sf/smtp-user-personal)
-                                            (smtpmail-smtp-server . ,sf/smtp-server-personal)
-                                            (smtpmail-stream-type . ssl)
-                                            (smtpmail-smtp-service . 465)
-                                            )
-                                   )
-                         )
-        mu4e-context-policy 'pick-first
-        mu4e-maildir (expand-file-name "~/.mail")
-        mu4e-compose-signature-auto-include t
-        mu4e-get-mail-command "mbsync -a"
-        mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
-        mu4e-update-interval 300              ;; check for updates every 5 min
-        mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
-        mu4e-view-show-images t               ;; show images inline
-        mu4e-view-show-addresses t            ;; always show full email address
-        mu4e-completing-read 'ivy-completing-read
-        mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
-        mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
-        mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder "/Work/Archive"
-        mu4e-refile-folder 'sf/mu4e-refile-folder
-        gnus-dired-mail-mode 'mu4e-user-agent
-        )
-      (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
-        (evil-set-initial-state mode 'emacs))
-      (when (fboundp 'imagemagick-register-types)
-        (imagemagick-register-types))
-      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
-        (evil-set-initial-state mode 'emacs))
-
-      (defun sf/mu4e-refile-folder (msg)
-        "Set the refile folder for MSG.  Looks at several alists to evaluate how best to refile."
-        (cond
-          ((string-match "Work" (mu4e-message-field msg :maildir))
-            (cond
-              ((catch 'found
-                 (dolist (subject sf/mu4e-refile-work-by-subject)
-                   (if (string-match (car subject) (mu4e-message-field msg :subject))
-                     (throw 'found (cdr subject))))))
-              ((catch 'found
-                 (dolist (contact sf/mu4e-refile-work-by-contact)
-                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
-                     (throw 'found (cdr contact))))))
-              (t "/Work/Archive")))
-          ((string-match "Personal" (mu4e-message-field msg :maildir))
-            (cond
-              ((catch 'found
-                 (dolist (contact sf/mu4e-refile-personal-by-contact)
-                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
-                     (throw 'found (cdr contact))))))
-              (t "/Personal/Archive")))
-          ))
-
-      (defun sf/mu4e-forward-as-attachment ()
-        "Forward message as an attachment"
-        (interactive)
-        (let ((subject (plist-get (mu4e-message-at-point t) :subject))
-               (path (plist-get (mu4e-message-at-point t) :path)))
-          (mu4e-compose 'new)
-          (unless (file-exists-p path)
-            (mu4e-warn "Message file not found"))
-          (mml-attach-file
-            path
-            "message/rfc822"
-            (or subject "No subject")
-            "attachment")
-          (when (message-goto-subject)
-            (message-delete-line))
-          (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
-          )
-        )
-      (defun sf/mu4e-bounce-message (address)
-        "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
-        (interactive "sBounce to: ")
-        (let ((path (plist-get (mu4e-message-at-point t) :path)))
-          (unless (and path (file-readable-p path))
-            (mu4e-error "Not a readable file: %S" path))
-          (find-file path)
-          (mu4e-compose-mode)
-          (make-local-variable 'mu4e-sent-messages-behavior)
-          (setq mu4e-sent-messages-behavior 'sent)
-          (message-resend address)
-          (kill-buffer)
-          )
-        )
-      (define-key mu4e-headers-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
-      (define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-refile)
-      (define-key mu4e-headers-mode-map (kbd "B") 'sf/mu4e-bounce-message)
-      (define-key mu4e-view-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
-      (define-key mu4e-view-mode-map (kbd "y") 'mu4e-view-mark-for-refile)
-      )
-    )
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package mu4e-maildirs-extension
-    :ensure t
-    :defer 1
-    :config
-    (progn
-      (mu4e-maildirs-extension)
-      (setq
-        mu4e-maildirs-extension-maildir-separator    "*"
-        mu4e-maildirs-extension-submaildir-separator "✉"
-        mu4e-maildirs-extension-action-text          nil)
-      ))
-#+END_SRC
-
-**** Keyboard shortcuts
-
-*Main View*
-
-| Keybinding | Command | Description                                 |
-|------------+---------+---------------------------------------------|
-| j          |         | Jump to a maildir                           |
-| b          |         | Search using a bookmarked query             |
-| B          |         | Edit an existing bookmark before running it |
-| s          |         | Perform a search for QUERY                  |
-| C          |         | Compose new message                         |
-| U          |         | Get new mail and update index               |
-
-*Headers View*
-
-| Keybinding | Command | Description            |
-|------------+---------+------------------------|
-| n          |         | Go to next message     |
-| p          |         | Go to previous message |
-|            |         |                        |
-
 *** notmuch
 
 [[http://notmuchmail.org/][notmuch]] is basically a mail indexer.  It helps you to better tame your
@@ -2500,8 +2241,8 @@ Define various keybindings.
         (lambda ()
           "mark thread as junk"
           (interactive)
-          (notmuch-search-tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
-          (notmuch-search-next-thread )))
+          (notmuch-search tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
+          (notmuch-show-next-thread t)))
       (define-key notmuch-show-mode-map (kbd "F")
         (lambda ()
           "star message"
@@ -2552,6 +2293,266 @@ Last, but not least, enable linking to messages from org-mode.
 #+BEGIN_SRC emacs-lisp
   (use-package org-notmuch)
 #+END_SRC
+
+*** mu4e
+
+[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is an emacs-based email client that uses [[http://www.djcbsoftware.nl/code/mu/][mu]] as its backend.  This
+configuration is disabled since I use *notmuch* nowadays.  It is kept
+here for historical note.
+
+Of particular note, this now uses /contexts/ to handle changing between
+a set of settings in /mu4e/.  This is primarily to handle switching
+between different email accounts and smtp servers.  For more
+information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package mu4e
+    :disabled t
+    :config
+    (progn
+      (require 'mu4e-contrib)
+      (require 'org-mu4e)
+      (setq
+        mu4e-attachment-dir "~/Download"
+        mu4e-html2text-command 'mu4e-shr2text
+        mu4e-use-fancy-chars t
+        mu4e-maildir-shortcuts '(
+                                  ("/Work/INBOX" . ?i)
+                                  ("/Personal/INBOX" . ?I)
+                                  ("/Work/Archive" . ?a)
+                                  ("/Personal/Archive" . ?A)
+                                  ("/Work/Trash" . ?t)
+                                  ("/Personal/Trash" . ?T)
+                                  )
+        mu4e-bookmarks `(
+                          ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+                          ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
+                          ("flag:flagged" "Flagged" ?f)
+                          ("date:today..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Today's messages" ?t)
+                          ("date:3d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Last 3 days" ?3)
+                          ("date:7d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Last 7 days" ?7)
+                          ("date:..7d       AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/announce OR maildir:/Work/lists OR maildir:/Work/ops )" "Old email" ?o)
+                          ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
+                          (,sf/mu4e-bookmark-vendors "Vendors" ?v)
+                          (,sf/mu4e-bookmark-providers "ISPs" ?p)
+                          (,sf/mu4e-bookmark-ren "ORGs" ?r)
+                          ("flag:attach" "Messages with attachments" ?A)
+                          ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
+                          ("mime:text/calendar" "Meeting invites" ?c)
+                          )
+        mu4e-headers-actions '(
+                                ("capture message" . mu4e-action-capture-message)
+                                ("show thread"     . mu4e-action-show-thread)
+                                )
+        mu4e-view-actions '(
+                             ("capture message" . mu4e-action-capture-message)
+                             ("tag message"     . mu4e-action-retag-message)
+                             ("view as pdf"     . mu4e-action-view-as-pdf)
+                             ("show thread"     . mu4e-action-show-thread)
+                             )
+        mu4e-contexts `(
+                         ,(make-mu4e-context
+                            :name "Work"
+                            :enter-func (lambda () (mu4e-message "Switch to Work context"))
+                            :match-func (lambda (msg)
+                                          (when msg
+                                            (mu4e-message-contact-field-matches msg
+                                              :to sf/email-work)))
+                            :vars `(
+                                     (user-mail-address . ,sf/email-work)
+                                     (mu4e-sent-folder . "/Work/Sent")
+                                     (mu4e-drafts-folder . "/Work/Drafts")
+                                     (mu4e-trash-folder . "/Work/Trash")
+                                     (mu4e-compose-signature . (get-string-from-file (expand-file-name "~/.signature")))
+                                     (smtpmail-smtp-user . ,sf/smtp-user-work)
+                                     (smtpmail-smtp-server . ,sf/smtp-server-work)
+                                     (smtpmail-stream-type . ssl)
+                                     (smtpmail-smtp-service . 465)
+                                     )
+                            )
+                         ,(make-mu4e-context
+                            :name "Personal"
+                            :enter-func (lambda () (mu4e-message "Switch to Personal context"))
+                            :match-func (lambda (msg)
+                                          (when msg
+                                            (mu4e-message-contact-field-matches msg
+                                              :to sf/email-personal)))
+                            :vars `(
+                                     (user-mail-address . ,sf/email-personal)
+                                     (mu4e-sent-folder . "/Personal/Sent")
+                                     (mu4e-drafts-folder . "/Personal/Drafts")
+                                     (mu4e-trash-folder . "/Personal/Trash")
+                                     (mu4e-compose-signature . user-full-name)
+                                     (smtpmail-smtp-user . ,sf/smtp-user-personal)
+                                     (smtpmail-smtp-server . ,sf/smtp-server-personal)
+                                     (smtpmail-stream-type . ssl)
+                                     (smtpmail-smtp-service . 465)
+                                     )
+                            )
+                         )
+        mu4e-context-policy 'pick-first
+        mu4e-maildir (expand-file-name "~/.mail")
+        mu4e-compose-signature-auto-include t
+        mu4e-get-mail-command "mbsync -a"
+        mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
+        mu4e-update-interval 300              ;; check for updates every 5 min
+        mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
+        mu4e-view-show-images t               ;; show images inline
+        mu4e-view-show-addresses t            ;; always show full email address
+        mu4e-completing-read 'ivy-completing-read
+        mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
+        mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
+        mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
+        mu4e-refile-folder "/Work/Archive"
+        mu4e-refile-folder 'sf/mu4e-refile-folder
+        gnus-dired-mail-mode 'mu4e-user-agent
+        )
+      (dolist (mode '(mu4e-headers-mode mu4e-view-mode))
+        (evil-set-initial-state mode 'emacs))
+      (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
+      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
+        (evil-set-initial-state mode 'emacs))
+
+      (defun sf/mu4e-refile-folder (msg)
+        "Set the refile folder for MSG.  Looks at several alists to evaluate how best to refile."
+        (cond
+          ((string-match "Work" (mu4e-message-field msg :maildir))
+            (cond
+              ((catch 'found
+                 (dolist (subject sf/mu4e-refile-work-by-subject)
+                   (if (string-match (car subject) (mu4e-message-field msg :subject))
+                     (throw 'found (cdr subject))))))
+              ((catch 'found
+                 (dolist (contact sf/mu4e-refile-work-by-contact)
+                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
+                     (throw 'found (cdr contact))))))
+              (t "/Work/Archive")))
+          ((string-match "Personal" (mu4e-message-field msg :maildir))
+            (cond
+              ((catch 'found
+                 (dolist (contact sf/mu4e-refile-personal-by-contact)
+                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
+                     (throw 'found (cdr contact))))))
+              (t "/Personal/Archive")))
+          ))
+
+      (defun sf/mu4e-forward-as-attachment ()
+        "Forward message as an attachment"
+        (interactive)
+        (let ((subject (plist-get (mu4e-message-at-point t) :subject))
+               (path (plist-get (mu4e-message-at-point t) :path)))
+          (mu4e-compose 'new)
+          (unless (file-exists-p path)
+            (mu4e-warn "Message file not found"))
+          (mml-attach-file
+            path
+            "message/rfc822"
+            (or subject "No subject")
+            "attachment")
+          (when (message-goto-subject)
+            (message-delete-line))
+          (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
+          )
+        )
+
+      (defun sf/mu4e-bounce-message (address)
+        "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
+        (interactive "sBounce to: ")
+        (let ((path (plist-get (mu4e-message-at-point t) :path)))
+          (unless (and path (file-readable-p path))
+            (mu4e-error "Not a readable file: %S" path))
+          (find-file path)
+          (mu4e-compose-mode)
+          (make-local-variable 'mu4e-sent-messages-behavior)
+          (setq mu4e-sent-messages-behavior 'sent)
+          (message-resend address)
+          (kill-buffer)
+          )
+        )
+
+      (defun my-mu4e-set-account ()
+        "Set the account for composing a message."
+        (let* (((and )ccount
+                 (if mu4e-compose-parent-message
+                   (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                     (string-match "/\\(.*?\\)/" maildir)
+                     (match-string 1 maildir))
+                   (completing-read (format "Compose with account: (%s) "
+                                      (mapconcat #'(lambda (var) (car var))
+                                        (search-forward "" bound noerror count)
+                                        /mu4e-account-alist  "/"))
+                     (mapcar #'(lambda (var) (car var)) (setq )f/mu4e-account-alist )
+                     nil t nil nil (caar sf/mu4e-account-alist ))))
+                (account-vars (cdr (assoc account sf/mu4e-account-alist ))))
+          (if account-vars
+            (mapc #'(lambda (var)
+                      (set (car var) (cadr var)))
+              account-vars)
+            (error "No email account found")
+            )
+          )
+        )
+
+      (defun mu4e-action-show-thread (msg)
+        "Show all messages that are in the same thread as the message
+  at point."
+        (let ((msgid (mu4e-message-field msg :message-id)))
+          (when msgid
+            (let ((mu4e-headers-show-threads t)
+                   (mu4e-headers-include-related t))
+              (mu4e-headers-search
+                (format "msgid:%s" msgid)
+                )
+              )
+            )
+          )
+        )
+
+      (define-key mu4e-headers-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
+      (define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-refile)
+      (define-key mu4e-headers-mode-map (kbd "B") 'sf/mu4e-bounce-message)
+      (define-key mu4e-view-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
+      (define-key mu4e-view-mode-map (kbd "y") 'mu4e-view-mark-for-refile)
+      )
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package mu4e-maildirs-extension
+    :disabled t
+    :ensure t
+    :defer 1
+    :config
+    (progn
+      (mu4e-maildirs-extension)
+      (setq
+        mu4e-maildirs-extension-maildir-separator    "*"
+        mu4e-maildirs-extension-submaildir-separator "✉"
+        mu4e-maildirs-extension-action-text          nil)
+      ))
+#+END_SRC
+
+**** Keyboard shortcuts
+
+*Main View*
+
+| Keybinding | Command | Description                                 |
+|------------+---------+---------------------------------------------|
+| j          |         | Jump to a maildir                           |
+| b          |         | Search using a bookmarked query             |
+| B          |         | Edit an existing bookmark before running it |
+| s          |         | Perform a search for QUERY                  |
+| C          |         | Compose new message                         |
+| U          |         | Get new mail and update index               |
+
+*Headers View*
+
+| Keybinding | Command | Description            |
+|------------+---------+------------------------|
+| n          |         | Go to next message     |
+| p          |         | Go to previous message |
+|            |         |                        |
 
 *** Gnus
 
