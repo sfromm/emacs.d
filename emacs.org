@@ -2241,8 +2241,8 @@ Define various keybindings.
         (lambda ()
           "mark thread as junk"
           (interactive)
-          (notmuch-search tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
-          (notmuch-show-next-thread t)))
+          (notmuch-search-tag (list "+spam" "+trash" "-inbox" "-unread" "-archive"))
+          (notmuch-search-next-thread )))
       (define-key notmuch-show-mode-map (kbd "F")
         (lambda ()
           "star message"
