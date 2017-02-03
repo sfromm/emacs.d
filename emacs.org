@@ -498,7 +498,7 @@ The following does lots of things:
         org-capture-templates '(
                                  ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
                                    "* %?%U\n")
-                                 ("b" "Bookmark" entry (file+headline (concat org-directory "/startpage.org") "Potpourri")
+                                 ("b" "Bookmark" entry (file+headline (concat org-directory "/startpage.org") "Unfiled")
     				     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
                                  ("t" "To do" entry (file+headline (concat org-directory "/tasks.org") "Tasks")
                                    "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
