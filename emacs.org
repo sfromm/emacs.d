@@ -828,8 +828,10 @@ other news-reading utility.
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
            )
+        url-queue-timeout 30
         elfeed-db-directory (concat user-emacs-directory "user/elfeed")
-        url-queue-timeout 30)
+        elfeed-update-timer (run-at-time 180 (* 120 60) 'elfeed-update) ; create timer to update elfeed
+        )
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
       )
