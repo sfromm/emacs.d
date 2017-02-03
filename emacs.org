@@ -2204,7 +2204,7 @@ Define various keybindings.
            (:name "7 days"          :key "7" :query "date:7d..now and not ( tag:archive or tag:sent ) ")
            (:name "old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) ")
            (:name "needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
-           (:name "ops/reports"         :key "r" :query "folder:Work/ops and not tag:archive")
+           (:name "ops/reports"         :key "r" :query "not tag:archive and ( tag:ops.commits or tag:ops.ddos or tag:ops.gitlab or tag:ops.ids or tag:ops.mailman or tag:ops.nms or tag:ops.rancid or tag:ops.systems )" )
            (:name "announcements/lists" :key "l" :query "( tag:lists or tag:announce ) and not tag:archive")
            (:name "noc"             :key "n" :query "tag:noc and not tag:archive")
            (:name "attachment"      :key "A" :query "tag:attachment")
