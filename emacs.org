@@ -2286,6 +2286,14 @@ Define various keybindings.
             (message "switching to local notmuch"))
           )
         )
+      (defun sf/notmuch-attach-email (&optional path)
+        "Attach a RFC822 email and give it a sensible file name"
+        (interactive "sMessage path: ")
+        (let ((newpath (expand-file-name (concat "~/tmp/" (number-to-string (truncate (float-time))) ".eml"))))
+          (copy-file path newpath)
+          (mml-attach-file newpath "message/rfc822" "" "attachment")
+          )
+        )
       )
     )
 #+END_SRC
