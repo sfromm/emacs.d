@@ -823,6 +823,7 @@ other news-reading utility.
            ("http://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
            ("http://planetsysadmin.com/atom.xml" devops)
            ("https://feeds.feedburner.com/sysadvent" devops)
+           ("https://blog.miguelgrinberg.com/feed" devops python)
            ("http://fedoraplanet.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
            ("http://kernelplanet.org/rss20.xml" linux )
@@ -836,8 +837,8 @@ other news-reading utility.
            )
         url-queue-timeout 30
         elfeed-db-directory (concat user-emacs-directory "user/elfeed")
-        elfeed-update-timer (run-at-time 180 (* 120 60) 'sf/elfeed-update) ; create timer to update elfeed
         )
+      (setq elfeed-update-timer (run-at-time 180 (* 120 60) 'sf/elfeed-update) ) ; create timer to update elfeed
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
       )
@@ -2205,9 +2206,9 @@ Define various keybindings.
         '(
            (:name "inbox"           :key "i" :query "tag:inbox")
            (:name "flagged"         :key "f" :query "tag:flagged")
-           (:name "today"           :key "t" :query "date:today..now and not ( tag:archive or tag:sent )")
-           (:name "3 days"          :key "3" :query "date:3d..now and not ( tag:archive or tag:sent )")
-           (:name "7 days"          :key "7" :query "date:7d..now and not ( tag:archive or tag:sent ) ")
+           (:name "today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
+           (:name "3 days"          :key "3" :query "date:3d.. and not ( tag:archive or tag:sent )")
+           (:name "7 days"          :key "7" :query "date:7d.. and not ( tag:archive or tag:sent ) ")
            (:name "old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) ")
            (:name "needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
            (:name "ops/reports"         :key "r" :query "not tag:archive and ( tag:ops.commits or tag:ops.ddos or tag:ops.gitlab or tag:ops.ids or tag:ops.mailman or tag:ops.nms or tag:ops.rancid or tag:ops.systems )" )
