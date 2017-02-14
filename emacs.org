@@ -557,6 +557,14 @@ Pull in *ox-twbs* for orgmode export to twitter bootstrap.
     :ensure t)
 #+END_SRC
 
+Pull in *org-mime* to htmlize Org subtrees for email.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mime
+    :ensure t
+    )
+#+END_SRC
+
 *** Contacts
 
 Instead of tinkering with *BBDB*, which seemed to require more energy
