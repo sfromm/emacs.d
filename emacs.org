@@ -832,6 +832,7 @@ other news-reading utility.
            ("http://planetsysadmin.com/atom.xml" devops)
            ("https://feeds.feedburner.com/sysadvent" devops)
            ("https://blog.miguelgrinberg.com/feed" devops python)
+           ("http://planetpython.org/rss20.xml" devops python)
            ("http://fedoraplanet.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
            ("http://kernelplanet.org/rss20.xml" linux )
