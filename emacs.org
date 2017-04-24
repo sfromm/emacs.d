@@ -408,6 +408,15 @@ Copy the path to the current file to the clipboard.
     )
 #+END_SRC
 
+Transparency for Emacs frames.  See: https://www.emacswiki.org/emacs/TransparentEmacs
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/transparency (value)
+   "Sets the transparency of the frame window. 0=transparent/100=opaque"
+   (interactive "nTransparency Value 0 - 100 opaque:")
+   (set-frame-parameter (selected-frame) 'alpha value))
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
