@@ -2356,7 +2356,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-compose-signature-auto-include t
         mu4e-get-mail-command "mbsync -a"
         mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
-        mu4e-update-interval 300              ;; check for updates every 5 min
+        mu4e-update-interval 120              ;; check for updates every 5 min
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-view-show-images t               ;; show images inline
         mu4e-view-show-addresses t            ;; always show full email address
@@ -2441,15 +2441,15 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
       (setq mu4e-bookmarks `(
                               ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                               ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
-                              ("flag:(format "message" format-args)lagged" "Flagged" ?f)
+                              ("flag:flagged" "Flagged" ?f)
                               ("date:today..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Today's messages" ?t)
                               ("date:3d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 3 days" ?3)
                               ("date:7d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 7 days" ?7)
                               ("date:..7d       AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Old email" ?o)
                               ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
-                              (,sf/mu4e-bookmark-vendors "Vendors" ?v)
                               (,sf/mu4e-bookmark-providers "ISPs" ?p)
                               (,sf/mu4e-bookmark-ren "ORGs" ?r)
+                              (,sf/mu4e-bookmark-vendors "Vendors" ?v)
                               ("flag:attach" "Messages with attachments" ?A)
                               ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                               ("mime:text/calendar" "Meeting invites" ?c)
