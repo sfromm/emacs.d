@@ -2409,8 +2409,15 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                          (smtpmail-smtp-service . 465)
                                          )
                                 )
-                             )
-        )
+                             ))
+
+      (setq mu4e-headers-fields '(
+                                   (:human-date . 12)
+                                   (:flags . 6)
+                                   (:mailing-list . 10)
+                                   (:tags . 8)
+                                   (:from . 22)
+                                   (:subject)))
 
       (add-to-list 'mu4e-maildir-shortcuts '("Work/INBOX" . ?w) t)
       (add-to-list 'mu4e-maildir-shortcuts '("Personal/INBOX" . ?p) t)
@@ -2446,8 +2453,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                               ("flag:attach" "Messages with attachments" ?A)
                               ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                               ("mime:text/calendar" "Meeting invites" ?c)
-                              )
-        )
+                              ))
 
       (when (fboundp 'imagemagick-register-types)
         (imagemagick-register-types))
