@@ -1888,7 +1888,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" notmuch "email")
+      ("e" mu4e "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
@@ -2208,8 +2208,9 @@ $ ./configure --prefix /usr/local && make && sudo make install
 
 Define various keybindings.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package notmuch
+    :disabled t
     :ensure notmuch
     :init
     (progn
@@ -2340,9 +2341,8 @@ a set of settings in /mu4e/.  This is primarily to handle switching
 between different email accounts and smtp servers.  For more
 information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
   (use-package mu4e
-    :disabled t
     :config
     (progn
       (require 'mu4e-contrib)
