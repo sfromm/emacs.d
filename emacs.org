@@ -2360,7 +2360,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-view-show-images t               ;; show images inline
         mu4e-view-show-addresses t            ;; always show full email address
-        mu4e-completing-read 'ivy-completing-read
+        mu4e-completing-read-function 'ivy-completing-read
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
@@ -2422,22 +2422,26 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
       (add-to-list 'mu4e-view-actions
         '("capture message" . mu4e-action-capture-message) t)
       (add-to-list 'mu4e-view-actions
-        '(";TODO: ag message" . mu4e-action-retag-message) t)
+        '("browse email" . mu4e-action-view-in-browser) t)
       (add-to-list 'mu4e-view-actions
         '("view as pdf" . mu4e-action-view-as-pdf) t)
       (add-to-list 'mu4e-view-actions
-        '("show thread"     . mu4e-action-show-thread) t)
+        '("tag message" . mu4e-action-retag-message) t)
+      (add-to-list 'mu4e-view-actions
+        '("show thread" . mu4e-action-show-thread) t)
 
       (add-to-list 'mu4e-headers-actions
         '("capture message" . mu4e-action-capture-message) t)
       (add-to-list 'mu4e-headers-actions
         '("show thread" . mu4e-action-show-thread) t)
+      (add-to-list 'mu4e-headers-actions
+        '("tag message" . mu4e-action-retag-message) t)
 
       (setq mu4e-bookmarks `(
                               ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
                               ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
                               ("flag:flagged" "Flagged" ?f)
-                              ("date:today..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Today's messages" ?t)
+                              ("date:1d..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Today's messages" ?t)
                               ("date:3d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 3 days" ?3)
                               ("date:7d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 7 days" ?7)
                               ("date:..7d       AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Old email" ?o)
@@ -2445,6 +2449,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                               (,sf/mu4e-bookmark-providers "ISPs" ?p)
                               (,sf/mu4e-bookmark-ren "ORGs" ?r)
                               (,sf/mu4e-bookmark-vendors "Vendors" ?v)
+                              (,sf/mu4e-bookmark-bulk "Bulk" ?b)
                               ("flag:attach" "Messages with attachments" ?A)
                               ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
                               ("mime:text/calendar" "Meeting invites" ?c)
@@ -2468,7 +2473,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                  (dolist (contact sf/mu4e-refile-work-by-contact)
                    (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
                      (throw 'found (cdr contact))))))
-              (t "/Work/Archive")))
+              (t (concat "/Work/Archive." (format-time-string "%Y")))))
           ((string-match "Personal" (mu4e-message-field msg :maildir))
             (cond
               ((catch 'found
