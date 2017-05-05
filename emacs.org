@@ -2419,11 +2419,6 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                    (:from . 22)
                                    (:subject)))
 
-      (add-to-list 'mu4e-maildir-shortcuts '("Work/INBOX" . ?w) t)
-      (add-to-list 'mu4e-maildir-shortcuts '("Personal/INBOX" . ?p) t)
-      (add-to-list 'mu4e-maildir-shortcuts '("Work/Archive" . ?a) t)
-      (add-to-list 'mu4e-maildir-shortcuts '("Work/Trash" . ?t) t)
-
       (add-to-list 'mu4e-view-actions
         '("capture message" . mu4e-action-capture-message) t)
       (add-to-list 'mu4e-view-actions
