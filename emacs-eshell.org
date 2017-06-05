@@ -1,0 +1,105 @@
+#+TITLE: Emacs and Eshell
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-eshell.el
+
+* Eshell
+
+Some useful references:
+
+- [[https://www.gnu.org/software/emacs/manual/html_mono/eshell.html][Manual]]
+- [[https://www.reddit.com/r/emacs/comments/1zkj2d/advanced_usage_of_eshell/][r/emacs Advanced usage of Eshell]]
+- [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]]
+- [[http://www.howardism.org/Technical/Emacs/eshell-fun.html][Eschewing zshell for eshell]]
+
+First off, set default method for [[https://www.gnu.org/software/tramp/][tramp]] to ssh:
+
+#+BEGIN_SRC emacs-lisp
+(setq tramp-default-method "ssh")
+#+END_SRC
+
+Now, let's go ahead and configure eshell:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eshell
+    :commands (eshell eshell-command)
+    :preface
+    (use-package eshell-git-prompt
+      :ensure t
+      :config (eshell-git-prompt-use-theme 'powerline)
+      )
+      (use-package em-unix
+        :defer t
+        :config
+        (unintern 'eshell/su nil)
+        (unintern 'eshell/sudo nil))
+    :init
+    (progn
+      (setq
+        eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish")
+        eshell-visual-subcommands '(("git" "log" "diff" "show"))
+        )
+      (evil-set-initial-state 'eshell-mode 'emacs)
+      (add-hook 'eshell-mode-hook
+        (lambda ()
+          (eshell/alias "q" "exit")
+          (eshell/alias "l" "ls -al")
+          (eshell/alias "ll" "ls -al")
+          (eshell/alias "e" "find-file")
+          (eshell/alias "ff" "find-file")
+          (eshell/alias "ee" "find-file-other-window")
+          (eshell/alias "gd" "magit-diff-unstaged")
+          (eshell/alias "gds" "magit-diff-staged")
+          ))
+      (defun eshell/gst (&rest args)
+        (magit-status (pop args) nil)
+        (eshell/echo))
+      )
+    )
+#+END_SRC
+
+The following comes from [[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][Howard Abrams]]:
+
+#+BEGIN_SRC emacs-lisp
+  (defun eshell-here ()
+    "Opens up a new shell in the directory associated with the current buffer's file."
+    (interactive)
+    (let* ((parent (file-name-directory (buffer-file-name)))
+            (height (/ (window-total-height) 3))
+            (name (car (last (split-string parent "/" t)))))
+      (split-window-vertically)
+      (other-window 1)
+      (eshell "new")
+      (rename-buffer (concat "*eshell: " name "*"))
+      (insert (concat "ls"))
+      (eshell-send-input)))
+  (global-set-key (kbd "C-!") 'eshell-here)
+#+END_SRC
+
+* Terminals
+
+References on the subject of running terminals in Emacs:
+
+- [[http://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs]]
+
+Set default shell to =bash=, make sure the initial state is =emacs= and
+then provide helper function to launch =ansi-term=.
+
+#+BEGIN_SRC emacs-lisp
+  (setq explicit-shell-file-name "/bin/bash")
+  (evil-set-initial-state 'term-mode 'emacs)
+  (defun sf/terminal ()
+    "Switch to terminal; launch if non-existent"
+    (interactive)
+    (if (get-buffer "*ansi-term*")
+      (switch-to-buffer "*ansi-term*")
+      (ansi-term "/bin/bash"))
+    (get-buffer-process "*ansi-term*"))
+#+END_SRC
+
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'emacs-eshell)
+#+END_SRC

@@ -1,0 +1,31 @@
+#+TITLE: Emacs / Vim emulation
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-vi.el
+
+* Emacs vi emulation
+
+While I have been using Emacs again for several years, I still have
+quite a bit of Vim muscle memory.  [[https://gitorious.org/evil/pages/Home][evil]] provides an emulation mode that
+I find extremely useful.
+
+This also sets the initial state of some modes to _emacs_ where it makes
+sense.
+
+#+BEGIN_SRC emacs-lisp
+  (sf/package-install 'evil)
+  (use-package evil
+    :init
+    (evil-mode 1)
+    :config
+    (progn
+      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode special-mode ))
+        (evil-set-initial-state mode 'emacs))
+      ))
+#+END_SRC
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'emacs-vi)
+#+END_SRC

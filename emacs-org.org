@@ -1,0 +1,231 @@
+#+TITLE: Org Mode
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-org.el
+
+* Org mode
+
+[[http://orgmode.org/][Org mode]] is a big reason why I've switched back to Emacs.  I use it for
+taking notes, tracking projects, todo items, and other miscellaneous
+items.
+
+The following does lots of things:
+
+- Enable spell-check when in *org-mode*.
+- Define the default =org-directory=.
+- Make agenda views /sticky/ via =org-agenda-sticky=.  This basically
+  means that when you switch to _org-agenda_, Emacs will switch to the
+  _org-agenda_ buffer but not refresh it.  You need to manually refresh
+  it by hand with _r_ or _g_.
+- Define where to capture notes (=org-default-notes-file=) and the
+  templates to use (=org-capture-templates=).  For templates, see the
+  following:
+  - http://orgmode.org/manual/Capture-templates.html
+  - http://orgmode.org/manual/Template-elements.html
+  - http://orgmode.org/manual/Template-expansion.html
+- Note when a task is rescheduled.
+- This defines some basics like where and what files with
+  =org-agenda-files=.
+- Use the current window when invoking =org-agenda=.
+- And, just in case, restore windows after quitting =org-agenda=.
+- Define =org-todo-keywords=.  This is discussed in the [[http://orgmode.org/manual/TODO-Items.html][manual]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure org-plus-contrib
+    :init
+    (progn
+      (add-hook 'org-mode-hook 'turn-on-auto-fill)
+      (add-hook 'org-mode-hook '(lambda() (set-fill-column 72)))
+      (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
+      (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
+      (setq
+        org-directory "~/depot/doc/org"
+        org-agenda-sticky t
+        org-default-notes-file (concat org-directory "/journal.org")
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-log-done t
+        org-completion-use-ido t
+        org-log-reschedule "note"
+        org-agenda-files (list
+                           (concat org-directory "/journal.org")
+                           (concat org-directory "/tasks.org")
+                           (concat org-directory "/work.org")
+                           (concat org-directory "/personal.org")
+                           (concat org-directory "/documentation.org")
+                           )
+        org-agenda-restore-windows-after-quit t
+        org-agenda-window-setup 'current-window
+        org-capture-templates '(
+                                 ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+                                   "* %?%U\n")
+                                 ("b" "Bookmark" entry (file+headline (concat org-directory "/startpage.org") "Unfiled")
+    				     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                 ("t" "To do" entry (file+headline (concat org-directory "/tasks.org") "Tasks")
+                                   "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+                                 )
+        org-export-allow-bind-keywords t
+        org-file-apps (quote ((auto-mode . emacs)
+                               ("\\.doc\\'" . "ooffice %s")
+                               ("\\.docx\\'" . "ooffice %s")
+                               ("\\.xlsx\\'" . "ooffice %s")
+                               ("\\.pptx\\'" . "ooffice %s")
+                               ("\\.pdf\\'" . default)))
+        org-modules '(org-w3m org-bbdb
+                       org-bibtex org-docview
+                       org-gnus org-info
+                       org-irc org-mhe org-rmail org-habit)
+        org-src-window-setup 'current-window
+        org-todo-keywords '(
+                             (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
+                             (sequence "|" "CANCELLED(c)")
+                             )
+        org-publish-project-alist '(
+                                     ("public"
+                                       :base-directory "~/depot/doc/org"
+                                       :publishing-directory "~/Documents")
+                                     )
+        )
+      (org-load-modules-maybe t)
+      (evil-set-initial-state 'org-mode 'emacs)
+      )
+    :bind (("<f8>" . org-cycle-agenda-files)
+            ("<f12>" . org-agenda)
+            ("C-c l" . org-store-link)
+            ("C-c c" . org-capture)
+            ("C-c a" . org-agenda)
+            ("C-c b" . org-switchb))
+    )
+#+END_SRC
+
+Pull in *org-git-link* to reference git links.  More
+information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-git-link)
+#+END_SRC
+
+Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js/][reveal.js]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-reveal)
+#+END_SRC
+
+Pull in *ox-twbs* for orgmode export to twitter bootstrap.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-twbs
+    :ensure t)
+#+END_SRC
+
+Pull in *org-mime* to htmlize Org subtrees for email.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mime
+    :ensure t
+    )
+#+END_SRC
+
+*** Contacts
+
+Instead of tinkering with *BBDB*, which seemed to require more energy
+than I want to commit, *[[https://julien.danjou.info/projects/emacs-packages#org-contacts][org-contacts]]* looks like a good alternative.
+It is /org-ish/ which is also a plus.  If _org-contacts-files_ is not
+set, *org-contacts* will search all your Org files.  Since I'm storing
+contacts elsewhere, this needs to be set.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-contacts
+    :config
+    (progn
+      (setq org-contacts-files (list  "~/depot/doc/org/contacts.org"))
+      (push '("c" "Contacts" entry (file (concat org-directory "/contacts.org"))
+               "* %(org-contacts-template-name)
+:PROPERTIES:
+:EMAIL: %(org-contacts-template-email)
+:PHONE:
+:ADDRESS:
+:BIRTHDAY:
+:END:") org-capture-templates)
+      )
+    )
+#+END_SRC
+
+*** Pomodoro
+
+The [[http://pomodorotechnique.com/][pomodoro technique]] is basically about time management.  You use a
+timer to break down work into intervals, traditionally 25 minutes in
+length, separated by short breaks.  The following installs
+*org-pomodoro* and sets up hooks to do notifications.  It also overrides
+the normal org-mode /clock-in/ and /clock-out/ functions.  These are
+normally *org-clock-in* and *org-clock-out*.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro
+    :ensure t
+    :init
+    (progn
+      (setq
+        org-pomodoro-audio-player "/usr/bin/mpv"
+        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/drip.ogg"
+        )
+      (defun sf/notify-pomodoro (title message)
+        (notifications-notify
+          :title title
+          :body message
+          :urgency 'low))
+      (add-hook 'org-pomodoro-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Pomodoro completed" "Time for a break")))
+      (add-hook 'org-pomodoro-break-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Break completed" "Ready for another?")))
+      (add-hook 'org-pomodoro-long-break-finished-hook
+        (lambda ()
+          (sf/notify-pomodoro "Long break completed" "Ready for another?")))
+      )
+    :bind (("C-c C-x C-i" . org-pomodoro)
+            ("C-c C-x C-o" . org-pomodoro))
+    )
+#+END_SRC
+
+*** Babel mode
+
+This defines which languages are enabled for evaluation by org-babel.
+[[http://ditaa.sourceforge.net/][ditaa]] allows creation of diagrams from Emacs.  May require using emacs
+=artist-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((ditaa . t)
+      (emacs-lisp . t)
+      (org . t)
+      (perl . t)
+      (python . t)
+      (ruby . t)
+      (shell . t)
+      (calc . t)
+     ))
+#+END_SRC
+
+You can type =C-c '= to edit the current code block.  This will bring up
+a major-mode edit buffer containing the body of the code block.  You can
+then use =C-c '= again to exit.
+
+*** Exporting
+
+One of the (many) nice features of org-mode is that you can export to
+many different formats.  What follows is miscellaneous resources online
+that discuss exporting.
+
+- [[http://orgmode.org/manual/Exporting.html#Exporting][Org Mode Manual, Exporting]]
+- [[http://orgmode.org/worg/org-contrib/babel/examples/article-class.html][Org-article LaTeX class]]
+- [[http://home.fnal.gov/~neilsen/notebook/orgExamples/org-examples.html][Emacs org-mode examples and cookbook]]
+- [[http://emacs-fu.blogspot.com/2011/04/nice-looking-pdfs-with-org-mode-and.html][Emacs Fu: Nice looking PDFs with org-mode and xetex]]
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'emacs-org)
+#+END_SRC

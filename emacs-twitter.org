@@ -1,0 +1,58 @@
+#+TITLE: Twitter Configuration
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-twitter.el
+
+* Twitter
+
+[[https://github.com/hayamiz/twittering-mode][Twittering]] is a major mode that allows access to Twitter.  You can start
+*twittering* with =M-x twit=.  
+
+Keybindings of interest:
+
+| Key              | Command                             |
+|------------------+-------------------------------------|
+| g                | Update current timeline             |
+| V                | Open or switch timeline             |
+| u                | Post tweet                          |
+| RET              | Post reply to pointed tweet         |
+| C-c RET          | Post organic retweet                |
+| C-u C-c RET      | Post official retweet               |
+| d                | Send direct message                 |
+| C-c C-w          | Delete the pointed tweet            |
+| 0                | Go to beginning of line             |
+| ^                | Go to beginning of text on the line |
+| $                | Go to end of the line               |
+| G                | Go to bottom tweet                  |
+| H                | Go to top tweet                     |
+| h                | Move cursor left                    |
+| j                | Go to next tweet                    |
+| k                | Go to previous tweet                |
+| l                | Move cursor right                   |
+| n                | Go to next tweet by the author      |
+| p                | Go to previous tweet by author      |
+| TAB              | Go to next thing (link, user, URL)  |
+| M-TAB            | Go to previous thing                |
+| C-v / SPC        | Scroll buffer upward                |
+| M-v / <backspace | Scroll buffer downward              |
+|                  |                                     |
+
+#+BEGIN_SRC emacs-lisp
+  (use-package twittering-mode
+    :ensure twittering-mode
+    :config
+    (progn
+      (setq
+        twittering-icon-mode 1
+        twittering-use-master-password t
+        twittering-private-info-file (concat user-emacs-directory "user/twittering-mode.gpg")
+        )
+      )
+    )
+#+END_SRC
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'emacs-twitter)
+#+END_SRC
