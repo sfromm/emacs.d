@@ -4,7 +4,7 @@
 * Emacs configuration
 
 This effectively serves as my [[http://www.gnu.org/software/emacs/][Emacs]] configuration.  This would not be
-possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are three main components:
+possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are a few main components:
 
 - /init.el/: Just enough emacs-lisp to load, via [[http://orgmode.org/worg/org-contrib/babel/][org-babel]], /private.org/
   and [[file:emacs.org][emacs.org]].
@@ -13,7 +13,10 @@ possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate
 - /emacs.org/: This is the bulk of the configuration.  It endeavors to
   follow the model of [[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by
   /allowing the act of programming to take place inside of Org-mode
-  documents/. 
+  documents/.
+- /emacs-<module>.org/: A module that configures a specific mode,
+  related modes, or set of features that are related logically.  The
+  goal is to move away from a consolidated /emacs.org/ to more modules.
 
 ** Usage
 
@@ -21,7 +24,11 @@ In order to use, clone this repository:
 
 #+BEGIN_EXAMPLE
 $ git clone https://github.com/sfromm/dot-emacs.d ~/.emacs.d
+$ make tangle
 #+END_EXAMPLE
+
+The =make tangle= command will tangle out the configuration from all the
+/org mode/ files.
 
 When you first start [[http://www.gnu.org/software/emacs/][Emacs]] with this configuration, it may take awhile
 for it to download and install all the packages it uses.  This only
