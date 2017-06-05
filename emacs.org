@@ -451,14 +451,6 @@ http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
 **** CANCELLED Consider loading secrets file on demand
      CLOSED: [2015-03-12 Thu 19:02]
 
-** Org Mode
-
-Pull in the awesome [[http://orgmode.org/][org mode]].  See [[file:emacs-org.org][emacs-org.org]] ...
-
-#+BEGIN_SRC emacs-lisp
-(require 'emacs-org)
-#+END_SRC
-
 ** Packages
 
 This section defines all the packages I use.  It installs (if needed)
@@ -654,6 +646,14 @@ says it is meant to resemble /ncmpc/.
 (use-package mingus
   :ensure t)
 #+END_SRC
+
+*** Org Mode
+
+ Pull in the awesome [[http://orgmode.org/][org mode]].  See [[file:emacs-org.org][emacs-org.org]] ...
+
+ #+BEGIN_SRC emacs-lisp
+ (require 'emacs-org)
+ #+END_SRC
 
 *** Paradox
 [[https://github.com/Malabarba/paradox][Paradox]] is a nice front-end to Emacs' package menu.  Among some of the
