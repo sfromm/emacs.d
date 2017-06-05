@@ -1336,7 +1336,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("j" sf/jabber-start-or-switch "jabber")
       ("g" magit-status "magit")
       ("m" mingus "music")
-      ("s" sf/terminal "shell")
+      ("s" eshell "shell")
       ("p" paradox-list-packages "packages")
       ("u" browse-url "open url")
       )
