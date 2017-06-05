@@ -24,6 +24,7 @@
 ;;
 ;; Invocation:  emacs --batch --load ~/.emacs.d/build.el
 
+(require 'em-glob)
 (require 'org)       ;; org-mode
 (require 'ob)        ;; org-mode export
 (require 'ob-tangle) ;; and finally org-mode tangle
@@ -35,20 +36,22 @@
   (org-babel-tangle)
   (kill-buffer))
 
-(defun sf/tangle-dot-emacs ()
-  "Tangle Emacs configuration from org-babel"
-  (sf/tangle-file "~/.emacs.d/emacs.org")
-  (sf/tangle-file "~/depot/etc/emacs.d/private.org"))
+(defun sf/tangle-files (path)
+  "Tangle files in path (directory)"
+  (interactive)
+  (mapc 'sf/tangle-file (sf/get-files path)))
 
-(defun sf/tangle-dot-files ()
-  "Tangle dot files from org-babel"
-  (sf/tangle-file "~/depot/doc/org/documentation.org"))
+(defun sf/get-files (path)
+  "Return list of files in directory that match glob pattern"
+  (directory-files (file-name-directory path)
+    nil
+    (eshell-glob-regexp (file-name-nondirectory path))))
 
 (defun sf/build-configs ()
   "Tangle all configs"
   (interactive)
-  (sf/tangle-dot-emacs)
-  (sf/tangle-dot-files))
+  (sf/tangle-file "~/depot/doc/org/documentation.org")
+  (sf/tangle-files "~/.emacs.d/*.org"))
 
 (sf/build-configs)
 
