@@ -120,7 +120,29 @@ Secret Question 1: What is your childhood best friend's most bizarre superhero f
 Phone Support PIN #: 84719
 #+END_EXAMPLE
 
-First off, let's pull in support to Emacs:
+First, install =pass= if not already present.
+
+#+BEGIN_SRC sh :dir /sudo:: :results silent :tangle no
+  if [ ! -x /usr/bin/pass ]; then
+      if [ -e /etc/fedora-release ]; then
+          dnf -y install pass
+      elif [ -e /etc/debian-release ]; then
+          apt-get -y install pass
+      fi
+  fi
+#+END_SRC
+
+Next, create a GPG key for the password store and then initialize.
+
+#+BEGIN_SRC sh :results silent :tangle no
+gpg2 --gen-key 
+pass init "Password Store"
+pass git init
+#+END_SRC
+
+** Password Store and Emacs
+
+The following will pull in support for Emacs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package password-store
@@ -149,25 +171,22 @@ First off, let's pull in support to Emacs:
   (provide 'emacs-pass)
 #+END_SRC
 
-First, install =pass= if not already present.
+** Password Store and Firefox
 
-#+BEGIN_SRC sh :dir /sudo:: :results silent
-  if [ ! -x /usr/bin/pass ]; then
-      if [ -e /etc/fedora-release ]; then
-          dnf -y install pass
-      elif [ -e /etc/debian-release ]; then
-          apt-get -y install pass
-      fi
-  fi
+There are a couple extensions that support [[https://www.mozilla.org/en-US/firefox/][Firefox]].  One of those is
+[[https://github.com/passff/passff][passff]].  The installation [[https://github.com/passff/passff/blob/master/docs/INSTALLATION.md][documentation]] describes how to install the
+host application, something the extension depends on.  There's the
+option to pipe something from =curl= into =bash= (yuck) or clone the
+repository and install by hand.
+
+#+BEGIN_SRC sh :results silent :tangle no :dir ~/src
+git clone https://github.com/passff/passff.git
+cd passff/src/host
+./install_host_app.sh --local firefox
 #+END_SRC
 
-Next, create a GPG key for the password store and then initialize.
-
-#+BEGIN_SRC sh :results silent :tangle no
-gpg2 --gen-key 
-pass init "Password Store"
-pass git init
-#+END_SRC
+This should install the host application to:
+/~/.mozilla/native-messaging-hosts/passff.json/ 
 
 * License
 
