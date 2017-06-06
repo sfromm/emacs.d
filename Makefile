@@ -1,11 +1,14 @@
 EMACS = emacs --batch 
 
-all: tangle update
+all: tangle packages
 
-tangle:
+tangle: update
 	$(EMACS) --load build.el
 
-update: tangle
+update:
+	git pull --rebase
+
+packages:
 	$(EMACS) --load emacs.el -f "sf/update-packages"
 
-.PHONY: all
+.PHONY: all tangle update packages
