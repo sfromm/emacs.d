@@ -34,7 +34,7 @@ Now, let's go ahead and configure eshell:
     :init
     (progn
       (setq
-        eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish")
+        eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish" "docker")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
         )
       (evil-set-initial-state 'eshell-mode 'emacs)
@@ -94,7 +94,6 @@ then provide helper function to launch =ansi-term=.
       (ansi-term "/bin/bash"))
     (get-buffer-process "*ansi-term*"))
 #+END_SRC
-
 
 * Postamble
 
