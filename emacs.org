@@ -831,18 +831,6 @@ tree.
     )
 #+END_SRC
 
-**** Finding files
-
-[[https://github.com/technomancy/find-file-in-project][find-file-in-project]] helps find files in a project ... quickly.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package find-file-in-project
-    :disabled t
-    :ensure t
-    :bind ("C-c f" . find-file-in-project)
-    )
-#+END_SRC
-
 *** Snippets
 
 [[https://github.com/capitaomorte/yasnippet][Yasnippet]] is a template system for Emacs.  You type an abbreviation and
