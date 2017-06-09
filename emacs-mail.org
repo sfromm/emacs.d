@@ -235,7 +235,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
           (mml-attach-file
             path
             "message/rfc822"
-            (or subject "No subject")
+            (concat (or subject "No subject") ".eml")
             "attachment")
           (when (message-goto-subject)
             (message-delete-line))
