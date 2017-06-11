@@ -26,32 +26,32 @@ Now, let's go ahead and configure eshell:
       :ensure t
       :config (eshell-git-prompt-use-theme 'powerline)
       )
-      (use-package em-unix
-        :defer t
-        :config
-        (unintern 'eshell/su nil)
-        (unintern 'eshell/sudo nil))
+    (use-package em-unix
+      :defer t
+      :config
+      (unintern 'eshell/su nil)
+      (unintern 'eshell/sudo nil))
     :init
     (progn
       (setq
         eshell-visual-commands '("less" "tmux" "htop" "top" "bash" "zsh" "fish" "docker")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
         )
-      (evil-set-initial-state 'eshell-mode 'emacs)
+      (evil-set-initial-state 'eshell-mode 'emacs))
+    :config
+    (progn
       (add-hook 'eshell-mode-hook
         (lambda ()
           (eshell/alias "q" "exit")
           (eshell/alias "l" "ls -al")
           (eshell/alias "ll" "ls -al")
-          (eshell/alias "e" "find-file")
-          (eshell/alias "ff" "find-file")
-          (eshell/alias "ee" "find-file-other-window")
+          (eshell/alias "e" "find-file \$1")
+          (eshell/alias "ff" "find-file \$1")
+          (eshell/alias "ee" "find-file-other-window \$1")
           (eshell/alias "gd" "magit-diff-unstaged")
           (eshell/alias "gds" "magit-diff-staged")
+          (eshell/alias "gst" "magit-status")
           ))
-      (defun eshell/gst (&rest args)
-        (magit-status (pop args) nil)
-        (eshell/echo))
       )
     )
 #+END_SRC
