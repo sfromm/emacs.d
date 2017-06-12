@@ -27,6 +27,8 @@ it to connect to Google Talk along with your standard Jabber servers.
         jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
         jabber-alert-muc-hooks (quote (jabber-muc-notifications-personal jabber-muc-echo jabber-muc-scroll))
         )
+      ; jabber uses the fsm package
+      (setq fsm-debug nil)       ; defaults to "*fsm-debug*"
       (dolist (mode '(jabber-chat-mode jabber-roster-mode))
         (evil-set-initial-state mode 'emacs))
       (dolist (hook '(jabber-chat-mode-hook jabber-roster-mode-hook))
