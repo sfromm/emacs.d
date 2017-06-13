@@ -96,7 +96,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-compose-signature-auto-include t
         mu4e-get-mail-command "mbsync -a"
         mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
-        mu4e-update-interval 120              ;; check for updates every 5 min
+        mu4e-update-interval 120              ;; check for updates every 2 min
         mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
         mu4e-view-show-images t               ;; show images inline
         mu4e-view-show-addresses t            ;; always show full email address
@@ -104,11 +104,15 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder "/Work/Archive"
         mu4e-refile-folder 'sf/mu4e-refile-folder
         gnus-dired-mail-mode 'mu4e-user-agent
         )
+#+END_SRC
 
+[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] uses [[https://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html][contexts]] to switch between different sets of settings.  This
+is especially useful for using personal and work email accounts.
+
+#+BEGIN_SRC emacs-lisp
       (setq mu4e-contexts `(
                              ,(make-mu4e-context
                                 :name "Work"
@@ -150,7 +154,32 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
                                          )
                                 )
                              ))
+#+END_SRC
 
+The following is to change the behavior of [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] so that when email is
+"trashed", it is just moved to the trash folder.  I don't want it to
+also add the /trash/ maildir flag.
+
+/mu4e-marks/ is defined in [[https://github.com/djcb/mu/blob/master/mu4e/mu4e-mark.el][mu4e-mark.el]].
+
+#+BEGIN_SRC emacs-lisp
+  (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
+  (push '(trash
+           :char ("d" . "▼")
+           :prompt "dtrash"
+           :dyn-target (lambda
+                         (target msg)
+                         (mu4e-get-trash-folder msg))
+           :action (lambda
+                     (docid msg target)
+                     (mu4e~proc-move docid
+                       (mu4e~mark-check-target target) "-N")))
+    mu4e-marks)
+#+END_SRC
+
+And then more configuration ... to be described at a later date.
+
+#+BEGIN_SRC emacs-lisp
       (setq mu4e-headers-fields '(
                                    (:human-date . 12)
                                    (:flags . 6)
@@ -303,6 +332,12 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
       )
     )
 #+END_SRC
+
+** Maildirs Extension
+
+[[https://github.com/agpchil/mu4e-maildirs-extension][mu4e-maildirs-extension]] is an extension that adds a maildir summary in
+the =mu4e-main-view=.  While I don't presently use this, I've left this
+for reference.
 
 #+BEGIN_SRC emacs-lisp :tangle no
   (use-package mu4e-maildirs-extension
