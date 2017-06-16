@@ -107,6 +107,12 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-refile-folder 'sf/mu4e-refile-folder
         gnus-dired-mail-mode 'mu4e-user-agent
         )
+      ;; help mu4e to display images
+      (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
+      ;; default to emacs mode - not vim emulation
+      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
+        (evil-set-initial-state mode 'emacs))
 #+END_SRC
 
 [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] uses [[https://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html][contexts]] to switch between different sets of settings.  This
@@ -225,11 +231,15 @@ And then more configuration ... to be described at a later date.
                               ("mime:text/calendar" "Meeting invites" ?c)
                               ))
 
-      (when (fboundp 'imagemagick-register-types)
-        (imagemagick-register-types))
-      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
-        (evil-set-initial-state mode 'emacs))
 
+#+END_SRC
+
+The following are miscellaneous helper functions.
+
+The first function =sf/mu4e-refile-folder= is based on the example from
+the [[http://www.djcbsoftware.nl/code/mu/mu4e/index.html][mu4e manual]] [[http://www.djcbsoftware.nl/code/mu/mu4e/Tips-and-Tricks.html][Tips and Tricks]] section on [[http://www.djcbsoftware.nl/code/mu/mu4e/Refiling-messages.html][refiling messages]].
+
+#+BEGIN_SRC emacs-lisp
       (defun sf/mu4e-refile-folder (msg)
         "Set the refile folder for MSG.  Looks at several alists to evaluate how best to refile."
         (cond
@@ -252,26 +262,50 @@ And then more configuration ... to be described at a later date.
                      (throw 'found (cdr contact))))))
               (t "/Personal/Archive")))
           ))
+#+END_SRC
 
-      (defun sf/mu4e-forward-as-attachment ()
-        "Forward message as an attachment"
-        (interactive)
-        (let ((subject (plist-get (mu4e-message-at-point t) :subject))
-               (path (plist-get (mu4e-message-at-point t) :path)))
-          (mu4e-compose 'new)
-          (unless (file-exists-p path)
-            (mu4e-warn "Message file not found"))
-          (mml-attach-file
-            path
-            "message/rfc822"
-            (concat (or subject "No subject") ".eml")
-            "attachment")
-          (when (message-goto-subject)
-            (message-delete-line))
-          (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
-          )
-        )
+I prefer to forward emails as attachments instead of inline; mu4e
+defaults to inline.  To forward as an attachment, mu4e provides a
+mechanism where you capture the message with =mu4e-capture-message=,
+start a new message, and then use =mu4e-compose-attach-captured-message=.
 
+In lieu of that, this will get the message at point and then attach
+the maildir message as message/rfc822.  This adds the /References/
+header, which appears to set the /Passed/ flag.
+
+For issues with /invalid RFC822/ characters, see:
+
+- https://github.com/djcb/mu/issues/1019
+- https://groups.google.com/forum/#!topic/mu-discuss/FJo0GmRl4Uo
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-forward-as-attachment ()
+    "Forward message as an attachment"
+    (interactive)
+    (let ((subject (mu4e-message-field (mu4e-message-at-point t) :subject))
+           (msgid (mu4e-message-field (mu4e-message-at-point t) :message-id))
+           (docid (mu4e-message-field (mu4e-message-at-point t) :docid))
+           (path (mu4e-message-field (mu4e-message-at-point t) :path)))
+      (mu4e-compose 'new)
+      (unless (file-exists-p path)
+        (mu4e-warn "Message file not found"))
+      (mml-attach-file
+        path
+        "message/rfc822"
+        (concat (or subject "No subject") ".eml")
+        "attachment")
+      (when (message-goto-subject)
+        (message-delete-line))
+      (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
+      (message-add-header (concat "References: <" msgid ">"))
+      (message-goto-to)
+      )
+    )
+#+END_SRC
+
+This bounces a message - ie. add a Resend-To header.
+
+#+BEGIN_SRC emacs-lisp
       (defun sf/mu4e-bounce-message (address)
         "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
         (interactive "sBounce to: ")
@@ -286,30 +320,11 @@ And then more configuration ... to be described at a later date.
           (kill-buffer)
           )
         )
+#+END_SRC
 
-      (defun my-mu4e-set-account ()
-        "Set the account for composing a message."
-        (let* (((and )ccount
-                 (if mu4e-compose-parent-message
-                   (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                     (string-match "/\\(.*?\\)/" maildir)
-                     (match-string 1 maildir))
-                   (completing-read (format "Compose with account: (%s) "
-                                      (mapconcat #'(lambda (var) (car var))
-                                        (search-forward "" bound noerror count)
-                                        /mu4e-account-alist  "/"))
-                     (mapcar #'(lambda (var) (car var)) (setq )f/mu4e-account-alist )
-                     nil t nil nil (caar sf/mu4e-account-alist ))))
-                (account-vars (cdr (assoc account sf/mu4e-account-alist ))))
-          (if account-vars
-            (mapc #'(lambda (var)
-                      (set (car var) (cadr var)))
-              account-vars)
-            (error "No email account found")
-            )
-          )
-        )
+This pulls in all related message to a thread.
 
+#+BEGIN_SRC emacs-lisp
       (defun mu4e-action-show-thread (msg)
         "Show all messages that are in the same thread as the message at point."
         (let ((msgid (mu4e-message-field msg :message-id)))
@@ -323,7 +338,11 @@ And then more configuration ... to be described at a later date.
             )
           )
         )
+#+END_SRC
 
+Finally, bind some keys to use the above functions.
+
+#+BEGIN_SRC emacs-lisp
       (define-key mu4e-headers-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
       (define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-refile)
       (define-key mu4e-headers-mode-map (kbd "B") 'sf/mu4e-bounce-message)
