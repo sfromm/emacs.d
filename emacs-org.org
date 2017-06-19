@@ -38,7 +38,7 @@ The following does lots of things:
       (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
       (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
       (setq
-        org-directory "~/depot/doc/org"
+        org-directory "~/forge"
         org-agenda-sticky t
         org-default-notes-file (concat org-directory "/journal.org")
         org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
@@ -80,7 +80,7 @@ The following does lots of things:
                              )
         org-publish-project-alist '(
                                      ("public"
-                                       :base-directory "~/depot/doc/org"
+                                       :base-directory "~/forge"
                                        :publishing-directory "~/Documents")
                                      )
         )
