@@ -77,14 +77,6 @@ Remember to keep this simple.  :-)
 (org-babel-load-file (concat user-emacs-directory "emacs.org"))
 #+END_SRC
 
-** Personal information
-
-Set my name.  =user-mail-address= is defined in /private.org/.
-
-#+BEGIN_SRC emacs-lisp
-(setq user-full-name "Stephen Fromm")
-#+END_SRC
-
 ** Emacs initialization
 
 The first time this file is loaded, it will take awhile to install the
@@ -450,6 +442,21 @@ http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html
 
 **** CANCELLED Consider loading secrets file on demand
      CLOSED: [2015-03-12 Thu 19:02]
+
+** Personal information
+
+Set my name.  =user-mail-address= is defined in /private.org/.
+
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Stephen Fromm")
+#+END_SRC
+
+Pull in information from private module.
+
+#+BEGIN_SRC emacs-lisp
+(if (file-exists-p (concat user-emacs-directory "site-lisp/sf-private.el"))
+  (require 'sf-private))
+#+END_SRC
 
 ** Packages
 
