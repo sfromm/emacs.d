@@ -36,21 +36,21 @@
   (org-babel-tangle)
   (kill-buffer))
 
-(defun sf/tangle-files (path)
+(defun sf/tangle-files (path &optional full)
   "Tangle files in path (directory)"
   (interactive)
-  (mapc 'sf/tangle-file (sf/get-files path)))
+  (mapc 'sf/tangle-file (sf/get-files path full)))
 
-(defun sf/get-files (path)
+(defun sf/get-files (path &optional full)
   "Return list of files in directory that match glob pattern"
   (directory-files (file-name-directory path)
-    nil
+    full
     (eshell-glob-regexp (file-name-nondirectory path))))
 
 (defun sf/build-configs ()
   "Tangle all configs"
   (interactive)
-  (sf/tangle-file "~/forge/*.org")
+  (sf/tangle-files "~/forge/*.org" t)
   (sf/tangle-files "~/.emacs.d/*.org"))
 
 (sf/build-configs)
