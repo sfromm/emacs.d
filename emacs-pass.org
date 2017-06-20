@@ -79,7 +79,7 @@ machine HOST login NAME password VALUE port NUMBER
 It helps to have a utility to extract account information from
 /authinfo/ that other programs can call.
 
-#+BEGIN_SRC python ~/bin/authinfo-query.py :shebang #!/usr/bin/python
+#+BEGIN_SRC python :tangle ~/bin/authinfo-query.py :shebang #!/usr/bin/python
   # Written by Stephen Fromm <sfromm gmail com>
   # (C) 2013 University of Oregon
   #
