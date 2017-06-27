@@ -22,10 +22,6 @@ Now, let's go ahead and configure eshell:
   (use-package eshell
     :commands (eshell eshell-command)
     :preface
-    (use-package eshell-git-prompt
-      :ensure t
-      :config (eshell-git-prompt-use-theme 'powerline)
-      )
     (use-package em-unix
       :defer t
       :config
@@ -40,6 +36,16 @@ Now, let's go ahead and configure eshell:
       (evil-set-initial-state 'eshell-mode 'emacs))
     :config
     (progn
+      (setq
+        eshell-prompt-function (lambda ()
+                                 (concat
+                                   "┌─["
+                                   (user-login-name) "@" (system-name)
+                                   " 🗁 " (abbreviate-file-name (eshell/pwd))
+                                   " 🕗 " (format-time-string "%b %d %H:%M" (current-time))
+                                   "]\n"
+                                   "└─>" (if (= (user-uid) 0) " # " " $ ")))
+        eshell-prompt-regexp "^[^#$]* [#$]")
       (add-hook 'eshell-mode-hook
         (lambda ()
           (eshell/alias "q" "exit")
