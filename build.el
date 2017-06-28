@@ -50,8 +50,8 @@
 (defun sf/build-configs ()
   "Tangle all configs"
   (interactive)
-  (sf/tangle-files "~/forge/*.org" t)
-  (sf/tangle-files "~/.emacs.d/*.org"))
+  (sf/tangle-files "~/.emacs.d/*.org")
+  (sf/tangle-files "~/forge/*.org" t))
 
 (sf/build-configs)
 
