@@ -44,8 +44,7 @@ Now, let's go ahead and configure eshell:
                                    " 🗁 " (abbreviate-file-name (eshell/pwd))
                                    " 🕗 " (format-time-string "%b %d %H:%M" (current-time))
                                    "]\n"
-                                   "└─>" (if (= (user-uid) 0) " # " " $ ")))
-        eshell-prompt-regexp "^[^#$]* [#$]")
+                                   "└─>" (if (= (user-uid) 0) " # " " $ "))) )
       (add-hook 'eshell-mode-hook
         (lambda ()
           (eshell/alias "q" "exit")
