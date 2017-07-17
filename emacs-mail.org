@@ -340,6 +340,21 @@ This pulls in all related message to a thread.
         )
 #+END_SRC
 
+This feeds a /text/calendar/ attachment into [[https://github.com/insanum/gcalcli][gcalcli]].
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-view-gcal-attachment (msg attachnum)
+    "Feed MSG's attachment ATTACHNUM through gcal-import"
+    (let* ((att (mu4e~view-get-attach msg attachnum))
+            (pipecmd "gcal-import")
+            (index (plist-get att :index)))
+      (mu4e~view-temp-action
+        (mu4e-message-field msg :docid) index "pipe" pipecmd)))
+
+  (add-to-list 'mu4e-view-attachment-actions
+    '("gcal-import" . sf/mu4e-view-gcal-attachment) t)
+#+END_SRC
+
 Finally, bind some keys to use the above functions.
 
 #+BEGIN_SRC emacs-lisp
