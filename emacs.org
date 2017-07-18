@@ -1047,14 +1047,16 @@ More about Emacs themes can be read in the manual on [[https://www.gnu.org/softw
 This defines the default theme, which is then loaded below.
 
 #+BEGIN_SRC emacs-lisp
-   (dolist (p '(leuven-theme
-                 material-theme
-                 solarized-theme
-                 spacemacs-theme
-                 zenburn-theme
-                 professional-theme))
-     (progn (sf/package-install p)))
-    (defvar sf/gui-theme 'material "Preferred graphics theme") 
+  (dolist (p '(leuven-theme
+                base16-theme
+                material-theme
+                solarized-theme
+                spacemacs-theme
+                zenburn-theme
+                professional-theme))
+    (progn (sf/package-install p)))
+  (defvar sf/gui-theme nil "Preferred graphics theme")
+  (setq sf/gui-theme 'material)
 #+END_SRC
 
 More information about themes can be found at EmacsWiki:
