@@ -136,7 +136,7 @@ contacts elsewhere, this needs to be set.
   (use-package org-contacts
     :config
     (progn
-      (setq org-contacts-files (list  "~/depot/doc/org/contacts.org"))
+      (setq org-contacts-files (list  "~/forge/contacts.org"))
       (push '("c" "Contacts" entry (file (concat org-directory "/contacts.org"))
                "* %(org-contacts-template-name)
 :PROPERTIES:
