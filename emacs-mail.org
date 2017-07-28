@@ -282,62 +282,63 @@ For issues with /invalid RFC822/ characters, see:
   (defun sf/mu4e-forward-as-attachment ()
     "Forward message as an attachment"
     (interactive)
-    (let ((subject (mu4e-message-field (mu4e-message-at-point t) :subject))
-           (msgid (mu4e-message-field (mu4e-message-at-point t) :message-id))
-           (docid (mu4e-message-field (mu4e-message-at-point t) :docid))
-           (path (mu4e-message-field (mu4e-message-at-point t) :path)))
+    (let ((msgid (mu4e-message-field (mu4e-message-at-point t) :msgid))
+           (path (mu4e-message-field (mu4e-message-at-point t) :path))
+           forward-subject)
       (mu4e-compose 'new)
-      (unless (file-exists-p path)
-        (mu4e-warn "Message file not found"))
-      (mml-attach-file
-        path
-        "message/rfc822"
-        (concat (or subject "No subject") ".eml")
-        "attachment")
-      (when (message-goto-subject)
-        (message-delete-line))
-      (message-add-header (concat "Subject: " mu4e~draft-forward-prefix subject))
-      (message-add-header (concat "References: <" msgid ">"))
-      (message-goto-to)
-      )
-    )
+      (let ((temp-buffer (get-buffer-create (concat "*sf-fwd-mail-" msgid "*"))))
+        ;; this comes from notmuch-mua.el
+        ;; insert the mail file into a temporary buffer
+        ;; then call message-forward-make-body on that temp buffer.
+        (with-current-buffer temp-buffer
+          (erase-buffer)
+          (let ((coding-system-for-read 'no-conversion))
+            (insert-file-contents path))
+          (setq forward-subject (message-make-forward-subject)))
+        (goto-char (point-max))
+        (message-forward-make-body temp-buffer)
+        (kill-buffer temp-buffer)
+        ;; Update the Subject header and add a References header.
+        (save-restriction
+          (message-narrow-to-headers)
+          (message-remove-header "Subject")
+          (message-add-header (concat "Subject: " forward-subject))
+          (message-add-header (concat "References: <" msgid ">")))
+        (message-goto-to)
+        )))
 #+END_SRC
 
 This bounces a message - ie. add a Resend-To header.
 
 #+BEGIN_SRC emacs-lisp
-      (defun sf/mu4e-bounce-message (address)
-        "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
-        (interactive "sBounce to: ")
-        (let ((path (plist-get (mu4e-message-at-point t) :path)))
-          (unless (and path (file-readable-p path))
-            (mu4e-error "Not a readable file: %S" path))
-          (find-file path)
-          (mu4e-compose-mode)
-          (make-local-variable 'mu4e-sent-messages-behavior)
-          (setq mu4e-sent-messages-behavior 'sent)
-          (message-resend address)
-          (kill-buffer)
-          )
-        )
+  (defun sf/mu4e-bounce-message (address)
+    "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
+    (interactive "sBounce to: ")
+    (let ((path (plist-get (mu4e-message-at-point t) :path)))
+      (unless (and path (file-readable-p path))
+        (mu4e-error "Not a readable file: %S" path))
+      (find-file path)
+      (mu4e-compose-mode)
+      (make-local-variable 'mu4e-sent-messages-behavior)
+      (setq mu4e-sent-messages-behavior 'sent)
+      (message-resend address)
+      (kill-buffer)
+      )
+    )
 #+END_SRC
 
 This pulls in all related message to a thread.
 
 #+BEGIN_SRC emacs-lisp
-      (defun mu4e-action-show-thread (msg)
-        "Show all messages that are in the same thread as the message at point."
-        (let ((msgid (mu4e-message-field msg :message-id)))
-          (when msgid
-            (let ((mu4e-headers-show-threads t)
-                   (mu4e-headers-include-related t))
-              (mu4e-headers-search
-                (format "msgid:%s" msgid)
-                )
-              )
-            )
-          )
-        )
+  (defun mu4e-action-show-thread (msg)
+    "Show all messages that are in the same thread as the message at point."
+    (let ((msgid (mu4e-message-field msg :message-id)))
+      (when msgid
+        (let ((mu4e-headers-show-threads t)
+               (mu4e-headers-include-related t))
+          (mu4e-headers-search
+            (format "msgid:%s" msgid)))
+        )))
 #+END_SRC
 
 This feeds a /text/calendar/ attachment into [[https://github.com/insanum/gcalcli][gcalcli]].
