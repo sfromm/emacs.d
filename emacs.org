@@ -1082,17 +1082,17 @@ C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
 will increase, decrease, and reset the font size.
 
 #+BEGIN_SRC emacs-lisp
-  (defvar sf/font-base "Source Code Pro" "Preferred font")
+  (defvar sf/font "Source Code Pro" "Preferred font")
   (defvar sf/font-size 10 "Preferred font size")
   (defun sf/font-ok-p ()
     "Is configured font valid?"
     (interactive)
-    (member sf/font-base (font-family-list)))
-  (defun sf/font-name ()
+    (member sf/font (font-family-list)))
+  (defun sf/font-name-and-size ()
     "Compute font name and size string"
     (interactive)
     (let* ((size (number-to-string sf/font-size))
-            (name (concat sf/font-base "-" size)))
+            (name (concat sf/font "-" size)))
       name))
   (defun sf/font-size-increase ()
     "Increase font size"
@@ -1114,10 +1114,10 @@ will increase, decrease, and reset the font size.
     (interactive)
     (if (sf/font-ok-p)
       (progn
-        (message "Setting font to: %s" (sf/font-name))
-        (set-frame-font (sf/font-name))
-        (set-face-attribute 'default nil :font sf/font-base :height 100)
-        (set-face-font 'default sf/font-base)
+        (message "Setting font to: %s" (sf/font-name-and-size))
+        (set-frame-font (sf/font-name-and-size))
+        (set-face-attribute 'default nil :font (sf/font-name-and-size))
+        (set-face-font 'default sf/font)
         )
       )
     )
