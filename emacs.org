@@ -1069,69 +1069,7 @@ between day/night (light/dark) themes.
 
 **** Fonts
 
-This sets up the font and size when in graphical mode.  For awhile, I've
-been comfortable with _Inconsolata_.  An alternative to this is _DejaVu
-Sans Mono_.
-
-This is taken from [[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html#sec-11-3][C3F]] section on fonts.
-
-This used to bind *C-=* to *sf/font-size-increase* and *C--* to
-*sf/font-size-decrease*.  With /Emacs-24.4/, this didn't work anymore.
-While it would be prudent to investigate why, I discovered that *C-x
-C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.  This
-will increase, decrease, and reset the font size.
-
-#+BEGIN_SRC emacs-lisp
-  (defvar sf/font "Source Code Pro" "Preferred font")
-  (defvar sf/font-size 10 "Preferred font size")
-  (defun sf/font-ok-p ()
-    "Is configured font valid?"
-    (interactive)
-    (member sf/font (font-family-list)))
-  (defun sf/font-name-and-size ()
-    "Compute font name and size string"
-    (interactive)
-    (let* ((size (number-to-string sf/font-size))
-            (name (concat sf/font "-" size)))
-      name))
-  (defun sf/font-size-increase ()
-    "Increase font size"
-    (interactive)
-    (setq sf/font-size (+ sf/font-size 1))
-    (sf/font-update))
-  (defun sf/font-size-decrease ()
-    "Decrease font size"
-    (interactive)
-    (setq sf/font-size (- sf/font-size 1))
-    (sf/font-update))
-  (defun sf/set-emoji-font ()
-    "Set emoji font properly"
-    (interactive)
-    (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend)
-    )
-  (defun sf/font-update ()
-    "Update font configuration"
-    (interactive)
-    (if (sf/font-ok-p)
-      (progn
-        (message "Setting font to: %s" (sf/font-name-and-size))
-        (set-frame-font (sf/font-name-and-size))
-        (set-face-attribute 'default nil :font (sf/font-name-and-size))
-        (set-face-font 'default sf/font)
-        )
-      )
-    )
-  (sf/font-update)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package all-the-icons :ensure t)
-
-  (use-package all-the-icons-dired
-    :ensure t
-    :init
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-#+END_SRC
+(require 'setup-fonts)
 
 **** General appearance items
 

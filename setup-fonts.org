@@ -1,0 +1,111 @@
+#+TITLE: Emacs Font Configuration
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-fonts.el
+
+* Fonts
+
+This sets up the font and size when in graphical mode.  While currently
+configured for [[https://github.com/be5invis/Iosevka][Iosevka]], there are lots of other fonts I like such as
+[[https://github.com/adobe-fonts/source-code-pro][Source Code Pro]], [[https://dejavu-fonts.github.io/][DejaVu Sans Mono]], [[http://levien.com/type/myfonts/inconsolata.html][Inconsolata]], and others.
+
+This allows one to call to *sf/font-size-increase* and
+*sf/font-size-decrease* to change font and font size.  You can also use
+*C-x C-=*, *C-x C--*, and *C-x C-0* are bound to *text-scale-adjust*.
+This will increase, decrease, and reset the font size for the frame in
+question. 
+
+The following defines some variables and functions to help us out.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar sf/font nil "Preferred font")
+  (defvar sf/font-size 0 "Preferred font size")
+
+  (defun sf/font-ok-p ()
+    "Is configured font valid?"
+    (interactive)
+    (member sf/font (font-family-list)))
+  (defun sf/font-name-and-size ()
+    "Compute font name and size string"
+    (interactive)
+    (let* ((size (number-to-string sf/font-size))
+            (name (concat sf/font "-" size)))
+      name))
+  (defun sf/font-size-increase ()
+    "Increase font size"
+    (interactive)
+    (setq sf/font-size (+ sf/font-size 1))
+    (sf/font-update))
+  (defun sf/font-size-decrease ()
+    "Decrease font size"
+    (interactive)
+    (setq sf/font-size (- sf/font-size 1))
+    (sf/font-update))
+  (defun sf/set-emoji-font ()
+    "Set emoji font properly"
+    (interactive)
+    (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend)
+    )
+  (defun sf/font-update ()
+    "Update font configuration"
+    (interactive)
+    (if (sf/font-ok-p)
+      (progn
+        (message "Setting font to: %s" (sf/font-name-and-size))
+        (set-frame-font (sf/font-name-and-size))
+        (set-face-attribute 'default nil :font (sf/font-name-and-size))
+        (set-face-font 'default sf/font)
+        (sf/set-emoji-font)
+        )
+      )
+    )
+#+END_SRC
+
+Now, let's put the above to work.
+
+#+BEGIN_SRC emacs-lisp
+  (progn
+    (setq
+      sf/font "Iosevka"
+      sf/font-size 12)
+    (sf/font-update))
+#+END_SRC
+
+[[https://github.com/domtronn/all-the-icons.el][all-the-icons]] makes emacs pretty.  Let's do this.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons :ensure t)
+
+  (use-package all-the-icons-dired
+    :ensure t
+    :init
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+#+END_SRC
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'setup-fonts)
+#+END_SRC
+
+* License
+
+This document is licensed under the GNU Free Documentation License
+version 1.3 or later (http://www.gnu.org/copyleft/fdl.html).
+
+#+BEGIN_SRC 
+Copyright (C) 2017 Stephen Fromm
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+Code in this document is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+#+END_SRC
