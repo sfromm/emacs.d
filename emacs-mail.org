@@ -282,7 +282,7 @@ For issues with /invalid RFC822/ characters, see:
   (defun sf/mu4e-forward-as-attachment ()
     "Forward message as an attachment"
     (interactive)
-    (let ((msgid (mu4e-message-field (mu4e-message-at-point t) :msgid))
+    (let ((msgid (mu4e-message-field (mu4e-message-at-point t) :message-id))
            (path (mu4e-message-field (mu4e-message-at-point t) :path))
            forward-subject)
       (mu4e-compose 'new)
