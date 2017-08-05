@@ -30,6 +30,7 @@ A default offset of 2 seems to make sense for lisp.
 
 #+BEGIN_SRC emacs-lisp
 (setq lisp-indent-offset 2)
+(evil-set-initial-state 'lisp-mode 'emacs)
 #+END_SRC
 
 * Lua
