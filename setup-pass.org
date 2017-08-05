@@ -1,5 +1,5 @@
 #+TITLE: Password Management
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-pass.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-pass.el
 
 * GPG keys
 
@@ -207,7 +207,7 @@ The following will pull in support for Emacs.
         )
       )
     )
-  (provide 'emacs-pass)
+  (provide 'setup-pass)
 #+END_SRC
 
 ** Password Store and Firefox

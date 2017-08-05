@@ -1,34 +1,31 @@
-#+TITLE: Emacs & Git Integration
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-git.el
+#+TITLE: Emacs / Vim emulation
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-vi.el
 
-* Magit
+* Emacs vi emulation
 
-I use [[http://magit.github.io/][magit]], the emacs mode for [[http://git-scm.com/][git]].  It can be used to review diffs,
-commit, push changes, and other things.  Documentation is available in
-_info_ and [[http://magit.github.io/master/magit.html][online]].  This also installs [[https://github.com/pidu/git-timemachine][git-timemachine]], a way of
-navigating a file's history in [[http://git-scm.com/][git]].
+While I have been using Emacs again for several years, I still have
+quite a bit of Vim muscle memory.  [[https://gitorious.org/evil/pages/Home][evil]] provides an emulation mode that
+I find extremely useful.
+
+This also sets the initial state of some modes to _emacs_ where it makes
+sense.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t
+  (sf/package-install 'evil)
+  (use-package evil
     :init
+    (evil-mode 1)
+    :config
     (progn
-      (setq
-        magit-push-always-verify nil
-        magit-completing-read-function 'ivy-completing-read
-        magit-last-seen-setup-instructions "1.4.0")
-      (dolist (mode '(magit-mode magit-popup-mode magit-diff-mode))
+      (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode special-mode ))
         (evil-set-initial-state mode 'emacs))
-      )
-    :commands magit-status
-    :bind ("C-x g" . magit-status))
-  (sf/package-install 'git-timemachine)
+      ))
 #+END_SRC
 
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-git)
+(provide 'setup-vi)
 #+END_SRC
 
 * License

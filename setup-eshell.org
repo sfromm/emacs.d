@@ -1,5 +1,5 @@
 #+TITLE: Emacs and Eshell
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-eshell.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-eshell.el
 
 * Eshell
 
@@ -103,7 +103,7 @@ then provide helper function to launch =ansi-term=.
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-eshell)
+(provide 'setup-eshell)
 #+END_SRC
 
 * License

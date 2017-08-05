@@ -1,5 +1,5 @@
 #+TITLE: Org Mode
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-org.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-org.el
 
 * Org mode
 
@@ -227,7 +227,7 @@ that discuss exporting.
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-org)
+(provide 'setup-org)
 #+END_SRC
 
 * License

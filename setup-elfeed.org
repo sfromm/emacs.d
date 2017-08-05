@@ -1,5 +1,5 @@
 #+TITLE: Elfeed: RSS Reader
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-elfeed.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-elfeed.el
 
 * Elfeed
 
@@ -87,7 +87,7 @@
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-elfeed)
+(provide 'setup-elfeed)
 #+END_SRC
 
 * License

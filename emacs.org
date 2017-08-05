@@ -408,7 +408,6 @@ Transparency for Emacs frames.  See: https://www.emacswiki.org/emacs/Transparent
    (interactive "nTransparency Value 0 - 100 opaque:")
    (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
-
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
@@ -473,7 +472,7 @@ occasionally.
 Pull in [[file:emacs-vi.org][emacs-vi.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-vi)
+(require 'setup-vi)
 #+END_SRC
 
 *** BBDB
@@ -549,7 +548,7 @@ kinda-sorta helps.
 Use [[https://github.com/skeeto/elfeed][elfeed]] as RSS feed reader.  See [[file:emacs-elfeed.org][emacs-elfeed.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-elfeed)
+(require 'setup-elfeed)
 #+END_SRC
 
 *** Emacsclient and server
@@ -568,7 +567,7 @@ via =emacsclient=.  In general, be sure to use =emacsclient -n= tells
 Pull in [[file:emacs-chat.org][emacs-chat.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-chat)
+(require 'setup-chat)
 #+END_SRC
 
 *** Hydra - Making Emacs bindings stick around
@@ -595,7 +594,7 @@ Let's give it a shot.
 Pull in [[file:emacs-git.org][emacs-git.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-git)
+(require 'setup-git)
 #+END_SRC
 
 *** Ledger
@@ -659,7 +658,7 @@ says it is meant to resemble /ncmpc/.
  Pull in the awesome [[http://orgmode.org/][org mode]].  See [[file:emacs-org.org][emacs-org.org]] ...
 
  #+BEGIN_SRC emacs-lisp
- (require 'emacs-org)
+ (require 'setup-org)
  #+END_SRC
 
 *** Paradox
@@ -691,7 +690,7 @@ handy features:
 Use [[https://www.passwordstore.org/][pass]] to store and manage passwords.  See [[file:emacs-pass.org][emacs-pass.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-pass)
+(require 'setup-pass)
 #+END_SRC
 
 *** Searching and Completion
@@ -863,7 +862,7 @@ To go with yasnippet, you may want to consider installing
 Pull in [[file:emacs-eshell.org][emacs-eshell.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-eshell)
+(require 'setup-eshell)
 #+END_SRC
 
 *** Tmux integration
@@ -881,7 +880,7 @@ interesting to try, but have yet to hit on a use-case.
 Pull in [[file:emacs-twitter.org][emacs-twitter.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-twitter)
+(require 'setup-twitter)
 #+END_SRC
 
 *** Web development
@@ -1069,7 +1068,9 @@ between day/night (light/dark) themes.
 
 **** Fonts
 
+#+BEGIN_SRC emacs-lisp
 (require 'setup-fonts)
+#+END_SRC
 
 **** General appearance items
 
@@ -1082,7 +1083,6 @@ when creating a frame.
     (interactive)
     (when (display-graphic-p)
       (sf/font-update)
-      (sf/set-emoji-font)
       (tool-bar-mode -1)
       (scroll-bar-mode -1)
       (load-theme sf/gui-theme t))
@@ -1310,7 +1310,7 @@ Define how emacs behavior for programming and editing.  See
 [[file:emacs-programming.org][emacs-programming.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-  (require 'emacs-programming)
+  (require 'setup-programming)
 #+END_SRC
 
 ** Mail configuration
@@ -1318,7 +1318,7 @@ Define how emacs behavior for programming and editing.  See
 Use [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] as email client.  See [[file:emacs-mail.org][emacs-mail.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-mail)
+(require 'setup-mail)
 #+END_SRC
 
 ** Le Fin

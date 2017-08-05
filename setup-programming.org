@@ -1,5 +1,5 @@
 #+TITLE: Support for programming and edting
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-programming.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-programming.el
 
 * Basics
 
@@ -87,7 +87,7 @@ stackexchange.
 Pull in support for [[https://www.python.org][Python]].  See [[file:emacs-python.org][emacs-python.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-(require 'emacs-python)
+(require 'setup-python)
 #+END_SRC
 
 * Shell scripts
@@ -135,7 +135,7 @@ A helper mode when editing [[www.json.org][JSON]].
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-programming)
+(provide 'setup-programming)
 #+END_SRC
 
 * License

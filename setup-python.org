@@ -1,5 +1,5 @@
 #+TITLE: Emacs support for Python
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-python.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-python.el
 
 * Python
 
@@ -51,7 +51,7 @@ To get better completion, use [[https://company-mode.github.io/][company-mode]] 
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-python)
+(provide 'setup-python)
 #+END_SRC
 
 * License

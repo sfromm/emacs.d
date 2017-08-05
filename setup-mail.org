@@ -1,5 +1,5 @@
 #+TITLE: Emacs Mail Configuration
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-mail.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-mail.el
 
 * Message mode
 
@@ -470,7 +470,7 @@ described below.
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-mail)
+(provide 'setup-mail)
 #+END_SRC
 
 * License

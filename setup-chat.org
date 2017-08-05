@@ -1,5 +1,5 @@
 #+TITLE: Chat and Instant Messaging
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-chat.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-chat.el
 
 * Jabber
 
@@ -154,7 +154,7 @@ This function then adds a join hook to authenticate to /bitlbee/.  [fn:2]
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-chat)
+(provide 'setup-chat)
 #+END_SRC
 
 * Footnotes

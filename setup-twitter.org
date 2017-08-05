@@ -1,5 +1,5 @@
 #+TITLE: Twitter Configuration
-#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/emacs-twitter.el
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-twitter.el
 
 * Twitter
 
@@ -52,7 +52,7 @@ Keybindings of interest:
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp
-(provide 'emacs-twitter)
+(provide 'setup-twitter)
 #+END_SRC
 
 * License
