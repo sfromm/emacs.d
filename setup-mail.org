@@ -51,10 +51,10 @@ The following configures default SMTP settings for =smtpmail=.
     :config
     (setq
       smtpmail-stream-type 'ssl
-      smtpmail-default-smtp-server sf/smtp-server-work
-      smtpmail-smtp-server sf/smtp-server-work
+      smtpmail-default-smtp-server sf-custom/smtp-server-work
+      smtpmail-smtp-server sf-custom/smtp-server-work
       smtpmail-smtp-service 465
-      smtpmail-smtp-user sf/smtp-user-work
+      smtpmail-smtp-user sf-custom/smtp-user-work
       smtpmail-queue-dir (expand-file-name (concat user-emacs-directory "user/queue"))
       ))
 #+END_SRC
@@ -104,7 +104,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder 'sf/mu4e-refile-folder
+        mu4e-refile-folder 'sf-custom/mu4e-refile-folder
         gnus-dired-mail-mode 'mu4e-user-agent
         )
       ;; help mu4e to display images
@@ -146,15 +146,15 @@ is especially useful for using personal and work email accounts.
                                 :match-func (lambda (msg)
                                               (when msg
                                                 (mu4e-message-contact-field-matches msg
-                                                  :to sf/email-personal)))
+                                                  :to sf-custom/email-personal)))
                                 :vars `(
-                                         (user-mail-address . ,sf/email-personal)
+                                         (user-mail-address . ,sf-custom/email-personal)
                                          (mu4e-sent-folder . "/Personal/Sent")
                                          (mu4e-drafts-folder . "/Personal/Drafts")
                                          (mu4e-trash-folder . "/Personal/Trash")
                                          (mu4e-compose-signature . user-full-name)
-                                         (smtpmail-smtp-user . ,sf/smtp-user-personal)
-                                         (smtpmail-smtp-server . ,sf/smtp-server-personal)
+                                         (smtpmail-smtp-user . ,sf-custom/smtp-user-personal)
+                                         (smtpmail-smtp-server . ,sf-custom/smtp-server-personal)
                                          (smtpmail-stream-type . ssl)
                                          (smtpmail-smtp-service . 465)
                                          )
@@ -459,8 +459,8 @@ described below.
     (progn
       (setq
         gnus-alias-default-identity "work"
-        gnus-alias-identity-alist sf/gnus-alias-alist
-        gnus-alias-identity-rules sf/gnus-alias-identity-rules
+        gnus-alias-identity-alist sf-custom/gnus-alias-alist
+        gnus-alias-identity-rules sf-custom/gnus-alias-identity-rules
         )
       (add-hook 'message-setup-hook 'gnus-alias-determine-identity)
       )

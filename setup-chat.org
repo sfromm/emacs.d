@@ -12,7 +12,7 @@ it to connect to Google Talk along with your standard Jabber servers.
     :config
     (progn
       (setq 
-        jabber-account-list sf/jabber-account-alist
+        jabber-account-list sf-custom/jabber-account-alist
         jabber-auto-reconnect t  ; reconnect automatically
         jabber-history-dir "~/.local/share/logs/jabber"
         jabber-history-enabled t ; enable logging
@@ -73,11 +73,11 @@ information.
                            services smiley spelling stamp track))
       (erc-services-mode t)
       (setq
-        erc-nick sf/erc-nick 
-        erc-user-full-name sf/erc-nick
-        erc-away-nickname sf/erc-away-nick
-        erc-keywords sf/erc-keywords
-        erc-auto-join-channels-alist sf/erc-channels-alist
+        erc-nick sf-custom/erc-nick
+        erc-user-full-name sf-custom/erc-nick
+        erc-away-nickname sf-custom/erc-away-nick
+        erc-keywords sf-custom/erc-keywords
+        erc-auto-join-channels-alist sf-custom/erc-channels-alist
         erc-insert-timestamp-function 'erc-insert-timestamp-left
         erc-timestamp-format "%H:%M:%S "
         ;; kill buffer after channel /part
