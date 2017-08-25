@@ -310,8 +310,8 @@ For issues with /invalid RFC822/ characters, see:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-abuse-message ()
-    "Forward an abuse report to responsible party"
+  (defun sf/mu4e-forward-abuse-complaint ()
+    "Forward an abuse complaint to responsible party"
     (interactive)
     (sf/mu4e-forward-as-attachment)
     (message-goto-body)
@@ -321,7 +321,7 @@ For issues with /invalid RFC822/ characters, see:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-infringement-message ()
+  (defun sf/mu4e-forward-infringement-complaint ()
     "Forward a infringement complaint to responsible party"
     (interactive)
     (sf/mu4e-forward-as-attachment)
@@ -422,8 +422,8 @@ Create a hydra for some mail/mu4e related tasks.
   _I_ Forward Infringement
   "
     ("f" sf/mu4e-forward-as-attachment)
-    ("A" sf/mu4e-forward-abuse-message)
-    ("I" sf/mu4e-forward-infringement-message)
+    ("A" sf/mu4e-forward-abuse-complaint)
+    ("I" sf/mu4e-forward-infringement-complaint)
     ("S" sf/mu4e-forward-spam-complaint)
     ("N" sf/mu4e-toggle-compose-new-frame))
   (global-set-key (kbd "C-c m") 'sf/hydra-email/body)
