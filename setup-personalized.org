@@ -1,0 +1,119 @@
+#+TITLE: Personalized Configuration
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-personalized.el
+
+* Personalized configuration
+
+The goal is to leverage Emacs' customization facility to handle
+miscellaneous personal settings.  One can either set the variables
+directly or use =M-x customize= them.  The manual has information on
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Customization.html#Customization][Customization Settings]].
+
+First create the customization group(s).
+
+#+BEGIN_SRC emacs-lisp
+  (defgroup sf-emacs nil
+    "Personalized configuration for Emacs"
+    :prefix "sf-custom/")
+#+END_SRC
+
+Create customization variables related to email.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom sf-custom/abuse-mail-cc nil
+    "What email address should be CC'd on forwarding of abuse-related reports?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/email-work nil
+    "Work-related email account?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/smtp-user-work nil
+    "Work-related SMTP username?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/smtp-server-work nil
+    "Work-related SMTP server name?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/email-personal nil
+    "Personal-related email account?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/smtp-user-personal nil
+    "Personal-related SMTP username?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/smtp-server-personal nil
+    "Personal-related SMTP server name?"
+    :group 'sf-emacs
+    :type 'string)
+
+#+END_SRC
+
+Create customization variables for Jabber and ERC.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom sf-custom/jabber-account-alist nil
+    "An alist defining Jabber accounts"
+    :group 'sf-emacs
+    :type 'alist)
+
+  (defcustom sf-custom/erc-nick nil
+    "ERC nick to use?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/erc-away-nick nil
+    "ERC nick to use when away?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/erc-channels-alist nil
+    "An alist of IRC channels to auto-join."
+    :group 'sf-emacs
+    :type 'alist)
+
+  (defcustom sf-custom/erc-keywords nil
+    "A list of ERC keywords to highlight."
+    :group 'sf-emacs
+    :type 'alist)
+
+#+END_SRC
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'setup-personalized)
+#+END_SRC
+
+* License
+
+This document is licensed under the GNU Free Documentation License
+version 1.3 or later (http://www.gnu.org/copyleft/fdl.html).
+
+#+BEGIN_SRC 
+Copyright (C) 2017 Stephen Fromm
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+Code in this document is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+#+END_SRC

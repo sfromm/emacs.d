@@ -465,7 +465,13 @@ Set my name.  =user-mail-address= is defined in /private.org/.
 (setq user-full-name "Stephen Fromm")
 #+END_SRC
 
-Pull in information from private module.
+Pull in the personalized configuration details.
+
+#+BEGIN_SRC emacs-lisp
+(require 'setup-personalized)
+#+END_SRC
+
+Pull in information from private module, if it exists.
 
 #+BEGIN_SRC emacs-lisp
 (if (file-exists-p (concat user-emacs-directory "site-lisp/sf-private.el"))
