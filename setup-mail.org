@@ -83,6 +83,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
 
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
+    :if (executable-find "mu")
     :config
     (progn
       (require 'mu4e-contrib)
@@ -126,16 +127,16 @@ is especially useful for using personal and work email accounts.
                                 :match-func (lambda (msg)
                                               (when msg
                                                 (mu4e-message-contact-field-matches msg
-                                                  :to sf/email-work)))
+                                                  :to sf-custom/email-work)))
                                 :vars `(
-                                         (user-mail-address . ,sf/email-work)
+                                         (user-mail-address . ,sf-custom/email-work)
                                          (mu4e-sent-folder . "/Work/Sent")
                                          (mu4e-drafts-folder . "/Work/Drafts")
                                          (mu4e-trash-folder . "/Work/Trash")
                                          (mu4e-compose-signature . (get-string-from-file
                                                                      (expand-file-name "~/.signature")))
-                                         (smtpmail-smtp-user . ,sf/smtp-user-work)
-                                         (smtpmail-smtp-server . ,sf/smtp-server-work)
+                                         (smtpmail-smtp-user . ,sf-custom/smtp-user-work)
+                                         (smtpmail-smtp-server . ,sf-custom/smtp-server-work)
                                          (smtpmail-stream-type . ssl)
                                          (smtpmail-smtp-service . 465)
                                          )
@@ -308,6 +309,39 @@ For issues with /invalid RFC822/ characters, see:
         )))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-forward-abuse-message ()
+    "Forward an abuse report to responsible party"
+    (interactive)
+    (sf/mu4e-forward-as-attachment)
+    (message-goto-body)
+    (yas-expand-snippet (yas-lookup-snippet "abuse-template"))
+    (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
+    (message-goto-to))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-forward-infringement-message ()
+    "Forward a infringement complaint to responsible party"
+    (interactive)
+    (sf/mu4e-forward-as-attachment)
+    (message-goto-body)
+    (yas-expand-snippet (yas-lookup-snippet "infringement-template"))
+    (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
+    (message-goto-to))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-forward-spam-complaint ()
+    "Forward a spam complaint to responsible party"
+    (interactive)
+    (sf/mu4e-forward-as-attachment)
+    (message-goto-body)
+    (yas-expand-snippet (yas-lookup-snippet "spam-template"))
+    (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
+    (message-goto-to))
+#+END_SRC
+
 This bounces a message - ie. add a Resend-To header.
 
 #+BEGIN_SRC emacs-lisp
@@ -356,6 +390,16 @@ This feeds a /text/calendar/ attachment into [[https://github.com/insanum/gcalcl
     '("gcal-import" . sf/mu4e-view-gcal-attachment) t)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-toggle-compose-new-frame ()
+    "Toggle whether to compose email in new frame"
+    (interactive)
+    (if (bound-and-true-p mu4e-compose-in-new-frame)
+      (setq mu4e-compose-in-new-frame nil)
+      (setq mu4e-compose-in-new-frame t)))
+
+#+END_SRC
+
 Finally, bind some keys to use the above functions.
 
 #+BEGIN_SRC emacs-lisp
@@ -366,6 +410,23 @@ Finally, bind some keys to use the above functions.
       (define-key mu4e-view-mode-map (kbd "y") 'mu4e-view-mark-for-refile)
       )
     )
+#+END_SRC
+
+Create a hydra for some mail/mu4e related tasks.
+
+#+BEGIN_SRC emacs-lisp
+  (defhydra sf/hydra-email (:color blue)
+    "
+  _f_ Forward email         _N_ Toggle compose New frame
+  _A_ Forward Abuse report  _S_ Forward Spam report
+  _I_ Forward Infringement
+  "
+    ("f" sf/mu4e-forward-as-attachment)
+    ("A" sf/mu4e-forward-abuse-message)
+    ("I" sf/mu4e-forward-infringement-message)
+    ("S" sf/mu4e-forward-spam-complaint)
+    ("N" sf/mu4e-toggle-compose-new-frame))
+  (global-set-key (kbd "C-c m") 'sf/hydra-email/body)
 #+END_SRC
 
 ** Maildirs Extension
