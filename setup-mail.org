@@ -105,7 +105,7 @@ information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
         mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
         mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
         mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder 'sf-custom/mu4e-refile-folder
+        mu4e-refile-folder 'sf/mu4e-refile-folder
         gnus-dired-mail-mode 'mu4e-user-agent
         )
       ;; help mu4e to display images
