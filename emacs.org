@@ -408,6 +408,21 @@ Transparency for Emacs frames.  See: https://www.emacswiki.org/emacs/Transparent
    (interactive "nTransparency Value 0 - 100 opaque:")
    (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
+
+Helper functions to toggle =hl-line-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/turn-on-hl-line ()
+    "Turn on hl-line-mode"
+    (interactive)
+    (hl-line-mode 1))
+
+  (defun sf/turn-off-hl-line ()
+    "Turn off hl-line-mode"
+    (interactive)
+    (hl-line-mode nil))
+#+END_SRC
+
 *** DONE Load encrypted secrets
     CLOSED: [2014-04-25 Fri 10:40]
 
