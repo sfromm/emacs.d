@@ -13,6 +13,7 @@ First create the customization group(s).
 #+BEGIN_SRC emacs-lisp
   (defgroup sf-emacs nil
     "Personalized configuration for Emacs"
+    :group 'external
     :prefix "sf-custom/")
 #+END_SRC
 
