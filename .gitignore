@@ -19,3 +19,4 @@ private.el
 emacs.el
 bookmarks
 custom.el
+site-lisp/setup*.el
