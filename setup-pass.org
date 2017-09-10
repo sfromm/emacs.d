@@ -40,6 +40,7 @@ manages to do the trick.
 #+BEGIN_SRC emacs-lisp
   (when (sf/system-type-is-darwin)
     (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg"))
+    (setq epa-pinentry-mode 'loopback)
     )
 #+END_SRC
 
