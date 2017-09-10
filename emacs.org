@@ -162,6 +162,12 @@ example of how to use =use-package=.  Don't forget the [[https://github.com/jwie
 
 *** Funtions and other building blocks
 
+Pull in core module.
+
+#+BEGIN_SRC emacs-lisp
+(require 'setup-core)
+#+END_SRC
+
 Pull in some packages that will be useful later.
 
 #+BEGIN_SRC emacs-lisp
