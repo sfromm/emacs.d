@@ -1,7 +1,7 @@
 #+TITLE: Password Management
 #+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-pass.el
 
-* GPG keys
+* GnuPG
 
 [[https://www.gnupg.org/][GnuPG]] is a /complete and free implementatoin of the OpenPGP standard/ as
 defined by [[https://www.ietf.org/rfc/rfc4880.txt][RFC4880]].  There is quite a bit of documentation on the
@@ -9,6 +9,39 @@ subject of GPG, including:
 
 - https://www.gnupg.org/documentation/index.html
 - https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
+
+** Install GnuPG
+
+If you are on linux, *GnuPG* is probably already installed.  If not ...
+
+#+BEGIN_SRC sh :tangle no :dir /sudo::
+  if [ ! -x /usr/bin/pass ]; then
+      if [ -e /etc/fedora-release ]; then
+          dnf -y install pass
+      elif [ -e /etc/debian-release ]; then
+          apt-get -y install pass
+      fi
+  fi
+#+END_SRC
+
+However if you are on MacOS, the following snippet will help.  It
+installs gnupg and pinentry-mac.  It also sets a =gpg2= symlink pointing
+to the =gpg= binary.
+
+#+BEGIN_SRC sh :tangle no
+brew install gnupg
+brew install pinentry-mac
+ln -s /usr/local/bin/gpg /usr/local/bin/gpg2
+#+END_SRC
+
+For whatever reason, Emacs needs extra help to use gnupg on MacOS.  This
+manages to do the trick.
+
+#+BEGIN_SRC emacs-lisp
+  (when (sf/system-type-is-darwin)
+    (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg"))
+    )
+#+END_SRC
 
 ** Creating a key
 
