@@ -13,8 +13,7 @@
     (string-equal system-type "windows-nt")
     )
 
-  ;; Check if system is GNU/Linux
-  (defun sf/system-type-is-gnu ()
+  (defun sf/system-type-is-linux ()
     "Return true if system is GNU/Linux"
     (string-equal system-type "gnu/linux")
     )
