@@ -81,6 +81,11 @@ gpg> quit
 
 * Emacs 
 
+** Resources
+
+- [[http://emacs-fu.blogspot.com/2011/02/keeping-your-secrets-secret.html][Keeping your secrets secret]] A useful resource for loading encrypted
+  libraries.  Not something I am using at this time.
+
 ** EasyPG Assistant
 
 [[https://www.gnu.org/software/emacs/manual/epa.html][EasyPG Assistant]] (aka /epa/) is an Emacs user interface to GPG.  
