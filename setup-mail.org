@@ -390,6 +390,33 @@ This feeds a /text/calendar/ attachment into [[https://github.com/insanum/gcalcl
     '("gcal-import" . sf/mu4e-view-gcal-attachment) t)
 #+END_SRC
 
+A helper for extracting all attachments in a message.
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/mu4e-save-all-attachments (&optional msg)
+    "Save all attachments in `msg' to a sub-directory
+  in `mu4e-attachment-dir' location.  The sub-directory is
+  derived from the subject of the email message."
+    (interactive)
+    (let* ((msg (or msg (mu4e-message-at-point)))
+            (subject (message-wash-subject (mu4e-message-field msg :subject)))
+            (attachdir (concat mu4e-attachment-dir "/" subject))
+            (count (hash-table-count mu4e~view-attach-map)))
+      (if (> count 0)
+        (progn
+          (mkdir attachdir t)
+          (dolist (num (number-sequence 1 count))
+            (let* ((att (mu4e~view-get-attach msg num))
+                    (fname (plist-get att :name))
+                    (index (plist-get att :index))
+                    fpath)
+              (setq fpath (expand-file-name (concat attachdir "/" fname)))
+              (mu4e~proc-extract
+                'save (mu4e-message-field msg :docid)
+                index mu4e-decryption-policy fpath))))
+        (message "Nothing to extract"))))
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (defun sf/mu4e-toggle-compose-new-frame ()
     "Toggle whether to compose email in new frame"
@@ -419,13 +446,14 @@ Create a hydra for some mail/mu4e related tasks.
     "
   _f_ Forward email         _N_ Toggle compose New frame
   _A_ Forward Abuse report  _S_ Forward Spam report
-  _I_ Forward Infringement
+  _I_ Forward Infringement  _e_ Extract all attachments
   "
     ("f" sf/mu4e-forward-as-attachment)
     ("A" sf/mu4e-forward-abuse-complaint)
     ("I" sf/mu4e-forward-infringement-complaint)
     ("S" sf/mu4e-forward-spam-complaint)
-    ("N" sf/mu4e-toggle-compose-new-frame))
+    ("N" sf/mu4e-toggle-compose-new-frame)
+    ("e" sf/mu4e-save-all-attachments))
   (global-set-key (kbd "C-c m") 'sf/hydra-email/body)
 #+END_SRC
 
