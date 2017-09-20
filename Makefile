@@ -4,9 +4,9 @@ tangle:
 	$(EMACS) --load build.el
 
 update:
+	git pull --rebase
 	$(EMACS) --load site-lisp/setup-core.el -f "sf/bootstrap"
 	$(EMACS) --load site-lisp/setup-core.el -f "sf/update-packages"
-	git pull --rebase
 
 tanglenogit:
 	$(EMACS) --load ~/.emacs.d/build.el
