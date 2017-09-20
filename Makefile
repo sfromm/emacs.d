@@ -1,10 +1,11 @@
 ARGS = -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
 OS := $(shell uname)
+VERSION = 25.3
 ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
 endif
 ifeq ($(OS),Darwin)
-    EMACS = /Applications/Emacs.app/Contents/MacOS/Emacs $(ARGS)
+    EMACS = /usr/local/Cellar/emacs/$(VERSION)/Emacs.app/Contents/MacOS/Emacs $(ARGS)
 endif
 
 tangle:
