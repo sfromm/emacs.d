@@ -15,10 +15,6 @@ update:
 	$(EMACS) --load site-lisp/setup-core.el -f "sf/bootstrap"
 	$(EMACS) --load site-lisp/setup-core.el -f "sf/update-packages"
 
-tanglenogit:
-	$(EMACS) --load ~/.emacs.d/build.el
-
-
 all: tangle packages
 
 .PHONY: all tangle update packages
