@@ -340,9 +340,10 @@ The default PATH on MacOS needs some help, particularly if you use
 
 #+BEGIN_SRC emacs-lisp
   (when (sf/system-type-is-darwin)
-    (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
-    (add-to-list 'exec-path "/usr/local/bin")
-    )
+    (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
+      (progn
+        (setenv "PATH" (concat path ":" (getenv "PATH")))
+        (add-to-list 'exec-path path))))
 #+END_SRC
 
 * Personal information
