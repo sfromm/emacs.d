@@ -1,16 +1,16 @@
-EMACS = emacs --batch 
+EMACS = emacs -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
 
-tangle: update
+tangle:
 	$(EMACS) --load build.el
 
 update:
+	$(EMACS) --load site-lisp/setup-core.el -f "sf/bootstrap"
+	$(EMACS) --load site-lisp/setup-core.el -f "sf/update-packages"
 	git pull --rebase
 
 tanglenogit:
 	$(EMACS) --load ~/.emacs.d/build.el
 
-packages:
-	$(EMACS) --load emacs.el -f "sf/update-packages"
 
 all: tangle packages
 

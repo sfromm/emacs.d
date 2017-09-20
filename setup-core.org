@@ -365,6 +365,62 @@ Pull in information from private module, if it exists.
   (require 'sf-private))
 #+END_SRC
 
+* Packages
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/bootstrap-packages ()
+    "Bootstrap packages to install for Emacs."
+    (interactive)
+    (dolist (package '(
+                        ace-window
+                        all-the-icons
+                        all-the-icons-dired
+                        anaconda-mode
+                        async
+                        avy
+                        base16-theme
+                        counsel
+                        dired+
+                        elfeed
+                        evil
+                        gnus-alias
+                        hydra
+                        jabber
+                        json-mode
+                        ledger-mode
+                        leuven-theme
+                        lua-mode
+                        magit
+                        markdown-mode
+                        material-theme
+                        org-plus-contrib
+                        org-pomodoro
+                        ox-reveal
+                        ox-twbs
+                        paradox
+                        password-store
+                        professional-theme
+                        smart-mode-line
+                        solarized-theme
+                        spacemacs-theme
+                        swiper
+                        transpose-frame
+                        twittering-mode
+                        web-mode
+                        yaml-mode
+                        yasnippet
+                        zenburn-theme
+                        zone-nyan
+                      ))
+      (progn (sf/package-install package))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun sf/bootstrap ()
+    "Bootstrap environment"
+    (sf/bootstrap-packages))
+#+END_SRC
+
 * Postamble
 
 Finally, offer module for use.
