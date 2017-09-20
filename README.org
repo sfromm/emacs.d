@@ -25,14 +25,16 @@ In order to use, clone this repository:
 #+BEGIN_EXAMPLE
 $ git clone https://github.com/sfromm/dot-emacs.d ~/.emacs.d
 $ make tangle
-#+END_EXAMPLE
+$ make update
+#+END_EXAMPLnE
 
 The =make tangle= command will tangle out the configuration from all the
 /org mode/ files.
 
-When you first start [[http://www.gnu.org/software/emacs/][Emacs]] with this configuration, it may take awhile
-for it to download and install all the packages it uses.  This only
-applies for the first run.
+The =make update= command will install the packages defined in
+/setup-core.org/.  This makes installation on a new host a little less
+painful.  For already existing installations, it will also do a =git
+pull --rebase= and update any existing [[http://www.gnu.org/software/emacs/][Emacs]] packages.
 
 ** Private variables
 
