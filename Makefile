@@ -1,4 +1,11 @@
-EMACS = emacs -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
+ARGS = -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
+OS := $(shell uname)
+ifeq ($(OS),Linux)
+    EMACS = emacs $(ARGS)
+endif
+ifeq ($(OS),Darwin)
+    EMACS = /Applications/Emacs.app/Contents/MacOS/Emacs $(ARGS)
+endif
 
 tangle:
 	$(EMACS) --load build.el
