@@ -191,10 +191,11 @@ It helps to have a utility to extract account information from
               return ""
           candidate = candidates[0]
           if len(candidates) > 1:
+              domain = '.'.join(host.split('.')[1:])
               for arg in candidates:
-                  if "/{}.gpg".format(host) in arg:
+                  if "/{}.gpg".format(domain) in arg:
                       candidate = arg
-                  elif ".{}.gpg".format(host) in arg and not candidate:
+                  if "/{}.gpg".format(host) in arg:
                       candidate = arg
           candidate = candidate.replace(".gpg", "")
           auth = os.popen("pass show {}".format(candidate)).read()
