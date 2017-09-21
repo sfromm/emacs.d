@@ -6,27 +6,55 @@
 This effectively serves as my [[http://www.gnu.org/software/emacs/][Emacs]] configuration.  This would not be
 possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are a few main components:
 
-- /init.el/: Just enough emacs-lisp to load, via [[http://orgmode.org/worg/org-contrib/babel/][org-babel]], /private.org/
-  and [[file:emacs.org][emacs.org]].
-- /private.org/: This defines miscellaneous variables with private values
-  that are later used in [[file:emacs.org][emacs.org]].
-- /emacs.org/: This is the bulk of the configuration.  It endeavors to
-  follow the model of [[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by
-  /allowing the act of programming to take place inside of Org-mode
-  documents/.
-- /emacs-<module>.org/: A module that configures a specific mode,
-  related modes, or set of features that are related logically.  The
-  goal is to move away from a consolidated /emacs.org/ to more modules.
+- /init.el/: Just enough emacs-lisp to load, via
+  [[http://orgmode.org/worg/org-contrib/babel/][org-babel]], [[file:emacs.org][emacs.org]], and lots of setup-*.org files.
+- There is a private file, /sf-private.el/, that this configuration will
+  include if it is present.
 
-** Usage
+I'm moving more and more to having modules that configure a specific
+mode, related modes, or set of features that are related logically.  The
+goal is to move away from a single /emacs.org/ file to more modules.
+These are all named /setup-*.org/.
 
-In order to use, clone this repository:
+Most if not all of the configuration endeavors to follow the model of
+[[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by /allowing the act of
+programming to take place inside of Org-mode  documents/.
+
+** Setup
+
+First install Emacs into your environment.  On Linux, this can be either
+=sudo apt-get -y install emacs=, =sudo dnf -y install emacs=, or =sudo
+yum -y install emacs=.  Follow your distribution's documentation.
+
+On MacOS, I did the following:
+
+#+BEGIN_EXAMPLE
+brew install emacs --with-cocoa  --with-librsvg --with-modules --with-gnutls
+#+END_EXAMPLE
+
+The next step is to clone this repository:
 
 #+BEGIN_EXAMPLE
 $ git clone https://github.com/sfromm/dot-emacs.d ~/.emacs.d
+#+END_EXAMPLE
+
+The following steps will then tangle the configuration and install any
+required packages.
+
+#+BEGIN_EXAMPLE
 $ make tangle
 $ make update
-#+END_EXAMPLnE
+#+END_EXAMPLE
+
+** Care and feeding
+
+Over time, there will be changes or updates.  The best way to keep up to
+date is to use the Makefile targets =tangle= and =update=.
+
+#+BEGIN_EXAMPLE
+$ make tangle
+$ make update
+#+END_EXAMPLE
 
 The =make tangle= command will tangle out the configuration from all the
 /org mode/ files.
@@ -38,18 +66,5 @@ pull --rebase= and update any existing [[http://www.gnu.org/software/emacs/][Ema
 
 ** Private variables
 
-The following enumerates the variables defined in /private.org/:
-
-- ~sf/email-work~
-- ~sf/smtp-server~
-- ~sf/smtp-user~
-- ~sf/gnus-alias-alist~
-- ~sf/notmuch-fcc-dirs~
-- ~sf/vm-primary~
-- ~sf/vm-imap-alist~
-- ~sf/nnimap-address~
-- ~sf/mu4e-account-alist~
-- ~sf/jabber-account-alist~
-- ~sf/erc-channels-alist~
-- ~sf/erc-nick~
-- ~sf/erc-away-nick~
+The file [[setup-personalized.org][setup-personalized.org]] creates several variables that are used
+in other parts of the configuration.  See that file for more details.
