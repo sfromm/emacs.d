@@ -127,13 +127,23 @@ You should see your key when you run =gpg --list-secret-keys=.
 ** Authinfo
 
 - https://www.emacswiki.org/emacs/GnusAuthinfo
+- https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
 
-Emacs can then read password information from an encrypted
-=~/.authinfo.gpg=.  The format of this file is:
-
+Emacs can then read password information with the =auth-source=
+package.  =auth-source= supports multiple backends.  The default is
+=~/.authinfo=, which can be encrypted as =~/.authinfo.gpg=.  The format
+of this file is:
+ 
 #+BEGIN_EXAMPLE
 machine HOST login NAME password VALUE port NUMBER
 #+END_EXAMPLE
+
+#+BEGIN_SRC emacs-lisp
+(use-package auth-source
+  :init
+  (progn
+    (setq auth-source-debug t)))
+#+END_SRC
 
 It helps to have a utility to extract account information from
 /authinfo/ that other programs can call.
@@ -159,7 +169,7 @@ It helps to have a utility to extract account information from
 
   import re, os, sys
 
-  def get_password(login, machine, port):
+  def get_password_authinfo(login, machine, port):
       s = "machine %s login %s port %s password \"(.*)\"\n" % (machine, login, port)
       p = re.compile(s)
       authinfo = os.popen("gpg -q --use-agent --no-tty -d ~/.authinfo.gpg").read()
@@ -168,10 +178,13 @@ It helps to have a utility to extract account information from
       except:
           return ""
 
+  def get_password_pass(login, machine, port):
+      data = os.popen("pass grep {}".format(machine))
+
   if __name__ == '__main__':
       if len(sys.argv) == 4:
           # Expects:  login, hostname, port/service
-          sys.stdout.write(get_password(sys.argv[1], sys.argv[2], sys.argv[3]))
+          sys.stdout.write(get_password_authinfo(sys.argv[1], sys.argv[2], sys.argv[3]))
 #+END_SRC
 
 * Password Store
@@ -267,6 +280,7 @@ The following will pull in support for Emacs.
       )
     )
   (use-package auth-password-store
+    :after auth-source
     :init
     (progn
       (setq auth-sources '(password-store))))
