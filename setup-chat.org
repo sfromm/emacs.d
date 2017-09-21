@@ -14,7 +14,7 @@ it to connect to Google Talk along with your standard Jabber servers.
       (setq 
         jabber-account-list sf-custom/jabber-account-alist
         jabber-auto-reconnect t  ; reconnect automatically
-        jabber-history-dir "~/.local/share/logs/jabber"
+        jabber-history-dir (concat user-emacs-directory "user/logs/jabber")
         jabber-history-enabled t ; enable logging
         jabber-history-muc-enabled t
         jabber-use-global-history nil
