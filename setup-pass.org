@@ -79,6 +79,26 @@ Do you really want to set this key to ultimate trust? (y/N) y
 gpg> quit
 #+END_EXAMPLE
 
+** Keybase
+
+Resources:
+- https://blog.scottlowe.org/2017/09/06/using-keybase-gpg-macos/
+- https://www.keybits.net/post/import-keybase-private-key/
+- https://www.ahmadnassri.com/blog/github-gpg-keybase-pgp/
+
+[[https://keybase.io][Keybase]] is an interesting website and application that leverages PGP.
+In the event you create your key on Keybase's website, the following
+steps will import the secret and public key into your keyring.
+
+#+BEGIN_SRC sh :tangle no
+keybase pgp export --secret | gpg --allow-secret-key-import --import
+keybase pgp export | gpg --import
+#+END_SRC
+
+You will then want to /trust/ the newly imported keys.
+
+You should see your key when you run =gpg --list-secret-keys=.
+
 * Emacs 
 
 ** Resources
