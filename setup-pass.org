@@ -183,20 +183,16 @@ It helps to have a utility to extract account information from
       try:
           os.chdir(os.path.expanduser("~/.password-store"))
           data = glob.glob("*/*.gpg")
-          candidates = list()
-          for candidate in data:
-              if "{}.gpg".format(host) in candidate:
-                  candidates.append(candidate)
-          if not candidates:
+          domain = '.'.join(host.split('.')[1:])
+          candidate = ""
+          for arg in data:
+              if "/{}.gpg".format(domain) in arg:
+                  candidate = arg
+              if "/{}.gpg".format(host) in arg:
+                  candidate = arg
+                  break
+          if not candidate:
               return ""
-          candidate = candidates[0]
-          if len(candidates) > 1:
-              domain = '.'.join(host.split('.')[1:])
-              for arg in candidates:
-                  if "/{}.gpg".format(domain) in arg:
-                      candidate = arg
-                  if "/{}.gpg".format(host) in arg:
-                      candidate = arg
           candidate = candidate.replace(".gpg", "")
           auth = os.popen("pass show {}".format(candidate)).read()
           return auth.splitlines()[0]
