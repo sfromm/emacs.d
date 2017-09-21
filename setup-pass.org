@@ -201,8 +201,10 @@ It helps to have a utility to extract account information from
 
   if __name__ == '__main__':
       if len(sys.argv) == 4:
-          # Expects:  login, hostname, port/service
-          sys.stdout.write(get_password_pass(sys.argv[1], sys.argv[2], sys.argv[3]))
+          if os.path.exists(os.path.expanduser("~/.authinfo.gpg")):
+              sys.stdout.write(get_password_authinfo(sys.argv[1], sys.argv[2], sys.argv[3]))
+          else:
+              sys.stdout.write(get_password_pass(sys.argv[1], sys.argv[2], sys.argv[3]))
 #+END_SRC
 
 * Password Store
