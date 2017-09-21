@@ -124,8 +124,9 @@ You should see your key when you run =gpg --list-secret-keys=.
 | =epa-verify-file=      | Verify the current file                   |
 | =epa-verify-region=    | Verify the current region                 |
 
-** Authinfo
+** auth-source
 
+- https://www.gnu.org/software/emacs/manual/html_mono/auth.html
 - https://www.emacswiki.org/emacs/GnusAuthinfo
 - https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
 
@@ -148,7 +149,7 @@ machine HOST login NAME password VALUE port NUMBER
 It helps to have a utility to extract account information from
 /authinfo/ that other programs can call.
 
-#+BEGIN_SRC python :tangle ~/bin/authinfo-query.py :shebang #!/usr/bin/python
+#+BEGIN_SRC python :tangle ~/bin/auth-source-query.py :shebang #!/usr/bin/python
   # Written by Stephen Fromm <sfromm gmail com>
   # (C) 2013 University of Oregon
   #
@@ -167,7 +168,7 @@ It helps to have a utility to extract account information from
   # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   # 02110-1301, USA.
 
-  import re, os, sys
+  import re, glob, os, sys
 
   def get_password_authinfo(login, machine, port):
       s = "machine %s login %s port %s password \"(.*)\"\n" % (machine, login, port)
@@ -178,13 +179,33 @@ It helps to have a utility to extract account information from
       except:
           return ""
 
-  def get_password_pass(login, machine, port):
-      data = os.popen("pass grep {}".format(machine))
+  def get_password_pass(login, host, port):
+      try:
+          os.chdir(os.path.expanduser("~/.password-store"))
+          data = glob.glob("*/*.gpg")
+          candidates = list()
+          for candidate in data:
+              if "{}.gpg".format(host) in candidate:
+                  candidates.append(candidate)
+          if not candidates:
+              return ""
+          candidate = candidates[0]
+          if len(candidates) > 1:
+              for arg in candidates:
+                  if "/{}.gpg".format(host) in arg:
+                      candidate = arg
+                  elif ".{}.gpg".format(host) in arg and not candidate:
+                      candidate = arg
+          candidate = candidate.replace(".gpg", "")
+          auth = os.popen("pass show {}".format(candidate)).read()
+          return auth.splitlines()[0]
+      except:
+          return ""
 
   if __name__ == '__main__':
       if len(sys.argv) == 4:
           # Expects:  login, hostname, port/service
-          sys.stdout.write(get_password_authinfo(sys.argv[1], sys.argv[2], sys.argv[3]))
+          sys.stdout.write(get_password_pass(sys.argv[1], sys.argv[2], sys.argv[3]))
 #+END_SRC
 
 * Password Store
