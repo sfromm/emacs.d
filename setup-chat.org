@@ -14,7 +14,7 @@ it to connect to Google Talk along with your standard Jabber servers.
       (setq 
         jabber-account-list sf-custom/jabber-account-alist
         jabber-auto-reconnect t  ; reconnect automatically
-        jabber-history-dir (concat user-emacs-directory "user/logs/jabber")
+        jabber-history-dir (concat user-emacs-directory "user/log/jabber")
         jabber-history-enabled t ; enable logging
         jabber-history-muc-enabled t
         jabber-use-global-history nil
@@ -89,7 +89,8 @@ information.
         erc-autoaway-use-emacs-idle t
         ;; logging
         erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
-        erc-log-channels-directory "~/.local/share/logs/erc/"
+        jabber-history-dir 
+        erc-log-channels-directory (concat user-emacs-directory "user/log/erc")
         erc-log-insert-log-on-open nil
         erc-prompt-for-nickserv-password nil
         erc-save-buffer-on-part t)
