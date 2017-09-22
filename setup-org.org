@@ -55,11 +55,11 @@ The following does lots of things:
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
         org-capture-templates '(
-                                 ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
                                    "* %?%U\n")
-                                 ("b" "Bookmark" entry (file+headline (concat org-directory "/startpage.org") "Unfiled")
+                                 ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
     				     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-                                 ("t" "To do" entry (file+headline (concat org-directory "/tasks.org") "Tasks")
+                                 ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
                                    "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                  )
         org-export-allow-bind-keywords t
