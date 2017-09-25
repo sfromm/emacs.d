@@ -678,7 +678,6 @@ This defines the default theme, which is then loaded below.
 
 #+BEGIN_SRC emacs-lisp
   (dolist (p '(leuven-theme
-                base16-theme
                 material-theme
                 solarized-theme
                 spacemacs-theme
