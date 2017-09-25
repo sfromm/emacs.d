@@ -303,7 +303,7 @@ The following will pull in support for Emacs.
     :after auth-source
     :init
     (progn
-      (setq auth-sources '(password-store))))
+      (setq auth-sources '(password-store "~/.authinfo.gpg"))))
   (provide 'setup-pass)
 #+END_SRC
 
