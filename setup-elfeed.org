@@ -67,6 +67,7 @@
            ("http://xkcd.com/atom.xml" comics fun)
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
+           ("http://feeds.arstechnica.com/arstechnica/index" news)
            )
         url-queue-timeout 30
         elfeed-db-directory (concat user-emacs-directory "user/elfeed")
