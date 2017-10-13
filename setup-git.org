@@ -25,6 +25,99 @@ navigating a file's history in [[http://git-scm.com/][git]].
   (sf/package-install 'git-timemachine)
 #+END_SRC
 
+
+* Git Annex
+
+[[http://git-annex.branchable.com][git-annex]] allows managing files with git, without checking the file
+contents into git.  The /git-annex/ website has a page discussing [[http://git-annex.branchable.com/not/][what it is not]].
+While it isn't directly a backup system, dropbox clone, or unison
+replacement, it has a lot of the functionality of those tools.
+
+The /git-annex/ website has a page documenting [[http://git-annex.branchable.com/install/][how to install]].
+
+** Setting up first repository
+
+The following is a just a synopsis of what is available in the
+/git-annex/ [[http://git-annex.branchable.com/walkthrough/][walkthrough]].  Refer to that for details.  There is also the 
+[[http://git-annex.branchable.com/git-annex/][man-page]] for extended documentation.
+
+The first steps:
+
+#+BEGIN_EXAMPLE
+$ mkdir ~/annex
+$ cd ~/annex
+$ git init
+$ git annex init "laptop"
+#+END_EXAMPLE
+
+You can then start adding files:
+
+#+BEGIN_EXAMPLE
+$ git annex add mastering-emacs-v2.pdf
+add mastering-emacs-v2.pdf ok
+(recording state in git...)
+#+END_EXAMPLE
+
+After adding the file, you can see that the file is now a symlink to
+=.git/annex/objects=.
+
+#+BEGIN_EXAMPLE
+$ ls -l mastering-emacs-v2.pdf
+lrwxr-xr-x  1 stephenf  staff  207 Oct 13 09:59 mastering-emacs-v2.pdf@ -> ../../../.git/annex/objects/XJ/ZZ/SHA256E-s1592548--9080f4fd92773e2e662755a3d2c726e53d01bef3b6b12a13319fceefda77c5c1.pdf/SHA256E-s1592548--9080f4fd92773e2e662755a3d2c726e53d01bef3b6b12a13319fceefda77c5c1.pdf
+#+END_EXAMPLE
+
+** Setting up your second repository
+
+The next step is to add a second repository.  As a refresher, the goal
+is to replicate files to multiple locations.
+
+Assuming we have a USB drive connected ...
+
+#+BEGIN_EXAMPLE
+$ cd /media/usb
+$ git clone ~/annex
+$ cd annex
+$ git annex init "usb drive"
+$ git remote add laptop ~/annex
+$ cd ~/annex
+$ git remote add usb /media/usb/annex
+#+END_EXAMPLE
+
+Or, as an alternative ...
+
+#+BEGIN_EXAMPLE
+$ mkdir /media/usb/annex
+$ cd /media/usb/annex
+$ git init
+$ git annex init "usb drive"
+$ git remote add laptop ~/annex
+$ cd ~/annex
+$ git remote add usb /media/usb/annex
+#+END_EXAMPLE
+
+** Emacs integration
+
+There are a couple packages that offer integration:
+
+- [[https://github.com/jwiegley/git-annex-el][git-annex-el]]
+  - Typing =C-x C-q= in an annexed file buffer will cause Emacs to run
+    =git annex edit=.  When the buffer is killed, Emacs will run 
+    =git annex add && git commit -m updated=
+  - Dired is also extended to not show annex symlinks, but to color
+    annexed files green.  You then have the commands available:
+    - =@ a= Add file to git-annex
+    - =@ e= Edit an annexed file
+- [[https://github.com/magit/magit-annex][magit-annex]]
+  - The annex subcommand prefix for magit is =@=
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-annex)
+
+(use-package magit-annex)
+#+END_SRC
+
+* Postamble
+
 Finally, offer module for use.
 
 #+BEGIN_SRC emacs-lisp

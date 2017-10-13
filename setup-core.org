@@ -375,24 +375,28 @@ Pull in information from private module, if it exists.
     (interactive)
     (dolist (package '(
                         ace-window
+                        alert
                         all-the-icons
                         all-the-icons-dired
-                        anaconda-mode
                         async
                         avy
-                        base16-theme
+                        company-jedi
                         counsel
                         dired+
                         elfeed
+                        elpy
                         evil
+                        git-annex
                         gnus-alias
                         hydra
                         jabber
+                        jedi
                         json-mode
                         ledger-mode
                         leuven-theme
                         lua-mode
                         magit
+                        magit-annex
                         markdown-mode
                         material-theme
                         org-plus-contrib
