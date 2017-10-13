@@ -22,7 +22,7 @@ it to connect to Google Talk along with your standard Jabber servers.
         jabber-backlog-days 30
         jabber-chat-buffer-show-avatar t ; show avatar in chat buffer
         jabber-vcard-avatars-retrieve t ; automatically download vcard avatars
-        jabber-alert-info-message-hooks (quote (jabber-info-libnotify jabber-info-echo jabber-info-display))
+        jabber-alert-info-message-hooks (quote (jabber-info-echo jabber-info-display))
         jabber-alert-message-hooks (quote (jabber-message-notifications jabber-message-echo jabber-message-scroll))
         jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
         jabber-alert-muc-hooks (quote (jabber-muc-notifications-personal jabber-muc-echo jabber-muc-scroll))
