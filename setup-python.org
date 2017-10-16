@@ -6,8 +6,12 @@
 Turn on *linum-mode* when editing Python files.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook 'linum-mode)
-(add-hook 'python-mode-hook 'sf/whitespace)
+  (use-package python
+    :interpreter ("python" . python-mode)
+    :config
+    (setq python-indent-offset 4)
+    (add-hook 'python-mode-hook 'linum-mode)
+    (add-hook 'python-mode-hook 'sf/whitespace))
 #+END_SRC
 
 * Virtual Environments
@@ -17,34 +21,51 @@ environments]] to isolate dependencies.  This allows you a clean way to
 specify which version of python and associated modules your project
 depends on.
 
-* Anaconda
+* Elpy
 
-[[https://github.com/proofit404/anaconda-mode][Anaconda]] is a code navigation, documentation lookup, and completion mode
-for [[https://www.python.org/][python]].
+[[https://elpy.readthedocs.io/en/latest/index.html][Elpy]] is an Emacs Python Development Environment.  It aims to provide an
+easy to install, fully featured environment for Python development.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package anaconda-mode
-    :ensure t
-    :init
-    (add-hook 'python-mode-hook 'anaconda-mode)
-    (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-    :config
-    (setq anaconda-mode-installation-directory (concat user-emacs-directory "user/anaconda-mode"))
-    )
+The author recommends to add the following package archive to get the
+latest version.  MELPA seems current enough.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(add-to-list 'package-archives
+             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 #+END_SRC
 
-Useful commands in =anaconda-mode=:
+Once installed, go ahead and configure it.
 
-| Keybinding | Description                    |
-|------------+--------------------------------|
-| C-M-i      | anaconda-mode-complete         |
-| M-.        | anaconda-mode-find-definitions |
-| M-,        | anaconda-mode-find-assignments |
-| M-r        | anaconda-mode-find-references  |
-| M-*        | anaconda-mode-go-back          |
-| M-?        | anaconda-mode-show-doc         |
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :commands elpy-enable
+    :config
+    (electric-indent-local-mode -1))
+#+END_SRC
 
-To get better completion, use [[https://company-mode.github.io/][company-mode]] and [[https://github.com/proofit404/company-anaconda][company-anaconda]].
+Useful commands in =elpy-mode=:
+
+| Keybinding | Description                       |
+|------------+-----------------------------------|
+| C-c C-f    | Find Python file                  |
+| C-c C-s    | Search for Python symbol          |
+| C-c C-z    | Switch to Python shell            |
+| C-c C-c    | Send region to Python interpreter |
+
+* Jedi
+
+For auto-completion, there is [[https://github.com/tkf/emacs-jedi][Jedi]].  
+
+#+BEGIN_SRC emacs-lisp
+  (use-package jedi
+    :init
+    (add-to-list 'company-backends 'company-jedi)
+    :config
+    (use-package company-jedi
+      :init
+      (add-hook 'python-mode-hook (lambda () (add-to-list 'company-backends 'company-jedi)))
+      (setq company-jedi-python-bin "python")))
+#+END_SRC
 
 * Module boilerplate
 
