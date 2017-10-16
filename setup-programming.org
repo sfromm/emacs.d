@@ -24,6 +24,11 @@ For basic =text-mode=, Use auto-fill and set a column width to 72.
   '(lambda() (set-fill-column 72)))
 #+END_SRC
 
+Set up company-mode for auto-completion.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company)
+#+END_SRC
 * Lisp
 
 A default offset of 2 seems to make sense for lisp.
