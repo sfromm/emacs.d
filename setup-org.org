@@ -164,8 +164,8 @@ normally *org-clock-in* and *org-clock-out*.
     :init
     (progn
       (setq
-        org-pomodoro-audio-player "/usr/bin/mpv"
-        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/drip.ogg"
+        org-pomodoro-audio-player "mpv"
+        org-pomodoro-finished-sound "~/annex/Music/drip.ogg"
         )
       (defun sf/notify-pomodoro (title message)
         (notifications-notify
