@@ -380,6 +380,7 @@ Pull in information from private module, if it exists.
                         all-the-icons-dired
                         async
                         avy
+                        boxquote
                         company-jedi
                         counsel
                         dired+
