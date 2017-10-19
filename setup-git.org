@@ -25,7 +25,6 @@ navigating a file's history in [[http://git-scm.com/][git]].
   (sf/package-install 'git-timemachine)
 #+END_SRC
 
-
 * Git Annex
 
 [[http://git-annex.branchable.com][git-annex]] allows managing files with git, without checking the file
