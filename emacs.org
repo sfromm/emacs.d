@@ -84,7 +84,7 @@ Remember to keep this simple.  :-)
 ** Core
 
 Pull in core module that defines lots of helper functions, ELPA,
-use-package, and so on.
+use-package, and so on.  See [[file:setup-core.org][setup-core.org]].
 
 #+BEGIN_SRC emacs-lisp
 (require 'setup-core)
@@ -203,25 +203,6 @@ Pull in [[file:emacs-chat.org][emacs-chat.org]] ...
 (require 'setup-chat)
 #+END_SRC
 
-*** Hydra - Making Emacs bindings stick around
-
-[[https://github.com/abo-abo/hydra][Hydra]] is a Emacs package that can be used to tie related commands into a
-family of short bindings with a common prefix - aka the Hydra.
-
-Abo Abo has some interesting posts on Hydra that demonstrate its
-utility:
-
-- [[http://oremacs.com/2015/02/03/one-hydra-two-hydra/][One Hydra Two Hydra Red Hydra Blue Hydra]]
-- [[http://oremacs.com/2015/02/04/pre-hydra-post/][New in Hydra - :pre and :post clauses]]
-- [[http://oremacs.com/2015/02/02/colorful-hydrae/][Colorful Hydras]]
-
-Let's give it a shot.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package hydra
-    :ensure t)
-#+END_SRC
-
 *** Git
 
 Pull in [[file:emacs-git.org][emacs-git.org]] ...
@@ -284,6 +265,14 @@ says it is meant to resemble /ncmpc/.
 #+BEGIN_SRC emacs-lisp
 (use-package mingus
   :ensure t)
+#+END_SRC
+
+*** Navigation
+
+Pull in the navigation menu.  See [[file:setup-navigation.org][setup-navigation.org]].
+
+#+BEGIN_SRC emacs-lisp
+(require 'setup-navigation)
 #+END_SRC
 
 *** Org Mode
@@ -433,41 +422,6 @@ Some possibly useful references:
   (use-package smex
     :ensure smex
     :init (setq smex-completion-method 'ivy))
-#+END_SRC
-
-**** Ivy, Avy, and Swiper
-
-[[https://github.com/abo-abo/swiper][swiper]] gives you an overview as you search for a regex.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package swiper
-    :ensure swiper
-    :diminish ivy-mode
-    :init
-    (progn
-      (use-package counsel :ensure t)
-      (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
-      (ivy-mode 1)
-      (setq ivy-use-virtual-buffers t)
-      )
-    :bind (
-            ("C-s" . swiper)
-            ("C-c f" . counsel-git)
-            )
-    )
-#+END_SRC
-
-[[https://github.com/abo-abo/avy][avy]] is a package for jumping to visible text using a char-based decision
-tree.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package avy
-    :ensure t
-    :bind (
-            ("M-g g" . avy-goto-line)
-            ("M-s" . avy-goto-word-1)
-            )
-    )
 #+END_SRC
 
 *** Snippets
@@ -922,10 +876,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
 A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/the-best-way-to-type-__/371351/][existential shrug]].
 
 #+BEGIN_SRC emacs-lisp
-(defun sf/shrug ()
-  "Shrug emoji"
-  (interactive)
-  (insert "¯\\_(ツ)_/¯"))
+(defun sf/shrug () "Shrug emoji" (interactive) (insert "¯\\_(ツ)_/¯"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -939,7 +890,7 @@ A function to insert an [[http://www.theatlantic.com/technology/archive/2014/05/
 ** Programming and Editing
 
 Define how emacs behavior for programming and editing.  See
-[[file:emacs-programming.org][emacs-programming.org]] ...
+[[file:setup-programming.org][setup-programming.org]] ...
 
 #+BEGIN_SRC emacs-lisp
   (require 'setup-programming)
