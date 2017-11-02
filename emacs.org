@@ -229,34 +229,11 @@ may make data entry simpler.
 
 *** Mode line
 
-There are lots of fancy ways of decorating the modeline, including
-[[https://github.com/milkypostman/powerline][powerline]] and [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]].  This uses the latter.
+Pull in module [[file:setup-modeline.org][setup-modeline.org]] ...
 
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line
-    :commands sml/setup
-    :demand t
-    :ensure t
-    :init
-    (setq sml/theme 'respectful
-      sml/shorten-directory t
-      sml/shorten-modes t)
-    :config
-    (sml/setup)
-    )
+(require 'setup-modeline)
 #+END_SRC
-
-**** Nyan
- Because I find the [[http://www.nyan.cat/][Nyan Cat]] amusing …
-
- #+BEGIN_SRC emacs-lisp
-   (sf/package-install 'nyan-mode)
-   (use-package zone-nyan
-     :ensure t
-     :init
-     (progn (setq zone-programs [zone-nyan]) )
-     )
- #+END_SRC
 
 *** Music 
 
