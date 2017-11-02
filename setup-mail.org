@@ -427,6 +427,16 @@ A helper for extracting all attachments in a message.
 
 #+END_SRC
 
+Extract a header from an email message.
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/mu4e-get-message-header (msg header)
+  "Extract header from message"
+     (replace-regexp-in-string "\n$" ""
+         (shell-command-to-string
+           (concat "mail-get-header.py -H " header " -p " (shell-quote-argument (mu4e-message-field msg :path))))))
+#+END_SRC
+
 Finally, bind some keys to use the above functions.
 
 #+BEGIN_SRC emacs-lisp
