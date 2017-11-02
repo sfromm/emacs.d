@@ -1,4 +1,4 @@
-#+TITLE: Elfeed: RSS Reader
+ #+TITLE: Elfeed: RSS Reader
 #+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-elfeed.el
 
 * Elfeed
@@ -53,6 +53,7 @@
            ("http://blog.aaronbieber.com/feed.xml" emacs )
            ("https://www.masteringemacs.org/feed" emacs )
            ("http://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
+           ("http://irreal.org/blog/?feed=rss2" emacs)
            ("http://planetsysadmin.com/atom.xml" devops)
            ("https://feeds.feedburner.com/sysadvent" devops)
            ("https://blog.miguelgrinberg.com/feed" devops python)
