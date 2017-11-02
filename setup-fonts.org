@@ -64,7 +64,7 @@ Now, let's put the above to work.
 #+BEGIN_SRC emacs-lisp
   (progn
     (setq
-      sf/font "Iosevka"
+      sf/font "Hack"
       sf/font-size 12)
     (sf/font-update))
 #+END_SRC
