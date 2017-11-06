@@ -1,4 +1,4 @@
- #+TITLE: Elfeed: RSS Reader
+#+TITLE: Elfeed: RSS Reader
 #+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-elfeed.el
 
 * Elfeed
@@ -58,7 +58,6 @@
            ("https://feeds.feedburner.com/sysadvent" devops)
            ("https://blog.miguelgrinberg.com/feed" devops python)
            ("http://planetpython.org/rss20.xml" devops python)
-           ("http://fedoraplanet.org/atom.xml" linux fedora)
            ("http://planet.centos.org/atom.xml" linux centos)
            ("http://kernelplanet.org/rss20.xml" linux )
            ("http://planet.freedesktop.org/rss20.xml" linux )
