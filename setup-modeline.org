@@ -31,21 +31,21 @@ spaceline icons [[https://github.com/domtronn/spaceline-all-the-icons.el][spacel
     :if (display-graphic-p)
     :after spaceline
     :config
-    (progn
-      (spaceline-compile "sf"
-        `(((major-mode :face default-face)
-            all-the-icons-modified
-            all-the-icons-bookmark
-            all-the-icons-dedicated
-            all-the-icons-window-number
-            all-the-icons-buffer-size) :face default-face :skip-alternate t)
-        ((all-the-icons-vc-status) " " :separator "")
-        ((remote-host
-           all-the-icons-buffer-path
-           all-the-icons-buffer-id)
-          :separator "")
-        (all-the-icons-which-function :face powerline-active2))
-      ))
+    ;; (progn
+    ;;   (spaceline-compile "sf"
+    ;;     `(((major-mode :face default-face)
+    ;;         all-the-icons-modified
+    ;;         all-the-icons-bookmark
+    ;;         all-the-icons-dedicated
+    ;;         all-the-icons-window-number
+    ;;         all-the-icons-buffer-size) :face default-face :skip-alternate t)
+    ;;     ((all-the-icons-vc-status) " " :separator "")
+    ;;     ((remote-host
+    ;;        all-the-icons-buffer-path
+    ;;        all-the-icons-buffer-id)
+    ;;       :separator "")
+    ;;     (all-the-icons-which-function :face powerline-active2)))
+      )
 
 #+END_SRC
 
