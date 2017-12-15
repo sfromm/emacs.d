@@ -55,6 +55,11 @@ Create customization variables related to email.
     :group 'sf-emacs
     :type 'string)
 
+  (defcustom sf-custom/fcc-dirs nil
+    "FCC Directories"
+    :group 'sf-emacs
+    :type 'alist)
+
   (defcustom sf-custom/gnus-alias-alist nil
     "An alist of alternate identities used by gnus-alias."
     :group 'sf-emacs
