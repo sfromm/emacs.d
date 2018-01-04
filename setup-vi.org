@@ -13,8 +13,6 @@ sense.
 #+BEGIN_SRC emacs-lisp
   (sf/package-install 'evil)
   (use-package evil
-    :init
-    (evil-mode 1)
     :config
     (progn
       (dolist (mode '(bbdb-mode erc-mode fundamental-mode shell-mode calendar-mode message-mode special-mode ))
