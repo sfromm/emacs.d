@@ -72,456 +72,230 @@ Use /dired/ to attach files to messages.
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
 
-* mu4e
+* Notmuch Emacs MUA
 
-[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] is an emacs-based email client that uses [[http://www.djcbsoftware.nl/code/mu/][mu]] as its backend.
+[[http://notmuchmail.org/][notmuch]] is basically a mail indexer.  It helps you to better tame your
+inbox with search, tagging, and other functions.  There is a CLI
+interface to interact with your email in Maildir format.  Or, you can
+use the Emacs notmuch client front-end.
 
-Of particular note, this now uses /contexts/ to handle changing between
-a set of settings in /mu4e/.  This is primarily to handle switching
-between different email accounts and smtp servers.  For more
-information, see http://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html#Contexts.
+Installation is basically:
+
+#+BEGIN_EXAMPLE
+$ brew install notmuch
+#+END_EXAMPLE
+
+The following the configures the emacs interface to notmuch.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package mu4e
-    :if (executable-find "mu")
+  (use-package notmuch
+    :ensure notmuch
+    :init
+    (progn
+      (setq
+        notmuch-archive-tags '("-inbox" "-unread" "-trash" "+archive")
+        notmuch-crypto-process-mime t
+        notmuch-fcc-dirs sf-custom/fcc-dirs
+        notmuch-hello-thousands-separator ","
+        notmuch-search-oldest-first nil
+        notmuch-show-part-button-default-action 'notmuch-show-view-part
+        notmuch-saved-searches
+        '(
+           (:name "Inbox"           :key "i" :query "tag:inbox and not tag:archive")
+           (:name "Flagged"         :key "f" :query "tag:flagged")
+           (:name "Today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
+           (:name "3 days"          :key "3" :query "date:3d..  and not ( tag:archive or tag:sent )")
+           (:name "14 days"         :key "4" :query "date:14d.. and not ( tag:archive or tag:sent ) ")
+           (:name "Old messages"    :key "o" :query "date:..14d and not ( tag:archive or tag:sent ) and ( folder:Work/INBOX or folder:Work/incoming ) ")
+           (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:copyright or tag:flagged )")
+           (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
+           (:name "Bulk"            :key "b" :query "folder:Work/incoming and not tag:archive")
+           (:name "Attachments"     :key "A" :query "tag:attachment")
+           (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")
+           )
+        )
+      (add-to-list 'auto-mode-alist '("notmuch-raw-id" . markdown-mode))
+      (add-hook 'notmuch-hello-mode-hook 'sf/nolinum)
+      (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
+      (dolist (mode '(notmuch-search notmuch-show notmuch-tree-mode notmuch-help notmuch-message-mode))
+        (evil-set-initial-state mode 'emacs))
+      )
     :config
     (progn
-      (require 'mu4e-contrib)
-      (require 'org-mu4e)
-      (setq
-        mu4e-attachment-dir "~/Download"
-        mu4e-html2text-command 'mu4e-shr2text
-        mu4e-use-fancy-chars t
-        mu4e-context-policy 'pick-first
-        mu4e-maildir (expand-file-name "~/.mail")
-        mu4e-compose-signature-auto-include t
-        mu4e-get-mail-command "mbsync -a"
-        mu4e-change-filenames-when-moving t   ;; new filenames when moving; needed for mbsync
-        mu4e-update-interval 120              ;; check for updates every 2 min
-        mu4e-view-scroll-to-next nil          ;; do not advance to next message when scolling
-        mu4e-view-show-images t               ;; show images inline
-        mu4e-view-show-addresses t            ;; always show full email address
-        mu4e-completing-read-function 'ivy-completing-read
-        mu4e-sent-folder   "/Work/Sent"       ;; folder for sent messages
-        mu4e-drafts-folder "/Work/Drafts"     ;; unfinished messages
-        mu4e-trash-folder  "/Work/Trash"      ;; trashed messages
-        mu4e-refile-folder 'sf/mu4e-refile-folder
-        gnus-dired-mail-mode 'mu4e-user-agent
-        )
-      ;; help mu4e to display images
-      (when (fboundp 'imagemagick-register-types)
-        (imagemagick-register-types))
-      ;; default to emacs mode - not vim emulation
-      (dolist (mode '(mu4e-main-mode mu4e-compose-mode mu4e-headers-mode mu4e-view-mode))
-        (evil-set-initial-state mode 'emacs))
+      (define-key notmuch-show-mode-map (kbd "D")
+        (lambda ()
+          "mark message for trash"
+          (interactive)
+          (notmuch-show-add-tag '("+trash" "-inbox" "-unread" "-archive"))
+          (unless (notmuch-show-next-open-message)
+            (notmuch-show-next-thread t))))
+      (define-key notmuch-search-mode-map (kbd "D")
+        (lambda ()
+          "mark thread for trash"
+          (interactive)
+          (notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))
+          (notmuch-search-next-thread )))
+      (define-key notmuch-show-mode-map (kbd "J")
+        (lambda ()
+          "mark message as junk"
+          (interactive)
+          (notmuch-show-add-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))
+          (unless (notmuch-show-next-open-message)
+            (notmuch-show-next-thread t))))
+      (define-key notmuch-search-mode-map (kbd "J")
+        (lambda ()
+          "mark thread as junk"
+          (interactive)
+          (notmuch-search-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))
+          (notmuch-search-next-thread )))
+      (define-key notmuch-show-mode-map (kbd "F")
+        (lambda ()
+          "toggle message as flagged"
+          (interactive)
+          (if (member "flagged" (notmuch-show-get-tags))
+            (notmuch-show-remove-tag (list "-flagged"))
+            (notmuch-show-add-tag (list "+flagged")))))
+      (define-key notmuch-search-mode-map (kbd "F")
+        (lambda ()
+          "toggle thread as flagged"
+          (interactive)
+          (if (member "flagged" (notmuch-search-get-tags))
+            (notmuch-search-tag (list "-flagged"))
+            (notmuch-search-tag (list "+flagged")))))
+      (define-key notmuch-show-mode-map (kbd "M")
+        (lambda ()
+          "toggle message as muted"
+          (interactive)
+          (if (member "mute" (notmuch-show-get-tags))
+            (notmuch-show-remove-tag (list "-mute"))
+            (notmuch-show-add-tag (list "+mute")))))
+      (define-key notmuch-search-mode-map (kbd "M")
+        (lambda ()
+          "toggle thread as muted"
+          (interactive)
+          (if (member "mute" (notmuch-search-get-tags))
+            (notmuch-search-tag (list "-mute"))
+            (notmuch-search-tag (list "+mute")))))
+      (define-key notmuch-show-mode-map (kbd "b")
+        (lambda (&optional address)
+          "Bounce the current message"
+          (interactive "sBounce to: ")
+          (notmuch-show-view-raw-message)
+          (message-resend address)))
+      (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
+      (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
+      (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer)
+      (defun sf/notmuch-toggle-remote ()
+        "Toggle whether to use notmuch remotely"
+        (interactive)
+        (if (string= notmuch-command "notmuch")
+          (progn
+            (setq notmuch-command "notmuch-remote.sh")
+            (message "switching to remote notmuch"))
+          (progn
+            (setq notmuch-command "notmuch")
+            (message "switching to local notmuch"))))
+      ))
 #+END_SRC
 
-[[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] uses [[https://www.djcbsoftware.nl/code/mu/mu4e/Contexts.html][contexts]] to switch between different sets of settings.  This
-is especially useful for using personal and work email accounts.
+A series of helpers for forwarding emails.
 
 #+BEGIN_SRC emacs-lisp
-      (setq mu4e-contexts `(
-                             ,(make-mu4e-context
-                                :name "Work"
-                                :enter-func (lambda () (mu4e-message "Switch to Work context"))
-                                :match-func (lambda (msg)
-                                              (when msg
-                                                (mu4e-message-contact-field-matches msg
-                                                  :to sf-custom/email-work)))
-                                :vars `(
-                                         (user-mail-address . ,sf-custom/email-work)
-                                         (mu4e-sent-folder . "/Work/Sent")
-                                         (mu4e-drafts-folder . "/Work/Drafts")
-                                         (mu4e-trash-folder . "/Work/Trash")
-                                         (mu4e-compose-signature . (get-string-from-file
-                                                                     (expand-file-name "~/.signature")))
-                                         (smtpmail-smtp-user . ,sf-custom/smtp-user-work)
-                                         (smtpmail-smtp-server . ,sf-custom/smtp-server-work)
-                                         (smtpmail-stream-type . ssl)
-                                         (smtpmail-smtp-service . 465)
-                                         )
-                                )
-                             ,(make-mu4e-context
-                                :name "Personal"
-                                :enter-func (lambda () (mu4e-message "Switch to Personal context"))
-                                :match-func (lambda (msg)
-                                              (when msg
-                                                (mu4e-message-contact-field-matches msg
-                                                  :to sf-custom/email-personal)))
-                                :vars `(
-                                         (user-mail-address . ,sf-custom/email-personal)
-                                         (mu4e-sent-folder . "/Personal/Sent")
-                                         (mu4e-drafts-folder . "/Personal/Drafts")
-                                         (mu4e-trash-folder . "/Personal/Trash")
-                                         (mu4e-compose-signature . user-full-name)
-                                         (smtpmail-smtp-user . ,sf-custom/smtp-user-personal)
-                                         (smtpmail-smtp-server . ,sf-custom/smtp-server-personal)
-                                         (smtpmail-stream-type . ssl)
-                                         (smtpmail-smtp-service . 465)
-                                         )
-                                )
-                             ))
-#+END_SRC
+  (defun sf/notmuch-attach-email (&optional path)
+    "Attach a RFC822 email and give it a sensible file name"
+    (interactive "sMessage path: ")
+    (let ((newpath (expand-file-name (concat "~/tmp/" (number-to-string (truncate (float-time))) ".eml"))))
+      (copy-file path newpath)
+      (mml-attach-file newpath "message/rfc822" "" "attachment")))
 
-The following is to change the behavior of [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] so that when email is
-"trashed", it is just moved to the trash folder.  I don't want it to
-also add the /trash/ maildir flag.
-
-/mu4e-marks/ is defined in [[https://github.com/djcb/mu/blob/master/mu4e/mu4e-mark.el][mu4e-mark.el]].
-
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-marks (assq-delete-all 'trash mu4e-marks))
-  (push '(trash
-           :char ("d" . "▼")
-           :prompt "dtrash"
-           :dyn-target (lambda
-                         (target msg)
-                         (mu4e-get-trash-folder msg))
-           :action (lambda
-                     (docid msg target)
-                     (mu4e~proc-move docid
-                       (mu4e~mark-check-target target) "-N")))
-    mu4e-marks)
-#+END_SRC
-
-And then more configuration ... to be described at a later date.
-
-#+BEGIN_SRC emacs-lisp
-      (setq mu4e-headers-fields '(
-                                   (:human-date . 12)
-                                   (:flags . 6)
-                                   (:mailing-list . 10)
-                                   (:tags . 8)
-                                   (:from . 22)
-                                   (:subject)))
-
-      (add-to-list 'mu4e-view-actions
-        '("capture message" . mu4e-action-capture-message) t)
-      (add-to-list 'mu4e-view-actions
-        '("browse email" . mu4e-action-view-in-browser) t)
-      (add-to-list 'mu4e-view-actions
-        '("view as pdf" . mu4e-action-view-as-pdf) t)
-      (add-to-list 'mu4e-view-actions
-        '("tag message" . mu4e-action-retag-message) t)
-      (add-to-list 'mu4e-view-actions
-        '("show thread" . mu4e-action-show-thread) t)
-
-      (add-to-list 'mu4e-headers-actions
-        '("capture message" . mu4e-action-capture-message) t)
-      (add-to-list 'mu4e-headers-actions
-        '("show thread" . mu4e-action-show-thread) t)
-      (add-to-list 'mu4e-headers-actions
-        '("tag message" . mu4e-action-retag-message) t)
-
-      (setq mu4e-bookmarks `(
-                              ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
-                              ("maildir:/Personal/INBOX OR maildir:/Work/INBOX" "ONE Inbox" ?I)
-                              ("flag:flagged" "Flagged" ?f)
-                              ("date:1d..now AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Today's messages" ?t)
-                              ("date:3d..now    AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 3 days" ?3)
-                              ("date:14d..now   AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Last 14 days" ?4)
-                              ("date:..14d      AND ( maildir:/Personal/INBOX OR maildir:/Work/INBOX OR maildir:/Work/incoming OR maildir:/Work/ops )" "Old email" ?o)
-                              ("maildir:/Personal/Archive or maildir:/Work/Archive*" "Archive" ?a)
-                              (,sf/mu4e-bookmark-providers "Providers" ?p)
-                              (,sf/mu4e-bookmark-ren "ORGs" ?r)
-                              (,sf/mu4e-bookmark-vendors "Vendors" ?v)
-                              (,sf/mu4e-bookmark-bulk "Bulk" ?b)
-                              (,sf/mu4e-bookmark-expunge-candidates "Expunge?" ?x)
-                              ("flag:attach" "Messages with attachments" ?A)
-                              ("maildir:/Work/INBOX AND ( subject:infringement OR contact:soc@ren-isac.net OR to:abuse OR flag:flagged )" "Need attention" ?!)
-                              ("mime:text/calendar" "Meeting invites" ?c)
-                              ))
-
-
-#+END_SRC
-
-The following are miscellaneous helper functions.
-
-The first function =sf/mu4e-refile-folder= is based on the example from
-the [[http://www.djcbsoftware.nl/code/mu/mu4e/index.html][mu4e manual]] [[http://www.djcbsoftware.nl/code/mu/mu4e/Tips-and-Tricks.html][Tips and Tricks]] section on [[http://www.djcbsoftware.nl/code/mu/mu4e/Refiling-messages.html][refiling messages]].
-
-#+BEGIN_SRC emacs-lisp
-      (defun sf/mu4e-refile-folder (msg)
-        "Set the refile folder for MSG.  Looks at several alists to evaluate how best to refile."
-        (cond
-          ((string-match "Work" (mu4e-message-field msg :maildir))
-            (cond
-              ((catch 'found
-                 (dolist (subject sf/mu4e-refile-work-by-subject)
-                   (if (string-match (car subject) (mu4e-message-field msg :subject))
-                     (throw 'found (cdr subject))))))
-              ((catch 'found
-                 (dolist (contact sf/mu4e-refile-work-by-contact)
-                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
-                     (throw 'found (cdr contact))))))
-              (t (concat "/Work/Archive." (format-time-string "%Y")))))
-          ((string-match "Personal" (mu4e-message-field msg :maildir))
-            (cond
-              ((catch 'found
-                 (dolist (contact sf/mu4e-refile-personal-by-contact)
-                   (if (mu4e-message-contact-field-matches msg '(:to :from :cc :bcc) (car contact))
-                     (throw 'found (cdr contact))))))
-              (t "/Personal/Archive")))
-          ))
-#+END_SRC
-
-I prefer to forward emails as attachments instead of inline; mu4e
-defaults to inline.  To forward as an attachment, mu4e provides a
-mechanism where you capture the message with =mu4e-capture-message=,
-start a new message, and then use =mu4e-compose-attach-captured-message=.
-
-In lieu of that, this will get the message at point and then attach
-the maildir message as message/rfc822.  This adds the /References/
-header, which appears to set the /Passed/ flag.
-
-For issues with /invalid RFC822/ characters, see:
-
-- https://github.com/djcb/mu/issues/1019
-- https://groups.google.com/forum/#!topic/mu-discuss/FJo0GmRl4Uo
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-as-attachment ()
-    "Forward message as an attachment"
-    (interactive)
-    (let ((msgid (mu4e-message-field (mu4e-message-at-point t) :message-id))
-           (path (mu4e-message-field (mu4e-message-at-point t) :path))
-           forward-subject)
-      (mu4e-compose 'new)
-      (let ((temp-buffer (get-buffer-create (concat "*sf-fwd-mail-" msgid "*"))))
-        ;; this comes from notmuch-mua.el
-        ;; insert the mail file into a temporary buffer
-        ;; then call message-forward-make-body on that temp buffer.
-        (with-current-buffer temp-buffer
-          (erase-buffer)
-          (let ((coding-system-for-read 'no-conversion))
-            (insert-file-contents path))
-          (setq forward-subject (message-make-forward-subject)))
-        (goto-char (point-max))
-        (message-forward-make-body temp-buffer)
-        (kill-buffer temp-buffer)
-        ;; Update the Subject header and add a References header.
-        (save-restriction
-          (message-narrow-to-headers)
-          (message-remove-header "Subject")
-          (message-add-header (concat "Subject: " forward-subject))
-          (message-add-header (concat "References: <" msgid ">")))
-        (message-goto-to)
-        )))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-abuse-complaint ()
+  (defun sf/mail-forward-abuse-complaint ()
     "Forward an abuse complaint to responsible party"
     (interactive)
-    (sf/mu4e-forward-as-attachment)
+    (notmuch-show-forward-message)
     (message-goto-body)
     (yas-expand-snippet (yas-lookup-snippet "abuse-template"))
     (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
     (message-goto-to))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-infringement-complaint ()
+  (defun sf/mail-forward-infringement-complaint ()
     "Forward a infringement complaint to responsible party"
     (interactive)
-    (sf/mu4e-forward-as-attachment)
+    (notmuch-show-forward-message)
     (message-goto-body)
     (yas-expand-snippet (yas-lookup-snippet "infringement-template"))
     (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
     (message-goto-to))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-forward-spam-complaint ()
+  (defun sf/mail-forward-spam-complaint ()
     "Forward a spam complaint to responsible party"
     (interactive)
-    (sf/mu4e-forward-as-attachment)
+    (notmuch-show-forward-message)
     (message-goto-body)
     (yas-expand-snippet (yas-lookup-snippet "spam-template"))
     (message-add-header (concat "Cc: " sf-custom/abuse-mail-cc))
     (message-goto-to))
+
 #+END_SRC
 
-This bounces a message - ie. add a Resend-To header.
+Other email helpers.
 
 #+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-bounce-message (address)
-    "Bounce message at point to a recipient. See https://github.com/djcb/mu/pull/449/files"
-    (interactive "sBounce to: ")
-    (let ((path (plist-get (mu4e-message-at-point t) :path)))
-      (unless (and path (file-readable-p path))
-        (mu4e-error "Not a readable file: %S" path))
-      (find-file path)
-      (mu4e-compose-mode)
-      (make-local-variable 'mu4e-sent-messages-behavior)
-      (setq mu4e-sent-messages-behavior 'sent)
-      (message-resend address)
-      (kill-buffer)
-      )
-    )
-#+END_SRC
+  (defun sf/mail-toggle-compose-new-frame ()
+    "Toggle whether to compose email in new frame"
+    (interactive)
+    (cond ((eq notmuch-mua-compose-in 'current-window)
+            setq notmuch-mua-compose-in 'new-frame)
+          ((eq notmuch-mua-compose-in 'new-frame)
+            setq notmuch-mua-compose-in 'current-window)))
 
-This pulls in all related message to a thread.
-
-#+BEGIN_SRC emacs-lisp
-  (defun mu4e-action-show-thread (msg)
-    "Show all messages that are in the same thread as the message at point."
-    (let ((msgid (mu4e-message-field msg :message-id)))
-      (when msgid
-        (let ((mu4e-headers-show-threads t)
-               (mu4e-headers-include-related t))
-          (mu4e-headers-search
-            (format "msgid:%s" msgid)))
-        )))
-#+END_SRC
-
-This feeds a /text/calendar/ attachment into [[https://github.com/insanum/gcalcli][gcalcli]].
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-view-gcal-attachment (msg attachnum)
-    "Feed MSG's attachment ATTACHNUM through gcal-import"
-    (let* ((att (mu4e~view-get-attach msg attachnum))
-            (pipecmd "gcal-import")
-            (index (plist-get att :index)))
-      (mu4e~view-temp-action
-        (mu4e-message-field msg :docid) index "pipe" pipecmd)))
-
-  (add-to-list 'mu4e-view-attachment-actions
-    '("gcal-import" . sf/mu4e-view-gcal-attachment) t)
-#+END_SRC
-
-A helper for extracting all attachments in a message.
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-save-all-attachments (&optional msg)
+  (defun sf/mail-save-all-attachments (&optional msg)
     "Save all attachments in `msg' to a sub-directory
-  in `mu4e-attachment-dir' location.  The sub-directory is
-  derived from the subject of the email message."
+    in `mu4e-attachment-dir' location.  The sub-directory is
+    derived from the subject of the email message."
     (interactive)
     (let* ((msg (or msg (mu4e-message-at-point)))
-            (subject (message-wash-subject (mu4e-message-field msg :subject)))
+            (subject (message-wash-subject (notmuch-show-get-subject)))
             (attachdir (concat mu4e-attachment-dir "/" subject))
             (count (hash-table-count mu4e~view-attach-map)))
       (if (> count 0)
         (progn
           (mkdir attachdir t)
-          (dolist (num (number-sequence 1 count))
-            (let* ((att (mu4e~view-get-attach msg num))
-                    (fname (plist-get att :name))
-                    (index (plist-get att :index))
-                    fpath)
-              (setq fpath (expand-file-name (concat attachdir "/" fname)))
-              (mu4e~proc-extract
-                'save (mu4e-message-field msg :docid)
-                index mu4e-decryption-policy fpath))))
-        (message "Nothing to extract"))))
+            (dolist (num (number-sequence 1 count))
+              (let* ((att (mu4e~view-get-attach msg num))
+                      (fname (plist-get att :name))
+                      (index (plist-get att :index))
+                      fpath)
+                (setq fpath (expand-file-name (concat attachdir "/" fname)))
+                (mu4e~proc-extract
+                  'save (mu4e-message-field msg :docid)
+                  index mu4e-decryption-policy fpath))))
+          (message "Nothing to extract"))))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (defun sf/mu4e-toggle-compose-new-frame ()
-    "Toggle whether to compose email in new frame"
-    (interactive)
-    (if (bound-and-true-p mu4e-compose-in-new-frame)
-      (setq mu4e-compose-in-new-frame nil)
-      (setq mu4e-compose-in-new-frame t)))
-
-#+END_SRC
-
-Extract a header from an email message.
-
-#+BEGIN_SRC emacs-lisp
-(defun sf/mu4e-get-message-header (msg header)
-  "Extract header from message"
-     (replace-regexp-in-string "\n$" ""
-         (shell-command-to-string
-           (concat "mail-get-header.py -H " header " -p " (shell-quote-argument (mu4e-message-field msg :path))))))
-#+END_SRC
-
-Finally, bind some keys to use the above functions.
-
-#+BEGIN_SRC emacs-lisp
-      (define-key mu4e-headers-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
-      (define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-refile)
-      (define-key mu4e-headers-mode-map (kbd "B") 'sf/mu4e-bounce-message)
-      (define-key mu4e-view-mode-map (kbd "f") 'sf/mu4e-forward-as-attachment)
-      (define-key mu4e-view-mode-map (kbd "y") 'mu4e-view-mark-for-refile)
-      )
-    )
-#+END_SRC
-
-Create a hydra for some mail/mu4e related tasks.
+Put together a hydra to make it easy to access the functionality.
 
 #+BEGIN_SRC emacs-lisp
   (defhydra sf/hydra-email (:color blue)
+      "
+    _f_ Forward email         _N_ Toggle compose New frame
+    _A_ Forward Abuse report  _S_ Forward Spam report
+    _I_ Forward Infringement  _e_ Extract all attachments
     "
-  _f_ Forward email         _N_ Toggle compose New frame
-  _A_ Forward Abuse report  _S_ Forward Spam report
-  _I_ Forward Infringement  _e_ Extract all attachments
-  "
-    ("f" sf/mu4e-forward-as-attachment)
-    ("A" sf/mu4e-forward-abuse-complaint)
-    ("I" sf/mu4e-forward-infringement-complaint)
-    ("S" sf/mu4e-forward-spam-complaint)
-    ("N" sf/mu4e-toggle-compose-new-frame)
-    ("e" sf/mu4e-save-all-attachments))
+      ("f" notmuch-show-forward-message)
+      ("A" sf/mail-forward-abuse-complaint)
+      ("I" sf/mail-forward-infringement-complaint)
+      ("S" sf/mail-forward-spam-complaint)
+      ("N" sf/mail-toggle-compose-new-frame)
+      ("e" sf/mu4e-save-all-attachments))
+
   (global-set-key (kbd "C-c m") 'sf/hydra-email/body)
 #+END_SRC
 
-** Maildirs Extension
+Last, but not least, enable linking to messages from org-mode.
 
-[[https://github.com/agpchil/mu4e-maildirs-extension][mu4e-maildirs-extension]] is an extension that adds a maildir summary in
-the =mu4e-main-view=.  While I don't presently use this, I've left this
-for reference.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package mu4e-maildirs-extension
-    :disabled t
-    :ensure t
-    :defer 1
-    :config
-    (progn
-      (mu4e-maildirs-extension)
-      (setq
-        mu4e-maildirs-extension-maildir-separator    "*"
-        mu4e-maildirs-extension-submaildir-separator "✉"
-        mu4e-maildirs-extension-action-text          nil)
-      ))
+#+BEGIN_SRC emacs-lisp
+  (use-package org-notmuch)
 #+END_SRC
-
-** Keyboard shortcuts
-
-*Main View*
-
-| Keybinding | Command                             | Description                                 |
-|------------+-------------------------------------+---------------------------------------------|
-| j          | *mu4e-headers-jump-to-maildir*      | Jump to a maildir                           |
-| b          | *mu4e-headers-search-bookmark*      | Search using a bookmarked query             |
-| B          | *mu4e-headers-search-bookmark-edit* | Edit an existing bookmark before running it |
-| s          | *mu4e-headers-search*               | Perform a search for QUERY                  |
-| C          | *mu4e-compose-new*                  | Compose new message                         |
-| U          | *mu4e-update-mail-and-index*        | Get new mail and update index               |
-| $          | *mu4e-show-log*                     | Show log                                    |
-
-
-*Headers View*
-
-| Keybinding | Command                             | Description                                 |
-|------------+-------------------------------------+---------------------------------------------|
-| n          | *mu4e-headers-next*                 | Go to next message                          |
-| p          | *mu4e-headers-prev*                 | Go to previous message                      |
-| RET        | *mu4e-headers-view-message*         | Open message at point                       |
-| s          | *mu4e-headers-search*               | Search                                      |
-| S          | *mu4e-headers-search-edit*          | Edit last search                            |
-| /          | *mu4e-headers-search-narrow*        | Narrow the search                           |
-| \          | *mu4e-headers-query-prev*           | Previous query                              |
-| b          | *mu4e-headers-search-bookmark*      | Search using a bookmarked query             |
-| B          | *mu4e-headers-search-bookmark-edit* | Edit an existing bookmark before running it |
-| g          | *mu4e-headers-rerun-search*         | Re-run previous search                      |
-| d          | *mu4e-headers-mark-for-trash*       | Mark for moving to trash                    |
-| D          | *mu4e-headers-mark-for-delete*      | Mark for deletion                           |
-| m          | *mu4e-headers-mark-for-move*        | Mark for moving to another folder           |
-| r          | *mu4e-headers-mark-for-refile*      | Mark for refiling (archiving)               |
-| C-S-u      | *mu4e-update-mail-and-index*        | Get new mail and update index               |
 
 * Potpourri
 
@@ -551,7 +325,7 @@ described below.
   )
 #+END_EXAMPLE
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
   (use-package gnus-alias
     :ensure t
     :init

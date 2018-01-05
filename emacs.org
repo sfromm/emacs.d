@@ -838,7 +838,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
     (defhydra hydra-app-selector (:color blue
                                    :columns 5)
       "Action"
-      ("e" mu4e "email")
+      ("e" notmuch "email")
       ("f" elfeed "elfeed")
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
