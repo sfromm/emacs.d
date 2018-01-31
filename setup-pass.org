@@ -276,34 +276,17 @@ pass git init
 The following will pull in support for Emacs.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package password-store
+  (use-package pass
     :ensure t
     :bind
-    ("C-c p" . hydra-password-store/body)
-    :config
-    (progn
-      (setq password-store-password-length 16)
-      (with-eval-after-load "hydra"
-        (defhydra hydra-password-store ()
-          "
-  _c_: copy,   _e_: edit,  _n_: new
-  _C_: commit, _F_: pull,  _p_: push
-  "
-          ("c" password-store-copy)
-          ("e" password-store-edit)
-          ("n" password-store-generate)
-          ("C" (lambda () (interactive) (async-shell-command "pass git commit -a -m update")))
-          ("F" (lambda () (interactive) (async-shell-command "pass git pull")))
-          ("p" (lambda () (interactive) (async-shell-command "pass git push")))
-          )
-        )
-      )
-    )
+    ("C-c p" . pass))
+
   (use-package auth-password-store
     :after auth-source
     :init
     (progn
       (setq auth-sources '(password-store "~/.authinfo.gpg"))))
+
   (provide 'setup-pass)
 #+END_SRC
 

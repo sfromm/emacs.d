@@ -14,7 +14,7 @@ snapshots instead of 'stable' releases.
   do not have it configured here, it is useful to know about.
 
 #+BEGIN_SRC emacs-lisp
-  (setq package-archives '(("org" . "http://orgmode.org/elpa/")
+  (setq package-archives '(("org" . "https://orgmode.org/elpa/")
                             ("melpa" . "http://melpa.org/packages/")
                             ("gnu" . "http://elpa.gnu.org/packages/")))
 ;                            ("marmalade" . "http://marmalade-repo.org/packages/")))
@@ -405,7 +405,7 @@ Pull in information from private module, if it exists.
                         ox-reveal
                         ox-twbs
                         paradox
-                        password-store
+                        pass
                         professional-theme
                         smart-mode-line
                         solarized-theme
