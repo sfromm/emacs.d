@@ -8,6 +8,15 @@
 #+BEGIN_SRC emacs-lisp
   (use-package elfeed
     :ensure elfeed
+    :bind (
+            :map elfeed-search-mode-map
+            ("f" . sf/elfeed-search-toggle-starred)
+            ("F" . sf/elfeed-search-starred)
+            ("<" . sf/elfeed-search-first-article)
+            (">" . sf/elfeed-search-last-article)
+            :map elfeed-show-mode-map
+            ("f" . sf/elfeed-show-toggle-starred)
+            )
     :config
     (progn
       (defun sf/elfeed-search-starred ()
@@ -32,8 +41,17 @@
       (defun sf/elfeed-update ()
         "Update elfeed database"
         (message "Updating elfeed articles...")
-        (elfeed-update)
-        )
+        (elfeed-update))
+
+      (defun sf/elfeed-search-first-article ()
+        "Go to first message in search"
+        (interactive)
+        (goto-char (point-min)))
+
+      (defun sf/elfeed-search-last-article ()
+        "Go to last message in search"
+        (interactive)
+        (goto-char (point-max)))
 
       (defface elfeed-search-starred-title-face
         '((t :foreground "#f77"))
@@ -68,21 +86,15 @@
            ("http://xkcd.com/atom.xml" comics fun)
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
-           ("http://feeds.arstechnica.com/arstechnica/index" news)
            )
         url-queue-timeout 30
         elfeed-db-directory (concat user-emacs-directory "user/elfeed")
         )
-      (setq elfeed-update-timer (run-at-time 180 (* 120 60) 'sf/elfeed-update) ) ; create timer to update elfeed
+      ;; create timer to update elfeed
+      (setq elfeed-update-timer (run-at-time 180 (* 120 60) 'sf/elfeed-update))
       (dolist (mode '(elfeed-show-mode elfeed-search-mode))
         (evil-set-initial-state mode 'emacs))
       )
-      :bind (
-              :map elfeed-search-mode-map
-              ("f" . sf/elfeed-search-toggle-starred)
-              ("F" . sf/elfeed-search-starred)
-              :map elfeed-show-mode-map
-              ("f" . sf/elfeed-show-toggle-starred) )
     )
 #+END_SRC
 
