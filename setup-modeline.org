@@ -1,52 +1,20 @@
 #+TITLE: Modeline Configuration
 #+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-modeline.el
 
-* Powerline
-
-[[https://github.com/milkypostman/powerline][Powerline]]
+* Smart Mode Line
 
 #+BEGIN_SRC emacs-lisp
-  (use-package powerline
-    :config (powerline-default-theme))
-#+END_SRC
-
-* Space Line
-
-[[https://github.com/TheBB/spaceline][Spaceline]] is the mode line that comes with spacemacs.  Also pull in the
-spaceline icons [[https://github.com/domtronn/spaceline-all-the-icons.el][spaceline-all-the-icons]].
-
-#+BEGIN_SRC emacs-lisp
-  (use-package spaceline
-    :if (display-graphic-p)
+  (use-package smart-mode-line
+    :ensure t
     :config
-    (progn
-      (setq-default powerline-default-separator 'utf-8)))
-
-  (use-package spaceline-all-the-icons
-    :if (display-graphic-p)
-    :after spaceline-config
-    :config (spaceline-all-the-icons-theme))
-
-  (use-package spaceline-config
-    :if (display-graphic-p)
-    :after spaceline
-    :config
-    ;; (progn
-    ;;   (spaceline-compile "sf"
-    ;;     `(((major-mode :face default-face)
-    ;;         all-the-icons-modified
-    ;;         all-the-icons-bookmark
-    ;;         all-the-icons-dedicated
-    ;;         all-the-icons-window-number
-    ;;         all-the-icons-buffer-size) :face default-face :skip-alternate t)
-    ;;     ((all-the-icons-vc-status) " " :separator "")
-    ;;     ((remote-host
-    ;;        all-the-icons-buffer-path
-    ;;        all-the-icons-buffer-id)
-    ;;       :separator "")
-    ;;     (all-the-icons-which-function :face powerline-active2)))
-      )
-
+    (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
+    (setq
+      sml/no-confirm-load-theme t
+      sml/theme 'dark
+      sml/mode-width 'full
+      sml/name-width 30
+      sml/shorten-modes t)
+    (sml/setup))
 #+END_SRC
 
 * Nyan Cat
