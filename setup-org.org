@@ -38,13 +38,6 @@ The following does lots of things:
       (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
       (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
       (setq
-        org-directory "~/forge"
-        org-agenda-sticky t
-        org-default-notes-file (concat org-directory "/journal.org")
-        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-        org-log-done t
-        org-completion-use-ido t
-        org-log-reschedule "note"
         org-agenda-files (list
                            (concat org-directory "/journal.org")
                            (concat org-directory "/tasks.org")
@@ -52,13 +45,23 @@ The following does lots of things:
                            (concat org-directory "/personal.org")
                            (concat org-directory "/documentation.org")
                            )
+        org-agenda-sticky t
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
+
+        org-completion-use-ido t
+        org-default-notes-file (concat org-directory "/journal.org")
+        org-directory "~/forge"
+        org-ellipsis "⤵"
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-log-done t
+        org-log-reschedule "note"
+
         org-capture-templates '(
                                  ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
                                    "* %?%U\n")
                                  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
-    				     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
                                  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
                                    "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                  )
@@ -96,6 +99,14 @@ The following does lots of things:
     )
 #+END_SRC
 
+Use fancy *org-bullets* to make things look nice.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+#+END_SRC
+
 Pull in *org-git-link* to reference git links.  More
 information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
 
@@ -124,7 +135,7 @@ Pull in *org-mime* to htmlize Org subtrees for email.
     )
 #+END_SRC
 
-*** Contacts
+** Contacts
 
 Instead of tinkering with *BBDB*, which seemed to require more energy
 than I want to commit, *[[https://julien.danjou.info/projects/emacs-packages#org-contacts][org-contacts]]* looks like a good alternative.
@@ -149,7 +160,7 @@ contacts elsewhere, this needs to be set.
     )
 #+END_SRC
 
-*** Pomodoro
+** Pomodoro
 
 The [[http://pomodorotechnique.com/][pomodoro technique]] is basically about time management.  You use a
 timer to break down work into intervals, traditionally 25 minutes in
@@ -187,7 +198,7 @@ normally *org-clock-in* and *org-clock-out*.
     )
 #+END_SRC
 
-*** Babel mode
+** Babel mode
 
 This defines which languages are enabled for evaluation by org-babel.
 [[http://ditaa.sourceforge.net/][ditaa]] allows creation of diagrams from Emacs.  May require using emacs
@@ -211,7 +222,7 @@ You can type =C-c '= to edit the current code block.  This will bring up
 a major-mode edit buffer containing the body of the code block.  You can
 then use =C-c '= again to exit.
 
-*** Exporting
+** Exporting
 
 One of the (many) nice features of org-mode is that you can export to
 many different formats.  What follows is miscellaneous resources online
@@ -222,7 +233,7 @@ that discuss exporting.
 - [[http://home.fnal.gov/~neilsen/notebook/orgExamples/org-examples.html][Emacs org-mode examples and cookbook]]
 - [[http://emacs-fu.blogspot.com/2011/04/nice-looking-pdfs-with-org-mode-and.html][Emacs Fu: Nice looking PDFs with org-mode and xetex]]
 
-*** Module boilerplate
+** Module boilerplate
 
 Finally, offer module for use.
 
