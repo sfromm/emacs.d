@@ -140,10 +140,7 @@ machine HOST login NAME password VALUE port NUMBER
 #+END_EXAMPLE
 
 #+BEGIN_SRC emacs-lisp
-(use-package auth-source
-  :init
-  (progn
-    (setq auth-source-debug t)))
+(use-package auth-source)
 #+END_SRC
 
 It helps to have a utility to extract account information from
