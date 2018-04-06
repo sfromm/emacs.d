@@ -63,7 +63,7 @@ The following does lots of things:
                                  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
                                      "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
                                  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
-                                   "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+                                   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                  )
         org-export-allow-bind-keywords t
         org-file-apps (quote ((auto-mode . emacs)
