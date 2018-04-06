@@ -14,6 +14,12 @@ Turn on *linum-mode* when editing Python files.
     (add-hook 'python-mode-hook 'sf/whitespace))
 #+END_SRC
 
+To get flycheck to work with Emacs, do
+
+#+BEGIN_EXAMPLE
+pip install --upgrade8 flake8
+#+END_EXAMPLE
+
 * Virtual Environments
 
 When working on Python code, you should strongly consider using [[http://docs.python-guide.org/en/latest/dev/virtualenvs/][virtual
