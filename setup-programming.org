@@ -29,6 +29,15 @@ Set up company-mode for auto-completion.
 #+BEGIN_SRC emacs-lisp
 (use-package company)
 #+END_SRC
+
+Set up [[http://www.flycheck.org/en/latest/index.html][flycheck]] for on the fly syntax checking.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+#+END_SRC
+
 * Lisp
 
 A default offset of 2 seems to make sense for lisp.
