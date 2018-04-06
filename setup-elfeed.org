@@ -5,20 +5,63 @@
 
 [[https://github.com/skeeto/elfeed][Elfeed]] is a web feed (ATOM and RSS) reader for Emacs.
 
+[[https://github.com/skeeto/youtube-dl-emacs][youtube-dl-emacs]] is a package that manages a download queue for [[https://rg3.github.io/youtube-dl/][youtube-dl]].
+
 #+BEGIN_SRC emacs-lisp
+  (use-package youtube-dl
+    :init (setq youtube-dl-directory "~/annex/Video/youtube"))
+
   (use-package elfeed
     :ensure elfeed
     :bind (
             :map elfeed-search-mode-map
+            ("d" . elfeed-search-youtube-dl)
             ("f" . sf/elfeed-search-toggle-starred)
+            ("o" . elfeed-search-mpv)
             ("F" . sf/elfeed-search-starred)
             ("<" . sf/elfeed-search-first-article)
             (">" . sf/elfeed-search-last-article)
             :map elfeed-show-mode-map
+            ("d" . elfeed-show-youtube-dl)
             ("f" . sf/elfeed-show-toggle-starred)
+            ("o" . elfeed-show-mpv)
             )
     :config
     (progn
+
+      (defun elfeed-search-mpv ()
+        "Play the current entry with mpv"
+        (interactive)
+        (message "url %s" (elfeed-entry-link (car (elfeed-search-selected))))
+        (start-process "*elfeed-mpv*" nil "mpv" (elfeed-entry-link (car (elfeed-search-selected)))))
+
+      (defun elfeed-show-mpv ()
+        "Play the current entry with mpv"
+        (interactive)
+        (start-process "*elfeed-mpv*" nil "mpv" (elfeed-entry-link elfeed-show-entry)))
+
+      ;; from skeeto
+      ;; https://github.com/skeeto/.emacs.d/blob/master/etc/feed-setup.el
+      (defun elfeed-search-youtube-dl ()
+        "Download the current entry/entries with youtube-dl"
+        (interactive)
+        (let ((entries (elfeed-search-selected)))
+          (dolist (entry entries)
+            (if (null (youtube-dl (elfeed-entry-link entry)
+                        :title (elfeed-entry-title entry)))
+                  (message "Entry is not a youtube link")
+                  (message "Downloading %s" (elfeed-entry-title entry)))
+            (elfeed-untag entry 'unread)
+            (elfeed-search-update-entry entry)
+            (unless (use-region-p) (forward-line)))))
+
+      ;; from skeeto
+      ;; https://github.com/skeeto/.emacs.d/blob/master/etc/feed-setup.el
+      (defun elfeed-show-youtube-dl ()
+        "Download the current entry with youtube-dl"
+        (interactive)
+        (pop-to-buffer (youtube-dl (elfeed-entry-link elfeed-show-entry))))
+
       (defun sf/elfeed-search-starred ()
         "Show starred elfeed articles"
         (interactive)
@@ -86,6 +129,7 @@
            ("http://xkcd.com/atom.xml" comics fun)
            ("https://what-if.xkcd.com/feed.atom" fun)
            ("http://americasgreatoutdoors.tumblr.com/rss" fun)
+           ("https://www.youtube.com/feeds/videos.xml?user=polygon" youtube)
            )
         url-queue-timeout 30
         elfeed-db-directory (concat user-emacs-directory "user/elfeed")
