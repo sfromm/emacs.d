@@ -16,18 +16,18 @@ question.
 The following defines some variables and functions to help us out.
 
 #+BEGIN_SRC emacs-lisp
-  (defvar sf/font nil "Preferred font")
+  (defvar sf/font-name nil "Preferred font")
   (defvar sf/font-size 0 "Preferred font size")
 
   (defun sf/font-ok-p ()
     "Is configured font valid?"
     (interactive)
-    (member sf/font (font-family-list)))
+    (member sf/font-name (font-family-list)))
   (defun sf/font-name-and-size ()
     "Compute font name and size string"
     (interactive)
     (let* ((size (number-to-string sf/font-size))
-            (name (concat sf/font "-" size)))
+            (name (concat sf/font-name "-" size)))
       name))
   (defun sf/font-size-increase ()
     "Increase font size"
@@ -42,21 +42,17 @@ The following defines some variables and functions to help us out.
   (defun sf/set-emoji-font ()
     "Set emoji font properly"
     (interactive)
-    (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend)
-    )
+    (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend))
   (defun sf/font-update ()
     "Update font configuration"
     (interactive)
     (if (sf/font-ok-p)
       (progn
         (message "Setting font to: %s" (sf/font-name-and-size))
-        (set-frame-font (sf/font-name-and-size))
-        (set-face-attribute 'default nil :font (sf/font-name-and-size))
-        (set-face-font 'default sf/font)
-        (sf/set-emoji-font)
-        )
-      )
-    )
+        (set-frame-font sf/font-name)
+        (set-face-attribute 'default nil :font sf/font-name :height (* sf/font-size 10))
+        (set-face-font 'default sf/font-name)
+        (sf/set-emoji-font))))
 #+END_SRC
 
 Now, let's put the above to work.
@@ -64,7 +60,7 @@ Now, let's put the above to work.
 #+BEGIN_SRC emacs-lisp
   (progn
     (setq
-      sf/font "Hack"
+      sf/font-name "Fira Code Light"
       sf/font-size 12)
     (sf/font-update))
 #+END_SRC
