@@ -31,109 +31,177 @@ The following does lots of things:
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :ensure org-plus-contrib
+    :bind 
+    (("<f8>" . org-cycle-agenda-files)
+      ("<f12>" . org-agenda)
+      ("C-c l" . org-store-link)
+      ("C-c c" . org-capture)
+      ("C-c a" . org-agenda)
+      ("C-c b" . org-switchb)
+      :map org-mode-map
+      ("RET" . org-return-indent))
     :init
-    (progn
-      (add-hook 'org-mode-hook 'turn-on-auto-fill)
-      (add-hook 'org-mode-hook '(lambda() (set-fill-column 72)))
-      (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
-      (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
-      (setq
-        org-agenda-files (list
-                           (concat org-directory "/journal.org")
-                           (concat org-directory "/tasks.org")
-                           (concat org-directory "/work.org")
-                           (concat org-directory "/personal.org")
-                           (concat org-directory "/documentation.org")
-                           )
-        org-agenda-sticky t
-        org-agenda-restore-windows-after-quit t
-        org-agenda-window-setup 'current-window
+    (setq
+      org-agenda-files (list
+                         (concat org-directory "/journal.org")
+                         (concat org-directory "/tasks.org")
+                         (concat org-directory "/work.org")
+                         (concat org-directory "/personal.org")
+                         (concat org-directory "/documentation.org")
+                         )
+      org-agenda-sticky t
+      org-agenda-restore-windows-after-quit t
+      org-agenda-window-setup 'current-window
 
-        org-completion-use-ido t
-        org-default-notes-file (concat org-directory "/journal.org")
-        org-directory "~/forge"
-        org-ellipsis "⤵"
-        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-        org-log-done t
-        org-log-reschedule "note"
+      org-completion-use-ido t
+      org-default-notes-file (concat org-directory "/journal.org")
+      org-directory "~/forge"
+      org-ellipsis "⤵"
+      org-log-done t
+      org-log-reschedule "note"
 
-        org-capture-templates '(
-                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
-                                   "* %?%U\n")
-                                 ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
-                                     "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-                                 ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
-                                   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
-                                 )
-        org-export-allow-bind-keywords t
-        org-file-apps (quote ((auto-mode . emacs)
-                               ("\\.doc\\'" . "ooffice %s")
-                               ("\\.docx\\'" . "ooffice %s")
-                               ("\\.xlsx\\'" . "ooffice %s")
-                               ("\\.pptx\\'" . "ooffice %s")
-                               ("\\.pdf\\'" . default)))
-        org-modules '(org-w3m org-bbdb
-                       org-bibtex org-docview
-                       org-gnus org-info
-                       org-irc org-mhe org-rmail org-habit)
-        org-src-window-setup 'current-window
-        org-todo-keywords '(
-                             (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
-                             (sequence "|" "CANCELLED(c)")
-                             )
-        org-publish-project-alist '(
-                                     ("public"
-                                       :base-directory "~/forge"
-                                       :publishing-directory "~/Documents")
-                                     )
-        )
-      (org-load-modules-maybe t)
-      (evil-set-initial-state 'org-mode 'emacs)
+      org-capture-templates '(
+                               ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* %?%U\n")
+                               ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
+                                 "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                               ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
+                                 "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+                               )
+
+      org-export-allow-bind-keywords t
+      org-export-coding-system 'utf-8
+
+      org-file-apps (quote ((auto-mode . emacs)
+                             ("\\.doc\\'" . "ooffice %s")
+                             ("\\.docx\\'" . "ooffice %s")
+                             ("\\.xlsx\\'" . "ooffice %s")
+                             ("\\.pptx\\'" . "ooffice %s")
+                             ("\\.pdf\\'" . default)))
+      org-modules '(org-w3m org-bbdb
+                     org-bibtex org-docview
+                     org-gnus org-info
+                     org-irc org-mhe org-rmail org-habit)
+      org-src-preserve-indentation t
+      org-src-window-setup 'current-window                    ;; use current window when editing a source block
+      org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
+      org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
+      org-todo-keywords '(
+                           (sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
+                           (sequence "|" "CANCELLED(c)"))
+      org-publish-project-alist '(
+                                   ("public"
+                                     :base-directory "~/forge"
+                                     :publishing-directory "~/Documents")
+                                   )
       )
-    :bind (("<f8>" . org-cycle-agenda-files)
-            ("<f12>" . org-agenda)
-            ("C-c l" . org-store-link)
-            ("C-c c" . org-capture)
-            ("C-c a" . org-agenda)
-            ("C-c b" . org-switchb))
+    (defun sf/org-mode-hook ()
+      (interactive)
+      (set-fill-column 100)
+      (when (fboundp 'turn-on-auto-fill)
+        (turn-on-auto-fill))
+      (when (fboundp 'turn-on-flyspell)
+        (turn-on-flyspell)))
+    (org-load-modules-maybe t)
+    (evil-set-initial-state 'org-mode 'emacs)
+    (add-hook 'org-mode-hook 'sf/org-mode-hook)
+    (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode))
     )
 #+END_SRC
 
-Use fancy *org-bullets* to make things look nice.
+ Pull in *org-git-link* to reference git links.  More
+ information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :init (add-hook 'org-mode-hook 'org-bullets-mode))
-#+END_SRC
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-git-link)
+ #+END_SRC
 
-Pull in *org-git-link* to reference git links.  More
-information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
+** Org Bullets
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org-git-link)
-#+END_SRC
+ Use fancy *org-bullets* to make things look nice.
 
-Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js/][reveal.js]].
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-bullets
+     :after org
+     :ensure t
+     :init (add-hook 'org-mode-hook 'org-bullets-mode))
+ #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(use-package ox-reveal)
-#+END_SRC
+** Org ID
+
+ Have a unique ID generated for all Org headings.
+
+ #+BEGIN_SRC emacs-lisp
+ (use-package org-id
+       :after org
+       :config
+       (setq org-id-method 'uuid
+         org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+ #+END_SRC
+
+** Org Indent
+
+ Use *org-indent* to make text look nice and indented to level of heading.
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package org-indent
+     :diminish
+     :config
+     (setq org-startup-indented t))
+ #+END_SRC
+
+** Exporting
+
+One of the (many) nice features of org-mode is that you can export to
+many different formats.  What follows is miscellaneous resources online
+that discuss exporting.
+
+   - [[http://orgmode.org/manual/Exporting.html#Exporting][Org Mode Manual, Exporting]]
+   - [[http://orgmode.org/worg/org-contrib/babel/examples/article-class.html][Org-article LaTeX class]]
+   - [[http://home.fnal.gov/~neilsen/notebook/orgExamples/org-examples.html][Emacs org-mode examples and cookbook]]
+   - [[http://emacs-fu.blogspot.com/2011/04/nice-looking-pdfs-with-org-mode-and.html][Emacs Fu: Nice looking PDFs with org-mode and xetex]]
 
 Pull in *ox-twbs* for orgmode export to twitter bootstrap.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ox-twbs
-    :ensure t)
+ (use-package ox-twbs :ensure t)
 #+END_SRC
 
 Pull in *org-mime* to htmlize Org subtrees for email.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-mime
-    :ensure t
-    )
+ (use-package org-mime :ensure t)
 #+END_SRC
+
+** Presentations
+
+Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js/][reveal.js]].
+
+#+BEGIN_SRC emacs-lisp
+ (use-package ox-reveal)
+#+END_SRC
+
+    Another alternative is to use [[https://github.com/rlister/org-present][org-present]], which supports
+    presentations from within Emacs.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package org-present
+        :ensure t
+        :defer 20
+        :init
+        (add-hook 'org-present-mode-hook
+          (lambda ()
+            (org-present-big)
+            (org-display-inline-images)
+            (org-present-hide-cursor)
+            (org-present-read-only)))
+        (add-hook 'org-present-mode-quit-hook
+          (lambda ()
+            (org-present-small)
+            (org-remove-inline-images)
+            (org-present-show-cursor)
+            (org-present-read-write))))
+    #+END_SRC
 
 ** Contacts
 
@@ -224,14 +292,6 @@ then use =C-c '= again to exit.
 
 ** Exporting
 
-One of the (many) nice features of org-mode is that you can export to
-many different formats.  What follows is miscellaneous resources online
-that discuss exporting.
-
-- [[http://orgmode.org/manual/Exporting.html#Exporting][Org Mode Manual, Exporting]]
-- [[http://orgmode.org/worg/org-contrib/babel/examples/article-class.html][Org-article LaTeX class]]
-- [[http://home.fnal.gov/~neilsen/notebook/orgExamples/org-examples.html][Emacs org-mode examples and cookbook]]
-- [[http://emacs-fu.blogspot.com/2011/04/nice-looking-pdfs-with-org-mode-and.html][Emacs Fu: Nice looking PDFs with org-mode and xetex]]
 
 ** Module boilerplate
 
