@@ -113,7 +113,8 @@ Save all buffers and then run =depot-sync.sh=.
       (with-temp-buffer (async-shell-command "depot-sync.sh" t))))
 #+END_SRC
 
-Define function that will disable =global-linum=.
+Define function that will disable =global-linum=.  Note that
+=linum-mode= is deprecated with *26.1*.
 
 #+BEGIN_SRC emacs-lisp
   (defun sf/nolinum ()
