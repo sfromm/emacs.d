@@ -227,14 +227,6 @@ may make data entry simpler.
     :ensure t)
 #+END_SRC
 
-*** Mode line
-
-Pull in module [[file:setup-modeline.org][setup-modeline.org]] ...
-
-#+BEGIN_SRC emacs-lisp
-(require 'setup-modeline)
-#+END_SRC
-
 *** Music 
 
 [[https://github.com/pft/mingus][Mingus]] is a frontend for Emacs to the Music Player Daemon (MPD).  The
@@ -495,13 +487,6 @@ Use UTF-8 as the default locale.
 (prefer-coding-system 'utf-8)
 #+END_SRC
 
-Define format for line numbers on the side, when *linum-mode* is
-enabled.
-
-#+BEGIN_SRC emacs-lisp
-(setq linum-format "%4d")
-#+END_SRC
-
 Turn on highlighting of current line.  See Emacs manual on [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Cursor-Display.html][Cursor Display]].
 
 #+BEGIN_SRC emacs-lisp
@@ -603,101 +588,11 @@ Lastly, enable *undo-tree-mode*.  You can visualize the changes with
 
 *** Appearance
 
-**** Themes
+    Pull in appearance-related configuration.  See [[file:setup-appearance.org][setup-appearance.org]].
 
-This installs and enables an Emacs theme.  I try out different themes on
-a regular basis, but have been partial to [[http://ethanschoonover.com/solarized][Solarized]] for a long time.
-More about Emacs themes can be read in the manual on [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Custom-Themes.html][custom-themes]].
-This defines the default theme, which is then loaded below.
-
-#+BEGIN_SRC emacs-lisp
-  (dolist (p '(leuven-theme
-                material-theme
-                solarized-theme
-                spacemacs-theme
-                zenburn-theme
-                professional-theme))
-    (progn (sf/package-install p)))
-  (defvar sf/gui-theme nil "Preferred graphics theme")
-  (setq sf/gui-theme 'material)
-#+END_SRC
-
-More information about themes can be found at EmacsWiki:
-
-http://www.emacswiki.org/emacs/ColorTheme
-
-This includes installing a theme for one buffer (=M-x
-color-theme-buffer-local=) or for a specific frame.  You can also toggle
-between day/night (light/dark) themes.
-
-**** Fonts
-
-#+BEGIN_SRC emacs-lisp
-(require 'setup-fonts)
-#+END_SRC
-
-**** General appearance items
-
-If using Emacs in server mode, the following function wraps things to do
-when creating a frame.
-
-#+BEGIN_SRC emacs-lisp
-  (defun sf/look-feel ()
-    "Set up look and feel"
-    (interactive)
-    (when (display-graphic-p)
-      (sf/font-update)
-      (tool-bar-mode -1)
-      (scroll-bar-mode -1)
-      (load-theme sf/gui-theme t))
-    )
-#+END_SRC
-
-A few things when in graphical mode:
-- Disable the toolbar and scroll bar.
-- Install [[https://julien.danjou.info/projects/emacs-packages][rainbow mode]] to /colorize color names in buffers/.
-- Run ~sf/look-feel~.
-
-#+BEGIN_SRC emacs-lisp
-  (sf/package-install 'rainbow-mode)
-  (when (display-graphic-p)
-    (sf/look-feel))
-#+END_SRC
-
-Activate syntax highlighting.  See [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html][Font Lock]] in the Emacs manual.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'font-lock)
-  (global-font-lock-mode 1)
-  (setq font-lock-use-default-colors t)
-#+END_SRC
-
-Add some information to the mode line: line, column, battery remaining,
-and the time.
-
-#+BEGIN_SRC emacs-lisp
-  (setq line-number-mode t)
-  (setq column-number-mode t)
-  (setq display-battery-mode t)
-  (setq display-time-24hr-format t)
-  (display-battery-mode)
-#+END_SRC
-
-**** DONE Use ~after-make-frame-functions~ if using emacsclient
-     CLOSED: [2015-04-06 Mon 20:10]
-
-If I start Emacs via ~emacs --server~, I still want the frame to have
-the right look when I invoke =emacsclient=.  Something like:
-
-#+BEGIN_SRC emacs-lisp
-  (if (daemonp)
-    (add-hook 'after-make-frame-functions
-      (lambda (frame)
-        (select-frame frame)
-        (sf/look-feel))
-      )
-    )
-#+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (require 'setup-appearance)
+    #+END_SRC
 
 *** Behavior
 
@@ -843,7 +738,7 @@ Define a hydra to start/switch to applications or trigger miscellaneous actions.
       ("t" twit "twitter")
       ("j" sf/jabber-start-or-switch "jabber")
       ("g" magit-status "magit")
-      ("m" mingus "music")
+      ("m" simple-mpc "music")
       ("s" eshell "shell")
       ("p" paradox-list-packages "packages")
       ("u" browse-url "open url")
