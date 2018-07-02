@@ -17,6 +17,20 @@ First create the customization group(s).
     :prefix "sf-custom/")
 #+END_SRC
 
+Create customization variables for look and feel.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom sf-custom/font-name nil
+    "What is the preferred font family to use?"
+    :group 'sf-emacs
+    :type 'string)
+
+  (defcustom sf-custom/font-size 0
+    "What is the preferred font size?"
+    :group 'sf-emacs
+    :type 'integer)
+#+END_SRC
+
 Create customization variables related to email.
 
 #+BEGIN_SRC emacs-lisp
