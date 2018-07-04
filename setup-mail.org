@@ -561,10 +561,12 @@ for reference.
 
 * Notmuch MUA
 
-notmuch]] is basically a mail indexer.  It helps you to better tame your
+[[http://notmuchmail.org/][notmuch]] is basically a mail indexer.  It helps you to better tame your
 inbox with search, tagging, and other functions.  There is a CLI
 interface to interact with your email in Maildir format.  Or, you can
 use the Emacs notmuch client front-end. 
+
+While I am presently using /mu4e/, I have left the configuration here for reference.
 
 Installation is basically:
 

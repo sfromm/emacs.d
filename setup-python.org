@@ -6,12 +6,12 @@
 Turn on *linum-mode* when editing Python files.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package python
-    :interpreter ("python" . python-mode)
-    :config
-    (setq python-indent-offset 4)
-    (add-hook 'python-mode-hook 'linum-mode)
-    (add-hook 'python-mode-hook 'sf/whitespace))
+(use-package python
+  :interpreter ("python" . python-mode)
+  :config
+  (setq python-indent-offset 4)
+  (add-hook 'python-mode-hook 'linum-mode)
+  (add-hook 'python-mode-hook 'sf/whitespace))
 #+END_SRC
 
 To get flycheck to work with Emacs, do

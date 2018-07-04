@@ -30,12 +30,15 @@ Set up company-mode for auto-completion.
 (use-package company)
 #+END_SRC
 
+* Flycheck - Syntax checking
+
 Set up [[http://www.flycheck.org/en/latest/index.html][flycheck]] for on the fly syntax checking.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :init (global-flycheck-mode))
+(use-package flycheck
+  :ensure t
+  :diminish flycheck-mode
+  :init (global-flycheck-mode))
 #+END_SRC
 
 * Lisp
@@ -45,6 +48,18 @@ A default offset of 2 seems to make sense for lisp.
 #+BEGIN_SRC emacs-lisp
 (setq lisp-indent-offset 2)
 (evil-set-initial-state 'lisp-mode 'emacs)
+#+END_SRC
+
+[[https://www.emacswiki.org/emacs/ElDoc][ElDoc]] shows the argument list of the function call you are currently writing in the echo area.
+
+#+BEGIN_SRC emacs-lisp
+(use-package eldoc
+  :diminish eldoc-mode
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  :config
+  (setq eldoc-idle-delay 0.3))
 #+END_SRC
 
 * Lua

@@ -119,7 +119,7 @@ and the time.
   (setq line-number-mode t
     column-number-mode t
     display-battery-mode t
-    display-time-24hr-format t
+    display-time-24hr-format t)
   (display-battery-mode)
 #+END_SRC
 

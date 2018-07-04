@@ -39,6 +39,7 @@ The following does lots of things:
       ("C-c a" . org-agenda)
       ("C-c b" . org-switchb)
       :map org-mode-map
+      ("C-c >" . org-time-stamp-inactive)
       ("RET" . org-return-indent))
     :init
     (setq
@@ -112,43 +113,43 @@ The following does lots of things:
  Pull in *org-git-link* to reference git links.  More
  information available [[http://orgmode.org/worg/org-contrib/org-git-link.html][here]].
 
- #+BEGIN_SRC emacs-lisp
-   (use-package org-git-link)
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package org-git-link)
+#+END_SRC
 
 ** Org Bullets
 
  Use fancy *org-bullets* to make things look nice.
 
- #+BEGIN_SRC emacs-lisp
-   (use-package org-bullets
-     :after org
-     :ensure t
-     :init (add-hook 'org-mode-hook 'org-bullets-mode))
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :after org
+  :ensure t
+  :init (add-hook 'org-mode-hook 'org-bullets-mode))
+#+END_SRC
 
 ** Org ID
 
  Have a unique ID generated for all Org headings.
 
- #+BEGIN_SRC emacs-lisp
- (use-package org-id
-       :after org
-       :config
-       (setq org-id-method 'uuid
-         org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package org-id
+  :after org
+  :config
+  (setq org-id-method 'uuid
+    org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+#+END_SRC
 
 ** Org Indent
 
  Use *org-indent* to make text look nice and indented to level of heading.
 
- #+BEGIN_SRC emacs-lisp
-   (use-package org-indent
-     :diminish
-     :config
-     (setq org-startup-indented t))
- #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package org-indent
+  :diminish
+  :config
+  (setq org-startup-indented t))
+#+END_SRC
 
 ** Exporting
 
@@ -164,13 +165,13 @@ that discuss exporting.
 Pull in *ox-twbs* for orgmode export to twitter bootstrap.
 
 #+BEGIN_SRC emacs-lisp
- (use-package ox-twbs :ensure t)
+(use-package ox-twbs :ensure t)
 #+END_SRC
 
 Pull in *org-mime* to htmlize Org subtrees for email.
 
 #+BEGIN_SRC emacs-lisp
- (use-package org-mime :ensure t)
+(use-package org-mime :ensure t)
 #+END_SRC
 
 ** Presentations
@@ -178,30 +179,30 @@ Pull in *org-mime* to htmlize Org subtrees for email.
 Pull in *ox-reveal* for orgmode export to [[https://github.com/hakimel/reveal.js/][reveal.js]].
 
 #+BEGIN_SRC emacs-lisp
- (use-package ox-reveal)
+(use-package ox-reveal)
 #+END_SRC
 
     Another alternative is to use [[https://github.com/rlister/org-present][org-present]], which supports
     presentations from within Emacs.
 
-    #+BEGIN_SRC emacs-lisp
-      (use-package org-present
-        :ensure t
-        :defer 20
-        :init
-        (add-hook 'org-present-mode-hook
-          (lambda ()
-            (org-present-big)
-            (org-display-inline-images)
-            (org-present-hide-cursor)
-            (org-present-read-only)))
-        (add-hook 'org-present-mode-quit-hook
-          (lambda ()
-            (org-present-small)
-            (org-remove-inline-images)
-            (org-present-show-cursor)
-            (org-present-read-write))))
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package org-present
+  :ensure t
+  :defer 20
+  :init
+  (add-hook 'org-present-mode-hook
+    (lambda ()
+      (org-present-big)
+      (org-display-inline-images)
+      (org-present-hide-cursor)
+      (org-present-read-only)))
+  (add-hook 'org-present-mode-quit-hook
+    (lambda ()
+      (org-present-small)
+      (org-remove-inline-images)
+      (org-present-show-cursor)
+      (org-present-read-write))))
+#+END_SRC
 
 ** Contacts
 

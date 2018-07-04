@@ -1,0 +1,121 @@
+#+TITLE: Directory Editing and Navigation
+#+PROPERTY: header-args :tangle ~/.emacs.d/site-lisp/setup-dired.el
+
+* Dired
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] makes an Emacs buffer with a directory listing that you can use to
+operate on listed files.
+
+- [[http://ergoemacs.org/emacs/emacs_dired_tips.html][ErgoEmacs dired tips]]
+- [[https://www.masteringemacs.org/article/dired-shell-commands-find-xargs-replacement][Mastering Emacs on dired]]
+  
+#+BEGIN_SRC emacs-lisp
+(defun sf/dired-mode-hook ()
+  "Set misc settings in dired mode."
+  (setq-local truncate-lines t)
+  (sf/turn-on-hl-line))
+
+(defun sf/dired-up ()
+  "Move up a directory without opening a new buffer."
+  (interactive)
+  (find-alternate-file ".."))
+
+(setq insert-directory-program "gls")
+
+(use-package dired
+  :bind
+  (("C-x C-j" . dired-jump)
+    :map dired-mode-map
+    ("RET" . dired-find-alternate-file)
+    ("Y" . sf/dired-rsync)
+    ("^" . sf/dired-up))
+  :hook
+  (dired-mode . sf/dired-mode-hook)
+  :diminish dired-omit-mode
+  :config
+  (put 'dired-find-alternate-file 'disabled nil)
+  (setq
+    dired-dwim-target t
+    dired-ls-F-marks-symlinks t
+    dired-use-ls-dired t
+    dired-recursive-copies 'always
+    dired-recursive-deletes 'top
+    global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
+    auto-revert-verbose nil)
+  (add-to-list 'dired-omit-extensions ".DS_Store"))
+
+(use-package dired-x :after dired)
+#+END_SRC
+
+Use the =async= package with =dired=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package async :ensure t)
+(autoload 'dired-async-mode "dired-async.el" nil t)
+(dired-async-mode 1)
+#+END_SRC
+
+** Dired Rsync
+
+Via the following sources:
+
+- https://oremacs.com/2016/02/24/dired-rsync/
+- https://truongtx.me/tmtxt-dired-async.html
+
+#+BEGIN_SRC emacs-lisp
+(defun sf/dired-rsync (dest)
+  (interactive
+    (list
+      (expand-file-name
+        (read-file-name "Rsync to:" (dired-dwim-target-directory)))))
+  ;; store all selected files into "files" list
+  (let ((files (dired-get-marked-files
+                 nil current-prefix-arg))
+         ;; the rsync command
+         (tmtxt/rsync-command
+           "rsync -arvz --progress "))
+    ;; add all selected file names as arguments
+    ;; to the rsync command
+    (dolist (file files)
+      (setq sf//rsync-command
+        (concat sf/rsync-command (shell-quote-argument file) " ")))
+    ;; append the destination
+    (setq sf/rsync-command
+      (concat tmtxt/rsync-command (shell-quote-argument dest)))
+    ;; run the async shell command
+    (async-shell-command tmtxt/rsync-command "*rsync*")
+    ;; finally, switch to that window
+    (other-window 1)))
+#+END_SRC
+
+* Postamble
+
+Finally, offer module for use.
+
+#+BEGIN_SRC emacs-lisp
+(provide 'setup-dired)
+#+END_SRC
+
+* License
+
+This document is licensed under the GNU Free Documentation License
+version 1.3 or later (http://www.gnu.org/copyleft/fdl.html).
+
+#+BEGIN_SRC 
+Copyright (C) 2017 Stephen Fromm
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+Code in this document is free software: you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+This code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+#+END_SRC
