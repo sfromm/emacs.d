@@ -24,7 +24,7 @@ operate on listed files.
 
 (use-package dired
   :bind
-  (("C-x C-j" . dired-jump)
+  (("C-c d" . dired-jump)
     :map dired-mode-map
     ("RET" . dired-find-alternate-file)
     ("Y" . sf/dired-rsync)
@@ -72,18 +72,17 @@ Via the following sources:
   (let ((files (dired-get-marked-files
                  nil current-prefix-arg))
          ;; the rsync command
-         (tmtxt/rsync-command
-           "rsync -arvz --progress "))
+         (sf/rsync-command "rsync -arvz --progress "))
     ;; add all selected file names as arguments
     ;; to the rsync command
     (dolist (file files)
-      (setq sf//rsync-command
+      (setq sf/rsync-command
         (concat sf/rsync-command (shell-quote-argument file) " ")))
     ;; append the destination
     (setq sf/rsync-command
-      (concat tmtxt/rsync-command (shell-quote-argument dest)))
+      (concat sf/rsync-command (shell-quote-argument dest)))
     ;; run the async shell command
-    (async-shell-command tmtxt/rsync-command "*rsync*")
+    (async-shell-command sf/rsync-command "*rsync*")
     ;; finally, switch to that window
     (other-window 1)))
 #+END_SRC
