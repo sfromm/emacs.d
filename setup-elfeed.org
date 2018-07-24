@@ -125,7 +125,7 @@
            ("http://sachachua.com/blog/feed" emacs blog )
            ("http://blog.aaronbieber.com/feed.xml" emacs blog )
            ("https://www.masteringemacs.org/feed" emacs )
-           ("http://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
+           ("https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
            ("http://irreal.org/blog/?feed=rss2" emacs)
            ("https://changelog.complete.org/feed" emacs blog)
            ;; amusement
