@@ -1,6 +1,6 @@
 ARGS = -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
 OS := $(shell uname)
-VERSION = 25.3
+VERSION = 26.1_1
 ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
 endif
