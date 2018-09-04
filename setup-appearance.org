@@ -91,15 +91,16 @@ More about Emacs themes can be read in the manual on [[https://www.gnu.org/softw
 This defines the default theme, which is then loaded below.
 
 #+BEGIN_SRC emacs-lisp
-  (dolist (p '(leuven-theme
-                material-theme
-                solarized-theme
-                spacemacs-theme
-                zenburn-theme
-                professional-theme))
-    (progn (sf/package-install p)))
-  (defvar sf/gui-theme nil "Preferred graphics theme")
-  (setq sf/gui-theme 'material)
+(dolist (p '(leuven-theme
+              doom-themes
+              material-theme
+              solarized-theme
+              spacemacs-theme
+              zenburn-theme
+              professional-theme))
+  (progn (sf/package-install p)))
+(defvar sf/gui-theme nil "Preferred graphics theme")
+(setq sf/gui-theme 'material)
 #+END_SRC
 
 More information about themes can be found at EmacsWiki:
@@ -137,6 +138,15 @@ Pull in [[https://github.com/Malabarba/smart-mode-line/][smart-mode-line]] to he
       sml/name-width 30
       sml/shorten-modes t)
     (sml/setup))
+#+END_SRC
+
+Another alternative is [[https://github.com/seagle0128/doom-modeline][doom-modeline]]:
+
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :defer t
+  :hook (after-init . doom-modeline-init))
 #+END_SRC
 
 * Nyan Cat
