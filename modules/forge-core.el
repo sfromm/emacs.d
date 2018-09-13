@@ -1,6 +1,21 @@
-;;; forge-core.el --- Set up the core -*- lexical-binding: t; -*-
+;;; forge-core.el --- Set up the core.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 by Stephen Fromm
+;; Copyright (C) 2018 Stephen Fromm
+
+;; Author: Stephen Fromm
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -91,6 +106,12 @@
   (interactive)
   (hl-line-mode nil))
 
+(defun forge-initialize ()
+  "Initialize paths and environment for this Emacs install."
+  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir))
+    (unless (file-directory-p dir)
+      (make-directory dir t))))
+
 ;;;
 ;;; Platform
 ;;; Maybe one day spin this out to separate file.
@@ -109,34 +130,7 @@
 ;;;
 (load "server")
 (unless (server-running-p) (server-start))
-
-;;;
-;;; Backups and auto-save
-;;;
-(defun forge/save-all ()
-  "Save any file-related buffers."
-  (interactive)
-  (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
-  (save-some-buffers t))
-
-(setq
-  backup-directory-alist `((".*" forge-backup-dir))
-  auto-save-file-name-transforms `((".*" forge-backup-dir t))
-  delete-old-versions -1
-  version-control t
-  savehist-file (concat forge-state-dir "savehist")
-  savehist-save-minibuffer-history 1
-  savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-  auto-save-timeout 120
-  auto-save-interval 1000)
-
-(savehist-mode 1)
-
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-
-;; If focus switches away, save all files.
-(when (version<= "24.4" emacs-version)
-  (add-hook 'focus-out-hook 'forge/save-all))
+(forge-initialize)
 
 ;;;
 (provide 'forge-core)
