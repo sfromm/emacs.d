@@ -21,21 +21,21 @@
 
 ;;; Code:
 
-(defun forge/dired-mode-hook ()
-  "Set misc settings in dired mode."
-  (setq-local truncate-lines t)
-  (forge/turn-on-hl-line))
-
-(defun forge/dired-up ()
-  "Move up a directory without opening a new buffer."
-  (interactive)
-  (find-alternate-file ".."))
-
 ;;; This requires installing coreutils via homebrew
 (when (forge/system-type-is-darwin)
   (setq insert-directory-program "gls"))
 
 (use-package dired
+  :preface
+  (defun forge/dired-mode-hook ()
+    "Set misc settings in dired mode."
+    (setq-local truncate-lines t)
+    (forge/turn-on-hl-line))
+
+  (defun forge/dired-up ()
+    "Move up a directory without opening a new buffer."
+    (interactive)
+    (find-alternate-file ".."))
   :bind
   (("C-c d" . dired-jump)
     :map dired-mode-map
