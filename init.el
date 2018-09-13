@@ -17,6 +17,7 @@
 (require 'forge-git)
 (require 'forge-pass)
 (require 'forge-eshell)
+(require 'forge-orgmode)
 
 (message "Emacs is ready, finished loading after %.03fs."
   (float-time (time-subtract after-init-time before-init-time)))
