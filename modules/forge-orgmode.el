@@ -42,6 +42,7 @@
     ("C-c a" . org-agenda)
     ("C-c b" . org-switchb)
     :map org-mode-map
+    ("M-q" . endless/fill-or-unfill)
     ("C-c >" . org-time-stamp-inactive)
     ("RET" . org-return-indent))
   :init
