@@ -36,15 +36,19 @@
     "Move up a directory without opening a new buffer."
     (interactive)
     (find-alternate-file ".."))
+
   :bind
   (("C-c d" . dired-jump)
     :map dired-mode-map
     ("RET" . dired-find-alternate-file)
     ("Y" . forge/dired-rsync)
     ("^" . forge/dired-up))
+
   :hook
   (dired-mode . forge/dired-mode-hook)
+
   :diminish dired-omit-mode
+
   :config
   (put 'dired-find-alternate-file 'disabled nil)
   (setq

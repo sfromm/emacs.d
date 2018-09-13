@@ -22,52 +22,53 @@
 ;;; Code:
 
 (use-package eshell
-  :commands (eshell eshell-command)
-  :preface
-  (use-package em-unix
-    :defer t
-    :config
-    (unintern 'eshell/su nil)
-    (unintern 'eshell/sudo nil))
-  :config
-  (progn
-    (setq
-      tramp-default-method "ssh"
-      eshell-visual-commands '("less" "tmux" "htop" "top" "docker")
-      eshell-visual-subcommands '(("git" "log" "diff" "show"))
-      eshell-prompt-function (lambda ()
-                               (concat
-                                 "┌─["
-                                 (user-login-name) "@" (system-name)
-                                 " 🗁 " (abbreviate-file-name (eshell/pwd))
-                                 " 🕗 " (format-time-string "%b %d %H:%M" (current-time))
-                                 "]\n"
-                                 "└─>" (if (= (user-uid) 0) " # " " $ "))) )
-    (add-hook 'eshell-mode-hook
-      (lambda ()
-        (eshell/alias "q" "exit")
-        (eshell/alias "l" "ls -al")
-        (eshell/alias "ll" "ls -al")
-        (eshell/alias "e" "find-file \$1")
-        (eshell/alias "ff" "find-file \$1")
-        (eshell/alias "ee" "find-file-other-window \$1")
-        (eshell/alias "gd" "magit-diff-unstaged")
-        (eshell/alias "gds" "magit-diff-staged")
-        (eshell/alias "gst" "magit-status")))))
+    :commands (eshell eshell-command)
+    :preface
+    (defun eshell-here ()
+      "Opens up a new shell in the directory associated with the current buffer's file."
+      (interactive)
+      (let* ((parent (file-name-directory (buffer-file-name)))
+             (height (/ (window-total-height) 3))
+             (name (car (last (split-string parent "/" t)))))
+	(split-window-vertically)
+	(other-window 1)
+	(eshell "new")
+	(rename-buffer (concat "*eshell: " name "*"))
+	(insert (concat "ls"))
+	(eshell-send-input)))
 
-(defun eshell-here ()
-  "Opens up a new shell in the directory associated with the current buffer's file."
-  (interactive)
-  (let* ((parent (file-name-directory (buffer-file-name)))
-          (height (/ (window-total-height) 3))
-          (name (car (last (split-string parent "/" t)))))
-    (split-window-vertically)
-    (other-window 1)
-    (eshell "new")
-    (rename-buffer (concat "*eshell: " name "*"))
-    (insert (concat "ls"))
-    (eshell-send-input)))
-(global-set-key (kbd "C-!") 'eshell-here)
+    (use-package em-unix
+	:defer t
+	:config
+	(unintern 'eshell/su nil)
+	(unintern 'eshell/sudo nil))
+
+    :bind ("C-!" . eshell-here)
+
+    :config
+    (progn
+      (setq tramp-default-method "ssh"
+	    eshell-visual-commands '("less" "tmux" "htop" "top" "docker")
+	    eshell-visual-subcommands '(("git" "log" "diff" "show"))
+	    eshell-prompt-function (lambda ()
+				     (concat
+				      "┌─["
+				      (user-login-name) "@" (system-name)
+				      " 🗁 " (abbreviate-file-name (eshell/pwd))
+				      " 🕗 " (format-time-string "%b %d %H:%M" (current-time))
+				      "]\n"
+				      "└─>" (if (= (user-uid) 0) " # " " $ "))) )
+      (add-hook 'eshell-mode-hook (lambda ()
+				    (eshell/alias "q" "exit")
+				    (eshell/alias "l" "ls -al")
+				    (eshell/alias "ll" "ls -al")
+				    (eshell/alias "e" "find-file \$1")
+				    (eshell/alias "ff" "find-file \$1")
+				    (eshell/alias "ee" "find-file-other-window \$1")
+				    (eshell/alias "gd" "magit-diff-unstaged")
+				    (eshell/alias "gds" "magit-diff-staged")
+				    (eshell/alias "gst" "magit-status")))))
+
 
 (setq explicit-shell-file-name "/bin/bash")
 

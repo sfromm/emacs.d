@@ -22,16 +22,14 @@
 ;;; Code:
 
 (use-package magit
-  :ensure t
-  :init
-  (progn
-    (setq
-      magit-push-always-verify nil
-      magit-completing-read-function 'ivy-completing-read
-      magit-last-seen-setup-instructions "1.4.0")
-    )
-  :commands magit-status
-  :bind ("C-x g" . magit-status))
+    :ensure t
+    :init
+    (progn
+      (setq magit-push-always-verify nil
+	    magit-completing-read-function 'ivy-completing-read
+	    magit-last-seen-setup-instructions "1.4.0"))
+    :commands magit-status
+    :bind ("C-x g" . magit-status))
 
 (use-package magit-annex :ensure t)
 

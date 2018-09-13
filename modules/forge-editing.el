@@ -57,16 +57,15 @@
   (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
   (save-some-buffers t))
 
-(setq
-  backup-directory-alist (list (cons ".*" forge-backup-dir))    ;; make backups of files to the backup directory
-  auto-save-file-name-transforms `((".*" ,forge-backup-dir t))  ;; 
-  delete-old-versions -1
-  version-control t
-  savehist-file (concat forge-state-dir "savehist")
-  savehist-save-minibuffer-history 1
-  savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-  auto-save-timeout 120
-  auto-save-interval 1000)
+(setq backup-directory-alist (list (cons ".*" forge-backup-dir)) ;; make backups of files to the backup directory
+      auto-save-file-name-transforms `((".*" ,forge-backup-dir t))   ;;
+      delete-old-versions -1
+      version-control t
+      savehist-file (concat forge-state-dir "savehist")
+      savehist-save-minibuffer-history 1
+      savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+      auto-save-timeout 120
+      auto-save-interval 1000)
 
 (savehist-mode 1)
 
@@ -78,4 +77,3 @@
 
 (provide 'forge-editing)
 ;;; forge-editing.el ends here
-
