@@ -24,23 +24,28 @@
 ;;;
 ;;; Fonts
 ;;;
-(defvar forge-font-name "Fira Code"
-  "Preferred font.")
+(defvar forge-font "Fira Mono"
+  "Preferred default font.")
 
 (defvar forge-font-size 12
   "Preferred font size.")
 
-(defun forge/font-ok-p ()
-  "Is configured font valid?"
-  (interactive)
-  (member forge-font-name (font-family-list)))
+ (defvar forge-variable-pitch-font "Fira Sans"
+   "Preferred variable pitch font.")
+
+(defvar forge-unicode-font "Fira Sans"
+  "Preferred Unicode font.")
 
 (defun forge/font-name-and-size ()
   "Compute font name and size string."
   (interactive)
   (let* ((size (number-to-string forge-font-size))
-          (name (concat forge-font-name "-" size)))
-    name))
+         (name (concat forge-font "-" size))) name))
+
+(defun forge/font-ok-p ()
+  "Is configured font valid?"
+  (interactive)
+  (member forge-font (font-family-list)))
 
 (defun forge/font-size-increase ()
   "Increase font size."
@@ -54,31 +59,29 @@
   (setq forge-font-size (- forge-font-size 1))
   (forge/font-update))
 
-(defun forge/set-emoji-font ()
-  "Try to set emoji font properly."
-  (interactive)
-  (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'prepend))
-
 (defun forge/font-update ()
   "Update font configuration."
   (interactive)
-  (if (forge/font-ok-p)
+  (when (forge/font-ok-p)
     (progn
       (message "Setting font to: %s" (forge/font-name-and-size))
-      (set-frame-font forge-font-name)
-      (set-face-attribute 'default nil :font forge-font-name :height (* forge-font-size 10))
-      (set-face-font 'default forge-font-name)
-      (forge/set-emoji-font))))
+      ;; (set-frame-font forge-font)
+      (set-face-attribute 'default nil :font forge-font :height (* forge-font-size 10))
+      (set-face-attribute 'fixed-pitch nil :font forge-font :height (* forge-font-size 10))
+      (when forge-variable-pitch-font
+        (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font))
+      (when (fontp forge-unicode-font)
+        (set-fontset-font t 'unicode (font-spec :family forge-unicode-font) nil 'prepend)))))
+
 
 (forge/font-update)
 
 (use-package all-the-icons :ensure t)
 
 (use-package all-the-icons-dired
-  :ensure t
-  :init
-  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
-
+    :ensure t
+    :init
+    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 ;;;
 ;;; Themes
@@ -88,34 +91,33 @@
 
 ;; Install a mix of themes to have something to start with.
 (dolist (p '(doom-themes leuven-theme
-              material-theme solarized-theme
-              spacemacs-theme zenburn-theme))
+             material-theme solarized-theme
+             spacemacs-theme zenburn-theme))
   (progn (forge/package-install p)))
 
 ;;;
 ;;; Modeline
 ;;;
 (use-package smart-mode-line
-  :ensure t
-  :disabled t
-  :defer t
-  :config
-  (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
-  (setq
-    sml/no-confirm-load-theme t
-    sml/theme 'dark
-    sml/mode-width 'full
-    sml/name-width 30
-    sml/shorten-modes t)
-  (sml/setup))
+    :ensure t
+    :disabled t
+    :defer t
+    :config
+    (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
+    (setq sml/no-confirm-load-theme t
+          sml/theme 'dark
+          sml/mode-width 'full
+          sml/name-width 30
+          sml/shorten-modes t)
+    (sml/setup))
 
 (use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-init))
+    :ensure t
+    :init (doom-modeline-init))
 
 (use-package rainbow-mode
-  :ensure t
-  :defer t)
+    :ensure t
+    :defer t)
 
 (defun forge/setup-ui ()
   "Set up the look and feel."
