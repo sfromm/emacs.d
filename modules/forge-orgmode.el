@@ -34,7 +34,8 @@
 	(turn-on-flyspell)))
 
     :hook
-    (org-mode . forge/org-mode-hook)
+    ((org-mode . forge/org-mode-hook)
+     (org-mode . variable-pitch-mode))
 
     :bind (("<f8>" . org-cycle-agenda-files)
 	   ("<f12>" . org-agenda)
@@ -48,50 +49,50 @@
 		("RET" . org-return-indent))
     :init
     (setq org-directory "~/forge"
-	 org-agenda-files (list
-			   (concat org-directory "/journal.org")
-			   (concat org-directory "/tasks.org")
-			   (concat org-directory "/work.org")
-			   (concat org-directory "/personal.org")
-			   (concat org-directory "/documentation.org"))
-	 org-default-notes-file (concat org-directory "/journal.org")
-	 org-file-apps (quote ((auto-mode . emacs)
-			       ("\\.doc\\'" . "open %s")
-			       ("\\.docx\\'" . "open %s")
-			       ("\\.xlsx\\'" . "open %s")
-			       ("\\.pptx\\'" . "open %s")
-			       ("\\.pdf\\'" . default)))
+	  org-agenda-files (list
+			    (concat org-directory "/journal.org")
+			    (concat org-directory "/tasks.org")
+			    (concat org-directory "/work.org")
+			    (concat org-directory "/personal.org")
+			    (concat org-directory "/documentation.org"))
+	  org-default-notes-file (concat org-directory "/journal.org")
+	  org-file-apps (quote ((auto-mode . emacs)
+			        ("\\.doc\\'" . "open %s")
+			        ("\\.docx\\'" . "open %s")
+			        ("\\.xlsx\\'" . "open %s")
+			        ("\\.pptx\\'" . "open %s")
+			        ("\\.pdf\\'" . default)))
 
-	 org-agenda-sticky t
-	 org-agenda-restore-windows-after-quit t
-	 org-agenda-window-setup 'current-window
+	  org-agenda-sticky t
+	  org-agenda-restore-windows-after-quit t
+	  org-agenda-window-setup 'current-window
 
-	 org-completion-use-ido t
-	 org-ellipsis "⤵"
-	 org-log-done t
-	 org-log-reschedule "note"
+	  org-completion-use-ido t
+	  org-ellipsis "⤵"
+	  org-log-done t
+	  org-log-reschedule "note"
 
-	 org-capture-templates '(("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
-				  "* %?%U\n")
-				 ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
-				  "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-				 ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
-				  "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))
+	  org-capture-templates '(("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
+				   "* %?%U\n")
+				  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
+				   "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+				  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
+				   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))
 
-	 org-export-allow-bind-keywords t
-	 org-export-coding-system 'utf-8
+	  org-export-allow-bind-keywords t
+	  org-export-coding-system 'utf-8
 
-	 org-modules '(org-w3m org-bbdb org-bibtex org-docview
-		       org-gnus org-info org-irc org-mhe org-rmail org-habit)
-	 org-src-preserve-indentation t
-	 org-src-window-setup 'current-window                    ;; use current window when editing a source block
-	 org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
-	 org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-	 org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
-			     (sequence "|" "CANCELLED(c)"))
-	 org-publish-project-alist '(("public"
-				      :base-directory "~/forge"
-				      :publishing-directory "~/Documents")))
+	  org-modules '(org-w3m org-bbdb org-bibtex org-docview
+		        org-gnus org-info org-irc org-mhe org-rmail org-habit)
+	  org-src-preserve-indentation t
+	  org-src-window-setup 'current-window                    ;; use current window when editing a source block
+	  org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
+	  org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
+	  org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
+			      (sequence "|" "CANCELLED(c)"))
+	  org-publish-project-alist '(("public"
+				       :base-directory "~/forge"
+				       :publishing-directory "~/Documents")))
     (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
 							     (emacs-lisp . t)
 							     (org . t)
