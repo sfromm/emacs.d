@@ -21,6 +21,9 @@
 
 ;;; Code:
 
+(setq-default indent-tabs-mode nil
+	      require-final-newline t)
+
 ;;;
 ;;; yasnippets
 ;;;
@@ -62,6 +65,7 @@
 ;;;
 ;;; Fill paragraph ... unfill
 ;;; From http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html
+;;;
 (defun endless/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
   (interactive)
@@ -73,6 +77,41 @@
     (call-interactively #'fill-paragraph)))
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
+
+;;;
+;;; ediff
+;;;
+(use-package ediff
+    :defer t
+    :init
+    (setq ediff-split-window-function 'split-window-horizontally
+          ediff-window-setup-function 'ediff-setup-windows-plain))
+
+;;;
+;;; undo tree
+;;;
+(use-package undo-tree
+    :defer t
+    :diminish undo-tree-mode
+    :init
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t
+          undo-tree-visualizer-diff t))
+
+;;;
+;;; Misc helpers
+;;;
+(defun forge/join-next-line ()
+  "Join the next line with the current line."
+  (interactive)
+  (join-line -1))
+
+(global-set-key (kbd "M-j") 'forge/join-next-line)
+
+(defun forge/whitespace-visualize ()
+  "Enable whitespace visualizations."
+  (setq highlight-tabs t)
+  (setq show-trailing-whitespace t))
 
 ;;;
 ;;; Backups and auto-save
