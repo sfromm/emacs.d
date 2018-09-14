@@ -50,7 +50,7 @@
 <!--- END RECEIVE ORGTBL " table-name " -->")
       (previous-line)
       (previous-line)
-      (previous-line))))
+      (previous-line)))
 
 (provide 'forge-markdown)
 ;;; forge-markdown.el ends here
