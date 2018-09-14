@@ -113,7 +113,8 @@
   "Initialize paths and environment for this Emacs install."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir))
     (unless (file-directory-p dir)
-      (make-directory dir t))))
+      (make-directory dir t)))
+  (setq inhibit-splash-screen t))
 
 ;;;
 ;;; Platform
