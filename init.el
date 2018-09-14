@@ -11,14 +11,17 @@
 
 (require 'forge-core (concat user-emacs-directory "modules/forge-core"))
 
-(require 'forge-appearance)
-(require 'forge-ui)
-(require 'forge-dired)
-(require 'forge-git)
-(require 'forge-pass)
-(require 'forge-eshell)
-(require 'forge-editing)
-(require 'forge-orgmode)
+(forge/load-modules 'forge-appearance
+                    'forge-editing
+                    'forge-ui
+                    'forge-dired
+                    'forge-git
+                    'forge-eshell
+                    'forge-dired
+                    'forge-markdown
+                    'forge-orgmode
+                    'forge-pass
+                    'forge-web)
 
 (message "Emacs is ready, finished loading after %.03fs."
   (float-time (time-subtract after-init-time before-init-time)))
