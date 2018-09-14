@@ -25,13 +25,39 @@
 ;;; yasnippets
 ;;;
 (use-package yasnippet
-  :ensure t
-  :diminish yasnippet-minor-mode
-  :init
-  (yas-global-mode 1)
-  :config
-  (add-to-list 'yas-snippet-dirs (concat forge-user-dir "snippets"))
-  (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
+    :ensure t
+    :diminish yasnippet-minor-mode
+    :init
+    (yas-global-mode 1)
+    :config
+    (add-to-list 'yas-snippet-dirs (concat forge-personal-dir "snippets"))
+    (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
+
+;;;
+;;; recentf
+;;;
+(use-package recentf
+    :defer 2
+    :bind ("<f7>" . ivy-recentf)
+    :init
+    (recentf-mode 1)
+    :config
+    (setq recentf-save-file (expand-file-name "recentf" forge-state-dir)
+          recentf-max-menu-items 500
+          recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "/tmp" "/ssh:")))
+
+;;;
+;;; uniquify
+;;; Make buffer names legible
+;;;
+(use-package uniquify
+    :defer t
+    :init
+    (setq
+     uniquify-buffer-name-style 'forward
+     uniquify-separator "/"
+     uniquify-ignore-buffers-re "^\\*"
+     uniquify-after-kill-buffer-p t))
 
 ;;;
 ;;; Fill paragraph ... unfill

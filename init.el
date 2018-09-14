@@ -17,6 +17,7 @@
 (require 'forge-git)
 (require 'forge-pass)
 (require 'forge-eshell)
+(require 'forge-editing)
 (require 'forge-orgmode)
 
 (message "Emacs is ready, finished loading after %.03fs."
