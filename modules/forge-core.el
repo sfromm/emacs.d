@@ -116,6 +116,15 @@
       (make-directory dir t)))
   (setq inhibit-splash-screen t))
 
+(defun forge/load-modules (&rest modules)
+  "Load forge modules."
+  (interactive)
+  (dolist (module (cons '() modules ))
+    (when module
+      (unless (featurep module)
+        (message "Loading %s" module)
+        (require module nil t)))))
+
 ;;;
 ;;; Platform
 ;;; Maybe one day spin this out to separate file.
