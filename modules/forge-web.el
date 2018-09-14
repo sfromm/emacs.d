@@ -33,4 +33,5 @@
        )
       (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
 
+(provide 'forge-web)
 ;;; forge-web.el ends here
