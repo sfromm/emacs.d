@@ -38,7 +38,16 @@
                     'forge-pass
                     'forge-web)
 
+(setq custom-file (concat forge-personal-dir "custom.el"))
+
+;; load personal settings, includin `custom-file'
+(when (file-exists-p forge-personal-dir)
+  (message "Loading personal configuration files in %s..." forge-personal-dir)
+  (mapc 'load (directory-files forge-personal-dir 't "^[^#\.].*el$")))
+
+(defun sf/msg (arg) (message "%s" arg))
+
 (message "Emacs is ready, finished loading after %.03fs."
-  (float-time (time-subtract after-init-time before-init-time)))
+         (float-time (time-subtract after-init-time before-init-time)))
 
 ;;; init.el ends here

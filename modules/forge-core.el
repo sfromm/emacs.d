@@ -42,12 +42,6 @@
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
 
-;; move custom out of init.el
-(setq custom-file (concat forge-personal-dir "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
-
 ;;;
 ;;; Packages
 ;;;
