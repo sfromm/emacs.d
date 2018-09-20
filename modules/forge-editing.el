@@ -24,7 +24,21 @@
 (setq-default indent-tabs-mode nil
 	      require-final-newline t)
 
+
 ;;;
+;;; page-break-lines
+;;; More info:
+;;; - http://endlessparentheses.com/improving-page-navigation.html
+;;; - https://ericjmritz.wordpress.com/2015/08/29/using-page-breaks-in-gnu-emacs/
+;;;
+(use-package page-break-lines
+    :ensure t
+    :commands (turn-on-page-break-lines-mode)
+    :diminish page-break-lines-mode
+    :init
+    (add-hook 'emacs-lisp-mode-hook #'turn-on-page-break-lines-mode))
+
+;;;
 ;;; yasnippets
 ;;;
 (use-package yasnippet
@@ -36,7 +50,7 @@
     (add-to-list 'yas-snippet-dirs (concat forge-personal-dir "snippets"))
     (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
 
-;;;
+;;;
 ;;; recentf
 ;;;
 (use-package recentf
@@ -49,7 +63,7 @@
           recentf-max-menu-items 500
           recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "/tmp" "/ssh:")))
 
-;;;
+;;;
 ;;; uniquify
 ;;; Make buffer names legible
 ;;;
@@ -61,6 +75,47 @@
      uniquify-separator "/"
      uniquify-ignore-buffers-re "^\\*"
      uniquify-after-kill-buffer-p t))
+
+
+;;;
+;;; ediff
+;;;
+(use-package ediff
+    :defer t
+    :init
+    (setq ediff-split-window-function 'split-window-horizontally
+          ediff-window-setup-function 'ediff-setup-windows-plain))
+
+
+;;;
+;;; undo tree
+;;;
+(use-package undo-tree
+    :defer t
+    :diminish undo-tree-mode
+    :bind
+    (("C-/" . undo-tree-undo)
+     ("C-?" . undo-tree-redo)
+     ("C-x u" . undo-tree-visualize))
+    :init
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t
+          undo-tree-visualizer-diff t))
+
+;;;
+;;; Misc helpers
+;;;
+(defun forge/join-next-line ()
+  "Join the next line with the current line."
+  (interactive)
+  (join-line -1))
+
+(global-set-key (kbd "M-j") 'forge/join-next-line)
+
+(defun forge/whitespace-visualize ()
+  "Enable whitespace visualizations."
+  (setq highlight-tabs t)
+  (setq show-trailing-whitespace t))
 
 ;;;
 ;;; Fill paragraph ... unfill
@@ -78,42 +133,7 @@
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
-;;;
-;;; ediff
-;;;
-(use-package ediff
-    :defer t
-    :init
-    (setq ediff-split-window-function 'split-window-horizontally
-          ediff-window-setup-function 'ediff-setup-windows-plain))
-
-;;;
-;;; undo tree
-;;;
-(use-package undo-tree
-    :defer t
-    :diminish undo-tree-mode
-    :init
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-diff t))
-
-;;;
-;;; Misc helpers
-;;;
-(defun forge/join-next-line ()
-  "Join the next line with the current line."
-  (interactive)
-  (join-line -1))
-
-(global-set-key (kbd "M-j") 'forge/join-next-line)
-
-(defun forge/whitespace-visualize ()
-  "Enable whitespace visualizations."
-  (setq highlight-tabs t)
-  (setq show-trailing-whitespace t))
-
-;;;
+;;;
 ;;; Backups and auto-save
 ;;;
 (defun forge/save-all ()
@@ -139,6 +159,20 @@
 ;; If focus switches away, save all files.
 (when (version<= "24.4" emacs-version)
   (add-hook 'focus-out-hook 'forge/save-all))
+
+
+;;;
+;;; lisp
+;;;
+(use-package aggressive-indent
+    :ensure t
+    :hook (emacs-lisp-mode . aggressive-indent-mode))
+
+(use-package lisp-mode
+    :defer t
+    :config
+    (setq lisp-indent-offset nil))
+
 
 (provide 'forge-editing)
 ;;; forge-editing.el ends here
