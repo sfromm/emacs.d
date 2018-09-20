@@ -45,6 +45,7 @@
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
 
+
 ;;;
 ;;; Packages
 ;;;
@@ -78,21 +79,7 @@
   :init
   (setq paradox-execute-asynchronously t))
 
-;;;
-;;; Platform specific
-;;;
-(defun forge/system-type-is-darwin ()
-  "Return non-nil if system is Darwin/MacOS."
-  (string-equal system-type "darwin"))
-
-(defun forge/system-type-is-windows ()
-  "Return non-nil if system is Windows."
-  (string-equal system-type "windows-nt"))
-
-(defun forge/system-type-is-linux ()
-  "Return non-nil if system is GNU/Linux."
-  (string-equal system-type "gnu/linux"))
-
+
 ;;;
 ;;; Helper functions
 ;;;
@@ -123,11 +110,32 @@
         (require module nil t)))))
 
 
+;;;
+;;; Platform specific details.
+;;;
+(defun forge/system-type-is-darwin ()
+  "Return non-nil if system is Darwin/MacOS."
+  (string-equal system-type "darwin"))
+
+(defun forge/system-type-is-windows ()
+  "Return non-nil if system is Windows."
+  (string-equal system-type "windows-nt"))
+
+(defun forge/system-type-is-linux ()
+  "Return non-nil if system is GNU/Linux."
+  (string-equal system-type "gnu/linux"))
 
 ;;;
-;;; Platform
-;;; Maybe one day spin this out to separate file.
+;;; exec-path-from-shell
+;;; Set exec-path based on shell PATH.
+;;; Some platforms, such as MacOSX, do not get this done correctly.
 ;;;
+(use-package exec-path-from-shell
+    :ensure t
+    :defer t
+    :init
+    (exec-path-from-shell-initialize))
+
 (when (forge/system-type-is-linux)
   (require 'dbus))
 
@@ -137,6 +145,7 @@
       (setenv "PATH" (concat path ":" (getenv "PATH")))
       (add-to-list 'exec-path path))))
 
+
 ;;;
 ;;; Set up the server
 ;;;
