@@ -103,6 +103,8 @@
 							     (calc . t)))
 
     (org-load-modules-maybe t)
+    ;; Keep tables with a fixed-pitch font.
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 
     (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode)))
 
@@ -138,6 +140,9 @@
     :ensure t)
 
 (use-package ox-reveal
+    :ensure t)
+
+(use-package ox-tufte
     :ensure t)
 
 (use-package org-present
