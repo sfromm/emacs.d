@@ -45,8 +45,8 @@
      ("Y" . forge/dired-rsync)
      ("^" . forge/dired-up))
 
-    :hook
-    (dired-mode . forge/dired-mode-hook)
+    ;;:hook
+    ;;(dired-mode . forge/dired-mode-hook)
 
     :diminish dired-omit-mode
 
@@ -63,6 +63,9 @@
 
 (use-package dired-x 
     :after dired
+    :init
+    (global-unset-key (kbd "C-x C-j"))
+    (setq dired-bind-jump nil)
     :config
     (add-to-list 'dired-omit-extensions ".DS_Store"))
 
