@@ -29,13 +29,15 @@
 (forge/load-modules 'forge-appearance
                     'forge-editing
                     'forge-ui
-                    'forge-dired
+                    'forge-pass
                     'forge-git
                     'forge-eshell
                     'forge-dired
                     'forge-markdown
                     'forge-orgmode
-                    'forge-pass
+                    'forge-mail
+                    'forge-chat
+                    'forge-elfeed
                     'forge-web)
 
 (setq custom-file (concat forge-personal-dir "custom.el"))
