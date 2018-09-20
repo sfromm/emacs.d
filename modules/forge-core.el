@@ -39,6 +39,9 @@
 (defvar forge-backup-dir (concat forge-state-dir "backup/")
   "Path to Emacs' backup and autosave files.")
 
+(defvar forge-log-dir (concat forge-state-dir "log/")
+  "Path to Emacs packages' log files.")
+
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
 
@@ -105,7 +108,7 @@
 
 (defun forge-initialize ()
   "Initialize paths and environment for this Emacs install."
-  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir))
+  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
   (setq inhibit-splash-screen t))
@@ -118,6 +121,8 @@
       (unless (featurep module)
         (message "Loading %s" module)
         (require module nil t)))))
+
+
 
 ;;;
 ;;; Platform
