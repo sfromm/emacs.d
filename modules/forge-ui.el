@@ -21,68 +21,90 @@
 
 ;;; Code:
 
+
+(setq scroll-step 1               ;; keyboard scroll one line at a time
+      scroll-conservatively 10000
+      scroll-preserve-screen-position 1
+      mouse-wheel-follow-mouse 't ;; scroll window under mouse
+      mouse-wheel-progressive-speed nil     ;;  don't accelerate scrolling
+      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))))
+
+
 ;;;
 ;;; ivy, swiper, and counsel
 ;;;
 (use-package ivy
-  :ensure t
-  :diminish (ivy-mode . "")
-  :bind
-  (("C-c C-r" . ivy-resume))
-  :init
-  (ivy-mode 1)
-  :config
-  (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
-  (setq
-    ivy-use-virtual-buffers t
-    enable-recursive-minibuffers t))
+    :ensure t
+    :diminish (ivy-mode . "")
+    :bind
+    (("C-c C-r" . ivy-resume))
+    :init
+    (ivy-mode 1)
+    :config
+    (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
+    (setq
+     ivy-use-virtual-buffers t
+     enable-recursive-minibuffers t))
 
 (use-package swiper
-  :ensure t
-  :diminish
-  :bind (("C-s" . swiper)))
+    :ensure t
+    :diminish
+    :bind (("C-s" . swiper)))
 
 (use-package counsel
-  :ensure t
-  :requires ivy
-  :bind
-  (("C-c f" . counsel-git)
-    ("M-x" . counsel-M-x)
-    ("C-x C-f" . counsel-find-file))
-  :config
-  (setq ivy-use-virtual-buffers t))
+    :ensure t
+    :requires ivy
+    :bind
+    (("C-c f" . counsel-git)
+     ("M-x" . counsel-M-x)
+     ("C-x C-f" . counsel-find-file))
+    :config
+    (setq ivy-use-virtual-buffers t))
 
+
 ;;;
 ;;; smex
 ;;;
 (use-package smex
-  :ensure t
-  :init (setq smex-completion-method 'ivy))
+    :ensure t
+    :init (setq smex-completion-method 'ivy))
 
 (use-package ace-window
-  :ensure t)
+    :ensure t)
 
 (use-package avy
-  :ensure t
-  :bind
-  (("M-g g" . avy-goto-line)
-    ("M-s" . avy-goto-word-1)))
+    :ensure t
+    :bind
+    (("M-g g" . avy-goto-line)
+     ("M-s" . avy-goto-word-1)))
 
 (use-package dumb-jump
-  :bind
-  (("M-g o" . dumb-jump-go-other-window)
-    ("M-g j" . dumb-jump-go)
-    ("M-g i" . dumb-jump-go-prompt)
-    ("M-g x" . dumb-jump-go-prefer-external)
-    ("M-g z" . dumb-jump-go-prefer-external-other-window))
-  :config
-  (setq dumb-jump-selector 'ivy))
+    :defer t
+    :bind
+    (("M-g o" . dumb-jump-go-other-window)
+     ("M-g j" . dumb-jump-go)
+     ("M-g i" . dumb-jump-go-prompt)
+     ("M-g x" . dumb-jump-go-prefer-external)
+     ("M-g z" . dumb-jump-go-prefer-external-other-window))
+    :config
+    (setq dumb-jump-selector 'ivy))
 
+
+;;;
+;;; uniquify
+;;;
+(use-package uniquify
+    :init (setq uniquify-buffer-name-style 'forward
+                uniquify-separator "/"
+                uniquify-ignore-buffers-re "^\\*"
+                uniquify-after-kill-buffer-p t))
+
+
 ;;;
 ;;; hydra
 ;;;
 (use-package hydra
-  :ensure t)
+    :ensure t)
 
 (defhydra forge/navigate (:foreign-keys run)
   "[Navigate] or q to exit"
