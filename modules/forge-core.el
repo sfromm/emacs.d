@@ -33,6 +33,9 @@
 (defvar forge-personal-dir (concat forge-emacs-dir "user/")
   "Path to user's personal configuration.")
 
+(defvar forge-preload-dir (concat forge-emacs-dir "preload/")
+  "Path to user's personal configuration to preload before anything else.")
+
 (defvar forge-state-dir (concat forge-emacs-dir "var/")
   "Path to Emacs' persistent data files.")
 
@@ -95,10 +98,16 @@
 
 (defun forge-initialize ()
   "Initialize paths and environment for this Emacs install."
-  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
+  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir forge-preload-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
   (setq inhibit-splash-screen t))
+
+(defun forge/load-directory-modules (path)
+  "Load lisp files in a directory."
+  (when (file-exists-p path)
+    (message "Loading lisp files in %s..." path)
+    (mapc 'load (directory-files path 't "^[^#\.].*el$"))))
 
 (defun forge/load-modules (&rest modules)
   "Load forge modules."
