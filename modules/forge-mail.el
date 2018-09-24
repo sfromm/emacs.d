@@ -21,7 +21,7 @@
 
 ;;; Code:
 
-
+
 (require 'message)
 
 (setq mail-from-style 'angles
@@ -51,6 +51,7 @@
             )
           )
 
+
 ;;;
 ;;; PGP
 ;;;
@@ -60,6 +61,7 @@
 (setq mml-secure-openpgp-signers forge-openpgp-signers ; key to use for signing email
       mml-secure-openpgp-encrypt-to-self t)            ; also encrypt to self when sending email
 
+
 ;;;
 ;;; SMTP
 ;;;
@@ -73,7 +75,7 @@
           smtpmail-smtp-user forge-smtp-user-work
           smtpmail-queue-dir (expand-file-name (concat forge-personal-dir "queue"))))
 
-
+
 ;;;
 ;;; Variables for setting up email.
 ;;;
@@ -83,12 +85,6 @@
 (defvar forge-attachment-dir "~/Download"
   "Path to where to save attachments to.")
 
-(defvar forge-mail-gnus-alias-identity nil
-  "Alist with Mail account rules.")
-
-(defvar forge-mail-gnus-alias-identity-rules nil
-  "Rules to determine which mail account to use.")
-
 (defvar forge-mail-abuse-cc nil
   "Default contact to CC on abuse reports.")
 
@@ -96,12 +92,18 @@
   "Path to Fcc mail.")
 
 (use-package notmuch
-    :ensure notmuch
+    :commands (notmuch)
     :bind
     (:map notmuch-search-mode-map
-          ("y" . notmuch-search-archive-thread))
+          ("y" . notmuch-search-archive-thread)
+          ("S-SPC" . notmuch-search-scroll-down))
     (:map notmuch-show-mode-map
-          ("y" . notmuch-show-archive-message-then-next-or-next-thread))
+          ("y" . notmuch-show-archive-message-then-next-or-next-thread)
+          ("S-SPC" . notmuch-show-rewind)
+          ("TAB" . notmuch-show-toggle-message))
+    (:map notmuch-show-part-map
+          ("c" . forge/mail-add-ics-calendar))
+
     :init
     (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
     (setq notmuch-archive-tags '("-unread" "-trash" "+archive")
@@ -113,7 +115,7 @@
           notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox and not tag:archive")
                                    (:name "Flagged"         :key "f" :query "tag:flagged")
                                    (:name "Today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
-                                   (:name "7 days"          :key "3" :query "date:7d..  and not ( tag:archive or tag:sent )")
+                                   (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:archive or tag:sent )")
                                    (:name "Old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) and ( folder:Work/INBOX or folder:Work/incoming ) ")
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
@@ -123,38 +125,54 @@
     :config
     (defmacro forge-notmuch-show-tag (tags)
       "Macro to take list of tags and apply to query."
-      (notmuch-show-add-tag tags)
-      (unless (notmuch-show-next-open-message)
-        (notmuch-show-next-thread t)))
+      `(progn
+         (notmuch-show-add-tag ,tags)
+         (unless (notmuch-show-next-open-message)
+           (notmuch-show-next-thread t))))
 
     (defmacro forge-notmuch-search-tag (tags)
       "Macro to take list of tags and apply to query."
-      (notmuch-search-tag tags)
-      (notmuch-search-next-thread))
+      `(progn
+         (notmuch-search-tag ,tags)
+         (notmuch-search-next-thread)))
 
     (defmacro forge-notmuch-show-toggle-tag (tag)
       "Macro to toggle presence of tag for query."
-      (if (member tag (notmuch-show-get-tags))
-          (notmuch-show-remove-tag (list tag))
-        (notmuch-show-add-tag (list tag))))
+      `(progn
+         (if (member ,tag (notmuch-show-get-tags))
+             (notmuch-show-remove-tag (list (concat "-" ,tag)))
+           (notmuch-show-add-tag (list (concat "+" ,tag))))))
 
     (defmacro forge-notmuch-search-toggle-tag (tag)
       "Macro to toggle presence of tag for query."
-      (if (member tag (notmuch-search-get-tags))
-          (notmuch-search-tag (list (concat "-" tag)))
-        (notmuch-search-tag (list (concat "+" tag)))))
+      `(progn
+         (if (member ,tag (notmuch-search-get-tags))
+             (notmuch-search-tag (list (concat "-" ,tag)))
+           (notmuch-search-tag (list (concat "+" ,tag))))))
 
-    (define-key notmuch-show-mode-map (kbd "D")
+    (define-key notmuch-show-mode-map (kbd "d")
       (lambda ()
         "mark message for trash"
         (interactive)
         (forge-notmuch-show-tag (list "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-search-mode-map (kbd "D")
+    (define-key notmuch-search-mode-map (kbd "d")
       (lambda ()
         "mark thread for trash"
         (interactive)
         (forge-notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))))
+
+    (define-key notmuch-show-mode-map (kbd "D")
+      (lambda ()
+        "unmark message for trash and tag for inbox"
+        (interactive)
+        (forge-notmuch-show-tag (list "-trash" "+inbox"))))
+
+    (define-key notmuch-search-mode-map (kbd "D")
+      (lambda ()
+        "unmark thread for trash and tag for inbox"
+        (interactive)
+        (forge-notmuch-search-tag (list "-trash" "+inbox"))))
 
     (define-key notmuch-show-mode-map (kbd "J")
       (lambda ()
@@ -199,10 +217,13 @@
         (notmuch-show-view-raw-message)
         (message-resend address)))
 
-    (define-key notmuch-show-mode-map   (kbd "TAB") 'notmuch-show-toggle-message)
-    (define-key notmuch-show-mode-map   (kbd "C") 'forge/mail-add-ics-calendar)
     (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
     (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer))
+
+
+;;;
+;;; Helpers
+;;;
 
 ;;;
 ;;; Pipe ICS part into the calendar.
@@ -215,8 +236,25 @@
         (notmuch-foreach-mime-part
          (lambda (p)
            (if (string-equal (mm-handle-media-type p) "text/calendar")
-               (mm-pipe-part p "gcalcli")))
+               (mm-pipe-part p "gcal-import")))
          mm-handle))))
+
+;;;
+;;; Pipe HTML part into a browser
+;;;
+(defun forge/mail-open-html ()
+  "Open HTML part in browser."
+  (interactive)
+  (with-current-notmuch-show-message
+      (let ((mm-handle (mm-dissect-buffer)))
+        (notmuch-foreach-mime-part
+         (lambda (p)
+           (if (string-equal (mm-handle-media-type p) "text/html")
+               (mm-display-part p "open")))
+         ;;             (notmuch-show-view-part)))
+         ;;             (notmuch-show-apply-to-current-part-handle #'mm-display-part)))
+         mm-handle))))
+
 ;;;
 ;;; Misc helpers to forward abuse reports.
 ;;;
@@ -265,7 +303,7 @@
 
 (defhydra forge/hydra-email (:color blue)
   "
-  
+
   _A_ Forward Abuse report  _S_ Forward Spam report
   _I_ Forward Infringement  _N_ Toggle compose New frame
   "
@@ -313,6 +351,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                index mu4e-decryption-policy fpath))))
       (message "Nothing to extract"))))
 
+(defun forge/twiddle-luminance (value)
+  "Twiddle the luminance value"
+  (interactive "nLuminance: ")
+  (message "Current luminance level: %s" shr-color-visible-luminance-min)
+  (setq shr-color-visible-luminance-min value))
+
+
 ;;;
 ;;; org notmuch integration
 ;;;
@@ -320,20 +365,27 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     :demand t
     :after (:any org notmuch))
 
+
 ;;;
 ;;; gnus-alias
 ;;; Mechanism to switch identities when using message mode
 ;;; https://www.emacswiki.org/emacs/GnusAlias
 ;;;
+(defvar forge-gnus-alias-identity nil
+  "Alist with Mail account rules.")
+
+(defvar forge-gnus-alias-identity-rules nil
+  "Rules to determine which mail account to use.")
+
 (use-package gnus-alias
     :ensure t
     :hook (message-setup . gnus-alias-determine-identity)
     :init
     (setq gnus-alias-default-identity "work"
-          gnus-alias-identity-alist forge-mail-gnus-alias-identity
-          gnus-alias-identity-rules forge-mail-gnus-alias-identity-rules))
+          gnus-alias-identity-alist forge-gnus-alias-identity
+          gnus-alias-identity-rules forge-gnus-alias-identity-rules))
 
-
+
 ;;;
 ;;; Gnu Dired integration
 ;;; Attach files to email
@@ -343,7 +395,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     :defer t
     :init
     (add-hook 'dired-mode-hook 'gnus-dired-mode)
-    (setq gnus-dired-mail-mode 'mu4e-user-agent))
+    (setq gnus-dired-mail-mode 'notmuch-user-agent))
 
 (provide 'forge-mail)
 ;;; forge-mail.el ends here
