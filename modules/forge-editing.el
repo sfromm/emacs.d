@@ -21,6 +21,7 @@
 
 ;;; Code:
 
+(show-paren-mode)
 (setq-default indent-tabs-mode nil
 	      require-final-newline t)
 
@@ -174,5 +175,29 @@
     (setq lisp-indent-offset nil))
 
 
+
+;;;
+;;; web mode
+;;; For html, css, and related files.
+;;;
+(use-package web-mode
+    :ensure t
+    :init
+    (progn
+      (setq
+       web-mode-css-indent-offset 2
+       web-mode-markup-indent-offset 2
+       web-mode-code-indent-offset 2)
+      (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
+
+
+;;;
+;;; ledger-mode
+;;; For editing ledger files.
+(use-package ledger-mode)
+
+;;;
+;;;
+;;;
 (provide 'forge-editing)
 ;;; forge-editing.el ends here
