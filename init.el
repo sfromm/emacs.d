@@ -26,6 +26,18 @@
 
 (require 'forge-core (concat user-emacs-directory "modules/forge-core"))
 
+
+;;;
+;;; Load any personal preload settings and site lisp files.
+;;;
+(forge/load-directory-modules forge-preload-dir)
+
+(forge/load-directory-modules forge-site-dir)
+
+
+;;;
+;;; Load forge modules.
+;;;
 (forge/load-modules 'forge-appearance
                     'forge-editing
                     'forge-ui
@@ -37,17 +49,15 @@
                     'forge-orgmode
                     'forge-mail
                     'forge-chat
-                    'forge-elfeed
-                    'forge-web)
+                    'forge-elfeed)
 
+
+;;;
+;;; Load any personal lisp files, including `custom-file'.
+;;;
 (setq custom-file (concat forge-personal-dir "custom.el"))
 
-;; load personal settings, includin `custom-file'
-(when (file-exists-p forge-personal-dir)
-  (message "Loading personal configuration files in %s..." forge-personal-dir)
-  (mapc 'load (directory-files forge-personal-dir 't "^[^#\.].*el$")))
-
-(defun sf/msg (arg) (message "%s" arg))
+(forge/load-directory-modules forge-personal-dir)
 
 (message "Emacs is ready, finished loading after %.03fs."
          (float-time (time-subtract after-init-time before-init-time)))
