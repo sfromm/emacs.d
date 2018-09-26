@@ -39,7 +39,8 @@
     :init
     (add-hook 'emacs-lisp-mode-hook #'turn-on-page-break-lines-mode))
 
-;;;
+
+;;;
 ;;; yasnippets
 ;;;
 (use-package yasnippet
@@ -161,6 +162,17 @@
 (when (version<= "24.4" emacs-version)
   (add-hook 'focus-out-hook 'forge/save-all))
 
+
+
+;;;
+;;; flycheck
+;;;
+(use-package flycheck
+    :ensure t
+    :diminish flycheck-mode
+    :init (global-flycheck-mode))
+
+
 
 ;;;
 ;;; lisp
@@ -171,8 +183,52 @@
 
 (use-package lisp-mode
     :defer t
+    :hook
+    (before-save . forge/turn-on-delete-trailing-whitespace)
     :config
     (setq lisp-indent-offset nil))
+
+(use-package eldoc
+    :diminish eldoc-mode
+    :init
+    (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+    (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+    :config
+    (setq eldoc-idle-delay 0.3))
+
+
+
+;;;
+;;; shell scripts
+;;;
+(use-package shell-script
+    :defer t
+    :hook
+    (shell-script . forge/whitespace-visualize)
+    (shell-script . forge/turn-on-delete-trailing-whitespace))
+
+
+
+;;;
+;;; markdown mode
+;;;
+(use-package markdown-mode
+    :ensure t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init
+    (defun orgtbl-to-gfm (table params)
+      "Convert the Orgtbl mode TABLE to GitHub Flavored Markdown."
+      (let* ((alignment (mapconcat (lambda (x) (if x "|--:" "|---"))
+                                   org-table-last-alignment ""))
+             (params2
+              (list
+               :splice t
+               :hline (concat alignment "|")
+               :lstart "| " :lend " |" :sep " | ")))
+        (orgtbl-to-generic table (org-combine-plists params2 params)))))
 
 
 
@@ -190,12 +246,39 @@
        web-mode-code-indent-offset 2)
       (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
 
+
+
+;;;
+;;; yaml mode
+;;;
+(use-package yaml-mode
+    :ensure t
+    :hook
+    (yaml-mode . forge/turn-on-delete-trailing-whitespace)
+    (yaml-mode . forge/whitespace-visualize)
+    :config
+    (setq yaml-indent-offset 2))
+
+
+
+;;;
+;;; json mode
+;;;
+(use-package json-mode
+    :ensure t
+    :hook
+    (json-mode . forge/turn-on-delete-trailing-whitespace)
+    (json-mode . forge/whitespace-visualize))
+
+
 
 ;;;
 ;;; ledger-mode
 ;;; For editing ledger files.
 (use-package ledger-mode)
 
+
+
 ;;;
 ;;;
 ;;;
