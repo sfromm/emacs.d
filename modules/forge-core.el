@@ -96,6 +96,14 @@
   (interactive)
   (hl-line-mode nil))
 
+(defun forge/turn-on-delete-trailing-whitespace ()
+  "Turn on `delete-trailing-whitespace' when saving files."
+  (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+
+(defun forge/turn-off-delete-trailing-whitespace ()
+  "Turn off `delete-trailing-whitespace' when saving files."
+  (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
+
 (defun forge-initialize ()
   "Initialize paths and environment for this Emacs install."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir forge-preload-dir))
