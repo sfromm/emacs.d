@@ -1,70 +1,47 @@
 #+TITLE: README
 #+AUTHOR: Stephen Fromm
 
-* Emacs configuration
+* Forge
 
-This effectively serves as my [[http://www.gnu.org/software/emacs/][Emacs]] configuration.  This would not be
-possible without [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][org mode]].  There are a few main components:
+This is my forge for getting stuff done.  It is based in [[https://www.gnu.org/software/emacs/][Emacs]].  This is how I manage [[https://notmuchmail.org/][mail]], software
+development, journaling, project tracking, and more.
 
-- /init.el/: Just enough emacs-lisp to load, via
-  [[http://orgmode.org/worg/org-contrib/babel/][org-babel]], [[file:emacs.org][emacs.org]], and lots of setup-*.org files.
-- There is a private file, /sf-private.el/, that this configuration will
-  include if it is present.
+At one time, this configuration was based on the ideas of [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][literate programming]].  While I have moved
+away from that for managing my Emacs configuration, I think there are a lot of positive elements to
+it that I still use in other projects.  As part of this rewrite, I opted to move away from this
+approach to managing /emacs.d/.
 
-I'm moving more and more to having modules that configure a specific
-mode, related modes, or set of features that are related logically.  The
-goal is to move away from a single /emacs.org/ file to more modules.
-These are all named /setup-*.org/.
+This environment is managed by the included Makefile.  It only has two targets:  Install Emacs and
+update the installed packages.
 
-Most if not all of the configuration endeavors to follow the model of
-[[http://en.wikipedia.org/wiki/Literate_programming][literate programming]].  [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][Babel]] facilitates this by /allowing the act of
-programming to take place inside of Org-mode  documents/.
+** Installation
 
-** Setup
-
-First install Emacs into your environment.  On Linux, this can be either
-=sudo apt-get -y install emacs=, =sudo dnf -y install emacs=, or =sudo
-yum -y install emacs=.  Follow your distribution's documentation.
-
-On MacOS, I did the following:
-
-#+BEGIN_EXAMPLE
-brew install emacs --with-cocoa  --with-librsvg --with-modules --with-gnutls
-#+END_EXAMPLE
-
-The next step is to clone this repository:
+First things first.  Clone the git repository:
 
 #+BEGIN_EXAMPLE
 $ git clone https://github.com/sfromm/dot-emacs.d ~/.emacs.d
 #+END_EXAMPLE
 
-The following steps will then tangle the configuration and install any
-required packages.
+If you do not already have Emacs installed, you can use the =make install= target.  On MacOSX, this
+will use [[https://brew.sh/][Homebrew]] to install Emacs.
 
-#+BEGIN_EXAMPLE
-$ make tangle
-$ make update
-#+END_EXAMPLE
+On the first time you run /emacs-forge/, it will go through and install several packages.  This may
+take awhile, so please be patient.  You can also run the target =make bootstrap= command to install
+the main packages needed by /emacs-forge/.
 
-** Care and feeding
+** Updates
 
-Over time, there will be changes or updates.  The best way to keep up to
-date is to use the Makefile targets =tangle= and =update=.
+You can keep up to date by using the =make update= target.  This will do a few things:
 
-#+BEGIN_EXAMPLE
-$ make tangle
-$ make update
-#+END_EXAMPLE
+- Do a =git pull= to pull in the latest changes to /emacs-forge/.
+- Run the function =forge/update-packages= to update the installed Emacs packages.
 
-The =make tangle= command will tangle out the configuration from all the
-/org mode/ files.
 
-The =make update= command will install the packages defined in
-/setup-core.org/.  This makes installation on a new host a little less
-painful.  For already existing installations, it will also do a =git
-pull --rebase= and update any existing [[http://www.gnu.org/software/emacs/][Emacs]] packages.
+** Configuration
 
-** Private variables
+There are a couple directories you use to store any personal or site-specific configuration for
+/emacs-forge/:
 
-The file [[setup-personalized.org][setup-personalized.org]] creates several variables that are used
-in other parts of the configuration.  See that file for more details.
+- *~/.emacs.d/preload* (=forge-preload-dir)  Files to preload before loading forge modules.
+- *~/.emacs.d/site* (=forge-site-dir=)
+- *~/.emacs.d/user*  (=forge-personal-dir=)

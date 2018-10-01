@@ -67,6 +67,31 @@
     (package-install package)
     (delete-other-windows)))
 
+(defun forge/update-packages ()
+  "Update all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (paradox-upgrade-packages)
+    (message "Packages updated.")))
+
+(defun forge/bootstrap-packages ()
+  "Bootstrap packages to install for Emacs."
+  (interactive)
+  (dolist (package '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode
+                     jabber
+                     paradox exec-path-from-shell
+                     async
+                     page-break-lines yasnippet flycheck aggressive-indent markdown-mode web-mode yaml-mode json-mode
+                     elfeed
+                     magit magit-annex git-annex git-timemachine
+                     paredit
+                     gnus-alias
+                     org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
+                     pass
+                     ivy swiper counsel smex ace-window avy dumb-jump hydra))
+    (progn (forge/package-install package))))
+
 (forge/package-install 'use-package)
 (eval-when-compile
   (require 'use-package))

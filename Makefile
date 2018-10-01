@@ -3,20 +3,25 @@ OS := $(shell uname)
 VERSION = 26.1_1
 ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
+    PKGMGR = apt-get install
+    PKGFLAGS =
 endif
 ifeq ($(OS),Darwin)
-    EMACS = /usr/local/Cellar/emacs/$(VERSION)/Emacs.app/Contents/MacOS/Emacs $(ARGS)
+    EMACS = emacs $(ARGS)
+    PKGMGR = brew
+    PKGFLAGS = --with-cocoa --with-librsvg --with-modules --with-gnutls
 endif
 
-tangle:
-	$(EMACS) --load build.el
+install:
+	$(PKGMGR) emacs $(PKGFLAGS)
+
+bootstrap:
+	$(EMACS) --load site-lisp/setup-core.el -f "forge/bootstrap"
 
 update:
 	git pull --rebase
-	$(EMACS) --load site-lisp/setup-core.el -f "sf/bootstrap"
-	$(EMACS) --load site-lisp/setup-core.el -f "sf/update-packages"
+	$(EMACS) --load modules/forge-core.el -f "forge/update-packages"
 
 all: tangle packages
 
-.PHONY: all tangle update packages
- 
+.PHONY: all install update
