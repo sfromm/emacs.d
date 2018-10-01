@@ -24,6 +24,11 @@
 (use-package org
     :ensure org-plus-contrib
     :preface
+    (defun forge/tangle-org-mode-on-save ()
+      "Tangle org-mode file when saving."
+      (when (string= (message "%s" major-mode) "org-mode")
+        (org-babel-tangle)))
+
     (defun forge/org-mode-hook ()
       "Turn on settings for org-mode."
       (interactive)
@@ -35,6 +40,7 @@
 
     :hook
     ((org-mode . forge/org-mode-hook)
+     (org-mode . forge/tangle-org-mode-on-save)
      (org-mode . variable-pitch-mode))
 
     :bind (("<f8>" . org-cycle-agenda-files)
@@ -137,7 +143,12 @@
     :ensure t)
 
 (use-package org-mime
-    :ensure t)
+    :ensure nil
+    :defer t
+    :init
+    (setq org-mime-export-options '(:section-numbers nil
+                                    :with-author nil
+                                    :with-toc nil)))
 
 (use-package ox-reveal
     :ensure t)
