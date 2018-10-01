@@ -139,6 +139,8 @@
                          ("http://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
                          ("http://irreal.org/blog/?feed=rss2" emacs)
                          ("https://changelog.complete.org/feed" emacs blog)
+                         ("https://ambrevar.xyz/rss.xml" emacs blog)
+                         ("https://two-wrongs.com/feed.xml" emacs blog)
                          ;; amusement
                          ("http://xkcd.com/atom.xml" comics fun)
                          ("https://what-if.xkcd.com/feed.atom" fun)
