@@ -99,20 +99,19 @@
           ("S-SPC" . notmuch-search-scroll-down))
     (:map notmuch-show-mode-map
           ("y" . notmuch-show-archive-message-then-next-or-next-thread)
-          ("S-SPC" . notmuch-show-rewind)
-          ("TAB" . notmuch-show-toggle-message))
+          ("S-SPC" . notmuch-show-rewind))
     (:map notmuch-show-part-map
           ("c" . forge/mail-add-ics-calendar))
 
     :init
     (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-    (setq notmuch-archive-tags '("-unread" "-trash" "+archive")
+    (setq notmuch-archive-tags '("+archive" "-unread" "-trash" "-bulk")
           notmuch-crypto-process-mime t
           notmuch-fcc-dirs forge-fcc-dirs
           notmuch-hello-thousands-separator ","
           notmuch-search-oldest-first nil
           notmuch-show-part-button-default-action 'notmuch-show-view-part
-          notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox and not tag:archive")
+          notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox or folder:Work/INBOX")
                                    (:name "Flagged"         :key "f" :query "tag:flagged")
                                    (:name "Today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
                                    (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:archive or tag:sent )")
@@ -258,32 +257,34 @@
 ;;;
 ;;; Misc helpers to forward abuse reports.
 ;;;
-(defun forge/mail-forward-abuse-complaint ()
-  "Forward an abuse complaint to responsible party."
+(defun forge/mail-forward-complaint (template)
+  "Forward an abuse complaint using TEMPLATE."
   (interactive)
   (if (boundp 'notmuch-mua-compose-in) (notmuch-show-forward-message) (mu4e-compose 'forward))
   (message-goto-body)
-  (yas-expand-snippet (yas-lookup-snippet "abuse-template"))
+  (yas-expand-snippet (yas-lookup-snippet template))
   (message-add-header (concat "Cc: " forge-mail-abuse-cc))
   (message-goto-to))
+
+(defun forge/mail-forward-abuse-complaint ()
+  "Forward an abuse complaint to responsible party."
+  (interactive)
+  (forge/mail-forward-complaint "abuse-template"))
 
 (defun forge/mail-forward-infringement-complaint ()
   "Forward a infringement complaint to responsible party."
   (interactive)
-  (if (boundp 'notmuch-mua-compose-in) (notmuch-show-forward-message) (mu4e-compose 'forward))
-  (message-goto-body)
-  (yas-expand-snippet (yas-lookup-snippet "infringement-template"))
-  (message-add-header (concat "Cc: " forge-mail-abuse-cc))
-  (message-goto-to))
+  (forge/mail-forward-complaint "infrinement-template"))
 
 (defun forge/mail-forward-spam-complaint ()
   "Forward a spam complaint to responsible party."
   (interactive)
-  (if (boundp 'notmuch-mua-compose-in) (notmuch-show-forward-message) (mu4e-compose 'forward))
-  (message-goto-body)
-  (yas-expand-snippet (yas-lookup-snippet "spam-template"))
-  (message-add-header (concat "Cc: " forge-mail-abuse-cc))
-  (message-goto-to))
+  (forge/mail-forward-complaint "spam-template"))
+
+(defun forge/mail-forward-compromised-complaint ()
+  "Forward a compromised account report to responsible party."
+  (interactive)
+  (forge/mail-forward-complaint "compromise-template"))
 
 ;;;
 ;;; Toggle whether to compose email in new frame.
@@ -304,12 +305,13 @@
 (defhydra forge/hydra-email (:color blue)
   "
 
-  _A_ Forward Abuse report  _S_ Forward Spam report
-  _I_ Forward Infringement  _N_ Toggle compose New frame
+  _A_ Forward Abuse report  _S_ Forward Spam report  _N_ Toggle compose New frame
+  _I_ Forward Infringement  _C_ Comporomised report
   "
   ("A" forge/mail-forward-abuse-complaint)
   ("I" forge/mail-forward-infringement-complaint)
   ("S" forge/mail-forward-spam-complaint)
+  ("C" forge/mail-forward-compromised-complaint)
   ("N" forge/mail-toggle-compose-new-frame))
 
 
