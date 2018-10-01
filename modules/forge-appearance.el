@@ -83,18 +83,22 @@
     :init
     (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
+
 ;;;
 ;;; Themes
 ;;;
 (defvar forge-theme nil
   "Preferred graphics theme.")
 
-;; Install a mix of themes to have something to start with.
-(dolist (p '(doom-themes leuven-theme
-             material-theme solarized-theme
-             spacemacs-theme zenburn-theme))
-  (progn (forge/package-install p)))
+(defun forge/install-themes ()
+  "Install a mix of themes."
+  (interactive)
+  (dolist (p '(doom-themes leuven-theme
+               material-theme solarized-theme
+               spacemacs-theme zenburn-theme))
+    (progn (forge/package-install p))))
 
+
 ;;;
 ;;; Modeline
 ;;;
@@ -119,12 +123,17 @@
     :ensure t
     :defer t)
 
+
+;;;
+;;;
+;;;
 (defun forge/setup-ui ()
   "Set up the look and feel."
   (interactive)
   (when forge-theme
     (load-theme forge-theme t))
   (when (display-graphic-p)
+    (forge/install-themes)
     (forge/font-update)
     (line-number-mode t)                ;; show line number in modeline
     (column-number-mode t)              ;; show column number in modeline
@@ -133,7 +142,7 @@
     (scroll-bar-mode -1)                ;; disable scroll bar
     (display-battery-mode)))
 
-(defun forge/setup-up-in-daemon (frame)
+(defun forge/setup-ui-in-daemon (frame)
   "Reload the UI in a daemon frame FRAME."
   (when (or (daemonp) (not (display-graphic-p)))
     (with-selected-frame frame
