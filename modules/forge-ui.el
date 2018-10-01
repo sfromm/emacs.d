@@ -103,11 +103,10 @@
 ;;;
 ;;; hydra
 ;;;
-(use-package hydra
-    :ensure t)
+(use-package hydra :ensure t)
 
 (defhydra forge/navigate (:foreign-keys run)
-  "[Navigate] or q to exit"
+  "[Navigate] or q to exit."
   ("a" beginning-of-line)
   ("e" end-of-line)
   ("l" forward-char)
@@ -120,13 +119,60 @@
   ("u" View-scroll-half-page-backward)
   ("SPC" scroll-up-command)
   ("S-SPC" scroll-down-command)
+  ("[" backward-page)
+  ("]" forward-page)
   ("<" beginning-of-buffer)
   (">" end-of-buffer)
   ("." end-of-buffer)
   ("C-'" nil)
   ("q" nil :exit t))
 
-(global-set-key (kbd "C-c n") 'forge/navigate/body)
+(defhydra forge/window ()
+  "
+╭────────────────────────────────────────────────────────╯
+  [_a_] Ace Window      [_v_] Split vertically
+  [_t_] Transpose       [_x_] Split horizontally
+  [_s_] Swap windows    [_o_] Delete other windows
+  [_d_] Delete window
+"
+  ("a" ace-window :exit t)
+  ("t" transpose-frame :exit t)
+  ("o" ace-delete-other-windows :exit t)
+  ("s" ace-swap-window :exit t)
+  ("d" ace-delete-window :exit t)
+  ("b" ivy-switch-buffer :exit t)
+  ("v" (lambda ()
+         (interactive)
+         (split-window-right)
+         (windmove-right)) "vert")
+  ("x" (lambda ()
+         (interactive)
+         (split-window-below)
+         (windmove-down)) "horz")
+  ("q" nil))
 
+(defhydra forge/hydra (:color blue)
+  "
+╭────────────────────────────────────────────────────────╯
+  [_m_] Mail        [_s_] Eshell  [_p_] Packages
+  [_w_] Windows     [_f_] Elfeed
+  [_n_] Navigation  [_j_] Jabber
+"
+  ("w" forge/window/body)
+  ("n" forge/navigate/body)
+  ("m" notmuch)
+  ("f" elfeed)
+  ("j" forge/jabber-start-or-switch)
+  ("s" eshell-here)
+  ("p" paradox-list-packages)
+  ("q" nil))
+
+(global-set-key (kbd "C-c n") 'forge/navigate/body)
+(global-set-key (kbd "C-c SPC") 'forge/hydra/body)
+
+
+;;;
+;;;
+;;;
 (provide 'forge-ui)
 ;;; forge-ui.el ends here
