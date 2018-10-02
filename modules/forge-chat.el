@@ -21,7 +21,13 @@
 
 ;;; Code:
 
+(require 'notifications)
+(require 'tls)
 
+
+;;;
+;;; Jabber
+;;;
 (defvar forge-jabber-account-alist nil
   "Alist of jabber account definitions.")
 
@@ -59,9 +65,11 @@
       (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
 
-(require 'notifications)
-(require 'tls)
 
+
+;;;
+;;; ERC and IRC
+;;;
 (defvar forge-erc-nick user-login-name
   "Default IRC login name.")
 
@@ -146,6 +154,30 @@
       (erc-message "PRIVMSG" (concat (erc-default-target) " " "identify" " " password) nil))))
 ;; Enable the netrc authentication function for &biblbee channels.
 (add-hook 'erc-join-hook 'bitlbee-netrc-identify)
+
+
+;;;
+;;; Slack
+;;; Follow the setup instructions for getting the client id, token, and so on.
+;;; https://github.com/yuya373/emacs-slack#how-to-get-token
+;;; TODO: call slack-register-team somewhere
+;;;
+(defvar forge-slack-client-id nil
+  "Slack Client ID.")
+
+(defvar forge-slack-client-token nil
+  "Slack client token.")
+
+(use-package slack
+    :defer t
+    :commands (slack-start)
+    :bind (:map slack-mode-map
+                ("@" . slack-message-embed-function)
+                ("#" . slack-message-embed-channel))
+    :init
+    (setq slack-buffer-emojify t
+          slack-prefer-current-team t))
+
 
 (provide 'forge-chat)
 ;;; forge-chat.el ends here
