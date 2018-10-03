@@ -24,6 +24,20 @@
 (require 'notifications)
 (require 'tls)
 
+(defun forge/emoji-shrug () "Shrug emoji." (interactive) (insert "¯\\_(ツ)_/¯"))
+(defun forge/emoji-glare () "Glare emoji." (interactive) (insert "ಠ_ಠ"))
+(defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
+
+;;;
+;;; alerts
+;;; https://github.com/jwiegley/alert
+;;;
+(use-package alert
+    :ensure t
+    :commands (alert)
+    :init
+    (setq alert-default-style 'notifier))
+
 
 ;;;
 ;;; Jabber
@@ -160,6 +174,7 @@
 ;;; Slack
 ;;; Follow the setup instructions for getting the client id, token, and so on.
 ;;; https://github.com/yuya373/emacs-slack#how-to-get-token
+;;; http://endlessparentheses.com/keep-your-slack-distractions-under-control-with-emacs.html?source=rss
 ;;; TODO: call slack-register-team somewhere
 ;;;
 (defvar forge-slack-client-id nil
@@ -172,7 +187,9 @@
     :defer t
     :commands (slack-start)
     :bind (:map slack-mode-map
-                ("@" . slack-message-embed-function)
+                ("C-c C-e" . slack-message-edit)
+                ("C-c C-k" . slack-channel-leave)
+                ("@" . slack-message-embed-mention)
                 ("#" . slack-message-embed-channel))
     :init
     (setq slack-buffer-emojify t
