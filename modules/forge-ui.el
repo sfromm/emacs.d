@@ -70,7 +70,8 @@
     :init (setq smex-completion-method 'ivy))
 
 (use-package ace-window
-    :ensure t)
+    :ensure t
+    :bind ([remap other-window] . ace-window))
 
 (use-package avy
     :ensure t
