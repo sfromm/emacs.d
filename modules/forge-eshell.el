@@ -27,15 +27,15 @@
     (defun eshell-here ()
       "Opens up a new shell in the directory associated with the current buffer's file."
       (interactive)
-      (let* ((parent (file-name-directory (buffer-file-name)))
+      (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
              (height (/ (window-total-height) 3))
              (name (car (last (split-string parent "/" t)))))
-	(split-window-vertically)
-	(other-window 1)
-	(eshell "new")
-	(rename-buffer (concat "*eshell: " name "*"))
-	(insert (concat "ls"))
-	(eshell-send-input)))
+        (split-window-vertically)
+        (other-window 1)
+        (eshell "new")
+        (rename-buffer (concat "*eshell: " name "*"))
+        (insert (concat "ls"))
+        (eshell-send-input)))
 
     (use-package em-unix
 	:defer t
