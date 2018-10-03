@@ -34,13 +34,13 @@
       (interactive)
       (set-fill-column 100)
       (when (fboundp 'turn-on-auto-fill)
-	(turn-on-auto-fill))
+        (turn-on-auto-fill))
       (when (fboundp 'turn-on-flyspell)
-	(turn-on-flyspell)))
+        (turn-on-flyspell)))
 
     :hook
     ((org-mode . forge/org-mode-hook)
-     (org-mode . forge/tangle-org-mode-on-save)
+     (after-save . forge/tangle-org-mode-on-save)
      (org-mode . variable-pitch-mode))
 
     :bind (("<f8>" . org-cycle-agenda-files)
@@ -50,9 +50,9 @@
 	   ("C-c a" . org-agenda)
 	   ("C-c b" . org-switchb))
     :bind (:map org-mode-map
-		("M-q" . endless/fill-or-unfill)
-		("C-c >" . org-time-stamp-inactive)
-		("RET" . org-return-indent))
+	        ("M-q" . endless/fill-or-unfill)
+	        ("C-c >" . org-time-stamp-inactive)
+	        ("RET" . org-return-indent))
     :init
     (setq org-directory "~/forge"
 	  org-agenda-files (list
