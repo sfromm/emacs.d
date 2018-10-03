@@ -155,20 +155,22 @@
   "
 ╭────────────────────────────────────────────────────────╯
   [_m_] Mail        [_s_] Eshell  [_p_] Packages
-  [_w_] Windows     [_f_] Elfeed
-  [_n_] Navigation  [_j_] Jabber
+  [_w_] Windows     [_f_] Elfeed  [_g_] Magit
+  [_n_] Navigation  [_j_] Jabber  [_S_] Slack
 "
   ("w" forge/window/body)
   ("n" forge/navigate/body)
   ("m" notmuch)
   ("f" elfeed)
   ("j" forge/jabber-start-or-switch)
+  ("g" magit-status)
   ("s" eshell-here)
+  ("S" slack-start)
   ("p" paradox-list-packages)
   ("q" nil))
 
 (global-set-key (kbd "C-c n") 'forge/navigate/body)
-(global-set-key (kbd "C-c SPC") 'forge/hydra/body)
+(global-set-key (kbd "C-.") 'forge/hydra/body)
 
 
 ;;;
