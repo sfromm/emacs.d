@@ -166,7 +166,7 @@
   ("j" forge/jabber-start-or-switch)
   ("g" magit-status)
   ("s" eshell-here)
-  ("S" slack-start)
+  ("S" forge/slack/body)
   ("p" paradox-list-packages)
   ("q" nil))
 
