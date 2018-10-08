@@ -173,6 +173,7 @@
 ;;;
 ;;; Slack
 ;;; Follow the setup instructions for getting the client id, token, and so on.
+;;; https://github.com/yuya373/emacs-slack
 ;;; https://github.com/yuya373/emacs-slack#how-to-get-token
 ;;; http://endlessparentheses.com/keep-your-slack-distractions-under-control-with-emacs.html?source=rss
 ;;; TODO: call slack-register-team somewhere
@@ -195,6 +196,25 @@
     (setq slack-buffer-emojify t
           slack-prefer-current-team t))
 
+(defhydra forge/slack (:color blue)
+    "
+╭────────────────────────────────────────────────────────╯
+[_s_] Start  [_d_] Disconnect
+[_i_] IM     [_g_] Group  [_c_] Channel
+"
+    ("s" slack-start)
+    ("i" slack-im-select)
+    ("g" slack-group-select)
+    ("c" slack-channel-select)
+    ("d" slack-ws-close)
+    ("q" nil))
 
+(use-package emojify
+    :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))
+
+
+;;;
+;;;
+;;;
 (provide 'forge-chat)
 ;;; forge-chat.el ends here
