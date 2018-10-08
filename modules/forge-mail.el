@@ -73,7 +73,7 @@
           smtpmail-smtp-server forge-smtp-server-work
           smtpmail-smtp-service 465
           smtpmail-smtp-user forge-smtp-user-work
-          smtpmail-queue-dir (expand-file-name (concat forge-personal-dir "queue"))))
+          smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
 
 
 ;;;
@@ -274,7 +274,7 @@
 (defun forge/mail-forward-infringement-complaint ()
   "Forward a infringement complaint to responsible party."
   (interactive)
-  (forge/mail-forward-complaint "infrinement-template"))
+  (forge/mail-forward-complaint "infringement-template"))
 
 (defun forge/mail-forward-spam-complaint ()
   "Forward a spam complaint to responsible party."
