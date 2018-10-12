@@ -92,6 +92,12 @@
 
 
 ;;;
+;;; golden ratio for windows
+;;;
+(use-package golden-ratio)
+
+
+;;;
 ;;; uniquify
 ;;;
 (use-package uniquify
@@ -134,7 +140,7 @@
   [_a_] Ace Window      [_v_] Split vertically
   [_t_] Transpose       [_x_] Split horizontally
   [_s_] Swap windows    [_o_] Delete other windows
-  [_d_] Delete window
+  [_d_] Delete window   [_g_] Golden ratio
 "
   ("a" ace-window :exit t)
   ("t" transpose-frame :exit t)
@@ -142,6 +148,7 @@
   ("s" ace-swap-window :exit t)
   ("d" ace-delete-window :exit t)
   ("b" ivy-switch-buffer :exit t)
+  ("g" golden-ratio :exit t)
   ("v" (lambda ()
          (interactive)
          (split-window-right)
