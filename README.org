@@ -45,6 +45,74 @@ There are a couple directories you use to store any personal or site-specific co
 - *~/.emacs.d/site* (=forge-site-dir=)
 - *~/.emacs.d/user*  (=forge-personal-dir=)
 
+** Modules
+
+*** COMMENT Email
+
+The =forge-mail= module sets up reading and sending email from within Emacs.  I've bounced back and
+forth between [[https://notmuchmail.org/][notmuch]] and [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] several times through the years.  They both have their positives and
+their not-so positives.  At this time, [[https://notmuchmail.org/][notmuch]] is a better fit for my workflow and I've managed to
+smooth over some of the pain points.
+
+The setup is basically:  [[http://isync.sourceforge.net/][mbsync]] to sync mail locally, [[https://notmuchmail.org/][notmuch]] to index, and Emacs' [[https://www.gnu.org/software/emacs/manual/html_node/smtpmail/Emacs-Speaks-SMTP.html][smtpmail]] to send
+mail.  I happen to be online more often than not and have not needed something like [[https://marlam.de/msmtp/][msmtp]] to handle
+mail delivery while offline.
+
+Here's an example /mbsyncrc/ configuration:
+
+#+BEGIN_EXAMPLE
+Create Both
+Expunge Both
+SyncState *
+
+IMAPAccount Work
+Host mail.example.com
+User myusername
+PassCmd "~/bin/auth-source-query.py myusername mail.example.com 993"
+SSLType IMAPS
+CertificateFile ~/.mail/.certs.pem
+
+IMAPStore work-remote
+Account Work
+
+MaildirStore work-local
+Path ~/.mail/Work/
+Inbox ~/.mail/Work/INBOX
+Flatten .
+
+Channel work
+Master :work-remote:
+Slave :work-local:
+#+END_EXAMPLE
+
+And here are example notmuch hooks.
+
+#+BEGIN_SRC sh :tangle no :shebang #!/bin/bash
+# The pre-new hook
+echo -e "---\nStart $(date)."
+mbsync -a
+exit 0
+#+END_SRC
+
+#+BEGIN_SRC sh :tangle no :shebang #!/bin/bash
+# The post-new hook
+notmuch tag --batch <<EOF
++inbox                  -- folder:Work/INBOX or folder:Personal/INBOX
+-inbox                  -- not ( folder:Personal/INBOX or folder:Work/INBOX )
++sent                   -- folder:Personal/Sent or folder:Work/Sent
++bulk                   -- folder:Work/Spam or folder:Work/incoming
+-bulk                   -- not ( folder:Work/Spam or folder:Work/incoming or folder:Work/Trash )
++trash -archive -inbox  -- folder:Personal/Trash or folder:Work/Trash
+#
++invite                 -- mimetype:text/calendar
+#
+-new -- tag:new
+EOF
+
+echo -e "Done at $(date)."
+exit
+#+END_SRC
+
 ** Inspiration
 
 There are many elements of this configuration that are drawn from other users' configurations
@@ -70,3 +138,4 @@ online.  Below is a list of only some of those configurations that caught my eye
 - [[http://karl-voit.at/][Karl Voit]]'s [[https://github.com/novoid/dot-emacs][dot-emacs]]
 - [[https://github.com/DamienCassou/emacs.d/blob/master/init.el][Damien Cassou]]
 - [[https://github.com/hlissner][Henrik Lissner]] [[https://github.com/hlissner/doom-emacs][Doom Emacs]]
+- [[https://github.com/jethrokuan/.emacs.d][Jethro Kuan]]
