@@ -130,20 +130,24 @@
   (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
 
 (defun forge-initialize ()
-  "Initialize paths and environment for this Emacs install."
+  "Initialize paths and session for this Emacs instance."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir forge-preload-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
-  (setq inhibit-splash-screen t))
+  (setq inhibit-splash-screen t
+        ;; only run garbage collection after 50MB of allocated data.
+        gc-cons-threshold 50000000
+        ;; warn when opening files bigger than 50MB
+        large-file-warning-threshold 50000000))
 
 (defun forge/load-directory-modules (path)
-  "Load lisp files in a directory."
+  "Load Lisp files in PATH directory."
   (when (file-exists-p path)
     (message "Loading lisp files in %s..." path)
     (mapc 'load (directory-files path 't "^[^#\.].*el$"))))
 
 (defun forge/load-modules (&rest modules)
-  "Load forge modules."
+  "Load forge modules MODULES."
   (interactive)
   (dolist (module (cons '() modules ))
     (when module
