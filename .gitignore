@@ -1,4 +1,6 @@
 # misc top level dirs
+var
+snippets
 auto-save-list
 backups
 tramp
