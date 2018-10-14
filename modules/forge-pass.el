@@ -32,7 +32,7 @@
   :bind
   ("C-c p" . pass))
 
-(use-package auth-password-store
+(use-package auth-source-pass
   :after auth-source
   :init
   (setq auth-sources '(password-store "~/.authinfo.gpg")))
