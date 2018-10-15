@@ -88,7 +88,7 @@
                      paredit
                      gnus-alias
                      org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
-                     pass
+                     pass auth-source-pass
                      ivy swiper counsel smex ace-window avy dumb-jump hydra))
     (progn (forge/package-install package))))
 
