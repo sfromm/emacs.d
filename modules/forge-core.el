@@ -135,6 +135,8 @@
     (unless (file-directory-p dir)
       (make-directory dir t)))
   (setq inhibit-splash-screen t
+        ;; always load the newer version of a file
+        load-prefer-newer t
         ;; only run garbage collection after 50MB of allocated data.
         gc-cons-threshold 50000000
         ;; warn when opening files bigger than 50MB
