@@ -19,7 +19,7 @@ bootstrap:
 	$(EMACS) --load modules/forge-core.el -f "forge/bootstrap-packages"
 
 update:
-#	git pull --rebase
+	git pull --rebase
 	$(EMACS) --load modules/forge-core.el -f "forge/update-packages"
 
 all: tangle packages
