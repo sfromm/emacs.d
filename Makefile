@@ -8,8 +8,8 @@ ifeq ($(OS),Linux)
 endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
-    PKGMGR = brew
-    PKGFLAGS = --with-cocoa --with-librsvg --with-modules --with-gnutls
+    PKGMGR = brew install
+    PKGFLAGS = --with-cocoa --with-librsvg --with-gnutls --with-modules --with-imagemagick@6
 endif
 
 install:
