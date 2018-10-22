@@ -139,3 +139,4 @@ online.  Below is a list of only some of those configurations that caught my eye
 - [[https://github.com/DamienCassou/emacs.d/blob/master/init.el][Damien Cassou]]
 - [[https://github.com/hlissner][Henrik Lissner]] [[https://github.com/hlissner/doom-emacs][Doom Emacs]]
 - [[https://github.com/jethrokuan/.emacs.d][Jethro Kuan]]
+- [[https://gitlab.com/ambrevar/dotfiles][Ambrevar]]
