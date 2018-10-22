@@ -101,7 +101,7 @@
           ("y" . notmuch-show-archive-message-then-next-or-next-thread)
           ("S-SPC" . notmuch-show-rewind))
     (:map notmuch-show-part-map
-          ("c" . forge/mail-add-ics-calendar))
+          ("c" . forge/notmuch-show-calendar-invite))
 
     :init
     (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
@@ -119,7 +119,7 @@
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
                                    (:name "Attachments"     :key "A" :query "tag:attachment")
-                                   (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar and not tag:archive")))
+                                   (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")))
 
     :config
     (defmacro forge-notmuch-show-tag (tags)
@@ -227,16 +227,20 @@
 ;;;
 ;;; Pipe ICS part into the calendar.
 ;;;
-(defun forge/mail-add-ics-calendar ()
+(defun forge/mail-add-calendar-invite (handle &optional prompt)
   "Open calendar ICS part in Calendar."
+  (ignore prompt)
+  (mm-with-unibyte-buffer
+    (mm-insert-part handle)
+    (mm-add-meta-html-tag handle)
+    (let ((path (expand-file-name "~/Download/invite.ics")))
+      (mm-write-region (point-min) (point-max) path nil nil nil 'binary t)
+      (start-process "add-calendar-invite" nil "/usr/bin/open" "-a" "/Applications/Microsoft Outlook.app" path))))
+
+(defun forge/notmuch-show-calendar-invite ()
+  "Save ics MIME part."
   (interactive)
-  (with-current-notmuch-show-message
-      (let ((mm-handle (mm-dissect-buffer)))
-        (notmuch-foreach-mime-part
-         (lambda (p)
-           (if (string-equal (mm-handle-media-type p) "text/calendar")
-               (mm-pipe-part p "gcal-import")))
-         mm-handle))))
+  (notmuch-show-apply-to-current-part-handle #'forge/mail-add-calendar-invite))
 
 ;;;
 ;;; Pipe HTML part into a browser
