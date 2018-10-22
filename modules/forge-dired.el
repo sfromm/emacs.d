@@ -59,7 +59,6 @@
           dired-recursive-deletes 'top
           global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
           auto-revert-verbose nil))
-  
 
 (use-package dired-x 
     :after dired
@@ -99,5 +98,10 @@
     ;; finally, switch to that window
     (other-window 1)))
 
+(use-package gnus-dired
+    :hook (dired-mode . turn-on-gnus-dired-mode))
+;;;
+;;;
+;;;
 (provide 'forge-dired)
 ;;; forge-dired.el ends here
