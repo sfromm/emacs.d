@@ -47,7 +47,7 @@ There are a couple directories you use to store any personal or site-specific co
 
 ** Modules
 
-*** COMMENT Email
+*** Email
 
 The =forge-mail= module sets up reading and sending email from within Emacs.  I've bounced back and
 forth between [[https://notmuchmail.org/][notmuch]] and [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] several times through the years.  They both have their positives and
