@@ -94,7 +94,12 @@
 ;;;
 ;;; golden ratio for windows
 ;;;
-(use-package golden-ratio)
+(use-package golden-ratio
+    :defer t
+    :init
+    (append golden-ratio-extra-commands '(ace-window ace-delete-window ace-select-window
+                                          ace-swap-window ace-maximize-window)))
+
 
 
 ;;;
