@@ -49,6 +49,7 @@
                     'forge-orgmode
                     'forge-mail
                     'forge-chat
+                    'forge-util
                     'forge-elfeed)
 
 
