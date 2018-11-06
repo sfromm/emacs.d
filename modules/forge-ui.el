@@ -96,7 +96,7 @@
 ;;;
 (use-package golden-ratio
     :defer t
-    :init
+    :config
     (append golden-ratio-extra-commands '(ace-window ace-delete-window ace-select-window
                                           ace-swap-window ace-maximize-window)))
 
