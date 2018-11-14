@@ -111,6 +111,9 @@
     (org-load-modules-maybe t)
     ;; Keep tables with a fixed-pitch font.
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 
     (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode)))
 
