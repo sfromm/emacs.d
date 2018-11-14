@@ -119,6 +119,7 @@
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
                                    (:name "Attachments"     :key "A" :query "tag:attachment")
+                                   (:name "Bulk"            :key "B" :query "tag:bulk")
                                    (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")))
 
     :config
