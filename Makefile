@@ -1,4 +1,4 @@
-ARGS = -Q --batch --eval "(add-to-list 'load-path \"~/.emacs.d/site-lisp\")"
+ARGS = --quick --batch --load modules/forge-core.el
 OS := $(shell uname)
 VERSION = 26.1_1
 ifeq ($(OS),Linux)
@@ -16,11 +16,13 @@ install:
 	$(PKGMGR) emacs $(PKGFLAGS)
 
 bootstrap:
-	$(EMACS) --load modules/forge-core.el -f "forge/bootstrap-packages"
+	$(EMACS) -f "forge/bootstrap-packages"
 
 update:
 	git pull --rebase
-	$(EMACS) --load modules/forge-core.el -f "forge/update-packages"
+
+upgrade:
+	$(EMACS) -f "forge/upgrade-packages"
 
 all: tangle packages
 
