@@ -68,12 +68,14 @@
     (package-install package)
     (delete-other-windows)))
 
-(defun forge/update-packages ()
-  "Update all installed packages."
+(defun forge/upgrade-packages ()
+  "Upgrade all installed packages."
   (interactive)
   (save-window-excursion
     (package-refresh-contents)
-    (paradox-upgrade-packages)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
     (message "Packages updated.")))
 
 (defun forge/bootstrap-packages ()
