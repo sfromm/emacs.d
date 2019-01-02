@@ -27,7 +27,9 @@
 ;;; https://github.com/wasamasa/nov.el
 (use-package nov
     :ensure t
-    :mode ("\\.epub\\'" . nov-mode))
+    :mode ("\\.epub\\'" . nov-mode)
+    :init
+    (setq nov-save-place-file (concat forge-state-dir "nov-places")))
 
 ;;;
 ;;;
