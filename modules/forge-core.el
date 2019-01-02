@@ -132,11 +132,18 @@
   "Turn off `delete-trailing-whitespace' when saving files."
   (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
 
+(defun forge/clean-user-emacs-directory ()
+  "Set appropriate paths to keep `user-emacs-directory' clean."
+  (interactive)
+  (setq gamegrid-user-score-file-directory (concat forge-state-dir "games")
+        bookmark-default-file (concat forge-state-dir "bookmarks")))
+
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir forge-preload-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
+  (forge/clean-user-emacs-directory)
   (setq inhibit-splash-screen t
         ;; always load the newer version of a file
         load-prefer-newer t
