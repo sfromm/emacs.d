@@ -135,8 +135,10 @@
 (defun forge/clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
-  (setq gamegrid-user-score-file-directory (concat forge-state-dir "games")
-        bookmark-default-file (concat forge-state-dir "bookmarks")))
+  (with-no-warnings
+    (setq nov-save-place-file (concat forge-state-dir "nov-places")
+          gamegrid-user-score-file-directory (concat forge-state-dir "games")
+          bookmark-default-file (concat forge-state-dir "bookmarks"))))
 
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
