@@ -61,6 +61,7 @@
     :config
     (setq jabber-account-list forge-jabber-account-alist
           jabber-auto-reconnect t  ; reconnect automatically
+          jabber-avatar-cache-directory (concat forge-state-dir "jabber/avatar-cache")
           jabber-history-dir (concat forge-log-dir "jabber")
           jabber-history-enabled t ; enable logging
           jabber-history-muc-enabled t
