@@ -48,6 +48,7 @@
     :config
     (progn
       (setq tramp-default-method "ssh"
+            eshell-directory-name (concat forge-state-dir "eshell")
 	    eshell-visual-commands '("less" "tmux" "htop" "top" "docker")
 	    eshell-visual-subcommands '(("git" "log" "diff" "show"))
 	    eshell-prompt-function (lambda ()
