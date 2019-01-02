@@ -113,6 +113,14 @@ echo -e "Done at $(date)."
 exit
 #+END_SRC
 
+*** Chat
+
+The /chat/ module will facilitate chatting via Jabber, IRC, and Slack.
+
+**** Slack
+
+The support for slack is provided via [[https://github.com/yuya373/emacs-slack][emacs-slack]].
+
 ** Inspiration
 
 There are many elements of this configuration that are drawn from other users' configurations
