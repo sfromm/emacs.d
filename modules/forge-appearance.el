@@ -94,7 +94,7 @@
   "Install a mix of themes."
   (interactive)
   (dolist (p '(doom-themes leuven-theme
-               material-theme solarized-theme
+               material-theme poet-theme solarized-theme
                spacemacs-theme zenburn-theme))
     (progn (forge/package-install p))))
 
