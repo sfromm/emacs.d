@@ -400,8 +400,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 ;;;
 (use-package gnus-dired
     :defer t
+    :hook (dired-mode . turn-on-gnus-dired-mode)
     :init
-    (add-hook 'dired-mode-hook 'gnus-dired-mode)
     (setq gnus-dired-mail-mode 'notmuch-user-agent))
 
 (provide 'forge-mail)

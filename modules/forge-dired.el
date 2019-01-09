@@ -45,9 +45,6 @@
      ("Y" . forge/dired-rsync)
      ("^" . forge/dired-up))
 
-    ;;:hook
-    ;;(dired-mode . forge/dired-mode-hook)
-
     :diminish dired-omit-mode
 
     :config
@@ -60,7 +57,11 @@
           global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
           auto-revert-verbose nil))
 
-(use-package dired-x 
+
+;;;
+;;; dired-x
+;;;
+(use-package dired-x
     :after dired
     :init
     (global-unset-key (kbd "C-x C-j"))
@@ -72,7 +73,7 @@
 (autoload 'dired-async-mode "dired-async.el" nil t)
 (dired-async-mode 1)
 
-
+
 ;;;
 ;;; Dired Rsync
 ;;;
@@ -98,8 +99,6 @@
     ;; finally, switch to that window
     (other-window 1)))
 
-(use-package gnus-dired
-    :hook (dired-mode . turn-on-gnus-dired-mode))
 ;;;
 ;;;
 ;;;
