@@ -169,6 +169,13 @@
         (message "Loading %s" module)
         (require module nil t)))))
 
+;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
+(defun forge/enable-copyright-update ()
+  "Update copyright year when saving a file."
+  (when (fboundp 'copyright-update)
+    (setq copyright-names-regexp "Free Software")
+    (add-hook 'before-save-hook #'copyright-update))
+
 
 ;;;
 ;;; Platform specific details.
