@@ -1,6 +1,6 @@
 ;;; forge-appearance.el --- Set up appearance.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Stephen Fromm
+;; Copyright (C) 2018, 2019 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

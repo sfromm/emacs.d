@@ -1,6 +1,6 @@
 ;;; forge-editing.el --- This is an Emacs Lisp file with Emacs Lisp code.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Stephen Fromm
+;; Copyright (C) 2018, 2019 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

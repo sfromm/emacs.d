@@ -1,6 +1,6 @@
 ;;; forge-pass.el --- Configure pass, password-store, and auth-source.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Stephen Fromm
+;; Copyright (C) 2018, 2019 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

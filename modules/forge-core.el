@@ -1,6 +1,6 @@
 ;;; forge-core.el --- Set up the core.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Stephen Fromm
+;; Copyright (C) 2018, 2019 Stephen Fromm
 
 ;; Author: Stephen Fromm
 
