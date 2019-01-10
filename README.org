@@ -121,6 +121,20 @@ The /chat/ module will facilitate chatting via Jabber, IRC, and Slack.
 
 The support for slack is provided via [[https://github.com/yuya373/emacs-slack][emacs-slack]].
 
+*** OrgMode
+
+For all changes, see the upstream Org Mode [[https://orgmode.org/Changes.html][Changes]] page.
+
+**** Notable version 9.2 changes
+
+- Change in the structure template expansion.  This means things like =<s= no longer work.  You can
+  do one of two things.  Use the new template expansion mechanism with
+  =org-insert-structure-template= that is bound to =C-c C-, .=.  Or do the following and add to =org-modules=.
+
+  #+BEGIN_SRC emacs-lisp :tangle no
+  (require 'org-tempo)
+  #+END_SRC
+
 ** Inspiration
 
 There are many elements of this configuration that are drawn from other users' configurations
