@@ -174,7 +174,7 @@
   "Update copyright year when saving a file."
   (when (fboundp 'copyright-update)
     (setq copyright-names-regexp "Free Software")
-    (add-hook 'before-save-hook #'copyright-update))
+    (add-hook 'before-save-hook #'copyright-update)))
 
 
 ;;;
