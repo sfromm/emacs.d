@@ -117,11 +117,18 @@
 
 (use-package doom-modeline
     :ensure t
-    :init (doom-modeline-init))
+    :init
+    (setq doom-modeline-github nil)
+    (doom-modeline-init))
 
 (use-package rainbow-mode
     :ensure t
     :defer t)
+
+(use-package nyan-mode
+    :ensure t
+    :defer t
+    :init (nyan-mode))
 
 
 ;;;
