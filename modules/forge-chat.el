@@ -28,6 +28,7 @@
 (defun forge/emoji-glare () "Glare emoji." (interactive) (insert "ಠ_ಠ"))
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
 
+
 ;;;
 ;;; alerts
 ;;; https://github.com/jwiegley/alert
@@ -44,6 +45,11 @@
 ;;;
 (defvar forge-jabber-account-alist nil
   "Alist of jabber account definitions.")
+
+(defun forge/jabber-notification (from buf text title)
+  "Take a notification from jabber and send to `alert'.
+Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
+  (alert text :title title :id 'new-jabber-alert))
 
 (use-package jabber
     :ensure t
@@ -71,7 +77,7 @@
           jabber-chat-buffer-show-avatar t ; show avatar in chat buffer
           jabber-vcard-avatars-retrieve t ; automatically download vcard avatars
           jabber-alert-info-message-hooks (quote (jabber-info-echo jabber-info-display))
-          jabber-alert-message-hooks (quote (jabber-message-notifications jabber-message-echo jabber-message-scroll))
+          jabber-alert-message-hooks (quote (forge/jabber-notification jabber-message-echo jabber-message-scroll))
           jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
           jabber-alert-muc-hooks (quote (jabber-muc-notifications-personal jabber-muc-echo jabber-muc-scroll)))
                                         ; jabber uses the fsm package
