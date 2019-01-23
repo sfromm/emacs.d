@@ -24,6 +24,19 @@
 (use-package org
     :ensure org-plus-contrib
     :preface
+    (defun forge/org-tbl-export (name)
+      "Search for table named `NAME` and export"
+      (interactive "s")
+      (show-all)
+      (push-mark)
+      (goto-char (point-min))
+      (let ((case-fold-search t))
+        (if (search-forward-regexp (concat "#\\+NAME: +" name) nil t)
+            (progn
+              (next-line)
+              (org-table-export (format "%s.csv" name) "orgtbl-to-csv"))))
+      (pop-mark))
+
     (defun forge/tangle-org-mode-on-save ()
       "Tangle org-mode file when saving."
       (when (string= (message "%s" major-mode) "org-mode")
@@ -37,6 +50,28 @@
         (turn-on-auto-fill))
       (when (fboundp 'turn-on-flyspell)
         (turn-on-flyspell)))
+
+    ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
+    (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
+      "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
+      ;; https://orgmode.org/manual/HTML-preamble-and-postamble.html
+      ;; disable author + date + validate link at end of HTML exports
+      ;;(setq org-html-postamble nil)
+
+      (let* ((org-html-with-latex 'imagemagick)
+             (outfile
+              (org-publish-org-to 'html filename
+                                  (concat "." (or (plist-get plist :html-extension)
+                                                  org-html-extension
+                                                  "html"))
+                                  plist pub-dir)))
+        ;; 1. apple notes handles <p> paras badly, so we have to replace all blank
+        ;;    lines (which the orgmode export accurately leaves for us) with
+        ;;    <br /> tags to get apple notes to actually render blank lines between
+        ;;    paragraphs
+        ;; 2. remove large h1 with title, as apple notes already adds <title> as
+        ;; the note title
+        (shell-command (format "sed -i \"\" -e 's/^$/<br \\/>/' -e 's/<h1 class=\"title\">.*<\\/h1>$//' %s" outfile)) outfile))
 
     :hook
     ((org-mode . forge/org-mode-hook)
