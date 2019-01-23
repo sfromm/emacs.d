@@ -173,6 +173,11 @@
     :init (global-flycheck-mode))
 
 
+(use-package company
+    :ensure t
+    :hook (prog-mode . company-mode)
+    :diminish company-mode)
+
 
 ;;;
 ;;; lisp
@@ -196,6 +201,32 @@
     :config
     (setq eldoc-idle-delay 0.3))
 
+
+
+;;;
+;;; python
+;;;
+(use-package python
+    :defer t
+    :interpreter ("python" . python-mode)
+    :hook
+    (python-mode . forge/turn-on-delete-trailing-whitespace)
+    (python-mode . forge/whitespace-visualize)
+    :config
+    (setq-default python-indent-offset 4))
+
+;;
+;; https://github.com/proofit404/anaconda-mode
+;;
+(use-package anaconda-mode
+    :after python
+    :hook python-mode
+    :init
+    (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
+
+(use-package company-anaconda
+    :ensure t
+    :after anaconda-mode)
 
 
 ;;;
