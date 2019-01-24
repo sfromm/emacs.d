@@ -95,7 +95,7 @@
 			    (concat org-directory "/tasks.org")
 			    (concat org-directory "/work.org")
 			    (concat org-directory "/personal.org")
-			    (concat org-directory "/documentation.org"))
+			    (concat org-directory "/notebook.org"))
 	  org-default-notes-file (concat org-directory "/journal.org")
 	  org-file-apps (quote ((auto-mode . emacs)
 			        ("\\.doc\\'" . "open %s")
