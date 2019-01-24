@@ -118,7 +118,8 @@
 (use-package doom-modeline
     :ensure t
     :init
-    (setq doom-modeline-github nil)
+    (setq doom-modeline-github nil
+          doom-modeline-lsp nil)
     (doom-modeline-init))
 
 (use-package rainbow-mode
