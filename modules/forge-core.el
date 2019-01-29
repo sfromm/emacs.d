@@ -176,6 +176,54 @@
     (setq copyright-names-regexp "Free Software")
     (add-hook 'before-save-hook #'copyright-update)))
 
+;; Make a peek-frame, a modified version of what is from here:
+;; https://tuhdo.github.io/emacs-frame-peek.html
+(defun forge/make-peek-frame (func &rest args)
+  "Make a new frame for peeking at information.  Provide FUNC that will return data and optional ARGS."
+  (let ((summary)
+        (peek-frame)
+        (x) (y)
+        (abs-pixel-pos (save-excursion
+                         ;; (beginning-of-thing 'word)
+                         (window-absolute-pixel-position))))
+    (setq x (car abs-pixel-pos))
+    (setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
+
+    (setq peek-frame (make-frame '((minibuffer . nil)
+                                   (name . "*Peek*")
+                                   (width . 80)
+                                   (visibility . nil)
+                                   (height . 20))))
+    (message "peek %s" peek-frame)
+
+    (set-frame-position peek-frame x y)
+
+    (with-selected-frame peek-frame
+      (funcall func)
+      (read-only-mode)
+      (recenter-top-bottom 0))
+
+    (make-frame-visible peek-frame)))
+
+(defun forge/get-itunes-stream-song ()
+  "Get current song."
+  (let ((as-tmpl ""))
+    (setq as-tmpl "tell application \"iTunes\"
+	if player state is not stopped then
+		set ct to current track
+		set this_song to \"\"
+		try
+			if (class of ct is URL track) and (get current stream title) is not missing value then
+				set this_song to (get current stream title)
+				this_song
+			end if
+		end try
+	end if
+end tell")
+    (split-string (do-applescript as-tmpl) " - ")))
+
+
+
 
 ;;;
 ;;; Platform specific details.

@@ -24,6 +24,11 @@
 (use-package org
     :ensure org-plus-contrib
     :preface
+    (defun forge/capture-current-song ()
+      "Capture the current song details."
+      (let ((song-info (forge/get-itunes-stream-song)))
+        (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
+
     (defun forge/org-tbl-export (name)
       "Search for table named `NAME` and export"
       (interactive "s")
@@ -118,7 +123,9 @@
 				  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
 				   "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 				  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
-				   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n"))
+				   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+                                  ("m" "Music" entry  (file+olp+datetree "~/forge/journal.org")
+				   "* %?%U %(forge/capture-current-song) :music:\n"))
 
 	  org-export-allow-bind-keywords t
 	  org-export-coding-system 'utf-8
