@@ -121,6 +121,26 @@ The /chat/ module will facilitate chatting via Jabber, IRC, and Slack.
 
 The support for slack is provided via [[https://github.com/yuya373/emacs-slack][emacs-slack]].
 
+**** Jabber
+
+The support for Jabber, ie. XMPP, is provided by [[https://github.com/legoscia/emacs-jabber][emacs-jabber]].  For configuration of
+=jabber-account-alist=, it is set to =forge-jabber-account-alist=.  It uses the same conventions for
+how to configure account(s).  Please refer to that [[info:jabber#Account%20settings][documentation]] for more information.
+
+***** Known issues
+
+- There is a [[https://github.com/legoscia/emacs-jabber/pull/26][pull request #26]] to fix the now missing function =assoc-ignore-case=.  It was deprecated
+  with Emacs 22 and is now gone.  You can use the apply the patch from the PR to /jabber-util.el/.
+  I've run into this bug when trying to join a MUC.
+
+#+begin_example
+        (setq chosen
+-	    (if (and input (assoc-ignore-case input jid-completion-table))
+-		(symbol-name (cdr (assoc-ignore-case input jid-completion-table)))
++	    (if (and input (assoc-string input jid-completion-table t))
++		(symbol-name (cdr (assoc-string input jid-completion-table t)))
+#+end_example
+
 *** OrgMode
 
 For all changes, see the upstream Org Mode [[https://orgmode.org/Changes.html][Changes]] page.
