@@ -31,6 +31,41 @@
     :init
     (setq nov-save-place-file (concat forge-state-dir "nov-places")))
 
+
+;;;
+;;; MPD frontend
+;;; https://github.com/pft/mingus
+(use-package mingus
+    :ensure t
+    :defer t
+    :preface
+    (defun forge/get-current-song-mpd ()
+      "Get the current song playing via MPD."
+      (interactive)
+      (let ((conn (mpd-conn-new "localhost" 6600))
+            (cursong nil))
+        (condition-case nil
+            (setq cursong (split-string (plist-get (mpd-get-current-song conn) 'Title) " - "))
+          (error nil))
+        cursong)))
+
+(defhydra forge/music-hydra ()
+  "MPD Actions"
+  ("p" mingus-toggle "Play/Pause")
+  ("/" mingus-search "Search" :exit t)
+  ("c" (message "Currently Playing: %s" (shell-command-to-string "mpc status")) "Currently Playing")
+  ("s" mingus "Show Mingus" :exit t)
+  ("m" mingus "Mingus" :exit t)
+  ("<" (progn
+         (mingus-prev)
+         (message "Currently Playing: %s" (shell-command-to-string "mpc status"))) "Previous")
+  (">" (progn
+         (mingus-next)
+         (message "Currently Playing: %s" (shell-command-to-string "mpc status"))) "Next")
+  ("+" (dotimes (i 5) (mingus-vol-up)) "Louder")
+  ("-" (dotimes (i 5) (mingus-vol-down)) "Quieter")
+  ("q" nil "Quit"))
+
 ;;;
 ;;;
 ;;;

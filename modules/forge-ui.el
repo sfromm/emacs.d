@@ -167,13 +167,14 @@
 (defhydra forge/hydra (:color blue)
   "
 ╭────────────────────────────────────────────────────────╯
-  [_m_] Mail        [_s_] Eshell  [_p_] Packages
+  [_m_] Mail        [_s_] Eshell  [_p_] Packages  [_M_] Music
   [_w_] Windows     [_f_] Elfeed  [_g_] Magit
   [_n_] Navigation  [_j_] Jabber  [_S_] Slack
 "
   ("w" forge/window/body)
   ("n" forge/navigate/body)
   ("m" notmuch)
+  ("M" forge/music-hydra/body)
   ("f" elfeed)
   ("j" forge/jabber-start-or-switch)
   ("g" magit-status)
