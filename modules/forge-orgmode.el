@@ -26,7 +26,10 @@
     :preface
     (defun forge/capture-current-song ()
       "Capture the current song details."
-      (let ((song-info (forge/get-itunes-stream-song)))
+      (let ((itunes-song (forge/get-current-song-itunes))
+            (mpd-song (forge/get-current-song-mpd))
+            (song-info nil))
+        (setq song-info (if itunes-song itunes-song mpd-song))
         (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
 
     (defun forge/org-tbl-export (name)
