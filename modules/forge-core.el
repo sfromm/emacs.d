@@ -45,6 +45,10 @@
 (defvar forge-log-dir (concat forge-state-dir "log/")
   "Path to Emacs packages' log files.")
 
+(defgroup forge nil
+  "Forge."
+  :group 'emacs)
+
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
 
@@ -93,7 +97,8 @@
                      org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
                      pass auth-source-pass
                      ivy swiper counsel smex ace-window avy dumb-jump hydra))
-    (progn (forge/package-install package))))
+    (progn (forge/package-install package)))
+  (all-the-icons-install-fonts))
 
 (forge/package-install 'use-package)
 (eval-when-compile
@@ -176,9 +181,71 @@
     (setq copyright-names-regexp "Free Software")
     (add-hook 'before-save-hook #'copyright-update)))
 
+;;;
+;;; look up current playing song on itunes stream
+;;;
+(defun forge/get-current-song-itunes ()
+  "Get current song playing via itunes."
+  (let ((as-tmpl "")
+        (cursong nil))
+    (setq as-tmpl "tell application \"iTunes\"
+	if player state is not stopped then
+		set ct to current track
+		set this_song to \"\"
+		try
+			if (class of ct is URL track) and (get current stream title) is not missing value then
+				set this_song to (get current stream title)
+				this_song
+			end if
+		end try
+	end if
+end tell")
+    (condition-case nil
+        (setq cursong (split-string (do-applescript as-tmpl) " - "))
+      (error nil))
+    cursong))
+
+
+;; Peek at queries
+
+(defcustom forge-peek-buffer-name "*forge-peek*"
+  "Buffer for peeking at data."
+  :group 'forge
+  :type 'string)
+
+(defun forge/peek-first ()
+  "Go to beginning of peek buffer."
+  (interactive)
+  (goto-char (point-min)))
+
+(defun forge/peek-last ()
+  "Go to end of peek buffer."
+  (interactive)
+  (goto-char (point-max)))
+
+(defvar forge-peek-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "q") 'delete-frame)
+    (define-key map (kbd "<") 'forge/peek-first)
+    (define-key map (kbd ">") 'forge/peek-last)
+    map)
+  "Keymap for forge-peek mode.")
+
+(define-derived-mode forge-peek-mode fundamental-mode "ForgePeek"
+                     "A major mode for peeking at query responses."
+                     :group 'forge
+                     (setq buffer-read-only t)
+                     (setq buffer-undo-list t))
+
+(defun forge/peek-make-buffer ()
+  "Return the peek query buffer."
+  (let ((buffer (get-buffer-create forge-peek-buffer-name)))
+    (with-current-buffer buffer (forge-peek-mode))
+    buffer))
+
 ;; Make a peek-frame, a modified version of what is from here:
 ;; https://tuhdo.github.io/emacs-frame-peek.html
-(defun forge/make-peek-frame (func &rest args)
+(defun forge/peek-make-frame (func &rest args)
   "Make a new frame for peeking at information.  Provide FUNC that will return data and optional ARGS."
   (let ((summary)
         (peek-frame)
@@ -193,36 +260,34 @@
                                    (name . "*Peek*")
                                    (width . 80)
                                    (visibility . nil)
-                                   (height . 20))))
+                                   (height . 25))))
     (message "peek %s" peek-frame)
 
     (set-frame-position peek-frame x y)
 
     (with-selected-frame peek-frame
+      (forge/peek-make-buffer)
       (funcall func)
-      (read-only-mode)
-      (recenter-top-bottom 0))
+      (recenter-top-bottom 0)
+      (select-window (display-buffer forge-peek-buffer-name t t))
+      (delete-other-windows))
 
     (make-frame-visible peek-frame)))
 
-(defun forge/get-itunes-stream-song ()
-  "Get current song."
-  (let ((as-tmpl ""))
-    (setq as-tmpl "tell application \"iTunes\"
-	if player state is not stopped then
-		set ct to current track
-		set this_song to \"\"
-		try
-			if (class of ct is URL track) and (get current stream title) is not missing value then
-				set this_song to (get current stream title)
-				this_song
-			end if
-		end try
-	end if
-end tell")
-    (split-string (do-applescript as-tmpl) " - ")))
-
-
+(defun forge/peek-ip-qry ()
+  "Look up information on IP address."
+  (interactive)
+  (let ((qry (lambda ()
+               (let ((ipqry (concat (getenv "HOME") "/src/ncon/ncon.sh"))
+                     (ipaddr))
+                 (if (not (region-active-p))
+                     (setq ipaddr (read-string "IP address: "))
+                   (setq ipaddr (buffer-substring (region-beginning) (region-end))))
+                 (with-current-buffer forge-peek-buffer-name
+                   (let ((inhibit-read-only t))
+                     (goto-char (point-max))
+                     (call-process ipqry nil forge-peek-buffer-name t "ip qry " ipaddr)))))))
+    (forge/peek-make-frame qry)))
 
 
 ;;;
