@@ -73,9 +73,11 @@
       (when (fontp forge-unicode-font)
         (set-fontset-font t 'unicode (font-spec :family forge-unicode-font) nil 'prepend)))))
 
-
 (forge/font-update)
 
+;;
+;; all the icons
+;; https://github.com/domtronn/all-the-icons.el
 (use-package all-the-icons :ensure t)
 
 (use-package all-the-icons-dired
@@ -93,23 +95,46 @@
 (defun forge/install-themes ()
   "Install a mix of themes."
   (interactive)
-  (dolist (p '(doom-themes leuven-theme
-               material-theme poet-theme solarized-theme
-               spacemacs-theme zenburn-theme))
-    (progn (forge/package-install p))))
+  (dolist (p '(doom-themes      ;; https://github.com/hlissner/emacs-doom-themes
+               leuven-theme     ;; https://github.com/fniessen/emacs-leuven-theme
+               material-theme   ;; https://github.com/cpaulik/emacs-material-theme
+               poet-theme       ;; https://github.com/kunalb/poet
+               solarized-theme  ;; https://github.com/bbatsov/solarized-emacs
+               spacemacs-theme  ;; https://github.com/nashamri/spacemacs-theme
+               zenburn-theme))  ;; https://github.com/bbatsov/zenburn-emacs
+    (progn (forge/package-install p)))
+  (when (forge/system-type-is-darwin)
+    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+    (add-to-list 'default-frame-alist '(ns-appearance . dark))))
 
 
 ;;;
 ;;; Modeline
 ;;;
+(defvar forge-powerline-height 25 "Height of mode-line.")
+(defvar forge-modeline-icon t "Whether to display icon in modeline.")
+
+;; https://github.com/milkypostman/powerline
+(use-package powerline
+    :ensure t
+    :init
+    (setq powerline-default-separator 'slant
+          powerline-default-separator-dir (quote (left . right))
+          powerline-height forge-powerline-height
+          powerline-display-buffer-size nil
+          powerline-display-hud nil
+          powerline-display-mule-info nil
+          powerline-gui-use-vcs-glyph t)
+    (powerline-default-theme))
+
+;; https://github.com/Malabarba/smart-mode-line
 (use-package smart-mode-line
     :ensure t
     :disabled t
-    :defer t
     :config
     (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
     (setq sml/no-confirm-load-theme t
-          sml/theme 'dark
+          sml/theme 'respectful
           sml/mode-width 'full
           sml/name-width 30
           sml/shorten-modes t)
@@ -117,19 +142,24 @@
 
 (use-package doom-modeline
     :ensure t
+    :disabled t
     :init
     (setq doom-modeline-github nil
           doom-modeline-lsp nil)
     (doom-modeline-init))
 
-(use-package rainbow-mode
-    :ensure t
-    :defer t)
-
 (use-package nyan-mode
     :ensure t
     :defer t
     :init (nyan-mode))
+
+
+;;; misc
+;;;
+;;;
+(use-package rainbow-mode
+    :ensure t
+    :defer t)
 
 
 ;;;
