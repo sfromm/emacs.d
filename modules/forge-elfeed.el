@@ -142,6 +142,7 @@
                          ("https://ambrevar.xyz/rss.xml" emacs blog)
                          ("https://two-wrongs.com/feed.xml" emacs blog)
                          ("https://emacsnotes.wordpress.com/feed/" emacs blog)
+                         ("https://fuco1.github.io/rss.xml" emacs blog)
                          ;; amusement
                          ("http://xkcd.com/atom.xml" comics fun)
                          ("https://what-if.xkcd.com/feed.atom" fun)
