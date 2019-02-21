@@ -120,7 +120,6 @@
     :init
     (setq powerline-default-separator 'slant
           powerline-default-separator-dir (quote (left . right))
-          powerline-height forge-powerline-height
           powerline-display-buffer-size nil
           powerline-display-hud nil
           powerline-display-mule-info nil
@@ -131,7 +130,7 @@
 (use-package smart-mode-line
     :ensure t
     :disabled t
-    :config
+    :init
     (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
     (setq sml/no-confirm-load-theme t
           sml/theme 'respectful
@@ -185,6 +184,11 @@
   (when (or (daemonp) (not (display-graphic-p)))
     (with-selected-frame frame
       (run-with-timer 0.1 nil #'forge/setup-ui))))
+
+(defun forge/transparency (value)
+  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
 
 (add-hook 'after-make-frame-functions 'forge/setup-ui-in-daemon)
 (forge/setup-ui)
