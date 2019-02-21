@@ -161,6 +161,7 @@
 
     (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode)))
 
+
 (use-package org-git-link)
 
 (use-package org-contacts
@@ -198,11 +199,14 @@
                                     :with-toc nil)))
 
 (use-package ox-reveal
-    :ensure t)
+    :ensure t
+    :init
+    (setq org-reveal-note-key-char nil))
 
 (use-package ox-tufte
     :ensure t)
 
+
 (use-package org-present
     :ensure t
     :defer 20
@@ -220,7 +224,7 @@
 		(org-present-show-cursor)
 		(org-present-read-write))))
 
-
+
 (use-package org-pomodoro
     :ensure t
     :bind
@@ -237,7 +241,7 @@
     :hook
     (org-pomodoro-finished . (lambda () (forge/notify-pomodoro "Pomodoro completed" "Time for a break")))
     (org-pomodoro-break-finished . (lambda () (forge/notify-pomodoro "Break completed" "Ready for another?")))
-    (org-pomodoro-long-break-finished . (lambda () (sf/notify-pomodoro "Long break completed" "Ready for another?")))
+    (org-pomodoro-long-break-finished . (lambda () (forge/notify-pomodoro "Long break completed" "Ready for another?")))
 
     :init
     (setq
