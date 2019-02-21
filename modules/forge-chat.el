@@ -204,17 +204,12 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
           slack-prefer-current-team t))
 
 (defhydra forge/slack (:color blue)
-    "
-╭────────────────────────────────────────────────────────╯
-[_s_] Start  [_d_] Disconnect
-[_i_] IM     [_g_] Group  [_c_] Channel
-"
-    ("s" slack-start)
-    ("i" slack-im-select)
-    ("g" slack-group-select)
-    ("c" slack-channel-select)
-    ("d" slack-ws-close)
-    ("q" nil))
+  ("s" slack-start "Start")
+  ("i" slack-im-select "IM")
+  ("g" slack-group-select "Group")
+  ("c" slack-channel-select "Channel")
+  ("d" slack-ws-close "Disconnect")
+  ("q" nil))
 
 (use-package emojify
     :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))

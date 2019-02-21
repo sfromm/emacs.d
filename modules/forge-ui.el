@@ -100,7 +100,6 @@
     (append golden-ratio-extra-commands '(ace-window ace-delete-window ace-select-window
                                           ace-swap-window ace-maximize-window)))
 
-
 
 ;;;
 ;;; uniquify
@@ -140,47 +139,35 @@
   ("q" nil :exit t))
 
 (defhydra forge/window ()
-  "
-╭────────────────────────────────────────────────────────╯
-  [_a_] Ace Window      [_v_] Split vertically
-  [_t_] Transpose       [_x_] Split horizontally
-  [_s_] Swap windows    [_o_] Delete other windows
-  [_d_] Delete window   [_g_] Golden ratio
-"
-  ("a" ace-window :exit t)
-  ("t" transpose-frame :exit t)
-  ("o" ace-delete-other-windows :exit t)
-  ("s" ace-swap-window :exit t)
-  ("d" ace-delete-window :exit t)
-  ("b" ivy-switch-buffer :exit t)
-  ("g" golden-ratio :exit t)
+  ("a" ace-window "Ace Window" :exit t)
+  ("t" transpose-frame "Transpose" :exit t)
+  ("o" ace-delete-other-windows "Delete other windows " :exit t)
+  ("s" ace-swap-window "Swap window" :exit t)
+  ("d" ace-delete-window "Delete window" :exit t)
+  ("b" ivy-switch-buffer "Switch" :exit t)
+  ("g" golden-ratio "Golden ratio" :exit t)
   ("v" (lambda ()
          (interactive)
          (split-window-right)
-         (windmove-right)) "vert")
+         (windmove-right)) "Split Vert")
   ("x" (lambda ()
          (interactive)
          (split-window-below)
-         (windmove-down)) "horz")
+         (windmove-down)) "Split Horz")
   ("q" nil))
 
 (defhydra forge/hydra (:color blue)
-  "
-╭────────────────────────────────────────────────────────╯
-  [_m_] Mail        [_s_] Eshell  [_p_] Packages  [_M_] Music
-  [_w_] Windows     [_f_] Elfeed  [_g_] Magit
-  [_n_] Navigation  [_j_] Jabber  [_S_] Slack
-"
-  ("w" forge/window/body)
-  ("n" forge/navigate/body)
-  ("m" notmuch)
-  ("M" forge/music-hydra/body)
-  ("f" elfeed)
-  ("j" forge/jabber-start-or-switch)
-  ("g" magit-status)
-  ("s" eshell-here)
-  ("S" forge/slack/body)
-  ("p" paradox-list-packages)
+  "Forge"
+  ("w" forge/window/body "Windows")
+  ("n" forge/navigate/body "Navigation")
+  ("m" notmuch "Email")
+  ("M" forge/music-hydra/body "Music")
+  ("f" elfeed "Elfeed")
+  ("j" forge/jabber-start-or-switch "Jabber")
+  ("g" magit-status "Magit")
+  ("s" eshell-here "Eshell")
+  ("S" forge/slack/body "Slack")
+  ("p" paradox-list-packages "Packages")
   ("q" nil))
 
 (global-set-key (kbd "C-c n") 'forge/navigate/body)
