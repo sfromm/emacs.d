@@ -143,7 +143,9 @@
   (with-no-warnings
     (setq nov-save-place-file (concat forge-state-dir "nov-places")
           gamegrid-user-score-file-directory (concat forge-state-dir "games")
-          bookmark-default-file (concat forge-state-dir "bookmarks"))))
+          bookmark-default-file (concat forge-state-dir "bookmarks")
+          tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
+          tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el"))))
 
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
