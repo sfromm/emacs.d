@@ -54,7 +54,6 @@
   ("p" mingus-toggle "Play/Pause")
   ("/" mingus-search "Search" :exit t)
   ("c" (message "Currently Playing: %s" (shell-command-to-string "mpc status")) "Currently Playing")
-  ("s" mingus "Show Mingus" :exit t)
   ("m" mingus "Mingus" :exit t)
   ("<" (progn
          (mingus-prev)
@@ -65,6 +64,25 @@
   ("+" (dotimes (i 5) (mingus-vol-up)) "Louder")
   ("-" (dotimes (i 5) (mingus-vol-down)) "Quieter")
   ("q" nil "Quit"))
+
+
+;;;
+;;; Twitter
+;;; Don't install by default, but provide a configuration.
+(use-package twittering-mode
+    :defer t
+    :commands twit
+    :bind
+    (:map twittering-mode-map
+          ("<" . twittering-goto-first-status)  ;; go to the most recent
+          (">" . twittering-goto-last-status))  ;; go to the oldest
+    :config
+    (setq twittering-use-master-password t
+          twittering-icon-mode nil
+          twittering-use-icon-storage t
+          twittering-icon-storage-file (concat forge-state-dir "twittering/icons.gz")
+          twittering-user-id-db-file (concat forge-state-dir "twittering/user-id-info.gz")
+          twittering-private-info-file (concat forge-state-dir "twittering/private.gpg")))
 
 ;;;
 ;;;
