@@ -69,7 +69,8 @@
     (defun elfeed-show-youtube-dl ()
       "Download the current entry with youtube-dl"
       (interactive)
-      (pop-to-buffer (youtube-dl (elfeed-entry-link elfeed-show-entry))))
+      (youtube-dl (elfeed-entry-link elfeed-show-entry)
+                  :title (elfeed-entry-title elfeed-show-entry)))
 
     (defun forge/elfeed-search-starred ()
       "Show starred elfeed articles"
