@@ -24,7 +24,7 @@
 ;;;
 ;;; Fonts
 ;;;
-(defvar forge-font "Fira Mono"
+(defvar forge-font "Hack"
   "Preferred default font.")
 
 (defvar forge-font-size 12
