@@ -5,14 +5,16 @@ ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
     PKGMGR = apt-get install
     PKGFLAGS =
+    FONTS = fonts-hack-ttf fonts-firacode
 endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
-    PKGMGR = brew install
-    PKGFLAGS = --with-cocoa --with-librsvg --with-gnutls --with-modules --with-imagemagick@6
+    PKGMGR = brew cask install
+    PKGFLAGS =
+    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans
 endif
 
-install:
+install: fonts
 	$(PKGMGR) emacs $(PKGFLAGS)
 
 bootstrap:
@@ -24,6 +26,9 @@ update:
 upgrade:
 	$(EMACS) -f "forge/upgrade-packages"
 
-all: tangle packages
+fonts:
+	$(PKGMGR) $(FONTS)
 
-.PHONY: all install update
+all: install bootstrap
+
+.PHONY: all install update fonts
