@@ -116,6 +116,7 @@
 
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
+    :disabled t
     :ensure t
     :init
     (setq powerline-default-separator 'slant
@@ -128,8 +129,8 @@
 
 ;; https://github.com/Malabarba/smart-mode-line
 (use-package smart-mode-line
-    :ensure t
     :disabled t
+    :ensure t
     :init
     (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
     (setq sml/no-confirm-load-theme t
@@ -141,11 +142,14 @@
 
 (use-package doom-modeline
     :ensure t
-    :disabled t
+    :hook
+    (doom-modeline-mode . column-number-mode)
+    (doom-modeline-mode . size-indication-mode)
+    (after-init-hook . doom-modeline-init)
     :init
     (setq doom-modeline-github nil
-          doom-modeline-lsp nil)
-    (doom-modeline-init))
+          doom-modeline-buffer-file-name-style 'relative-from-project
+          doom-modeline-lsp nil))
 
 (use-package nyan-mode
     :ensure t
