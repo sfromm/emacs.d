@@ -36,6 +36,7 @@
 ;;; MPD frontend
 ;;; https://github.com/pft/mingus
 (use-package mingus
+    :disabled t
     :ensure t
     :defer t
     :preface
@@ -49,7 +50,7 @@
           (error nil))
         cursong)))
 
-(defhydra forge/music-hydra ()
+(defhydra forge/music-mpd-hydra ()
   "MPD Actions"
   ("p" mingus-toggle "Play/Pause")
   ("/" mingus-search "Search" :exit t)
@@ -64,6 +65,48 @@
   ("+" (dotimes (i 5) (mingus-vol-up)) "Louder")
   ("-" (dotimes (i 5) (mingus-vol-down)) "Quieter")
   ("q" nil "Quit"))
+
+;;;
+;;; EMMS - Emacs Multimedia System
+;;; https://www.gnu.org/software/emms/
+;;; https://www.gnu.org/software/emms/manual/
+(use-package emms
+    :ensure t
+    :defer t
+    :config
+    (emms-all)
+    (emms-history-load)
+    (setq emms-directory (concat forge-state-dir "emms")
+          emms-player-list (list emms-player-mpv)
+          emms-stream-info-backend 'mplayer
+          emms-source-file-default-directory (expand-file-name "~/annex/Audio")
+          emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+          emms-browser-covers 'emms-browser-cache-thumbnail)
+    (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
+    (add-to-list 'emms-info-functions 'emms-info-cueinfo)
+    (if (executable-find "emms-print-metadata")
+        (progn
+          (require 'emms-info-libtag)
+          (add-to-list 'emms-info-functions 'emms-info-libtag)
+          (delete 'emms-info-ogginfo emms-info-functions)
+          (delete 'emms-info-mp3info emms-info-functions))
+      (add-to-list 'emms-info-functions 'emms-info-ogginfo)
+      (add-to-list 'emms-info-functions 'emms-info-mp3info)))
+
+(defhydra forge/music-emms-hydra ()
+  "EMMS Actions"
+  ("SPC" emms-pause "Play/Pause")
+  ("s" emms-stop "Stop")
+  ("c" emms-show "Currently Playing")
+  ("m" emms "EMMS")
+  ("S" emms-streams "EMMS Streams")
+  ("<" emms-previous "Previous")
+  (">" emms-next "Next")
+  ("+" emms-volume-raise "Louder")
+  ("-" emms-volume-lower "Quieter")
+  ("C" emms-playlist-clear "Clear")
+  ("q" nil "Quit"))
+
 
 
 ;;;
