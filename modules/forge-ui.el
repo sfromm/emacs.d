@@ -31,6 +31,16 @@
 
 
 ;;;
+;;; which-key
+;;; https://github.com/justbur/emacs-which-key
+(use-package which-key
+    :ensure t
+    :defer 5
+    :diminish
+    :config (which-key-mode))
+
+
+;;;
 ;;; ivy, swiper, and counsel
 ;;;
 (use-package ivy
@@ -155,23 +165,20 @@
          (split-window-below)
          (windmove-down)) "Split Horz")
   ("q" nil))
-
-(defhydra forge/hydra (:color blue)
-  "Forge"
-  ("w" forge/window/body "Windows")
-  ("n" forge/navigate/body "Navigation")
-  ("m" notmuch "Email")
-  ("M" forge/music-hydra/body "Music")
-  ("f" elfeed "Elfeed")
-  ("j" forge/jabber-start-or-switch "Jabber")
-  ("g" magit-status "Magit")
-  ("s" eshell-here "Eshell")
-  ("S" forge/slack/body "Slack")
-  ("p" paradox-list-packages "Packages")
-  ("q" nil))
-
 (global-set-key (kbd "C-c n") 'forge/navigate/body)
-(global-set-key (kbd "C-.") 'forge/hydra/body)
+
+(define-prefix-command 'forge-map)
+(define-key forge-map (kbd "w") 'forge/window/body)
+(define-key forge-map (kbd "n") 'forge/navigate/body)
+(define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
+(define-key forge-map (kbd "f") 'elfeed)
+(define-key forge-map (kbd "j") 'forge/jabber-start-or-switch)
+(define-key forge-map (kbd "g") 'magit-status)
+(define-key forge-map (kbd "s") 'eshell-here)
+(define-key forge-map (kbd "S") 'forge/slack/body)
+(define-key forge-map (kbd "p") 'paradox-list-packages)
+(global-set-key (kbd "C-z") 'forge-map)
+
 
 
 ;;;
