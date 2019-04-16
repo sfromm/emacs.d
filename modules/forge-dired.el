@@ -21,9 +21,6 @@
 
 ;;; Code:
 
-;;; This requires installing coreutils via homebrew
-(when (forge/system-type-is-darwin)
-  (setq insert-directory-program "gls"))
 
 (use-package dired
     :defer t
@@ -49,15 +46,21 @@
 
     :config
     (put 'dired-find-alternate-file 'disabled nil)
+    (when (forge/system-type-darwin-p)
+      (setq dired-use-ls-dired nil)
+
+      ;; This requires installing coreutils via homebrew
+      (when (executable-find "gls")
+        (setq insert-directory-program "gls")))
+
     (setq dired-dwim-target t
           dired-ls-F-marks-symlinks t
-          dired-use-ls-dired t
           dired-recursive-copies 'always
           dired-recursive-deletes 'top
           global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
           auto-revert-verbose nil))
 
-
+
 ;;;
 ;;; dired-x
 ;;;
@@ -77,11 +80,29 @@
 ;;;
 ;;; Dired Rsync
 ;;;
+;;; https://github.com/tmtxt/tmtxt-dired-async/pull/6/files
+(defun forge/maybe-convert-directory-to-rsync-target (directory)
+  "If directory starts with /scp: or /ssh: it is probably a tramp
+target and should be converted to rsync-compatible destination
+string, else we do (shell-quote-argument (expand-file-name
+directory)) as is required for normal local targets acquired with
+read-file-name and dired-dwim-target-directory."
+  (if (or (string-prefix-p "/scp:" directory)
+	  (string-prefix-p "/ssh:" directory))
+      ;; - throw out the initial "/scp:" or "/ssh:"
+      ;; - replace spaces with escaped spaces
+      ;; - surround the whole thing with quotes
+      ;; TODO: double-check that target ends with "/""
+      ;; which in the case of DWIM is what we want
+      (prin1-to-string
+       (replace-regexp-in-string "[[:space:]]" "\\\\\\&"
+	                         (substring directory 5)))
+    (shell-quote-argument (expand-file-name directory))))
+
 (defun forge/dired-rsync (dest)
   (interactive
    (list
-    (expand-file-name
-     (read-file-name "Rsync to:" (dired-dwim-target-directory)))))
+    (expand-file-name (read-file-name "Rsync to:" (dired-dwim-target-directory)))))
   ;; store all selected files into "files" list
   (let ((files (dired-get-marked-files nil current-prefix-arg))
         ;; the rsync command
@@ -89,11 +110,9 @@
     ;; add all selected file names as arguments
     ;; to the rsync command
     (dolist (file files)
-      (setq forge/rsync-command
-            (concat forge/rsync-command (shell-quote-argument file) " ")))
+      (setq forge/rsync-command (concat forge/rsync-command (shell-quote-argument file) " ")))
     ;; append the destination
-    (setq forge/rsync-command
-          (concat forge/rsync-command (shell-quote-argument dest)))
+    (setq forge/rsync-command (concat forge/rsync-command (forge/maybe-convert-directory-to-rsync-target dest)))
     ;; run the async shell command
     (async-shell-command forge/rsync-command "*rsync*")
     ;; finally, switch to that window
