@@ -28,10 +28,8 @@
 
 
 ;;;
-;;; Load any personal preload settings and site lisp files.
+;;; Load any site lisp files.
 ;;;
-(forge/load-directory-modules forge-preload-dir)
-
 (forge/load-directory-modules forge-site-dir)
 
 

@@ -27,14 +27,11 @@
 (defvar forge-modules-dir (concat forge-emacs-dir "modules/")
   "Path to built-in modules.")
 
-(defvar forge-site-dir (concat forge-emacs-dir "site/")
+(defvar forge-site-dir (concat forge-emacs-dir "site-lisp/")
   "Path to user's site configuration.")
 
 (defvar forge-personal-dir (concat forge-emacs-dir "user/")
   "Path to user's personal configuration.")
-
-(defvar forge-preload-dir (concat forge-emacs-dir "preload/")
-  "Path to user's personal configuration to preload before anything else.")
 
 (defvar forge-state-dir (concat forge-emacs-dir "var/")
   "Path to Emacs' persistent data files.")
