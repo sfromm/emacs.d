@@ -42,7 +42,7 @@
 
 ;;;
 ;;; ivy, swiper, and counsel
-;;;
+;;; https://github.com/abo-abo/swiper
 (use-package ivy
     :ensure t
     :diminish (ivy-mode . "")
@@ -59,7 +59,7 @@
 (use-package swiper
     :ensure t
     :diminish
-    :bind (("C-s" . swiper)))
+    :bind (("C-s" . swiper-isearch)))
 
 (use-package counsel
     :ensure t
@@ -123,7 +123,7 @@
 
 ;;;
 ;;; hydra
-;;;
+;;; https://github.com/abo-abo/hydra
 (use-package hydra :ensure t)
 
 (defhydra forge/navigate (:foreign-keys run)
