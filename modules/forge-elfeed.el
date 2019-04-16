@@ -31,6 +31,10 @@
                 ("f" . forge/elfeed-search-toggle-starred)
                 ("o" . elfeed-search-mpv)
                 ("F" . forge/elfeed-search-starred)
+                ("U" . forge/elfeed-search-unread)
+                ("E" . forge/elfeed-search-emacs)
+                ("N" . forge/elfeed-search-news)
+                ("T" . forge/elfeed-search-tech)
                 ("<" . forge/elfeed-search-first-article)
                 (">" . forge/elfeed-search-last-article)
                 :map elfeed-show-mode-map
@@ -76,6 +80,26 @@
       "Show starred elfeed articles"
       (interactive)
       (elfeed-search-set-filter "@6-months-ago +starred"))
+
+    (defun forge/elfeed-search-emacs ()
+      "Show elfeed articles tagged with emacs"
+      (interactive)
+      (elfeed-search-set-filter "@6-months-ago +emacs"))
+
+    (defun forge/elfeed-search-tech ()
+      "Show elfeed articles tagged with tech"
+      (interactive)
+      (elfeed-search-set-filter "@6-months-ago +tech"))
+
+    (defun forge/elfeed-search-news ()
+      "Show elfeed articles tagged with news"
+      (interactive)
+      (elfeed-search-set-filter "@6-months-ago +news +unread"))
+
+    (defun forge/elfeed-search-unread ()
+      "Show elfeed articles tagged with unread"
+      (interactive)
+      (elfeed-search-set-filter "@6-months-ago +unread"))
 
     (defalias 'forge/elfeed-search-toggle-starred (elfeed-expose #'elfeed-search-toggle-all 'starred))
 
