@@ -207,6 +207,19 @@
     :ensure t)
 
 
+;;;
+;;; org-journal
+;;; https://github.com/bastibe/org-journal
+(use-package org-journal
+    :ensure t
+    :defer t
+    :init
+    (setq org-journal-dir (concat org-directory "/journal/")
+          org-journal-file-type 'yearly
+          org-journal-file-format "%Y"
+          org-journal-date-format "%A, %d %B %Y"))
+
+
 (use-package org-present
     :ensure t
     :defer 20
