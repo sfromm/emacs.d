@@ -21,7 +21,7 @@
 
 ;;; Code:
 
-(when (forge/system-type-is-darwin)
+(when (forge/system-type-darwin-p)
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (setq epa-pinentry-mode 'loopback))
 

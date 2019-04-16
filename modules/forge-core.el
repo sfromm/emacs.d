@@ -293,15 +293,15 @@ end tell")
 ;;;
 ;;; Platform specific details.
 ;;;
-(defun forge/system-type-is-darwin ()
+(defun forge/system-type-darwin-p ()
   "Return non-nil if system is Darwin/MacOS."
   (string-equal system-type "darwin"))
 
-(defun forge/system-type-is-windows ()
+(defun forge/system-type-windows-p ()
   "Return non-nil if system is Windows."
   (string-equal system-type "windows-nt"))
 
-(defun forge/system-type-is-linux ()
+(defun forge/system-type-linux-p ()
   "Return non-nil if system is GNU/Linux."
   (string-equal system-type "gnu/linux"))
 
@@ -316,10 +316,10 @@ end tell")
     :init
     (exec-path-from-shell-initialize))
 
-(when (forge/system-type-is-linux)
+(when (forge/system-type-linux-p)
   (require 'dbus))
 
-(when (forge/system-type-is-darwin)
+(when (forge/system-type-darwin-p)
   (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
     (progn
       (setenv "PATH" (concat path ":" (getenv "PATH")))

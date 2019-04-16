@@ -103,7 +103,7 @@
                spacemacs-theme  ;; https://github.com/nashamri/spacemacs-theme
                zenburn-theme))  ;; https://github.com/bbatsov/zenburn-emacs
     (progn (forge/package-install p)))
-  (when (forge/system-type-is-darwin)
+  (when (forge/system-type-darwin-p)
     (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
     (add-to-list 'default-frame-alist '(ns-appearance . dark))))
 
