@@ -114,45 +114,18 @@
     (setq url-queue-timeout 30
           elfeed-db-directory (concat forge-state-dir "elfeed")
           ;; create timer to update elfeed
-          elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)
-          ;; configure feeds
-          elfeed-feeds '(("http://codeascraft.com/feed/" devops)
-                         ("https://rachelbythebay.com/w/atom.xml" blog)
-                         ("https://jpmens.net/atom.xml" blog)
-                         ("http://planetsysadmin.com/atom.xml" devops )
-                         ("https://feeds.feedburner.com/sysadvent" devops )
-                         ("https://blog.miguelgrinberg.com/feed" python )
-                         ("http://kernelplanet.org/rss20.xml" linux )
-                         ("http://planet.freedesktop.org/rss20.xml" linux )
-                         ("http://feeds.networklore.com/Networklore" netops )
-                         ("http://etherealmind.com/feed/" netops)
-                         ;; emacs
-                         ("http://endlessparentheses.com/atom.xml" emacs)
-                         ("http://planet.emacsen.org/atom.xml" emacs)
-                         ("http://oremacs.com/atom.xml" emacs)
-                         ("http://pragmaticemacs.com/feed/" emacs)
-                         ("http://mbork.pl/?action=rss" emacs )
-                         ("http://www.howardism.org/index.xml" emacs blog )
-                         ("http://feeds.feedburner.com/TheKitchinResearchGroup" emacs )
-                         ("http://sachachua.com/blog/feed" emacs blog )
-                         ("http://blog.aaronbieber.com/feed.xml" emacs blog )
-                         ("https://www.masteringemacs.org/feed" emacs )
-                         ("http://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-and-content.xml" emacs)
-                         ("http://irreal.org/blog/?feed=rss2" emacs)
-                         ("https://changelog.complete.org/feed" emacs blog)
-                         ("https://ambrevar.xyz/rss.xml" emacs blog)
-                         ("https://two-wrongs.com/feed.xml" emacs blog)
-                         ("https://emacsnotes.wordpress.com/feed/" emacs blog)
-                         ("https://fuco1.github.io/rss.xml" emacs blog)
-                         ;; amusement
-                         ("http://xkcd.com/atom.xml" comics fun)
-                         ("https://what-if.xkcd.com/feed.atom" fun)
-                         ;; misc
-                         ("http://americasgreatoutdoors.tumblr.com/rss" blog)
-                         ("https://www.youtube.com/feeds/videos.xml?user=polygon" youtube)
-                         ("http://git-annex.branchable.com/tips/index.atom" gitannex)
-                         ("http://git-annex.branchable.com/devblog/index.atom" gitannex))))
+          elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
+
+;;; elfeed-org
+;;; https://github.com/remyhonig/elfeed-org
+;;; Configure elfeed RSS feeds using org-mode.
+(use-package elfeed-org
+    :ensure t
+    :after (:all org elfeed)
+    :config
+    (setq rmh-elfeed-org-files (list (concat org-directory "/elfeed.org")))
+    (elfeed-org))
 
 (provide 'forge-elfeed)
 ;;; forge-elfeed.el ends here
