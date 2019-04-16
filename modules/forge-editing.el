@@ -162,6 +162,17 @@
 (when (version<= "24.4" emacs-version)
   (add-hook 'focus-out-hook 'forge/save-all))
 
+
+;;; https://www.emacswiki.org/emacs/DosToUnix
+;;; Also consider using set-buffer-file-coding-system (C-x RET f) to "undecided-dos" or "undecided-unix"
+(defun dos2unix (buffer)
+  "Do replacement of ^M characters with newlines in BUFFER."
+  ;; This is basically: "M-% C-q C-m RET C-q C-j RET"
+  (interactive "*b")
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward (string ?\C-m) nil t)
+      (replace-match (string ?\C-j) nil t))))
 
 
 ;;;
