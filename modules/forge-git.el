@@ -21,15 +21,19 @@
 
 ;;; Code:
 
+(defvar forge-magit-repository-directories nil
+  "Directories with Git repositories.  See `magit-repository-directories' for more information.")
+
 (use-package magit
     :ensure t
-    :init
-    (progn
-      (setq magit-push-always-verify nil
-	    magit-completing-read-function 'ivy-completing-read
-	    magit-last-seen-setup-instructions "1.4.0"))
     :commands magit-status
-    :bind ("C-x g" . magit-status))
+    :bind ("C-x g" . magit-status)
+    :init
+    (setq magit-push-always-verify nil
+          magit-completing-read-function 'ivy-completing-read
+          magit-repository-directories forge-magit-repository-directories
+          magit-last-seen-setup-instructions "1.4.0"))
+
 
 (use-package magit-annex :ensure t)
 
