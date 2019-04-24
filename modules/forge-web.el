@@ -24,14 +24,11 @@
 
 (use-package web-mode
     :ensure t
-    :init
-    (progn
-      (setq
-       web-mode-css-indent-offset 2
-       web-mode-markup-indent-offset 2
-       web-mode-code-indent-offset 2
-       )
-      (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
+    :mode ("\\.html\\'" . web-mode)
+    :custom
+    (web-mode-css-indent-offset 2)
+    (web-mode-markup-indent-offset 2)
+    (web-mode-code-indent-offset 2))
 
 (provide 'forge-web)
 ;;; forge-web.el ends here
