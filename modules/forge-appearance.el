@@ -82,8 +82,8 @@
 
 (use-package all-the-icons-dired
     :ensure t
-    :init
-    (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+    :hook
+    (dired-mode . all-the-icons-dired-mode))
 
 
 ;;;
@@ -111,50 +111,51 @@
 ;;;
 ;;; Modeline
 ;;;
-(defvar forge-powerline-height 25 "Height of mode-line.")
-(defvar forge-modeline-icon t "Whether to display icon in modeline.")
 
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
     :disabled t
     :ensure t
-    :init
-    (setq powerline-default-separator 'slant
-          powerline-default-separator-dir (quote (left . right))
-          powerline-display-buffer-size nil
-          powerline-display-hud nil
-          powerline-display-mule-info nil
-          powerline-gui-use-vcs-glyph t)
-    (powerline-default-theme))
+    :custom
+    (powerline-default-separator 'slant)
+    (powerline-default-separator-dir (quote (left . right)))
+    (powerline-display-buffer-size nil)
+    (powerline-display-hud nil)
+    (powerline-display-mule-info nil)
+    (powerline-gui-use-vcs-glyph t)
+    :hook
+    (after-init . powerline-default-theme))
 
 ;; https://github.com/Malabarba/smart-mode-line
 (use-package smart-mode-line
     :disabled t
     :ensure t
-    :init
-    (add-hook 'after-load-theme-hook 'smart-mode-line-enable)
-    (setq sml/no-confirm-load-theme t
-          sml/theme 'respectful
-          sml/mode-width 'full
-          sml/name-width 30
-          sml/shorten-modes t)
-    (sml/setup))
+    :custom
+    (sml/no-confirm-load-theme t)
+    (sml/theme 'respectful)
+    (sml/mode-width 'full)
+    (sml/name-width 30)
+    (sml/shorten-modes t)
+    :hook
+    (after-load-theme . smart-mode-line-enable)
+    (after-init . sml/setup))
 
+;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
     :ensure t
+    :custom
+    (doom-modeline-github nil "Disable github integration")
+    (doom-modeline-buffer-file-name-style 'relative-from-project)
+    (doom-modeline-lsp nil "Disable integration with lsp")
     :hook
     (doom-modeline-mode . column-number-mode)
     (doom-modeline-mode . size-indication-mode)
-    (after-init-hook . doom-modeline-init)
-    :init
-    (setq doom-modeline-github nil
-          doom-modeline-buffer-file-name-style 'relative-from-project
-          doom-modeline-lsp nil))
+    (after-init . doom-modeline-mode))
 
 (use-package nyan-mode
     :ensure t
     :defer t
-    :init (nyan-mode))
+    :hook (doom-modeline-mode . nyan-mode))
 
 
 ;;; misc
