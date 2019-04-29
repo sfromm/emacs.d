@@ -43,8 +43,8 @@
   "Path to Emacs packages' log files.")
 
 (defgroup forge nil
-  "Forge."
-  :group 'emacs)
+  "Forge custom settings."
+  :group 'environment)
 
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
@@ -147,7 +147,7 @@
 
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
-  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir forge-preload-dir))
+  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
   (forge/clean-user-emacs-directory)
