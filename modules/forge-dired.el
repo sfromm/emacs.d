@@ -44,6 +44,12 @@
 
     :diminish dired-omit-mode
 
+    :custom
+    (dired-dwim-target t)
+    (dired-ls-F-marks-symlinks t)
+    (dired-recursive-copies 'always)
+    (dired-recursive-deletes 'top)
+
     :config
     (put 'dired-find-alternate-file 'disabled nil)
     (when (forge/system-type-darwin-p)
@@ -53,11 +59,7 @@
       (when (executable-find "gls")
         (setq insert-directory-program "gls")))
 
-    (setq dired-dwim-target t
-          dired-ls-F-marks-symlinks t
-          dired-recursive-copies 'always
-          dired-recursive-deletes 'top
-          global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
+    (setq global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
           auto-revert-verbose nil))
 
 
