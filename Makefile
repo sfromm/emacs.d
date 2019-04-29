@@ -23,7 +23,7 @@ bootstrap:
 update:
 	git pull --rebase
 
-upgrade:
+upgrade: update
 	$(EMACS) -f "forge/upgrade-packages"
 
 fonts:
@@ -31,4 +31,4 @@ fonts:
 
 all: install bootstrap
 
-.PHONY: all install update fonts
+.PHONY: all install bootstrap update fonts
