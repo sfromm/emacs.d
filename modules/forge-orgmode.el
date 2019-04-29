@@ -27,7 +27,7 @@
     (defun forge/capture-current-song ()
       "Capture the current song details."
       (let ((itunes-song (forge/get-current-song-itunes))
-            (mpd-song (forge/get-current-song-mpd))
+            (mpd-song (or (forge/get-current-song-mpd) nil))
             (song-info nil))
         (setq song-info (if itunes-song itunes-song mpd-song))
         (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
@@ -116,34 +116,33 @@
 	  org-agenda-restore-windows-after-quit t
 	  org-agenda-window-setup 'current-window
 
-	  org-completion-use-ido t
 	  org-ellipsis "⤵"
 	  org-log-done t
 	  org-log-reschedule "note"
 
-	  org-capture-templates '(("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
-				   "* %?%U\n")
-				  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
-				   "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-				  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
-				   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+	  org-capture-templates '(("j" "Journal" entry (function org-journal-find-location)
+                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+                                  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
+                                   "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
+                                   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
                                   ("m" "Music" entry  (file+olp+datetree "~/forge/journal.org")
-				   "* %?%U %(forge/capture-current-song) :music:\n"))
+                                   "** %?%U %(forge/capture-current-song) :music:\n"))
 
-	  org-export-allow-bind-keywords t
-	  org-export-coding-system 'utf-8
+          org-export-allow-bind-keywords t
+          org-export-coding-system 'utf-8
 
-	  org-modules '(org-w3m org-bbdb org-bibtex org-docview
-		        org-gnus org-info org-irc org-mhe org-rmail org-habit)
-	  org-src-preserve-indentation t
-	  org-src-window-setup 'current-window                    ;; use current window when editing a source block
-	  org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
-	  org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-	  org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
-			      (sequence "|" "CANCELLED(c)"))
-	  org-publish-project-alist '(("public"
-				       :base-directory "~/forge"
-				       :publishing-directory "~/Documents")))
+          org-modules '(org-w3m org-bbdb org-bibtex org-docview
+                        org-gnus org-info org-irc org-mhe org-rmail org-habit)
+          org-src-preserve-indentation t
+          org-src-window-setup 'current-window                    ;; use current window when editing a source block
+          org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
+          org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
+          org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
+                              (sequence "|" "CANCELLED(c)"))
+          org-publish-project-alist '(("public"
+                                       :base-directory "~/forge"
+                                       :publishing-directory "~/Documents")))
     (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
 							     (emacs-lisp . t)
 							     (org . t)
@@ -212,7 +211,16 @@
 ;;; https://github.com/bastibe/org-journal
 (use-package org-journal
     :ensure t
-    :defer t
+    :preface
+    (defun org-journal-find-location ()
+      "Open today's journal file."
+      ;; Open today's journal, but specify a non-nil prefix argument in order to
+      ;; inhibit inserting the heading; org-capture will insert the heading.
+      (org-journal-new-entry t)
+      ;; Position point on the journal's top-level heading so that org-capture
+      ;; will add the new entry as a child entry.
+      (goto-char (point-min)))
+
     :init
     (setq org-journal-dir (concat org-directory "/journal/")
           org-journal-file-type 'yearly
@@ -260,6 +268,26 @@
     (setq
      org-pomodoro-audio-player "mpv"
      org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
+
+
+(defun forge/tangle-file (file)
+  "Given an 'org-mode' FILE, tangle the source code."
+  (interactive "fOrg File: ")
+  (find-file file)
+  (org-babel-tangle)
+  (kill-buffer))
+
+(defun forge/tangle-files (path &optional full)
+  "Tangle files in PATH (directory), FULL for absolute paths.
+Example: (forge/tangle-files \"~/.emacs.d/*.org\")."
+  (interactive)
+  (mapc 'forge/tangle-file (forge/get-files path full)))
+
+(defun forge/get-files (path &optional full)
+  "Return list of files in directory PATH that match glob pattern, FULL for absolute paths."
+  (directory-files (file-name-directory path)
+                   full
+                   (eshell-glob-regexp (file-name-nondirectory path))))
 
 
 (provide 'forge-orgmode)
