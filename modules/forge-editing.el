@@ -289,6 +289,9 @@
       (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
 
 
+(use-package php-mode
+    :ensure t)
+
 
 ;;;
 ;;; yaml mode
