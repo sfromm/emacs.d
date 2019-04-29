@@ -11,6 +11,9 @@ away from that for managing my Emacs configuration, I think there are a lot of p
 it that I still use in other projects.  As part of this rewrite, I opted to move away from this
 approach to managing /emacs.d/.
 
+The goal is to make use of [[https://github.com/jwiegley/use-package][use-package]] as much as possible when installing and configuring packages
+to use.
+
 This environment is managed by the included Makefile.  It only has two targets:  Install Emacs and
 update the installed packages.
 
@@ -41,8 +44,7 @@ You can keep up to date by using the =make update= target.  This will do a few t
 There are a couple directories you use to store any personal or site-specific configuration for
 /emacs-forge/:
 
-- *~/.emacs.d/preload* (=forge-preload-dir)  Files to preload before loading forge modules.
-- *~/.emacs.d/site* (=forge-site-dir=)
+- *~/.emacs.d/site-lisp* (=forge-site-dir=)
 - *~/.emacs.d/user*  (=forge-personal-dir=)
 
 ** Modules
@@ -84,7 +86,7 @@ smooth over some of the pain points.
 
 The setup is basically:  [[http://isync.sourceforge.net/][mbsync]] to sync mail locally, [[https://notmuchmail.org/][notmuch]] to index, and Emacs' [[https://www.gnu.org/software/emacs/manual/html_node/smtpmail/Emacs-Speaks-SMTP.html][smtpmail]] to send
 mail.  I happen to be online more often than not and have not needed something like [[https://marlam.de/msmtp/][msmtp]] to handle
-mail delivery while offline.
+mail queuing while offline.
 
 Here's an example /mbsyncrc/ configuration:
 
