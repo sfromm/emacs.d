@@ -121,13 +121,13 @@
 	  org-log-reschedule "note"
 
 	  org-capture-templates '(("j" "Journal" entry (function org-journal-find-location)
-                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+                                   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
                                   ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
                                    "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
                                   ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
                                    "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
-                                  ("m" "Music" entry  (file+olp+datetree "~/forge/journal.org")
-                                   "** %?%U %(forge/capture-current-song) :music:\n"))
+                                  ("m" "Music" entry (function org-journal-find-location)
+                                   "** %(format-time-string org-journal-time-format) %(forge/capture-current-song) :music:\n"))
 
           org-export-allow-bind-keywords t
           org-export-coding-system 'utf-8
@@ -192,6 +192,8 @@
 (use-package org-mime
     :ensure nil
     :defer t
+    :hook
+    (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
     :init
     (setq org-mime-export-options '(:section-numbers nil
                                     :with-author nil
