@@ -80,6 +80,14 @@
 
 
 ;;;
+;;; disk-usage
+;;; https://gitlab.com/ambrevar/emacs-disk-usage
+;;; requires GNU coreutils on MacOS.
+(use-package disk-usage
+    :ensure t)
+
+
+;;;
 ;;; Dired Rsync
 ;;;
 ;;; https://github.com/tmtxt/tmtxt-dired-async/pull/6/files
