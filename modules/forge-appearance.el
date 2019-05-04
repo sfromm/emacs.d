@@ -24,17 +24,25 @@
 ;;;
 ;;; Fonts
 ;;;
-(defvar forge-font "Hack"
-  "Preferred default font.")
+(defcustom forge-font "Hack"
+  "Preferred default font."
+  :type 'string
+  :group 'forge)
 
-(defvar forge-font-size 12
-  "Preferred font size.")
+(defcustom forge-font-size 12
+  "Preferred font size."
+  :type 'integer
+  :group 'forge)
 
- (defvar forge-variable-pitch-font "Fira Sans"
-   "Preferred variable pitch font.")
+(defcustom forge-variable-pitch-font "Fira Sans"
+  "Preferred variable pitch font."
+  :type 'string
+  :group 'forge)
 
-(defvar forge-unicode-font "Fira Sans"
-  "Preferred Unicode font.")
+(defcustom forge-unicode-font "Fira Sans"
+  "Preferred Unicode font."
+  :type 'string
+  :group 'forge)
 
 (defun forge/font-name-and-size ()
   "Compute font name and size string."
@@ -89,8 +97,13 @@
 ;;;
 ;;; Themes
 ;;;
-(defvar forge-theme nil
-  "Preferred graphics theme.")
+(defcustom forge-theme nil
+  "Preferred graphics theme."
+  :type 'symbol
+  :group 'forge)
+
+(unless forge-theme
+  (setq forge-theme 'doom-solarized-light))
 
 (defun forge/install-themes ()
   "Install a mix of themes."
@@ -104,8 +117,7 @@
                zenburn-theme))  ;; https://github.com/bbatsov/zenburn-emacs
     (progn (forge/package-install p)))
   (when (forge/system-type-darwin-p)
-    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-    (add-to-list 'default-frame-alist '(ns-appearance . dark))))
+    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))))
 
 
 ;;;
