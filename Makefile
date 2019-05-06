@@ -27,6 +27,7 @@ upgrade: update
 	$(EMACS) -f "forge/upgrade-packages"
 
 fonts:
+	test -x /usr/local/bin/brew && brew tap homebrew/cask-fonts || true
 	$(PKGMGR) $(FONTS)
 
 all: install bootstrap
