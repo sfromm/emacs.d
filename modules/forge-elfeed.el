@@ -39,6 +39,7 @@
                 (">" . forge/elfeed-search-last-article)
                 :map elfeed-show-mode-map
                 ("d" . elfeed-show-youtube-dl)
+                ("e" . elfeed-show-open-eww)
                 ("f" . forge/elfeed-show-toggle-starred)
                 ("o" . elfeed-show-mpv))
     :config
@@ -75,6 +76,12 @@
       (interactive)
       (youtube-dl (elfeed-entry-link elfeed-show-entry)
                   :title (elfeed-entry-title elfeed-show-entry)))
+
+    (defun elfeed-show-open-eww ()
+      "Open the current entry with eww."
+      (interactive)
+      (eww (elfeed-entry-link elfeed-show-entry))
+      (add-hook 'eww-after-render-hook 'eww-readable nil t))
 
     (defun forge/elfeed-search-starred ()
       "Show starred elfeed articles"
