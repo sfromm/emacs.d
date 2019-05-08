@@ -113,7 +113,7 @@
                                    (:name "Flagged"         :key "f" :query "tag:flagged")
                                    (:name "Today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
                                    (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:archive or tag:sent )")
-                                   (:name "Yesterday"       :key "y" :query "date:7d..1d and not ( tag:archive or tag:sent )")
+                                   (:name "This week"       :key "y" :query "date:7d..1d and not ( tag:archive or tag:sent )")
                                    (:name "Old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) and ( folder:Work/INBOX or folder:Work/incoming ) ")
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
