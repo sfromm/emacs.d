@@ -272,6 +272,9 @@
      org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
 
 
+;;;
+;;; Misc functions related to org life.
+;;;
 (defun forge/tangle-file (file)
   "Given an 'org-mode' FILE, tangle the source code."
   (interactive "fOrg File: ")
@@ -290,6 +293,44 @@ Example: (forge/tangle-files \"~/.emacs.d/*.org\")."
   (directory-files (file-name-directory path)
                    full
                    (eshell-glob-regexp (file-name-nondirectory path))))
+
+(defun sf/migrate-datetree-entry ()
+  "Take an org entry from a datetree outline and migrate to an org-journal file.
+
+The general intent behind this function is that it will migrate the current heading
+and advance to the next heading.  One can then bind it to a macro for the repetition piece.
+It will not remove entries from the source org file."
+  (interactive)
+  (org-beginning-of-line)
+  (let* ((heading (nth 4 (org-heading-components)))
+         (tags (nth 5 (org-heading-components)))
+         (year (format-time-string "%Y" (apply 'encode-time (org-parse-time-string heading))))
+         (time (format-time-string "%H:%M" (apply 'encode-time (org-parse-time-string heading))))
+         (day (format-time-string "%A, %d %B %Y" (apply 'encode-time (org-parse-time-string heading))))
+         (subject (when (string-match "\] *\\(.*\\)" heading) (match-string 1 heading)))
+         (day-heading (format "* %s" day))
+         (jrnl-heading (format "** %s %s   %s" time subject (or tags ""))))
+    (org-copy-subtree)
+    (with-current-buffer year
+      (sf/migrate-datetree-goto-heading day-heading)
+      (message "%s" jrnl-heading)
+      (insert (format "%s\n" jrnl-heading))
+      (org-paste-subtree)
+      (kill-line 1))
+    (forward-line)
+    ;; go to next datetree heading
+    (re-search-forward "^\\*\\*\\*\\* \\[" nil t)))
+
+(defun sf/migrate-datetree-goto-heading (heading)
+  "Go to day heading HEADING in org-journal file.  Create if it doesn't exist."
+  (interactive)
+  (goto-char (point-min))
+  (unless (search-forward heading nil t)
+    (progn (goto-char (point-max))
+           (insert (format "%s\n" heading))
+           (goto-char (point-min))))
+  (search-forward heading nil t)
+  (goto-char (point-max)))
 
 
 (provide 'forge-orgmode)
