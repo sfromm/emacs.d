@@ -65,6 +65,7 @@
 				    (eshell/alias "ll" "ls -al")
 				    (eshell/alias "e" "find-file \$1")
 				    (eshell/alias "ff" "find-file \$1")
+                                    (eshell/alias "d" "dired \$1")
 				    (eshell/alias "ee" "find-file-other-window \$1")
 				    (eshell/alias "gd" "magit-diff-unstaged")
 				    (eshell/alias "gds" "magit-diff-staged")
