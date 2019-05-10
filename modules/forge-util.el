@@ -127,6 +127,16 @@
           twittering-user-id-db-file (concat forge-state-dir "twittering/user-id-info.gz")
           twittering-private-info-file (concat forge-state-dir "twittering/private.gpg")))
 
+
+;;;
+;;; Weather
+;;; https://github.com/bcbcarl/emacs-wttrin
+(use-package wttrin
+    :ensure t
+    :custom
+    (wttrin-default-cities '("Eugene" "Portland" "Sonoma"))
+    (wttrin-default-accept-language '("Accept-Language" . "en-US")))
+
 ;;;
 ;;;
 ;;;
