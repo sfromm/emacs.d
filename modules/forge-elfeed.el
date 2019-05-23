@@ -86,7 +86,7 @@
     (defun forge/elfeed-search-starred ()
       "Show starred elfeed articles"
       (interactive)
-      (elfeed-search-set-filter "@6-months-ago +starred"))
+      (elfeed-search-set-filter "+starred"))
 
     (defun forge/elfeed-search-emacs ()
       "Show elfeed articles tagged with emacs"
