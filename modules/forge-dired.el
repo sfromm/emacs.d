@@ -68,6 +68,8 @@
 ;;;
 (use-package dired-x
     :after dired
+    :custom
+    (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp4\\|ogm\\)$" "mpv")))
     :init
     (global-unset-key (kbd "C-x C-j"))
     (setq dired-bind-jump nil)
