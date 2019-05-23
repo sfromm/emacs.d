@@ -27,7 +27,7 @@
     (defun forge/capture-current-song ()
       "Capture the current song details."
       (let ((itunes-song (forge/get-current-song-itunes))
-            (mpd-song (or (forge/get-current-song-mpd) nil))
+            (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
             (song-info nil))
         (setq song-info (if itunes-song itunes-song mpd-song))
         (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
@@ -86,6 +86,9 @@
      (after-save . forge/tangle-org-mode-on-save)
      (org-mode . variable-pitch-mode))
 
+    :custom
+    (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
+
     :bind (("<f8>" . org-cycle-agenda-files)
 	   ("<f12>" . org-agenda)
 	   ("C-c l" . org-store-link)
@@ -120,14 +123,21 @@
 	  org-log-done t
 	  org-log-reschedule "note"
 
-	  org-capture-templates '(("j" "Journal" entry (function org-journal-find-location)
-                                   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-                                  ("b" "Bookmark" entry (file+headline "~/forge/startpage.org" "Unfiled")
+	  org-capture-templates '(("j" "Journal" entry
+                                   (function org-journal-find-location)
+                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+
+                                  ("b" "Bookmark" entry
+                                   (file+headline "~/forge/startpage.org" "Unfiled")
                                    "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
-                                  ("t" "To do" entry (file+headline "~/forge/tasks.org" "Tasks")
+
+                                  ("t" "To do" entry
+                                   (file+headline "~/forge/tasks.org" "Tasks")
                                    "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
-                                  ("m" "Music" entry (function org-journal-find-location)
-                                   "** %(format-time-string org-journal-time-format) %(forge/capture-current-song) :music:\n"))
+
+                                  ("m" "Music" entry
+                                   (function org-journal-find-location)
+                                   "* %(format-time-string org-journal-time-format) %(forge/capture-current-song) :music:\n"))
 
           org-export-allow-bind-keywords t
           org-export-coding-system 'utf-8
@@ -152,13 +162,13 @@
 							     (shell . t)
 							     (calc . t)))
 
-    (org-load-modules-maybe t)
     ;; Keep tables with a fixed-pitch font.
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+    (org-load-modules-maybe t))
 
-    (add-to-list 'auto-mode-alist '("doc/org/.*\\.org$" . org-mode)))
+
 
 
 (use-package org-git-link)
@@ -218,10 +228,11 @@
       "Open today's journal file."
       ;; Open today's journal, but specify a non-nil prefix argument in order to
       ;; inhibit inserting the heading; org-capture will insert the heading.
-      (org-journal-new-entry t)
-      ;; Position point on the journal's top-level heading so that org-capture
-      ;; will add the new entry as a child entry.
-      (goto-char (point-min)))
+      ;; This should also get org-mode to the right place to add a heading at the correct depth
+      (org-journal-new-entry t))
+    ;; Position point on the journal's top-level heading so that org-capture
+    ;; will add the new entry as a child entry.
+    ;; (goto-char (point-min)))
 
     :init
     (setq org-journal-dir (concat org-directory "/journal/")
