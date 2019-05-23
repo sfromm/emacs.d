@@ -51,6 +51,28 @@
 
 
 ;;;
+;;; Everyone loves garbage collection
+;;;
+(defvar forge--file-name-handler-alist file-name-handler-alist)
+
+(setq file-name-handler-alist nil
+      message-log-max 16384
+      gc-cons-threshold 536870912 ;; 512mb
+      gc-cons-percentage 0.6)
+
+;; only run garbage collection after 50MB of allocated data.
+(defun forge/reset-startup-settings ()
+  "Reset garbage collection related settings to normal settings."
+  (setq file-name-handler-alist forge--file-name-handler-alist)
+  (setq gc-cons-threshold 16777216 ;; 16mb
+        gc-cons-percentage 0.1
+        message-log-max 1024))
+
+(add-hook 'after-init-hook #'forge/reset-startup-settings)
+(add-hook 'focus-out-hook #'garbage-collect)
+
+
+;;;
 ;;; Packages
 ;;;
 (setq package-archives '(("org" . "https://orgmode.org/elpa/")
@@ -170,9 +192,11 @@
   (interactive)
   (dolist (module (cons '() modules ))
     (when module
-      (unless (featurep module)
-        (message "Loading %s" module)
-        (require module nil t)))))
+      (let ((t1 (current-time)))
+        (unless (featurep module)
+          (require module nil t)
+          (message "Loaded %s in %s" module (float-time
+                                             (time-subtract (current-time) t1))))))))
 
 ;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
 (defun forge/enable-copyright-update ()
