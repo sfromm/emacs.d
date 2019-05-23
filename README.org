@@ -143,6 +143,25 @@ echo -e "Done at $(date)."
 exit
 #+END_SRC
 
+**** Gmail
+
+If using GMail, you may want to consider using [[https://github.com/gauteh/lieer][lieer]], a utility to pull email and labels from your
+GMail account.
+
+For installation:
+
+#+begin_src sh :tangle no
+pip3 install google-api-python-client
+pip3 install oauth2client
+pip3 install tqdm
+git clone https://github.com/gauteh/lieer.git ~/src/lieer
+pushd ~/bin
+ln -s ~/src/lieer/gmi gmi
+popd
+#+end_src
+
+See the [[https://github.com/gauteh/lieer/blob/master/docs/index.md][instructions]] for more on how to setup and configure ~lieer~.
+
 *** Eshell
 
 Interesting reading:
