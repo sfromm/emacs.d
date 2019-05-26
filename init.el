@@ -24,7 +24,9 @@
 
 (message "Loading up Emacs...")
 
+(defvar forge--core-start-time (current-time))
 (require 'forge-core (concat user-emacs-directory "modules/forge-core"))
+(forge/message-module-load "forge-core" forge--core-start-time)
 
 
 ;;;

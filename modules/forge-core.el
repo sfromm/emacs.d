@@ -167,6 +167,10 @@
           tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
           tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el"))))
 
+(defun forge/message-module-load (mod time)
+  "Log message on how long it took to load module MOD from TIME."
+  (message "Loaded %s in %0.2fs" mod (float-time (time-subtract (current-time) time))))
+
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
@@ -183,9 +187,11 @@
 
 (defun forge/load-directory-modules (path)
   "Load Lisp files in PATH directory."
-  (when (file-exists-p path)
-    (message "Loading lisp files in %s..." path)
-    (mapc 'load (directory-files path 't "^[^#\.].*el$"))))
+  (let ((t1 (current-time)))
+    (when (file-exists-p path)
+      (message "Loading lisp files in %s..." path)
+      (mapc 'load (directory-files path 't "^[^#\.].*el$"))
+      (forge/message-module-load path t1))))
 
 (defun forge/load-modules (&rest modules)
   "Load forge modules MODULES."
@@ -195,8 +201,7 @@
       (let ((t1 (current-time)))
         (unless (featurep module)
           (require module nil t)
-          (message "Loaded %s in %s" module (float-time
-                                             (time-subtract (current-time) t1))))))))
+          (forge/message-module-load module t1))))))
 
 ;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
 (defun forge/enable-copyright-update ()
