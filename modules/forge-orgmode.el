@@ -177,8 +177,9 @@
     :after org
     :config
     (setq org-contacts-files (list  "~/forge/contacts.org"))
-    (add-to-list 'org-capture-templates '("c" "Contacts" entry (file (concat org-directory "/contacts.org"))
-					  "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
+    (add-to-list 'org-capture-templates '("c" "Contacts" entry
+                                          (file "~/forge/contacts.org")
+                                          "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 
 (use-package org-bullets
     :ensure t
