@@ -57,7 +57,8 @@
 
       ;; This requires installing coreutils via homebrew
       (when (executable-find "gls")
-        (setq insert-directory-program "gls")))
+        (setq insert-directory-program "gls"
+              dired-use-ls-dired t)))
 
     (setq global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
           auto-revert-verbose nil))
