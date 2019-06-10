@@ -103,18 +103,18 @@
 
     :init
     (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-    (setq notmuch-archive-tags '("+archive" "-unread" "-trash" "-bulk")
+    (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk")
           notmuch-crypto-process-mime t
           notmuch-fcc-dirs forge-fcc-dirs
           notmuch-hello-thousands-separator ","
           notmuch-search-oldest-first nil
           notmuch-show-part-button-default-action 'notmuch-show-view-part
-          notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox or folder:Work/INBOX")
-                                   (:name "Flagged"         :key "f" :query "tag:flagged")
-                                   (:name "Today"           :key "t" :query "date:24h.. and not ( tag:archive or tag:sent )")
-                                   (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:archive or tag:sent )")
-                                   (:name "This week"       :key "y" :query "date:7d..1d and not ( tag:archive or tag:sent )")
-                                   (:name "Old messages"    :key "o" :query "date:..7d and not ( tag:archive or tag:sent ) and ( folder:Work/INBOX or folder:Work/incoming ) ")
+          notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
+                                   (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
+                                   (:name "Today"           :key "t" :query "date:24h.. and not ( tag:unread or tag:sent )")
+                                   (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:unread or tag:sent )")
+                                   (:name "This week"       :key "y" :query "date:7d..1d and not ( tag:unread or tag:sent )")
+                                   (:name "Old messages"    :key "o" :query "date:..7d and not ( tag:unread or tag:sent ) and ( tag:inbox or tag:bulk ) ")
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
                                    (:name "Attachments"     :key "A" :query "tag:attachment")
