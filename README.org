@@ -49,6 +49,20 @@ There are a couple directories you use to store any personal or site-specific co
 
 ** Modules
 
+*** Appearance
+
+**** Themes
+
+This will automatically install the following themes.
+
+- [[https://github.com/hlissner/emacs-doom-themes][doom-themes]]
+- [[https://github.com/fniessen/emacs-leuven-theme][leuven-theme]]
+- [[https://github.com/cpaulik/emacs-material-theme][material-theme]]
+- [[https://github.com/kunalb/poet][poet-theme]]
+- [[https://github.com/bbatsov/solarized-emacs][solarized-theme]]
+- [[https://github.com/nashamri/spacemacs-theme][spacemacs-theme]]
+- [[https://github.com/bbatsov/zenburn-emacs][zenburn-theme]]
+
 *** Chat
 
 The /chat/ module will facilitate chatting via Jabber, IRC, and Slack.
