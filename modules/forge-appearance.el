@@ -103,7 +103,7 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'doom-solarized-light))
+  (setq forge-theme 'doom-one-light))
 
 (defun forge/install-themes ()
   "Install a mix of themes."
