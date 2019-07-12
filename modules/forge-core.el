@@ -211,7 +211,10 @@
     (add-hook 'before-save-hook #'copyright-update)))
 
 ;;;
-;;; look up current playing song on itunes stream
+;;; look up current playing song in itunes
+;;; useful resources:
+;;; - https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
+;;; - https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
 ;;;
 (defun forge/get-current-song-itunes ()
   "Get current song playing via itunes."
@@ -219,14 +222,14 @@
         (cursong nil))
     (setq as-tmpl "tell application \"iTunes\"
 	if player state is not stopped then
-		set ct to current track
+		set ct to (properties of current track)
 		set this_song to \"\"
-		try
-			if (class of ct is URL track) and (get current stream title) is not missing value then
-				set this_song to (get current stream title)
-				this_song
-			end if
-		end try
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
 	end if
 end tell")
     (condition-case nil
