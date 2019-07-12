@@ -39,6 +39,11 @@
   :type 'string
   :group 'forge)
 
+(defcustom forge-variable-pitch-font-size 12
+  "Preferred font size."
+  :type 'integer
+  :group 'forge)
+
 (defcustom forge-unicode-font "Fira Sans"
   "Preferred Unicode font."
   :type 'string
@@ -50,6 +55,12 @@
   (let* ((size (number-to-string forge-font-size))
          (name (concat forge-font "-" size))) name))
 
+(defun forge/variable-pitch-font-name-and-size ()
+  "Compute variable-pitch font name and size string."
+  (interactive)
+  (let* ((size (number-to-string forge-variable-pitch-font-size))
+         (name (concat forge-variable-pitch-font "-" size))) name))
+
 (defun forge/font-ok-p ()
   "Is configured font valid?"
   (interactive)
@@ -59,12 +70,14 @@
   "Increase font size."
   (interactive)
   (setq forge-font-size (+ forge-font-size 1))
+  (setq forge-variable-pitch-font-size (+ forge-variable-pitch-font-size 1))
   (forge/font-update))
 
 (defun forge/font-size-decrease ()
   "Decrease font size."
   (interactive)
   (setq forge-font-size (- forge-font-size 1))
+  (setq forge-variable-pitch-font-size (- forge-variable-pitch-font-size 1))
   (forge/font-update))
 
 (defun forge/font-update ()
@@ -72,12 +85,12 @@
   (interactive)
   (when (forge/font-ok-p)
     (progn
-      (message "Setting font to: %s" (forge/font-name-and-size))
+      (message "Fixed font: %s; Variable pitch font: %s" (forge/font-name-and-size) (forge/variable-pitch-font-name-and-size))
       ;; (set-frame-font forge-font)
       (set-face-attribute 'default nil :font forge-font :height (* forge-font-size 10))
       (set-face-attribute 'fixed-pitch nil :font forge-font :height (* forge-font-size 10))
       (when forge-variable-pitch-font
-        (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font))
+        (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font :height (* forge-variable-pitch-font-size 10)))
       (when (fontp forge-unicode-font)
         (set-fontset-font t 'unicode (font-spec :family forge-unicode-font) nil 'prepend)))))
 
@@ -103,7 +116,7 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'doom-one-light))
+  (setq forge-theme 'zenburn))
 
 (defun forge/install-themes ()
   "Install a mix of themes."
@@ -118,6 +131,25 @@
     (progn (forge/package-install p)))
   (when (forge/system-type-darwin-p)
     (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))))
+
+;; Customize zenburn package
+(use-package zenburn-theme
+    :defer t
+    :custom
+    (zenburn-use-variable-pitch t)
+    (zenburn-scale-org-headlines t))
+
+;; Customize solarized
+(use-package solarized-theme
+    :defer t
+    :custom
+    (solarized-use-variable-pitch t)
+    (solarized-scale-org-headlines t))
+
+(use-package doom-themes
+    :defer t
+    :config
+    (doom-themes-org-config))
 
 
 ;;;
