@@ -31,7 +31,11 @@
       message-make-forward-subject-function (quote message-forward-subject-fwd)
       message-signature t
       message-signature-file "~/.signature"
-      message-send-mail-function 'smtpmail-send-it
+      ;;
+      message-sendmail-envelope-from 'header
+      message-send-mail-function 'message-send-mail-with-sendmail
+      ;;message-send-mail-function 'smtpmail-send-it
+      ;;
       mime-view-text/html-previewer 'shr
       mm-text-html-renderer 'shr
       mm-inline-text-html-with-images nil
@@ -65,6 +69,7 @@
 ;;;
 (use-package smtpmail
     :defer t
+    :disabled t
     :config
     (setq smtpmail-stream-type 'ssl
           smtpmail-default-smtp-server forge-smtp-server-work
@@ -72,6 +77,14 @@
           smtpmail-smtp-service 465
           smtpmail-smtp-user forge-smtp-user-work
           smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
+
+(use-package sendmail
+    :defer t
+    :custom
+    (mail-specify-envelope-from t)
+    (mail-envelope-from 'header)
+    (sendmail-program (executable-find "smtpmail.py")))
+
 
 
 ;;;
@@ -111,10 +124,11 @@
           notmuch-show-part-button-default-action 'notmuch-show-view-part
           notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                    (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
-                                   (:name "Today"           :key "t" :query "date:24h.. and not ( tag:unread or tag:sent )")
-                                   (:name "7 days"          :key "7" :query "date:7d..  and not ( tag:unread or tag:sent )")
-                                   (:name "This week"       :key "y" :query "date:7d..1d and not ( tag:unread or tag:sent )")
-                                   (:name "Old messages"    :key "o" :query "date:..7d and not ( tag:unread or tag:sent ) and ( tag:inbox or tag:bulk ) ")
+                                   (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                   (:name "7 days"          :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
+                                   (:name "This week"       :key "y" :query "date:7d..1d and ( tag:inbox or tag:unread )")
+                                   (:name "This month"      :key "m" :query "date:1M.. and ( tag:inbox or tag:unread )")
+                                   (:name "Old messages"    :key "o" :query "date:..7d and ( tag:inbox or tag:bulk or tag:unread ) ")
                                    (:name "Needs attention" :key "!" :query "folder:Work/INBOX and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "folder:Work/Sent or tag:sent")
                                    (:name "Attachments"     :key "A" :query "tag:attachment")
@@ -377,18 +391,23 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 ;;; Mechanism to switch identities when using message mode
 ;;; https://www.emacswiki.org/emacs/GnusAlias
 ;;;
-(defvar forge-gnus-alias-identity nil
-  "Alist with Mail account rules.")
+(defcustom forge-gnus-alias-identity nil
+  "Alist with Mail account rules."
+  :type 'list
+  :group 'forge)
 
-(defvar forge-gnus-alias-identity-rules nil
-  "Rules to determine which mail account to use.")
+(defcustom forge-gnus-alias-identity-rules nil
+  "Rules to determine which mail account to use."
+  :type 'list
+  :group 'forge)
 
 (use-package gnus-alias
     :ensure t
+    :custom
+    (gnus-alias-default-identity "work")
     :hook (message-setup . gnus-alias-determine-identity)
     :init
-    (setq gnus-alias-default-identity "work"
-          gnus-alias-identity-alist forge-gnus-alias-identity
+    (setq gnus-alias-identity-alist forge-gnus-alias-identity
           gnus-alias-identity-rules forge-gnus-alias-identity-rules))
 
 
