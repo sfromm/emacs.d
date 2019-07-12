@@ -91,12 +91,12 @@
     (defun forge/elfeed-search-emacs ()
       "Show elfeed articles tagged with emacs"
       (interactive)
-      (elfeed-search-set-filter "@6-months-ago +emacs"))
+      (elfeed-search-set-filter "@6-months-ago +emacs +unread"))
 
     (defun forge/elfeed-search-tech ()
       "Show elfeed articles tagged with tech"
       (interactive)
-      (elfeed-search-set-filter "@6-months-ago +tech"))
+      (elfeed-search-set-filter "@6-months-ago +tech +unread"))
 
     (defun forge/elfeed-search-news ()
       "Show elfeed articles tagged with news"
