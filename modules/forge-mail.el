@@ -34,7 +34,6 @@
       ;;
       message-sendmail-envelope-from 'header
       message-send-mail-function 'message-send-mail-with-sendmail
-      ;;message-send-mail-function 'smtpmail-send-it
       ;;
       mime-view-text/html-previewer 'shr
       mm-text-html-renderer 'shr
