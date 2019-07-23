@@ -68,15 +68,15 @@
 ;;; dired-x
 ;;;
 (use-package dired-x
-    :after dired
-    :custom
-    (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp4\\|ogm\\)$" "mpv")
-                                        '("\\.pdf$" "open"))
-    :init
-    (global-unset-key (kbd "C-x C-j"))
-    (setq dired-bind-jump nil)
-    :config
-    (add-to-list 'dired-omit-extensions ".DS_Store"))
+  :after dired
+  :custom
+  (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp4\\|ogm\\)$" "mpv")
+                                      '("\\.pdf$" "open")))
+  :init
+  (global-unset-key (kbd "C-x C-j"))
+  (setq dired-bind-jump nil)
+  :config
+  (add-to-list 'dired-omit-extensions ".DS_Store"))
 
 (use-package async :ensure t)
 (autoload 'dired-async-mode "dired-async.el" nil t)
