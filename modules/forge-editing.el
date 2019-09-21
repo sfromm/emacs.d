@@ -181,6 +181,7 @@
 (use-package flycheck
     :ensure t
     :diminish flycheck-mode
+    :custom (flycheck-global-modes '(not org-mode))
     :init (global-flycheck-mode))
 
 
@@ -248,6 +249,18 @@
     :hook
     (shell-script . forge/whitespace-visualize)
     (shell-script . forge/turn-on-delete-trailing-whitespace))
+
+
+
+;;;
+;;; go-mode
+;;;
+(use-package go-mode
+    :mode "\\.go\\ '"
+    :defer t
+    :ensure t
+    :config
+    (add-hook 'before-save-hook #'gofmt-before-save))
 
 
 
@@ -322,6 +335,13 @@
 ;;; For editing ledger files.
 (use-package ledger-mode)
 
+
+
+;;;
+;;; junos-mode
+;;;
+(use-package junos-mode
+    :config (setq-local c-basic-offset 4))
 
 
 ;;;
