@@ -30,7 +30,7 @@
       (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
              (height (/ (window-total-height) 3))
              (name (car (last (split-string parent "/" t)))))
-        (split-window-vertically)
+        (split-window-vertically (- height))
         (other-window 1)
         (eshell "new")
         (rename-buffer (concat "*eshell: " name "*"))
@@ -47,6 +47,7 @@
 
     :config
     (progn
+      (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
       (setq tramp-default-method "ssh"
             eshell-directory-name (concat forge-state-dir "eshell")
 	    eshell-visual-commands '("less" "tmux" "htop" "top" "docker")

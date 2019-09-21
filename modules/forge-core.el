@@ -237,6 +237,12 @@ end tell")
       (error nil))
     cursong))
 
+;; Delete window if not the only one.
+(defun forge/delete-window ()
+  "Delete window if it is not the only one."
+  (when (not (one-window-p))
+    (delete-window)))
+
 
 ;; Peek at queries
 
