@@ -30,6 +30,7 @@
                 ("d" . elfeed-search-youtube-dl)
                 ("f" . forge/elfeed-search-toggle-starred)
                 ("o" . elfeed-search-mpv)
+                ("J" . elfeed-unjam)
                 ("F" . forge/elfeed-search-starred)
                 ("U" . forge/elfeed-search-unread)
                 ("E" . forge/elfeed-search-emacs)
