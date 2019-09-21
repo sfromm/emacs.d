@@ -97,7 +97,6 @@
 	   ("C-c b" . org-switchb))
     :bind (:map org-mode-map
 	        ("M-q" . endless/fill-or-unfill)
-	        ("C-c >" . org-time-stamp-inactive)
 	        ("RET" . org-return-indent))
     :init
     (setq org-directory "~/forge"
@@ -230,10 +229,11 @@
       ;; Open today's journal, but specify a non-nil prefix argument in order to
       ;; inhibit inserting the heading; org-capture will insert the heading.
       ;; This should also get org-mode to the right place to add a heading at the correct depth
-      (org-journal-new-entry t))
+      (org-journal-new-entry t)
+      (goto-char (point-max)))
     ;; Position point on the journal's top-level heading so that org-capture
     ;; will add the new entry as a child entry.
-    ;; (goto-char (point-min)))
+    ;; (goto-char (point-max)))
 
     :init
     (setq org-journal-dir (concat org-directory "/journal/")
