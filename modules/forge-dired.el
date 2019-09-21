@@ -70,7 +70,7 @@
 (use-package dired-x
   :after dired
   :custom
-  (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp4\\|ogm\\)$" "mpv")
+  (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp4\\|ogm\\|webm\\)$" "mpv")
                                       '("\\.pdf$" "open")))
   :init
   (global-unset-key (kbd "C-x C-j"))

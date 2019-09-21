@@ -74,8 +74,8 @@
     (progn
       (message "Font: %s" (forge/font-name-and-size))
       ;; (set-frame-font forge-font)
-      (set-face-attribute 'default nil :font forge-font :height (* forge-font-size 10))
-      (set-face-attribute 'fixed-pitch nil :font forge-font :height (* forge-font-size 10))
+      (set-face-attribute 'default nil :family forge-font :height (* forge-font-size 10))
+      (set-face-attribute 'fixed-pitch nil :family forge-font :height (* forge-font-size 10))
       (when forge-variable-pitch-font
         (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font))
       (when (fontp forge-unicode-font)
