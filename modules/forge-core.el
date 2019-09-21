@@ -105,20 +105,19 @@
   "Bootstrap packages to install for Emacs."
   (interactive)
   (dolist (package '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode
-                     jabber
-                     paradox exec-path-from-shell
-                     async
-                     page-break-lines yasnippet flycheck aggressive-indent markdown-mode web-mode yaml-mode json-mode
-                     elfeed
-                     magit magit-annex git-annex git-timemachine
-                     paredit
-                     gnus-alias
-                     org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
-                     pass auth-source-pass
-                     ivy swiper counsel smex ace-window avy dumb-jump hydra))
+                                   jabber emojify
+                                   paradox exec-path-from-shell
+                                   async
+                                   page-break-lines yasnippet flycheck aggressive-indent markdown-mode web-mode yaml-mode json-mode undo-tree
+                                   elfeed
+                                   magit magit-annex git-annex git-timemachine
+                                   paredit
+                                   gnus-alias
+                                   org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
+                                   pass auth-source-pass
+                                   ivy swiper counsel smex ace-window avy dumb-jump hydra))
     (progn (forge/package-install package)))
-  (all-the-icons-install-fonts)
-  (forge/install-themes))
+  (all-the-icons-install-fonts))
 
 (forge/package-install 'use-package)
 (eval-when-compile
