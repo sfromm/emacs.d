@@ -212,7 +212,8 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   ("q" nil))
 
 (use-package emojify
-    :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))
+  :ensure t
+  :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))
 
 
 ;;;
