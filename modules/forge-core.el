@@ -117,7 +117,8 @@
                      pass auth-source-pass
                      ivy swiper counsel smex ace-window avy dumb-jump hydra))
     (progn (forge/package-install package)))
-  (all-the-icons-install-fonts))
+  (all-the-icons-install-fonts)
+  (forge/install-themes))
 
 (forge/package-install 'use-package)
 (eval-when-compile
