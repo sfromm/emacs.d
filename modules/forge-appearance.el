@@ -89,22 +89,14 @@
 (use-package all-the-icons :ensure t)
 
 (use-package all-the-icons-dired
-    :ensure t
-    :hook
-    (dired-mode . all-the-icons-dired-mode))
+  :ensure t
+  :hook
+  (dired-mode . all-the-icons-dired-mode))
 
 
 ;;;
 ;;; Themes
 ;;;
-(defcustom forge-theme nil
-  "Preferred graphics theme."
-  :type 'symbol
-  :group 'forge)
-
-(unless forge-theme
-  (setq forge-theme 'zenburn))
-
 (defun forge/install-themes ()
   "Install a mix of themes."
   (interactive)
@@ -119,24 +111,34 @@
   (when (forge/system-type-darwin-p)
     (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))))
 
+(forge/install-themes)
+
+(defcustom forge-theme nil
+  "Preferred graphics theme."
+  :type 'symbol
+  :group 'forge)
+
+(unless forge-theme
+  (setq forge-theme 'zenburn))
+
 ;; Customize zenburn package
 (use-package zenburn-theme
-    :defer t
-    :custom
-    (zenburn-use-variable-pitch t)
-    (zenburn-scale-org-headlines t))
+  :defer t
+  :custom
+  (zenburn-use-variable-pitch t)
+  (zenburn-scale-org-headlines t))
 
 ;; Customize solarized
 (use-package solarized-theme
-    :defer t
-    :custom
-    (solarized-use-variable-pitch t)
-    (solarized-scale-org-headlines t))
+  :defer t
+  :custom
+  (solarized-use-variable-pitch t)
+  (solarized-scale-org-headlines t))
 
 (use-package doom-themes
-    :defer t
-    :config
-    (doom-themes-org-config))
+  :defer t
+  :config
+  (doom-themes-org-config))
 
 
 ;;;
