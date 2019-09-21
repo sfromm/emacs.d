@@ -333,7 +333,8 @@
 ;;;
 ;;; ledger-mode
 ;;; For editing ledger files.
-(use-package ledger-mode)
+(use-package ledger-mode
+  :ensure t)
 
 
 
