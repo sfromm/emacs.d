@@ -119,6 +119,15 @@
     (progn (forge/package-install package)))
   (all-the-icons-install-fonts))
 
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun forge/recompile-elpa ()
+  "Recompile packages in elpa directory. Useful if you switch
+Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
+
+
 (forge/package-install 'use-package)
 (eval-when-compile
   (require 'use-package))
