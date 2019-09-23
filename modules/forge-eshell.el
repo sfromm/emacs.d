@@ -57,7 +57,7 @@
                                     "┌─["
                                     (user-login-name) "" (system-name)
                                     " 🗁 " (abbreviate-file-name (eshell/pwd))
-                                    " 🕗 " (format-time-string "%b %d %H:%M" (current-time))
+                                    " 🕗 " (format-time-string "%a %b %d %H:%M" (current-time))
                                     "]\n"
                                     "└─>" (if (= (user-uid) 0) " # " " $ "))) )
     (add-hook 'eshell-mode-hook (lambda ()
