@@ -59,6 +59,16 @@
       (when (fboundp 'turn-on-flyspell)
         (turn-on-flyspell)))
 
+    (defun forge/org-set-uuid ()
+      "Set ID property for current headline."
+      (interactive)
+      (org-set-property "ID" (org-id-uuid)))
+
+    (defun forge/org-set-created ()
+      "Set CREATED property for current headline."
+      (interactive)
+      (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
+
     ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
     (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
       "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
@@ -87,6 +97,7 @@
      (org-mode . variable-pitch-mode))
 
     :custom
+    (org-refile-use-outline-path 'file)
     (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
 
     :bind (("<f8>" . org-cycle-agenda-files)
