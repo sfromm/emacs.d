@@ -131,8 +131,8 @@
                                    "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                   ("t" "To do" entry
-                                   (file+headline "~/forge/tasks.org" "Tasks")
-                                   "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n")
+                                   (file+headline "~/forge/tasks.org" "Inbox")
+                                   "* TODO %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
                                   ("m" "Music" entry
                                    (function org-journal-find-location)
@@ -147,8 +147,7 @@
           org-src-window-setup 'current-window                    ;; use current window when editing a source block
           org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
           org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-          org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "DELEGATED(l)" "|" "DONE(d)")
-                              (sequence "|" "CANCELLED(c)"))
+          org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
           org-publish-project-alist '(("public"
                                        :base-directory "~/forge"
                                        :publishing-directory "~/Documents")))
