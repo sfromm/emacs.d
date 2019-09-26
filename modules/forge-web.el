@@ -30,5 +30,23 @@
     (web-mode-markup-indent-offset 2)
     (web-mode-code-indent-offset 2))
 
+
+;;
+;; restclient
+;; https://github.com/pashky/restclient.el
+;;
+(use-package restclient
+    :ensure t
+    :defer t)
+
+;;
+;; request
+;; https://github.com/tkf/emacs-request/
+;;
+(use-package request
+    :ensure t
+    :defer t)
+
+
 (provide 'forge-web)
 ;;; forge-web.el ends here
