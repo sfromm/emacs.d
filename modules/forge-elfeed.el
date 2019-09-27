@@ -27,6 +27,8 @@
 (use-package elfeed
     :ensure elfeed
     :bind (:map elfeed-search-mode-map
+                ("j" . next-line)
+                ("k" . previous-line)
                 ("d" . elfeed-search-youtube-dl)
                 ("f" . forge/elfeed-search-toggle-starred)
                 ("o" . elfeed-search-mpv)
@@ -39,6 +41,8 @@
                 ("<" . forge/elfeed-search-first-article)
                 (">" . forge/elfeed-search-last-article)
                 :map elfeed-show-mode-map
+                ("j" . elfeed-show-next)
+                ("k" . elfeed-show-prev)
                 ("d" . elfeed-show-youtube-dl)
                 ("e" . elfeed-show-open-eww)
                 ("f" . forge/elfeed-show-toggle-starred)
