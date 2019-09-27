@@ -81,6 +81,7 @@
 
 (use-package ace-window
     :ensure t
+    :custom (aw-scope 'frame)
     :bind ([remap other-window] . ace-window))
 
 (use-package avy
@@ -109,9 +110,16 @@
 ;;;
 (use-package golden-ratio
     :defer t
+    :custom (golden-ratio-recenter t)
     :config
-    (append golden-ratio-extra-commands '(ace-window ace-delete-window ace-select-window
-                                          ace-swap-window ace-maximize-window)))
+    (setq golden-ratio-exclude-modes '(messages-buffer-mode
+                                       fundamental-mode
+                                       ediff-mode
+                                       calendar-mode
+                                       calc-mode
+                                       calc-trail-mode
+                                       magit-popup-mode))
+    (add-to-list 'golden-ratio-extra-commands 'ace-window))
 
 
 ;;;
