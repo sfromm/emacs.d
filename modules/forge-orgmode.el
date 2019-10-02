@@ -69,6 +69,12 @@
       (interactive)
       (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
+    (defun forge/org-set-properties ()
+      "Set stock org properties for current headline."
+      (interactive)
+      (forge/org-set-uuid)
+      (forge/org-set-created))
+
     ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
     (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
       "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
