@@ -229,7 +229,7 @@ Emacs versions."
   "Get current song playing via itunes."
   (let ((as-tmpl "")
         (cursong nil))
-    (setq as-tmpl "tell application \"iTunes\"
+    (setq as-tmpl "tell application \"Music\"
 	if player state is not stopped then
 		set ct to (properties of current track)
 		set this_song to \"\"
