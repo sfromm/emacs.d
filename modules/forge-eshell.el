@@ -22,31 +22,31 @@
 ;;; Code:
 
 (use-package eshell
-  :commands (eshell eshell-command)
-  :preface
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the current buffer's file."
-    (interactive)
-    (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
-           (height (/ (window-total-height) 3))
-           (name (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
-      (insert (concat "ls"))
-      (eshell-send-input)))
+    :commands (eshell eshell-command)
+    :preface
+    (defun eshell-here ()
+      "Opens up a new shell in the directory associated with the current buffer's file."
+      (interactive)
+      (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
+             (height (/ (window-total-height) 3))
+             (name (car (last (split-string parent "/" t)))))
+        (split-window-vertically (- height))
+        (other-window 1)
+        (eshell "new")
+        (rename-buffer (concat "*eshell: " name "*"))
+        (insert (concat "ls"))
+        (eshell-send-input)))
 
-  (use-package em-unix
-    :defer t
+    (use-package em-unix
+        :defer t
+        :config
+        (unintern 'eshell/su nil)
+        (unintern 'eshell/sudo nil))
+
+    :bind ("C-!" . eshell-here)
+
     :config
-    (unintern 'eshell/su nil)
-    (unintern 'eshell/sudo nil))
-
-  :bind ("C-!" . eshell-here)
-
-  :config
-  (progn
+    (setenv "TERM" "xterm-256color")
     (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
     (setq tramp-default-method "ssh"
           eshell-directory-name (concat forge-state-dir "eshell")
@@ -70,7 +70,7 @@
                                   (eshell/alias "ee" "find-file-other-window \$1")
                                   (eshell/alias "gd" "magit-diff-unstaged")
                                   (eshell/alias "gds" "magit-diff-staged")
-                                  (eshell/alias "gst" "magit-status")))))
+                                  (eshell/alias "gst" "magit-status")))
 
 
 (setq explicit-shell-file-name "/bin/bash")
