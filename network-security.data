@@ -1,4 +1,0 @@
-(
- (:id "sha1:5f36d9f1037c0bd7723e584ca45204529bfe7946" :fingerprint "sha1:6b:7c:0d:15:7f:5b:7f:19:bd:32:d8:ac:be:a1:d8:a0:78:1e:b6:7f" :host "www.washingtonpost.com:443" :conditions (:unknown-ca :invalid))
- (:id "sha1:706608f9b7fcfdea563351d49047f296d74a5a76" :fingerprint "sha1:ad:21:74:db:f3:91:f9:93:86:dd:03:36:43:fc:fc:9e:90:c0:0c:d6")
-)

@@ -23,30 +23,6 @@
 
 
 ;;;
-;;; Make functions from executables in ~/bin
-;;; Based on Sacha Chua's work in http://pages.sachachua.com/.emacs.d/Sacha.html#org323ef6c
-(defmacro forge/shell-scripts-to-interactive-commands (path)
-  "Make interactive commands from executables in path PATH."
-  (cons 'progn
-        (-map
-         (lambda (filename)
-           (let ((function-name (intern (concat "forge/shell/" (file-name-nondirectory filename)))))
-             `(defun ,function-name (&rest args)
-                (interactive)
-                (cond
-                  ((not (called-interactively-p 'any))
-                   (shell-command-to-string (mapconcat 'shell-quote-argument (cons ,filename args) " ")))
-                  ((region-active-p)
-                   (apply 'call-process-region (point) (mark) ,filename nil (if current-prefix-arg t nil) t args))
-                  (t
-                   (apply 'call-process ,filename nil (if current-prefix-arg t nil) nil args))))))
-         (-filter #'file-regular-p
-                  (-filter #'file-executable-p (forge/get-files "~/bin" t))))))
-(forge/shell-scripts-to-interactive-commands "~/bin")
-
-
-
-;;;
 ;;; Epub reader
 ;;; https://github.com/wasamasa/nov.el
 (use-package nov

@@ -1,9 +1,0 @@
-;;; emms history -*- mode: emacs-lisp; coding: utf-8; -*-
-(
-;; active playlist
-" *EMMS Playlist*"
-;; playlists: ((BUFFER_NAME SELECT_POSITION TRACKS) ...)
-((" *EMMS Playlist*" 1 ((*track* (type . file) (name . "/Users/stephenf/annex/Audio/playlists/KMHD.m3u") (metadata "NPR All Songs" "https://nprdmp-stream02.akacast.akamaistream.net/7/940/364919/v1/npr.akacast.akamaistream.net/nprdmp_stream02" 1 url) (last-played 23706 42103 372740 0) (play-count . 1) (info-mtime 23022 12889 0 0)))))
-;; play method
-((emms-repeat-track) (emms-repeat-playlist))
-)
