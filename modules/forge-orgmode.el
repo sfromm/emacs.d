@@ -103,7 +103,7 @@
      (org-mode . variable-pitch-mode))
 
     :custom
-    (org-refile-use-outline-path 'file)
+    ;;    (org-refile-use-outline-path 'file)
     (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
 
     :bind (("<f8>" . org-cycle-agenda-files)
@@ -117,12 +117,6 @@
 	        ("RET" . org-return-indent))
     :init
     (setq org-directory "~/forge"
-	  org-agenda-files (list
-			    (concat org-directory "/journal.org")
-			    (concat org-directory "/tasks.org")
-			    (concat org-directory "/work.org")
-			    (concat org-directory "/personal.org")
-			    (concat org-directory "/notebook.org"))
 	  org-default-notes-file (concat org-directory "/journal.org")
 	  org-file-apps (quote ((auto-mode . emacs)
 			        ("\\.doc\\'" . "open %s")
@@ -131,9 +125,6 @@
 			        ("\\.pptx\\'" . "open %s")
 			        ("\\.pdf\\'" . default)))
 
-	  org-agenda-sticky t
-	  org-agenda-restore-windows-after-quit t
-	  org-agenda-window-setup 'current-window
 
 	  org-ellipsis "⤵"
 	  org-log-done t
@@ -168,14 +159,55 @@
           org-publish-project-alist '(("public"
                                        :base-directory "~/forge"
                                        :publishing-directory "~/Documents")))
+    ;;;
+    ;;; Configure org agenda
+    (let ((active-project-match "-INBOX/PROJECT"))
+      (setq org-agenda-compact-blocks t
+            org-agenda-sticky t
+            org-agenda-include-diary nil
+            org-agenda-restore-windows-after-quit t
+            org-agenda-window-setup 'current-window
+            org-agenda-files (list
+                              (concat org-directory "/journal")
+                              (concat org-directory "/journal.org")
+                              (concat org-directory "/tasks.org")
+                              (concat org-directory "/work.org")
+                              (concat org-directory "/personal.org")
+                              (concat org-directory "/notebook.org"))
+            org-agenda-custom-commands `(("N" "Notes" tags "NOTE"
+                                              ((org-agenda-overriding-header "Notes")
+                                               (org-tags-match-list-sublevels t)))
+                                         ("g" "GTD"
+                                              ((agenda "" nil)
+                                               (tags "INBOX"
+                                                     ((org-agenda-overriding-header "Inbox")
+                                                      (org-tags-match-list-sublevels nil)))
+                                               (tags-todo "-INBOX"
+                                                          ((org-agenda-overriding-header "Next Actions")
+                                                           (org-agenda-tags-todo-honor-ignore-options t)
+                                                           (org-agenda-todo-ignore-scheduled 'future)
+                                                           (org-agenda-skip-function
+                                                            '(lambda ()
+                                                              (or (org-agenda-skip-subtree-if 'todo '("HOLD" "WAITING"))
+                                                               (org-agenda-skip-entry-if 'nottodo '("NEXT")))))
+                                                           (org-tags-match-list-sublevels t)
+                                                           (org-agenda-sorting-strategy
+                                                            '(todo-state-down effort-up category-keep))))
+                                               (tags-todo ,active-project-match
+                                                          ((org-agenda-overriding-header "Projects")
+                                                           (org-tags-match-list-sublevels t)
+                                                           (org-agenda-sorting-strategy '(category-keep))))
+                                               )))))
+    ;;;
+    ;;; Org Babel
     (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
-							     (emacs-lisp . t)
-							     (org . t)
-							     (perl . t)
-							     (python . t)
-							     (ruby . t)
-							     (shell . t)
-							     (calc . t)))
+                                                             (emacs-lisp . t)
+                                                             (org . t)
+                                                             (perl . t)
+                                                             (python . t)
+                                                             (ruby . t)
+                                                             (shell . t)
+                                                             (calc . t)))
 
     ;; Keep tables with a fixed-pitch font.
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -314,13 +346,17 @@
   "Tangle files in PATH (directory), FULL for absolute paths.
 Example: (forge/tangle-files \"~/.emacs.d/*.org\")."
   (interactive)
-  (mapc 'forge/tangle-file (forge/get-files path full)))
+  (mapc 'forge/tangle-file (forge/get-files-glob path full)))
 
-(defun forge/get-files (path &optional full)
+(defun forge/get-files-glob (path &optional full)
   "Return list of files in directory PATH that match glob pattern, FULL for absolute paths."
   (directory-files (file-name-directory path)
                    full
                    (eshell-glob-regexp (file-name-nondirectory path))))
+
+(defun forge/get-files (path &optional full)
+  "Return list of files in directory PATH, FULL for absolute paths."
+  (directory-files path full))
 
 (defun sf/migrate-datetree-entry ()
   "Take an org entry from a datetree outline and migrate to an org-journal file.
