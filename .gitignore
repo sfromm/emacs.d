@@ -1,4 +1,5 @@
 # misc top level dirs
+.org-id-locations
 var
 snippets
 auto-save-list
@@ -22,3 +23,7 @@ emacs.el
 bookmarks
 custom.el
 site-lisp/setup*.el
+site-lisp/preload.el
+.sx
+emms/
+network-security.data
