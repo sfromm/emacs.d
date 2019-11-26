@@ -169,9 +169,11 @@ Emacs versions."
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq nov-save-place-file (concat forge-state-dir "nov-places")
-          gamegrid-user-score-file-directory (concat forge-state-dir "games")
+    (setq gamegrid-user-score-file-directory (concat forge-state-dir "games")
           bookmark-default-file (concat forge-state-dir "bookmarks")
+          transient-history-file (concat forge-state-dir "transient/history.el")
+          transient-levels-file (concat forge-personal-dir "transient/levels.el")
+          transient-values-file (concat forge-personal-dir "transient/values.el")
           message-auto-save-directory (concat forge-state-dir "messages")
           tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
           tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el"))))
