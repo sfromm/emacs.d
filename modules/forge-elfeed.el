@@ -33,6 +33,7 @@
                 ("f" . forge/elfeed-search-toggle-starred)
                 ("o" . elfeed-search-mpv)
                 ("J" . elfeed-unjam)
+                ("R" . forge/elfeed-search-mark-all-read)
                 ("F" . forge/elfeed-search-starred)
                 ("U" . forge/elfeed-search-unread)
                 ("E" . forge/elfeed-search-emacs)
@@ -59,6 +60,14 @@
       (interactive)
       (start-process "*elfeed-mpv*" nil "mpv" (elfeed-entry-link elfeed-show-entry)))
 
+    (defun elfeed--youtube-dl (entry)
+      "Download a video for ENTRY via youtube-dl."
+      (if (null (youtube-dl (elfeed-entry-link entry)
+                            :title (elfeed-entry-title entry)
+                            :directory (concat youtube-dl-directory "/" (elfeed-feed-author (elfeed-entry-feed entry)))))
+          (message "Entry is not a youtube link")
+        (message "Downloading %s" (elfeed-entry-title entry))))
+
     ;; from skeeto
     ;; https://github.com/skeeto/.emacs.d/blob/master/etc/feed-setup.el
     (defun elfeed-search-youtube-dl ()
@@ -66,10 +75,7 @@
       (interactive)
       (let ((entries (elfeed-search-selected)))
         (dolist (entry entries)
-          (if (null (youtube-dl (elfeed-entry-link entry)
-                                :title (elfeed-entry-title entry)))
-              (message "Entry is not a youtube link")
-            (message "Downloading %s" (elfeed-entry-title entry)))
+          (elfeed--youtube-dl entry)
           (elfeed-untag entry 'unread)
           (elfeed-search-update-entry entry)
           (unless (use-region-p) (forward-line)))))
@@ -79,8 +85,7 @@
     (defun elfeed-show-youtube-dl ()
       "Download the current entry with youtube-dl"
       (interactive)
-      (youtube-dl (elfeed-entry-link elfeed-show-entry)
-                  :title (elfeed-entry-title elfeed-show-entry)))
+      (elfeed--youtube-dl elfeed-show-entry))
 
     (defun elfeed-show-open-eww ()
       "Open the current entry with eww."
@@ -112,6 +117,14 @@
       "Show elfeed articles tagged with unread"
       (interactive)
       (elfeed-search-set-filter "@6-months-ago +unread"))
+
+    ;; from manuel uberti
+    ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
+    (defun forge/elfeed-search-mark-all-read ()
+      "Mark all articles as read."
+      (interactive)
+      (call-interactively 'mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
 
     (defalias 'forge/elfeed-search-toggle-starred (elfeed-expose #'elfeed-search-toggle-all 'starred))
 
