@@ -77,7 +77,8 @@
 ;;;
 (use-package smex
     :ensure t
-    :init (setq smex-completion-method 'ivy))
+    :init (setq smex-completion-method 'ivy
+                smex-save-file (concat forge-state-dir "smex-items")))
 
 (use-package ace-window
     :ensure t
