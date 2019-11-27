@@ -50,7 +50,7 @@
     (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
     (setq tramp-default-method "ssh"
           eshell-directory-name (concat forge-state-dir "eshell")
-          eshell-visual-commands '("less" "tmux" "htop" "top" "docker")
+          eshell-visual-commands '("less" "tmux" "htop" "top" "docker" "nethack")
           eshell-visual-subcommands '(("git" "log" "diff" "show"))
           eshell-prompt-function (lambda ()
                                    (concat
@@ -70,7 +70,7 @@
                                   (eshell/alias "ee" "find-file-other-window \$1")
                                   (eshell/alias "gd" "magit-diff-unstaged")
                                   (eshell/alias "gds" "magit-diff-staged")
-                                  (eshell/alias "gst" "magit-status")))
+                                  (eshell/alias "gst" "magit-status"))))
 
 
 (setq explicit-shell-file-name "/bin/bash")
