@@ -188,6 +188,7 @@
 (define-key forge-map (kbd "s") 'eshell-here)
 (define-key forge-map (kbd "S") 'forge/slack/body)
 (define-key forge-map (kbd "p") 'paradox-list-packages)
+(define-key forge-map (kbd "u") 'browse-url-at-point)
 (global-set-key (kbd "C-z") 'forge-map)
 
 
