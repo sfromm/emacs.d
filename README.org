@@ -3,7 +3,7 @@
 
 * Forge
 
-This is my forge for getting stuff done.  It is based in [[https://www.gnu.org/software/emacs/][Emacs]].  This is how I manage [[https://notmuchmail.org/][mail]], software
+This is my /forge/ for getting stuff done.  It is based in [[https://www.gnu.org/software/emacs/][Emacs]].  This is how I manage [[https://notmuchmail.org/][mail]], software
 development, journaling, project tracking, and more.
 
 At one time, this configuration was based on the ideas of [[http://orgmode.org/worg/org-contrib/babel/intro.html#literate-programming][literate programming]].  While I have moved
