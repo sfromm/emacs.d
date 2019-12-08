@@ -117,29 +117,36 @@
 	        ("RET" . org-return-indent))
     :init
     (setq org-directory "~/forge"
-	  org-agenda-files (list
-			    (concat org-directory "/journal.org")
-			    (concat org-directory "/tasks.org")
-			    (concat org-directory "/work.org")
-			    (concat org-directory "/personal.org")
-			    (concat org-directory "/notebook.org"))
-	  org-default-notes-file (concat org-directory "/journal.org")
-	  org-file-apps (quote ((auto-mode . emacs)
-			        ("\\.doc\\'" . "open %s")
-			        ("\\.docx\\'" . "open %s")
-			        ("\\.xlsx\\'" . "open %s")
-			        ("\\.pptx\\'" . "open %s")
-			        ("\\.pdf\\'" . default)))
+          org-default-notes-file (concat org-directory "/journal.org")
+          org-file-apps (quote ((auto-mode . emacs)
+                                ("\\.doc\\'" . "open %s")
+                                ("\\.docx\\'" . "open %s")
+                                ("\\.xlsx\\'" . "open %s")
+                                ("\\.pptx\\'" . "open %s")
+                                ("\\.pdf\\'" . default))))
+    (setq org-agenda-sticky t
+          org-agenda-restore-windows-after-quit t
+          org-agenda-window-setup 'current-window
+          org-agenda-files (list
+                            (concat org-directory "/journal.org")
+                            (concat org-directory "/tasks.org")
+                            (concat org-directory "/work.org")
+                            (concat org-directory "/personal.org")
+                            (concat org-directory "/notebook.org"))
+          org-agenda-custom-commands (quote (
+                                             ("i" "Inbox"
+                                                  ((tags-todo "inbox/-INBOX"
+                                                              ((org-agenda-overriding-header "Inbox")))))
+                                             ("P" "Projects"
+                                                  ((todo "PROJECT"
+                                                         ((org-agenda-overriding-header "Projects"))))))))
 
-	  org-agenda-sticky t
-	  org-agenda-restore-windows-after-quit t
-	  org-agenda-window-setup 'current-window
 
-	  org-ellipsis "⤵"
-	  org-log-done t
-	  org-log-reschedule "note"
+    (setq org-ellipsis "⤵"
+          org-log-done t
+          org-log-reschedule "note"
 
-	  org-capture-templates '(("j" "Journal" entry
+          org-capture-templates '(("j" "Journal" entry
                                    (function org-journal-find-location)
                                    "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
 
