@@ -22,173 +22,172 @@
 ;;; Code:
 
 (use-package org
-    :ensure org-plus-contrib
-    :preface
-    (defun forge/capture-current-song ()
-      "Capture the current song details."
-      (let ((itunes-song (forge/get-current-song-itunes))
-            (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
-            (song-info nil))
-        (setq song-info (if itunes-song itunes-song mpd-song))
-        (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
+  :ensure org-plus-contrib
+  :preface
+  (defun forge/capture-current-song ()
+    "Capture the current song details."
+    (let ((itunes-song (forge/get-current-song-itunes))
+          (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
+          (song-info nil))
+      (setq song-info (if itunes-song itunes-song mpd-song))
+      (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
 
-    (defun forge/org-tbl-export (name)
-      "Search for table named `NAME` and export"
-      (interactive "s")
-      (show-all)
-      (push-mark)
-      (goto-char (point-min))
-      (let ((case-fold-search t))
-        (if (search-forward-regexp (concat "#\\+NAME: +" name) nil t)
-            (progn
-              (next-line)
-              (org-table-export (format "%s.csv" name) "orgtbl-to-csv"))))
-      (pop-mark))
+  (defun forge/org-tbl-export (name)
+    "Search for table named `NAME` and export"
+    (interactive "s")
+    (outline-show-all)
+    (push-mark)
+    (goto-char (point-min))
+    (let ((case-fold-search t))
+      (if (search-forward-regexp (concat "#\\+NAME: +" name) nil t)
+          (progn
+            (next-line)
+            (org-table-export (format "%s.csv" name) "orgtbl-to-csv"))))
+    (pop-mark))
 
-    (defun forge/tangle-org-mode-on-save ()
-      "Tangle org-mode file when saving."
-      (when (string= (message "%s" major-mode) "org-mode")
-        (org-babel-tangle)))
+  (defun forge/tangle-org-mode-on-save ()
+    "Tangle org-mode file when saving."
+    (when (string= (message "%s" major-mode) "org-mode")
+      (org-babel-tangle)))
 
-    (defun forge/org-mode-hook ()
-      "Turn on settings for org-mode."
-      (interactive)
-      (set-fill-column 100)
-      (when (fboundp 'turn-on-auto-fill)
-        (turn-on-auto-fill))
-      (when (fboundp 'turn-on-flyspell)
-        (turn-on-flyspell)))
+  (defun forge/org-mode-hook ()
+    "Turn on settings for org-mode."
+    (interactive)
+    (set-fill-column 100)
+    (when (fboundp 'turn-on-auto-fill)
+      (turn-on-auto-fill))
+    (when (fboundp 'turn-on-flyspell)
+      (turn-on-flyspell)))
 
-    (defun forge/org-set-uuid ()
-      "Set ID property for current headline."
-      (interactive)
-      (org-set-property "ID" (org-id-uuid)))
+  (defun forge/org-set-uuid ()
+    "Set ID property for current headline."
+    (interactive)
+    (org-set-property "ID" (org-id-uuid)))
 
-    (defun forge/org-set-created ()
-      "Set CREATED property for current headline."
-      (interactive)
-      (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
+  (defun forge/org-set-created ()
+    "Set CREATED property for current headline."
+    (interactive)
+    (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
-    (defun forge/org-set-properties ()
-      "Set stock org properties for current headline."
-      (interactive)
-      (forge/org-set-uuid)
-      (forge/org-set-created))
+  (defun forge/org-set-properties ()
+    "Set stock org properties for current headline."
+    (interactive)
+    (forge/org-set-uuid)
+    (forge/org-set-created))
 
-    ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
-    (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
-      "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
-      ;; https://orgmode.org/manual/HTML-preamble-and-postamble.html
-      ;; disable author + date + validate link at end of HTML exports
-      ;;(setq org-html-postamble nil)
+  ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
+  (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
+    "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
+    ;; https://orgmode.org/manual/HTML-preamble-and-postamble.html
+    ;; disable author + date + validate link at end of HTML exports
+    ;;(setq org-html-postamble nil)
 
-      (let* ((org-html-with-latex 'imagemagick)
-             (outfile
-              (org-publish-org-to 'html filename
-                                  (concat "." (or (plist-get plist :html-extension)
-                                                  org-html-extension
-                                                  "html"))
-                                  plist pub-dir)))
-        ;; 1. apple notes handles <p> paras badly, so we have to replace all blank
-        ;;    lines (which the orgmode export accurately leaves for us) with
-        ;;    <br /> tags to get apple notes to actually render blank lines between
-        ;;    paragraphs
-        ;; 2. remove large h1 with title, as apple notes already adds <title> as
-        ;; the note title
-        (shell-command (format "sed -i \"\" -e 's/^$/<br \\/>/' -e 's/<h1 class=\"title\">.*<\\/h1>$//' %s" outfile)) outfile))
+    (let* ((org-html-with-latex 'imagemagick)
+           (outfile
+            (org-publish-org-to 'html filename
+                                (concat "." (or (plist-get plist :html-extension)
+                                                org-html-extension
+                                                "html"))
+                                plist pub-dir)))
+      ;; 1. apple notes handles <p> paras badly, so we have to replace all blank
+      ;;    lines (which the orgmode export accurately leaves for us) with
+      ;;    <br /> tags to get apple notes to actually render blank lines between
+      ;;    paragraphs
+      ;; 2. remove large h1 with title, as apple notes already adds <title> as
+      ;; the note title
+      (shell-command (format "sed -i \"\" -e 's/^$/<br \\/>/' -e 's/<h1 class=\"title\">.*<\\/h1>$//' %s" outfile)) outfile))
 
-    :hook
-    ((org-mode . forge/org-mode-hook)
-     (after-save . forge/tangle-org-mode-on-save)
-     (org-mode . variable-pitch-mode))
+  :hook
+  ((org-mode . forge/org-mode-hook)
+   (after-save . forge/tangle-org-mode-on-save)
+   (org-mode . variable-pitch-mode))
 
-    :custom
-    (org-refile-use-outline-path 'file)
-    (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
+  :custom
+  (org-refile-use-outline-path 'file)
+  (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
 
-    :bind (("<f8>" . org-cycle-agenda-files)
-	   ("<f12>" . org-agenda)
-	   ("C-c l" . org-store-link)
-	   ("C-c c" . org-capture)
-	   ("C-c a" . org-agenda)
-	   ("C-c b" . org-switchb))
-    :bind (:map org-mode-map
-	        ("M-q" . endless/fill-or-unfill)
-	        ("RET" . org-return-indent))
-    :init
-    (setq org-directory "~/forge"
-          org-default-notes-file (concat org-directory "/journal.org")
-          org-file-apps (quote ((auto-mode . emacs)
-                                ("\\.doc\\'" . "open %s")
-                                ("\\.docx\\'" . "open %s")
-                                ("\\.xlsx\\'" . "open %s")
-                                ("\\.pptx\\'" . "open %s")
-                                ("\\.pdf\\'" . default))))
-    (setq org-agenda-sticky t
-          org-agenda-restore-windows-after-quit t
-          org-agenda-window-setup 'current-window
-          org-agenda-files (list
-                            (concat org-directory "/journal.org")
-                            (concat org-directory "/tasks.org")
-                            (concat org-directory "/work.org")
-                            (concat org-directory "/personal.org")
-                            (concat org-directory "/notebook.org"))
-          org-agenda-custom-commands (quote (
-                                             ("i" "Inbox"
-                                                  ((tags-todo "inbox/-INBOX"
-                                                              ((org-agenda-overriding-header "Inbox")))))
-                                             ("P" "Projects"
-                                                  ((todo "PROJECT"
-                                                         ((org-agenda-overriding-header "Projects"))))))))
+  :bind (("<f8>" . org-cycle-agenda-files)
+         ("<f12>" . org-agenda)
+         ("C-c l" . org-store-link)
+         ("C-c c" . org-capture)
+         ("C-c a" . org-agenda)
+         ("C-c b" . org-switchb))
+  :bind (:map org-mode-map
+              ("M-q" . endless/fill-or-unfill)
+              ("RET" . org-return-indent))
+  :init
+  (setq org-directory "~/forge"
+        org-default-notes-file (concat org-directory "/journal.org")
+        org-file-apps (quote ((auto-mode . emacs)
+                              ("\\.doc\\'" . "open %s")
+                              ("\\.docx\\'" . "open %s")
+                              ("\\.xlsx\\'" . "open %s")
+                              ("\\.pptx\\'" . "open %s")
+                              ("\\.pdf\\'" . default))))
+  (setq org-agenda-sticky t
+        org-agenda-restore-windows-after-quit t
+        org-agenda-window-setup 'current-window
+        org-agenda-files (list
+                          (concat org-directory "/journal.org")
+                          (concat org-directory "/tasks.org")
+                          (concat org-directory "/work.org")
+                          (concat org-directory "/personal.org")
+                          (concat org-directory "/notebook.org"))
+        org-agenda-custom-commands (quote (
+                                           ("i" "Inbox"
+                                            ((tags-todo "inbox/-INBOX"
+                                                        ((org-agenda-overriding-header "Inbox")))))
+                                           ("P" "Projects"
+                                            ((todo "PROJECT"
+                                                   ((org-agenda-overriding-header "Projects"))))))))
 
 
-    (setq org-ellipsis "⤵"
-          org-log-done t
-          org-log-reschedule "note"
+  (setq org-ellipsis "⤵"
+        org-log-done t
+        org-log-reschedule "note"
 
-          org-capture-templates '(("j" "Journal" entry
-                                   (function org-journal-find-location)
-                                   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+        ;; For template expansion,
+        ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
+        org-capture-templates '(("n" "Note" entry (file+olp+datetree "~/forge/journal.org") "* %U %?\n" )
 
-                                  ("b" "Bookmark" entry
-                                   (file+headline "~/forge/startpage.org" "Unfiled")
-                                   "* %? %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org") "* %?\n%U\n" )
 
-                                  ("t" "To do" entry
-                                   (file+headline "~/forge/tasks.org" "Inbox")
-                                   "* TODO %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
+                                ("b" "Bookmark" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* [[%^{LINK}][%^{TITLE}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                  ("m" "Music" entry
-                                   (function org-journal-find-location)
-                                   "* %(format-time-string org-journal-time-format) %(forge/capture-current-song) :music:\n"))
+                                ("t" "To do" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
-          org-export-allow-bind-keywords t
-          org-export-coding-system 'utf-8
+                                ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* %(forge/capture-current-song) :music:\n%U\n"))
 
-          org-modules '(org-w3m org-bbdb org-bibtex org-docview
-                        org-gnus org-info org-irc org-mhe org-rmail org-habit)
-          org-src-preserve-indentation t
-          org-src-window-setup 'current-window                    ;; use current window when editing a source block
-          org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
-          org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-          org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
-          org-publish-project-alist '(("public"
-                                       :base-directory "~/forge"
-                                       :publishing-directory "~/Documents")))
-    (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
-							     (emacs-lisp . t)
-							     (org . t)
-							     (perl . t)
-							     (python . t)
-							     (ruby . t)
-							     (shell . t)
-							     (calc . t)))
+        org-export-allow-bind-keywords t
+        org-export-coding-system 'utf-8
 
-    ;; Keep tables with a fixed-pitch font.
-    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-    (org-load-modules-maybe t))
+        org-modules '(org-w3m org-bbdb org-bibtex org-docview
+                              org-gnus org-info org-irc org-mhe org-rmail org-habit)
+        org-src-preserve-indentation t
+        org-src-window-setup 'current-window                    ;; use current window when editing a source block
+        org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
+        org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
+        org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
+        org-publish-project-alist '(("public"
+                                     :base-directory "~/forge"
+                                     :publishing-directory "~/Documents")))
+  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
+                                                           (emacs-lisp . t)
+                                                           (org . t)
+                                                           (perl . t)
+                                                           (python . t)
+                                                           (ruby . t)
+                                                           (shell . t)
+                                                           (calc . t)))
+
+  ;; Keep tables with a fixed-pitch font.
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+  (org-load-modules-maybe t))
 
 
 
