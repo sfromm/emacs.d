@@ -328,7 +328,7 @@ Example: (forge/tangle-files \"~/.emacs.d/*.org\")."
                    full
                    (eshell-glob-regexp (file-name-nondirectory path))))
 
-(defun sf/migrate-datetree-entry ()
+(defun my/migrate-datetree-entry ()
   "Take an org entry from a datetree outline and migrate to an org-journal file.
 
 The general intent behind this function is that it will migrate the current heading
@@ -346,7 +346,7 @@ It will not remove entries from the source org file."
          (jrnl-heading (format "** %s %s   %s" time subject (or tags ""))))
     (org-copy-subtree)
     (with-current-buffer year
-      (sf/migrate-datetree-goto-heading day-heading)
+      (my/migrate-datetree-goto-heading day-heading)
       (message "%s" jrnl-heading)
       (insert (format "%s\n" jrnl-heading))
       (org-paste-subtree)
@@ -379,16 +379,16 @@ It will not remove entries from the source org file."
         (pop-global-mark)
         (org-copy-subtree)
         (with-current-buffer "journal.org"
-          (sf/migrate-datetree-goto-heading month-heading)
+          (my/migrate-datetree-goto-heading month-heading)
           (message "month heading %s" month-heading)
-          (sf/migrate-datetree-goto-heading day-heading)
+          (my/migrate-datetree-goto-heading day-heading)
           (message "day heading %s" day-heading)
           (org-paste-subtree 4)
           (forward-line)
           (insert (format "%s\n" org-ts)))
         (org-next-visible-heading 1)))))
 
-(defun sf/migrate-datetree-goto-heading (heading)
+(defun my/migrate-datetree-goto-heading (heading)
   "Go to day heading HEADING in org-journal file.  Create if it doesn't exist."
   (interactive)
   (goto-char (point-min))
