@@ -153,7 +153,7 @@
                                   ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org") "* %?\n%U\n" )
 
                                   ("b" "Bookmark" entry (file+olp+datetree "~/forge/journal.org")
-                                   "* [[%^{LINK}][%^{TITLE}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                   "* [[%^{Link}][%^{Description}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                   ("t" "To do" entry (file+olp+datetree "~/forge/journal.org")
                                    "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
