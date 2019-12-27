@@ -216,6 +216,13 @@
         (interactive)
         (forge-notmuch-show-toggle-tag "mute")))
 
+    (define-key notmuch-search-mode-map (kbd "Y")
+      (lambda ()
+        "Archive all messages in search results."
+        (interactive)
+        (call-interactively 'mark-whole-buffer)
+        (notmuch-search-archive-thread)))
+
     (define-key notmuch-search-mode-map (kbd "M")
       (lambda ()
         "toggle thread as muted"
