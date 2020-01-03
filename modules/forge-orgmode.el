@@ -133,34 +133,31 @@
                             (concat org-directory "/work.org")
                             (concat org-directory "/personal.org")
                             (concat org-directory "/notebook.org"))
-          org-agenda-custom-commands (quote (
-                                             ("i" "Inbox"
-                                                  ((tags-todo "inbox/-INBOX"
-                                                              ((org-agenda-overriding-header "Inbox")))))
-                                             ("P" "Projects"
-                                                  ((todo "PROJECT"
-                                                         ((org-agenda-overriding-header "Projects"))))))))
+          org-agenda-custom-commands '(("i" "Inbox"
+                                        ((tags-todo "REFILE"
+                                                    ((org-agenda-overriding-header "Inbox")))))
+                                       ("P" "Projects"
+                                        ((todo "PROJECT"
+                                               ((org-agenda-overriding-header "Projects")))))))
 
-
-    (setq org-ellipsis "⤵"
-          org-log-done t
-          org-log-reschedule "note"
-
-          ;; For template expansion,
-          ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
-          org-capture-templates '(("n" "Note" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
+    ;; For template expansion,
+    ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
+    (setq org-capture-templates '(("n" "Note" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
 
                                   ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org") "* %?\n%U\n" )
 
                                   ("b" "Bookmark" entry (file+olp+datetree "~/forge/journal.org")
                                    "* [[%^{Link}][%^{Description}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                  ("t" "To do" entry (file+olp+datetree "~/forge/journal.org")
+                                  ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
                                    "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
                                   ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
-                                   "* %(forge/capture-current-song) :music:\n%U\n"))
+                                   "* %(forge/capture-current-song) :music:\n%U\n")))
 
+    (setq org-ellipsis "⤵"
+          org-log-done t
+          org-log-reschedule "note"
           org-export-allow-bind-keywords t
           org-export-coding-system 'utf-8
 
