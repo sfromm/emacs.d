@@ -155,8 +155,10 @@
                                 ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %(forge/capture-current-song) :music:\n%U\n")))
 
-  (setq org-ellipsis "⤵"
+  (setq org-clock-out-remove-zero-time-clocks t
+        org-ellipsis "⤵"
         org-log-done t
+
         org-log-reschedule "note"
         org-export-allow-bind-keywords t
         org-export-coding-system 'utf-8
