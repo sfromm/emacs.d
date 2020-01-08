@@ -243,66 +243,60 @@
 ;;; org-journal
 ;;; https://github.com/bastibe/org-journal
 (use-package org-journal
-    :ensure t
-    :preface
-    (defun org-journal-find-location ()
-      "Open today's journal file."
-      ;; Open today's journal, but specify a non-nil prefix argument in order to
-      ;; inhibit inserting the heading; org-capture will insert the heading.
-      ;; This should also get org-mode to the right place to add a heading at the correct depth
-      (org-journal-new-entry t)
-      (goto-char (point-max)))
-    ;; Position point on the journal's top-level heading so that org-capture
-    ;; will add the new entry as a child entry.
-    ;; (goto-char (point-max)))
+  :ensure t
+  :preface
+  (defun org-journal-find-location ()
+    "Open today's journal file."
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    ;; This should also get org-mode to the right place to add a heading at the correct depth
+    (org-journal-new-entry t)
+    (goto-char (point-max)))
+  ;; Position point on the journal's top-level heading so that org-capture
+  ;; will add the new entry as a child entry.
+  ;; (goto-char (point-max)))
 
-    :init
-    (setq org-journal-dir (concat org-directory "/journal/")
-          org-journal-file-type 'yearly
-          org-journal-file-format "%Y"
-          org-journal-date-format "%A, %d %B %Y"))
+  :init
+  (setq org-journal-dir (concat org-directory "/journal/")
+        org-journal-file-type 'yearly
+        org-journal-file-format "%Y"
+        org-journal-date-format "%A, %d %B %Y"))
 
 
-(use-package org-present
-    :ensure t
-    :defer 20
-    :init
-    (add-hook 'org-present-mode-hook
-	      (lambda ()
-		(org-present-big)
-		(org-display-inline-images)
-		(org-present-hide-cursor)
-		(org-present-read-only)))
-    (add-hook 'org-present-mode-quit-hook
-	      (lambda ()
-		(org-present-small)
-		(org-remove-inline-images)
-		(org-present-show-cursor)
-		(org-present-read-write))))
+
+(use-package org-tree-slide
+  :ensure t
+  :bind (:map org-tree-slide-mode-map
+              ("<f8>" . org-tree-slide-mode)
+              ("<f9>" . org-tree-slide-move-previous-tree)
+              ("<f10>" . org-tree-slide-move-next-tree))
+  :init
+  (setq org-tree-slide-skip-outline-level 4))
+
 
 
 (use-package org-pomodoro
-    :ensure t
-    :bind
-    (("C-c C-x C-i" . org-pomodoro)
-     ("C-c C-x C-o" . org-pomodoro))
+  :ensure t
+  :bind
+  (("C-c C-x C-i" . org-pomodoro)
+   ("C-c C-x C-o" . org-pomodoro))
 
-    :preface
-    (defun forge/notify-pomodoro (title message)
-      (notifications-notify
-       :title title
-       :body message
-       :urgency 'low))
+  :preface
+  (defun forge/notify-pomodoro (title message)
+    (notifications-notify
+     :title title
+     :body message
+     :urgency 'low))
 
-    :hook
-    (org-pomodoro-finished . (lambda () (forge/notify-pomodoro "Pomodoro completed" "Time for a break")))
-    (org-pomodoro-break-finished . (lambda () (forge/notify-pomodoro "Break completed" "Ready for another?")))
-    (org-pomodoro-long-break-finished . (lambda () (forge/notify-pomodoro "Long break completed" "Ready for another?")))
+  :hook
+  (org-pomodoro-finished . (lambda () (forge/notify-pomodoro "Pomodoro completed" "Time for a break")))
+  (org-pomodoro-break-finished . (lambda () (forge/notify-pomodoro "Break completed" "Ready for another?")))
+  (org-pomodoro-long-break-finished . (lambda () (forge/notify-pomodoro "Long break completed" "Ready for another?")))
 
-    :init
-    (setq
-     org-pomodoro-audio-player "mpv"
-     org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
+  :init
+  (setq
+   org-pomodoro-audio-player "mpv"
+   org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
 
 
 ;;;
