@@ -189,7 +189,6 @@
   (org-load-modules-maybe t))
 
 
-
 
 (use-package org-git-link)
 
