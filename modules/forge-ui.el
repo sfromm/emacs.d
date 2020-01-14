@@ -37,6 +37,7 @@
     :ensure t
     :defer 5
     :diminish
+    :commands which-key-mode
     :config (which-key-mode))
 
 
@@ -178,10 +179,33 @@
   ("q" nil))
 (global-set-key (kbd "C-c n") 'forge/navigate/body)
 
+
+;;;
+;;; Helper for my mkhome makefile
+;;;
+(defmacro forge-mkhome-target (target)
+  "Macro to run mkhome makefile TARGET."
+  `(with-temp-buffer
+     (progn
+       (cd (getenv "HOME"))
+       (compile (mapconcat 'shell-quote-argument (list "make" "-f" "Makefile.mkhome" ,target) " ")))))
+
+(defun forge-mkhome-git ()
+  "Run mkhome git."
+  (interactive)
+  (forge-mkhome-target "git"))
+
+(define-prefix-command 'forge-mkhome-map)
+(define-key forge-mkhome-map (kbd "g") 'forge-mkhome-git)
+
+
+;;;
+;;; forge keymap
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
 (define-key forge-map (kbd "n") 'forge/navigate/body)
 (define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
+(define-key forge-map (kbd "h") 'forge-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
 (define-key forge-map (kbd "j") 'forge/jabber-start-or-switch)
 (define-key forge-map (kbd "g") 'magit-status)
