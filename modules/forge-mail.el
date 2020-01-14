@@ -109,6 +109,7 @@
           ("S-SPC" . notmuch-search-scroll-down))
     (:map notmuch-show-mode-map
           ("y" . notmuch-show-archive-message-then-next-or-next-thread)
+          ("Y" . notmuch-show-archive-thread-then-next)
           ("S-SPC" . notmuch-show-rewind))
     (:map notmuch-show-part-map
           ("c" . forge/notmuch-show-calendar-invite))
@@ -124,6 +125,7 @@
           notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                    (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
                                    (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                   (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
                                    (:name "7 days"          :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
                                    (:name "This week"       :key "y" :query "date:7d..1d and ( tag:inbox or tag:unread )")
                                    (:name "This month"      :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")
@@ -174,15 +176,15 @@
         (interactive)
         (forge-notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-show-mode-map (kbd "D")
+    (define-key notmuch-show-mode-map (kbd "I")
       (lambda ()
-        "unmark message for trash and tag for inbox"
+        "mark message for inbox and delete trash, if present."
         (interactive)
         (forge-notmuch-show-tag (list "-trash" "+inbox"))))
 
-    (define-key notmuch-search-mode-map (kbd "D")
+    (define-key notmuch-search-mode-map (kbd "I")
       (lambda ()
-        "unmark thread for trash and tag for inbox"
+        "mark message for inbox and delete trash tag, if present."
         (interactive)
         (forge-notmuch-search-tag (list "-trash" "+inbox"))))
 
