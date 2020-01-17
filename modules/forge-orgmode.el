@@ -190,7 +190,7 @@
 
 
 
-(use-package org-git-link)
+(use-package ol-git-link)
 
 (use-package org-contacts
     :after org

@@ -407,9 +407,10 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 ;;;
 ;;; org notmuch integration
 ;;;
-(use-package org-notmuch
+(use-package ol-notmuch
     :demand t
-    :after (:any org notmuch))
+    :after
+    (:any org notmuch))
 
 
 ;;;
