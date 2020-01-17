@@ -95,8 +95,11 @@
 (defvar forge-attachment-dir "~/Download"
   "Path to where to save attachments to.")
 
-(defvar forge-mail-abuse-cc nil
-  "Default contact to CC on abuse reports.")
+(defvar forge-mail-abuse-poc nil
+  "Abuse POC to CC on abuse reports.")
+
+(defvar forge-mail-noc-poc nil
+  "NOC POC to CC or Reply-To.")
 
 (defvar forge-fcc-dirs nil
   "Path to Fcc mail.")
@@ -133,7 +136,7 @@
                                    (:name "Needs attention" :key "!" :query "tag:inbox and ( tag:abuse or tag:flagged )")
                                    (:name "Sent"            :key "s" :query "tag:sent")
                                    (:name "Attachments"     :key "A" :query "tag:attachment")
-                                   (:name "Bulk"            :key "B" :query "tag:bulk and not tag:archive")
+                                   (:name "Bulk"            :key "B" :query "tag:bulk")
                                    (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")))
 
     :config
@@ -289,7 +292,7 @@
   (if (boundp 'notmuch-mua-compose-in) (notmuch-show-forward-message) (mu4e-compose 'forward))
   (message-goto-body)
   (yas-expand-snippet (yas-lookup-snippet template))
-  (message-add-header (concat "Cc: " forge-mail-abuse-cc))
+  (message-add-header (concat "Cc: " forge-mail-abuse-poc))
   (message-goto-to))
 
 (defun forge/mail-forward-abuse-complaint ()
@@ -312,6 +315,17 @@
   (interactive)
   (forge/mail-forward-complaint "compromise-template"))
 
+(defun forge/mail-reply-to-abuse ()
+  "Set Reply-To header to Abuse POC."
+  (interactive)
+  (message-add-header (concat "Reply-To: " forge-mail-abuse-poc)))
+
+(defun forge/mail-reply-to-noc ()
+  "Set Reply-To header to NOC POC."
+  (interactive)
+  (message-add-header (concat "Reply-To: " forge-mail-noc-poc)))
+
+
 ;;;
 ;;; Toggle whether to compose email in new frame.
 ;;;
@@ -333,8 +347,12 @@
 
   _A_ Forward Abuse report  _S_ Forward Spam report  _N_ Toggle compose New frame
   _I_ Forward Infringement  _C_ Comporomised report
+  _ra_ Reply to Abuse POC
+  _rn_ Reply to NOC POC
   "
   ("A" forge/mail-forward-abuse-complaint)
+  ("ra" forge/mail-reply-to-abuse)
+  ("rn" forge/mail-reply-to-noc)
   ("I" forge/mail-forward-infringement-complaint)
   ("S" forge/mail-forward-spam-complaint)
   ("C" forge/mail-forward-compromised-complaint)
