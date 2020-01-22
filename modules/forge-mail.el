@@ -95,11 +95,15 @@
 (defvar forge-attachment-dir "~/Download"
   "Path to where to save attachments to.")
 
-(defvar forge-mail-abuse-poc nil
-  "Abuse POC to CC on abuse reports.")
+(defcustom forge-mail-abuse-poc nil
+  "Abuse POC to CC or Reply-To."
+  :group 'forge
+  :type 'string)
 
-(defvar forge-mail-noc-poc nil
-  "NOC POC to CC or Reply-To.")
+(defcustom forge-mail-noc-poc nil
+  "NOC POC to CC or Reply-To."
+  :group 'forge
+  :type 'string)
 
 (defvar forge-fcc-dirs nil
   "Path to Fcc mail.")
