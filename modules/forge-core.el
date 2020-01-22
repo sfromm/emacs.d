@@ -294,10 +294,9 @@ end tell")
 ;;; Some platforms, such as MacOSX, do not get this done correctly.
 ;;;
 (use-package exec-path-from-shell
-    :ensure t
-    :defer t
-    :init
-    (exec-path-from-shell-initialize))
+  :defer t
+  :init
+  (exec-path-from-shell-initialize))
 
 (when (forge/system-type-linux-p)
   (require 'dbus))

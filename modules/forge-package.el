@@ -27,18 +27,19 @@
   "A list of core packages that will be automatically installed.")
 
 (defvar forge-bootstrap-packages
-  '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode
-    jabber emojify
-    paradox exec-path-from-shell
-    async
-    page-break-lines yasnippet flycheck aggressive-indent markdown-mode web-mode yaml-mode json-mode undo-tree
-    elfeed
-    magit magit-annex git-annex git-timemachine
-    paredit
-    gnus-alias
-    org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
-    pass auth-source-pass
-    ivy swiper counsel smex ace-window avy dumb-jump hydra)
+  '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode jabber emojify
+                  paradox exec-path-from-shell
+                  async
+                  page-break-lines yasnippet flycheck company aggressive-indent undo-tree
+                  anaconda-mode company-anaconda
+                  go-mode markdown-mode web-mode php-mode ledger-mode yaml-mode json-mode
+                  elfeed
+                  magit magit-annex git-annex git-timemachine
+                  paredit
+                  gnus-alias
+                  org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
+                  pass auth-source-pass
+                  ivy swiper counsel smex ace-window avy dumb-jump hydra)
   "A list of packages that will be installed as part of bootstrap process.")
 
 (defun forge/package-install (package)
@@ -101,6 +102,7 @@
 ;;; Paradox
 ;;; https://github.com/Malabarba/paradox
 (use-package paradox
+  :defer t
   :init
   (setq paradox-execute-asynchronously t))
 
@@ -108,6 +110,7 @@
 ;;; Quelpa
 ;;; https://github.com/quelpa/quelpa
 (use-package quelpa
+  :defer t
   :init
   (setq quelpa-dir (concat forge-state-dir "quelpa")
         quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa

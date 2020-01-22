@@ -190,59 +190,58 @@
 
 
 
-(use-package ol-git-link)
+(use-package ol-git-link :defer t)
 
 (use-package org-contacts
-    :after org
-    :config
-    (setq org-contacts-files (list  "~/forge/contacts.org"))
-    (add-to-list 'org-capture-templates '("c" "Contacts" entry
-                                          (file "~/forge/contacts.org")
-                                          "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
+  :defer t
+  :after org
+  :config
+  (setq org-contacts-files (list  "~/forge/contacts.org"))
+  (add-to-list 'org-capture-templates '("c" "Contacts" entry
+                                        (file "~/forge/contacts.org")
+                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 
 (use-package org-bullets
-    :ensure t
-    :after org
-    :init (add-hook 'org-mode-hook 'org-bullets-mode))
+  :defer t
+  :after org
+  :init (add-hook 'org-mode-hook 'org-bullets-mode))
 
 (use-package org-id
-    :after org
-    :config
-    (setq org-id-method 'uuid
-	  org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+  :defer 2
+  :after org
+  :config
+  (setq org-id-method 'uuid
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
 (use-package org-indent
-    :diminish t
-    :config
-    (setq org-startup-indented t))
+  :defer t
+  :diminish t
+  :config
+  (setq org-startup-indented t))
 
-(use-package ox-twbs
-    :ensure t)
+(use-package ox-twbs :defer t)
 
 (use-package org-mime
-    :ensure nil
-    :defer t
-    :hook
-    (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
-    :init
-    (setq org-mime-export-options '(:section-numbers nil
-                                    :with-author nil
-                                    :with-toc nil)))
+  :defer t
+  :hook
+  (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
+  :init
+  (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
 
 (use-package ox-reveal
-    :ensure t
-    :init
-    (setq org-reveal-note-key-char nil))
+  :defer t
+  :init
+  (setq org-reveal-note-key-char nil))
 
-(use-package ox-tufte
-    :ensure t)
+(use-package ox-tufte :defer t)
 
 
 ;;;
 ;;; org-journal
 ;;; https://github.com/bastibe/org-journal
 (use-package org-journal
-  :ensure t
+  :disabled t
+  :defer t
   :preface
   (defun org-journal-find-location ()
     "Open today's journal file."
@@ -264,7 +263,7 @@
 
 
 (use-package org-tree-slide
-  :ensure t
+  :defer t
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
               ("<f9>" . org-tree-slide-move-previous-tree)
@@ -275,7 +274,7 @@
 
 
 (use-package org-pomodoro
-  :ensure t
+  :defer t
   :bind
   (("C-c C-x C-i" . org-pomodoro)
    ("C-c C-x C-o" . org-pomodoro))

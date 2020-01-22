@@ -93,16 +93,16 @@
 ;;; undo tree
 ;;;
 (use-package undo-tree
-    :defer t
-    :diminish undo-tree-mode
-    :bind
-    (("C-/" . undo-tree-undo)
-     ("C-?" . undo-tree-redo)
-     ("C-x u" . undo-tree-visualize))
-    :init
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-diff t))
+  :defer t
+  :diminish undo-tree-mode
+  :bind
+  (("C-/" . undo-tree-undo)
+   ("C-?" . undo-tree-redo)
+   ("C-x u" . undo-tree-visualize))
+  :init
+  (global-undo-tree-mode)
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t))
 
 ;;;
 ;;; Misc helpers
@@ -179,39 +179,40 @@
 ;;; flycheck
 ;;;
 (use-package flycheck
-    :ensure t
-    :diminish flycheck-mode
-    :custom (flycheck-global-modes '(not org-mode))
-    :init (global-flycheck-mode))
+  :defer t
+  :diminish flycheck-mode
+  :custom (flycheck-global-modes '(not org-mode))
+  :init (global-flycheck-mode))
 
 
 (use-package company
-    :ensure t
-    :hook (prog-mode . company-mode)
-    :diminish company-mode)
+  :defer t
+  :hook (prog-mode . company-mode)
+  :diminish company-mode)
 
 
 ;;;
 ;;; lisp
 ;;;
 (use-package aggressive-indent
-    :ensure t
-    :hook (emacs-lisp-mode . aggressive-indent-mode))
+  :defer t
+  :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (use-package lisp-mode
-    :defer t
-    :hook
-    (before-save . forge/turn-on-delete-trailing-whitespace)
-    :config
-    (setq lisp-indent-offset nil))
+  :defer t
+  :hook
+  (before-save . forge/turn-on-delete-trailing-whitespace)
+  :config
+  (setq lisp-indent-offset nil))
 
 (use-package eldoc
-    :diminish eldoc-mode
-    :init
-    (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-    (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
-    :config
-    (setq eldoc-idle-delay 0.3))
+  :defer t
+  :diminish eldoc-mode
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  :config
+  (setq eldoc-idle-delay 0.3))
 
 
 
@@ -219,26 +220,27 @@
 ;;; python
 ;;;
 (use-package python
-    :defer t
-    :interpreter ("python" . python-mode)
-    :hook
-    (python-mode . forge/turn-on-delete-trailing-whitespace)
-    (python-mode . forge/whitespace-visualize)
-    :config
-    (setq-default python-indent-offset 4))
+  :defer t
+  :interpreter ("python" . python-mode)
+  :hook
+  (python-mode . forge/turn-on-delete-trailing-whitespace)
+  (python-mode . forge/whitespace-visualize)
+  :config
+  (setq-default python-indent-offset 4))
 
 ;;
 ;; https://github.com/proofit404/anaconda-mode
 ;;
 (use-package anaconda-mode
-    :after python
-    :hook python-mode
-    :init
-    (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
+  :defer t
+  :after python
+  :hook python-mode
+  :init
+  (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
 
 (use-package company-anaconda
-    :ensure t
-    :after anaconda-mode)
+  :defer t
+  :after anaconda-mode)
 
 
 ;;;
@@ -256,11 +258,10 @@
 ;;; go-mode
 ;;;
 (use-package go-mode
-    :mode "\\.go\\ '"
-    :defer t
-    :ensure t
-    :config
-    (add-hook 'before-save-hook #'gofmt-before-save))
+  :mode "\\.go\\ '"
+  :defer t
+  :config
+  (add-hook 'before-save-hook #'gofmt-before-save))
 
 
 
@@ -268,22 +269,22 @@
 ;;; markdown mode
 ;;;
 (use-package markdown-mode
-    :ensure t
-    :commands (markdown-mode gfm-mode)
-    :mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
-           ("\\.markdown\\'" . markdown-mode))
-    :init
-    (defun orgtbl-to-gfm (table params)
-      "Convert the Orgtbl mode TABLE to GitHub Flavored Markdown."
-      (let* ((alignment (mapconcat (lambda (x) (if x "|--:" "|---"))
-                                   org-table-last-alignment ""))
-             (params2
-              (list
-               :splice t
-               :hline (concat alignment "|")
-               :lstart "| " :lend " |" :sep " | ")))
-        (orgtbl-to-generic table (org-combine-plists params2 params)))))
+  :defer t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (defun orgtbl-to-gfm (table params)
+    "Convert the Orgtbl mode TABLE to GitHub Flavored Markdown."
+    (let* ((alignment (mapconcat (lambda (x) (if x "|--:" "|---"))
+                                 org-table-last-alignment ""))
+           (params2
+            (list
+             :splice t
+             :hline (concat alignment "|")
+             :lstart "| " :lend " |" :sep " | ")))
+      (orgtbl-to-generic table (org-combine-plists params2 params)))))
 
 
 
@@ -292,30 +293,30 @@
 ;;; For html, css, and related files.
 ;;;
 (use-package web-mode
-    :ensure t
-    :init
-    (progn
-      (setq
-       web-mode-css-indent-offset 2
-       web-mode-markup-indent-offset 2
-       web-mode-code-indent-offset 2)
-      (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
+  :defer t
+  :init
+  (progn
+    (setq
+     web-mode-css-indent-offset 2
+     web-mode-markup-indent-offset 2
+     web-mode-code-indent-offset 2)
+    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
 
 
 (use-package php-mode
-    :ensure t)
+  :defer t)
 
 
 ;;;
 ;;; yaml mode
 ;;;
 (use-package yaml-mode
-    :ensure t
-    :hook
-    (yaml-mode . forge/turn-on-delete-trailing-whitespace)
-    (yaml-mode . forge/whitespace-visualize)
-    :config
-    (setq yaml-indent-offset 2))
+  :defer t
+  :hook
+  (yaml-mode . forge/turn-on-delete-trailing-whitespace)
+  (yaml-mode . forge/whitespace-visualize)
+  :config
+  (setq yaml-indent-offset 2))
 
 
 
@@ -323,10 +324,10 @@
 ;;; json mode
 ;;;
 (use-package json-mode
-    :ensure t
-    :hook
-    (json-mode . forge/turn-on-delete-trailing-whitespace)
-    (json-mode . forge/whitespace-visualize))
+  :defer t
+  :hook
+  (json-mode . forge/turn-on-delete-trailing-whitespace)
+  (json-mode . forge/whitespace-visualize))
 
 
 
@@ -334,7 +335,7 @@
 ;;; ledger-mode
 ;;; For editing ledger files.
 (use-package ledger-mode
-  :ensure t)
+  :defer t)
 
 
 
@@ -342,7 +343,8 @@
 ;;; junos-mode
 ;;;
 (use-package junos-mode
-    :config (setq-local c-basic-offset 4))
+  :defer t
+  :config (setq-local c-basic-offset 4))
 
 
 ;;;

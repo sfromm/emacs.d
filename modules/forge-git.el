@@ -35,11 +35,11 @@
           magit-last-seen-setup-instructions "1.4.0"))
 
 
-(use-package magit-annex :ensure t)
+(use-package magit-annex :defer t)
 
-(use-package git-annex :ensure t)
+(use-package git-annex :defer t)
 
-(use-package git-timemachine :ensure t)
+(use-package git-timemachine :defer t)
 
 (provide 'forge-git)
 ;;; forge-git.el ends here
