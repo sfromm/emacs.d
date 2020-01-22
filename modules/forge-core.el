@@ -114,7 +114,7 @@
 
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
-  (message "Loaded %s in %0.2fs" mod (float-time (time-subtract (current-time) time))))
+  (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
 
 (defun forge-initialize ()
   "Initialize paths and session for this Emacs instance."
