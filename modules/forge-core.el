@@ -75,73 +75,7 @@
 ;;;
 ;;; Packages
 ;;;
-(setq package-archives '(("org" . "https://orgmode.org/elpa/")
-                         ("melpa" . "http://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
-(when (version< emacs-version "27.0")
-  (package-initialize))
-(require 'package)
-
-(defun forge/package-install (package)
-  "Install PACKAGE if not yet installed."
-  (unless (package-installed-p package)
-    (message "%s" "Refreshing package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    (package-install package)
-    (delete-other-windows)))
-
-(defun forge/upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-(defun forge/bootstrap-packages ()
-  "Bootstrap packages to install for Emacs."
-  (interactive)
-  (dolist (package '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode
-                     jabber emojify
-                     paradox exec-path-from-shell
-                     async
-                     page-break-lines yasnippet flycheck aggressive-indent markdown-mode web-mode yaml-mode json-mode undo-tree
-                     elfeed
-                     magit magit-annex git-annex git-timemachine
-                     paredit
-                     gnus-alias
-                     org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
-                     pass auth-source-pass
-                     ivy swiper counsel smex ace-window avy dumb-jump hydra))
-    (progn (forge/package-install package)))
-  (all-the-icons-install-fonts))
-
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun forge/recompile-elpa ()
-  "Recompile packages in elpa directory. Useful if you switch
-Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
-
-
-(forge/package-install 'use-package)
-(eval-when-compile
-  (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
-(require 'cl)
-
-;;;
-;;; Paradox
-;;;
-(use-package paradox
-  :ensure t
-  :init
-  (setq paradox-execute-asynchronously t))
+(require 'forge-package)
 
 
 ;;;
