@@ -216,8 +216,8 @@
 (use-package org-indent
   :defer t
   :diminish t
-  :config
-  (setq org-startup-indented t))
+  :custom
+  (org-startup-indented t))
 
 (use-package ox-twbs :defer t)
 
