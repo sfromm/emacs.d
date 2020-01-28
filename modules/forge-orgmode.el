@@ -41,7 +41,7 @@
     (let ((case-fold-search t))
       (if (search-forward-regexp (concat "#\\+NAME: +" name) nil t)
           (progn
-            (next-line)
+            (forward-line)
             (org-table-export (format "%s.csv" name) "orgtbl-to-csv"))))
     (pop-mark))
 
