@@ -149,12 +149,16 @@
                                 ("b" "Bookmark" entry (file+olp+datetree "~/forge/journal.org")
                                  "* [[%^{Link}][%^{Description}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
+                                ("r" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
+                                 "* REFERENCE %? %a\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
+
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
                                 ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %(forge/capture-current-song) :music:\n%U\n")))
 
+  ;;
   (setq org-clock-out-remove-zero-time-clocks t
         org-ellipsis "⤵"
         org-log-done t
@@ -169,7 +173,7 @@
         org-src-window-setup 'current-window                    ;; use current window when editing a source block
         org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
         org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-        org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
+        org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "REFERENCE(r)" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
         org-publish-project-alist '(("public"
                                      :base-directory "~/forge"
                                      :publishing-directory "~/Documents")))
