@@ -104,6 +104,7 @@
 
   :custom
   (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
   (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
 
   :bind (("<f8>" . org-cycle-agenda-files)
