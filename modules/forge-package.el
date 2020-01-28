@@ -110,14 +110,12 @@
 ;;; Quelpa
 ;;; https://github.com/quelpa/quelpa
 (use-package quelpa
-  :defer t
   :init
   (setq quelpa-dir (concat forge-state-dir "quelpa")
         quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
         quelpa-update-melpa-p nil))
 
 (use-package quelpa-use-package
-  :defer t
   :after quelpa)
 
 ;;;
