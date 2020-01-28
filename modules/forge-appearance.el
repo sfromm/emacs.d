@@ -119,7 +119,7 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'zenburn))
+  (setq forge-theme 'darktooth))
 
 ;; Customize zenburn package
 (use-package zenburn-theme
@@ -140,6 +140,16 @@
   :config
   (doom-themes-org-config))
 
+(use-package darktooth
+  :ensure t
+  :custom
+  (darktooth-use-variable-pitch t)
+  (darktooth-scale-headings t)
+  :quelpa
+  ((darktooth-theme :fetcher github
+                    :repo "sfromm/emacs-theme-darktooth")
+   :upgrade t))
+
 
 ;;;
 ;;; Modeline
@@ -147,48 +157,48 @@
 
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
-    :disabled t
-    :ensure t
-    :custom
-    (powerline-default-separator 'slant)
-    (powerline-default-separator-dir (quote (left . right)))
-    (powerline-display-buffer-size nil)
-    (powerline-display-hud nil)
-    (powerline-display-mule-info nil)
-    (powerline-gui-use-vcs-glyph t)
-    :hook
-    (after-init . powerline-default-theme))
+  :disabled t
+  :ensure t
+  :custom
+  (powerline-default-separator 'slant)
+  (powerline-default-separator-dir (quote (left . right)))
+  (powerline-display-buffer-size nil)
+  (powerline-display-hud nil)
+  (powerline-display-mule-info nil)
+  (powerline-gui-use-vcs-glyph t)
+  :hook
+  (after-init . powerline-default-theme))
 
 ;; https://github.com/Malabarba/smart-mode-line
 (use-package smart-mode-line
-    :disabled t
-    :ensure t
-    :custom
-    (sml/no-confirm-load-theme t)
-    (sml/theme 'respectful)
-    (sml/mode-width 'full)
-    (sml/name-width 30)
-    (sml/shorten-modes t)
-    :hook
-    (after-load-theme . smart-mode-line-enable)
-    (after-init . sml/setup))
+  :disabled t
+  :ensure t
+  :custom
+  (sml/no-confirm-load-theme t)
+  (sml/theme 'respectful)
+  (sml/mode-width 'full)
+  (sml/name-width 30)
+  (sml/shorten-modes t)
+  :hook
+  (after-load-theme . smart-mode-line-enable)
+  (after-init . sml/setup))
 
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
-    :ensure t
-    :custom
-    (doom-modeline-github nil "Disable github integration")
-    (doom-modeline-buffer-file-name-style 'relative-from-project)
-    (doom-modeline-lsp nil "Disable integration with lsp")
-    :hook
-    (doom-modeline-mode . column-number-mode)
-    (doom-modeline-mode . size-indication-mode)
-    (after-init . doom-modeline-mode))
+  :ensure t
+  :custom
+  (doom-modeline-github nil "Disable github integration")
+  (doom-modeline-buffer-file-name-style 'relative-from-project)
+  (doom-modeline-lsp nil "Disable integration with lsp")
+  :hook
+  (doom-modeline-mode . column-number-mode)
+  (doom-modeline-mode . size-indication-mode)
+  (after-init . doom-modeline-mode))
 
 (use-package nyan-mode
-    :ensure t
-    :defer t
-    :hook (doom-modeline-mode . nyan-mode))
+  :ensure t
+  :defer t
+  :hook (doom-modeline-mode . nyan-mode))
 
 
 ;;; misc
