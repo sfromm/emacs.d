@@ -110,7 +110,9 @@
           transient-values-file (concat forge-personal-dir "transient/values.el")
           message-auto-save-directory (concat forge-state-dir "messages")
           tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
-          tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el"))))
+          tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el")
+          url-cache-directory (concat forge-state-dir "url/cache/")
+          url-configuration-directory (concat forge-state-dir "url/configuration/"))))
 
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
