@@ -26,29 +26,29 @@
 ;;; Epub reader
 ;;; https://github.com/wasamasa/nov.el
 (use-package nov
-    :ensure t
-    :mode ("\\.epub\\'" . nov-mode)
-    :init
-    (setq nov-save-place-file (concat forge-state-dir "nov-places")))
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (concat forge-state-dir "nov-places")))
 
 
 ;;;
 ;;; MPD frontend
 ;;; https://github.com/pft/mingus
 (use-package mingus
-    :disabled t
-    :ensure t
-    :defer t
-    :preface
-    (defun forge/get-current-song-mpd ()
-      "Get the current song playing via MPD."
-      (interactive)
-      (let ((conn (mpd-conn-new "localhost" 6600))
-            (cursong nil))
-        (condition-case nil
-            (setq cursong (split-string (plist-get (mpd-get-current-song conn) 'Title) " - "))
-          (error nil))
-        cursong)))
+  :disabled t
+  :ensure t
+  :defer t
+  :preface
+  (defun forge/get-current-song-mpd ()
+    "Get the current song playing via MPD."
+    (interactive)
+    (let ((conn (mpd-conn-new "localhost" 6600))
+          (cursong nil))
+      (condition-case nil
+          (setq cursong (split-string (plist-get (mpd-get-current-song conn) 'Title) " - "))
+        (error nil))
+      cursong)))
 
 (defhydra forge/music-mpd-hydra ()
   "MPD Actions"
@@ -71,27 +71,27 @@
 ;;; https://www.gnu.org/software/emms/
 ;;; https://www.gnu.org/software/emms/manual/
 (use-package emms
-    :ensure t
-    :defer t
-    :config
-    (emms-all)
-    (emms-history-load)
-    (setq emms-directory (concat forge-state-dir "emms")
-          emms-player-list (list emms-player-mpv)
-          emms-stream-info-backend 'mplayer
-          emms-source-file-default-directory (expand-file-name "~/annex/Audio")
-          emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
-          emms-browser-covers 'emms-browser-cache-thumbnail)
-    (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
-    (add-to-list 'emms-info-functions 'emms-info-cueinfo)
-    (if (executable-find "emms-print-metadata")
-        (progn
-          (require 'emms-info-libtag)
-          (add-to-list 'emms-info-functions 'emms-info-libtag)
-          (delete 'emms-info-ogginfo emms-info-functions)
-          (delete 'emms-info-mp3info emms-info-functions))
-      (add-to-list 'emms-info-functions 'emms-info-ogginfo)
-      (add-to-list 'emms-info-functions 'emms-info-mp3info)))
+  :ensure t
+  :defer t
+  :config
+  (emms-all)
+  (emms-history-load)
+  (setq emms-directory (concat forge-state-dir "emms")
+        emms-player-list (list emms-player-mpv)
+        emms-stream-info-backend 'mplayer
+        emms-source-file-default-directory (expand-file-name "~/annex/Audio")
+        emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+        emms-browser-covers 'emms-browser-cache-thumbnail)
+  (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
+  (add-to-list 'emms-info-functions 'emms-info-cueinfo)
+  (if (executable-find "emms-print-metadata")
+      (progn
+        (require 'emms-info-libtag)
+        (add-to-list 'emms-info-functions 'emms-info-libtag)
+        (delete 'emms-info-ogginfo emms-info-functions)
+        (delete 'emms-info-mp3info emms-info-functions))
+    (add-to-list 'emms-info-functions 'emms-info-ogginfo)
+    (add-to-list 'emms-info-functions 'emms-info-mp3info)))
 
 (defhydra forge/music-emms-hydra ()
   "EMMS Actions"
@@ -119,6 +119,13 @@
   :defer t
   :commands twit
   :preface
+  (defun forge/twittering-toggle-icons ()
+    "Toggle use of icons in twittering mode."
+    (interactive)
+    (if (eq twittering-icon-mode t)
+        (twittering-icon-mode nil)
+      (twittering-icon-mode t)))
+
   (defun org-twittering-open (id-str)
     (twittering-visit-timeline (concat ":single/" id-str)))
 
@@ -161,6 +168,7 @@
                          retweeting-source retweeting-source-url)))))))
 
   :bind (:map twittering-mode-map
+              ("I" . forge/twittering-toggle-icons)
               ("<" . twittering-goto-first-status)  ;; go to the most recent
               (">" . twittering-goto-last-status))  ;; go to the oldest
   :config
