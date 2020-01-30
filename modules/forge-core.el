@@ -55,6 +55,8 @@
 ;;;
 (defvar forge--file-name-handler-alist file-name-handler-alist)
 
+;; Crank garbage collection to 11 for initialization.
+;; Reset after init
 (setq file-name-handler-alist nil
       message-log-max 16384
       gc-cons-threshold 536870912 ;; 512mb
