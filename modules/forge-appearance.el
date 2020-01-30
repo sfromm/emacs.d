@@ -140,11 +140,11 @@
   :config
   (doom-themes-org-config))
 
-(use-package darktooth
-  :ensure t
+(use-package darktooth-theme
   :custom
-  (darktooth-use-variable-pitch t)
-  (darktooth-scale-headings t)
+  (darktooth-headings-use-variable-pitch t)
+  (darktooth-headings-highlight t)
+  (darktooth-headings-scale t)
   :quelpa
   ((darktooth-theme :fetcher github
                     :repo "sfromm/emacs-theme-darktooth")
