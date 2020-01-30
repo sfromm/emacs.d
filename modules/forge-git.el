@@ -37,7 +37,9 @@
 
 (use-package magit-annex :defer t)
 
-(use-package git-annex :defer t)
+(use-package git-annex
+  :defer 1
+  :after dired)
 
 (use-package git-timemachine :defer t)
 
