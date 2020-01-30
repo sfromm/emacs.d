@@ -34,103 +34,124 @@
 ;;; which-key
 ;;; https://github.com/justbur/emacs-which-key
 (use-package which-key
-    :ensure t
-    :defer 5
-    :diminish
-    :commands which-key-mode
-    :config (which-key-mode))
+  :ensure t
+  :defer 5
+  :diminish
+  :commands which-key-mode
+  :config (which-key-mode))
 
 
 ;;;
 ;;; ivy, swiper, and counsel
 ;;; https://github.com/abo-abo/swiper
 (use-package ivy
-    :ensure t
-    :diminish (ivy-mode . "")
-    :bind
-    (("C-c C-r" . ivy-resume))
-    :init
-    (ivy-mode 1)
-    :config
-    (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
-    (setq
-     ivy-use-virtual-buffers t
-     enable-recursive-minibuffers t))
+  :ensure t
+  :diminish (ivy-mode . "")
+  :bind
+  (("C-c C-r" . ivy-resume))
+  :init
+  (ivy-mode 1)
+  :config
+  (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
+  (setq ivy-use-virtual-buffers t
+        enable-recursive-minibuffers t))
 
 (use-package swiper
-    :ensure t
-    :diminish
-    :bind (("C-s" . swiper-isearch)))
+  :ensure t
+  :diminish
+  :bind (("C-s" . swiper-isearch)))
 
 (use-package counsel
-    :ensure t
-    :requires ivy
-    :bind
-    (("C-c f" . counsel-git)
-     ("M-x" . counsel-M-x)
-     ("C-x C-f" . counsel-find-file))
-    :config
-    (setq ivy-use-virtual-buffers t))
+  :ensure t
+  :requires ivy
+  :bind
+  (("C-c f" . counsel-git)
+   ("M-x" . counsel-M-x)
+   ("C-x C-f" . counsel-find-file))
+  :config
+  (setq ivy-use-virtual-buffers t))
 
 
 ;;;
 ;;; smex
-;;;
+;;; https://github.com/nonsequitur/smex/
 (use-package smex
-    :ensure t
-    :init (setq smex-completion-method 'ivy
-                smex-save-file (concat forge-state-dir "smex-items")))
+  :ensure t
+  :init
+  (setq smex-completion-method 'ivy
+        smex-save-file (concat forge-state-dir "smex-items")))
 
+;;; ace-window
+;;; https://github.com/abo-abo/ace-window
 (use-package ace-window
-    :ensure t
-    :custom (aw-scope 'frame)
-    :bind ([remap other-window] . ace-window))
+  :ensure t
+  :custom (aw-scope 'frame)
+  :bind ([remap other-window] . ace-window))
 
+;;; avy
+;;; https://github.com/abo-abo/avy
 (use-package avy
-    :ensure t
-    :bind
-    (("M-g g" . avy-goto-line)
-     ("M-s" . avy-goto-word-1)))
+  :ensure t
+  :bind
+  (("M-g g" . avy-goto-line)
+   ("M-s" . avy-goto-word-1)))
 
+;;; dump-jump
+;;; https://github.com/jacktasia/dumb-jump
 (use-package dumb-jump
-    :defer t
-    :ensure t
-    :bind
-    (("M-g o" . dumb-jump-go-other-window)
-     ("M-g j" . dumb-jump-go)
-     ("M-g i" . dumb-jump-go-prompt)
-     ("M-g b" . dumb-jump-back)
-     ("M-g q" . dumb-jump-quick-look)
-     ("M-g x" . dumb-jump-go-prefer-external)
-     ("M-g z" . dumb-jump-go-prefer-external-other-window))
-    :config
-    (setq dumb-jump-selector 'ivy))
+  :defer t
+  :ensure t
+  :bind
+  (("M-g o" . dumb-jump-go-other-window)
+   ("M-g j" . dumb-jump-go)
+   ("M-g i" . dumb-jump-go-prompt)
+   ("M-g b" . dumb-jump-back)
+   ("M-g q" . dumb-jump-quick-look)
+   ("M-g x" . dumb-jump-go-prefer-external)
+   ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :config
+  (setq dumb-jump-selector 'ivy))
+
+
+;;;
+;;; eyebrowse
+;;; https://github.com/wasamasa/eyebrowse
+(use-package eyebrowse
+  :defer t
+  :ensure t
+  :bind
+  (("M-1" . eyebrowse-switch-to-window-config-1)
+   ("M-2" . eyebrowse-switch-to-window-config-2)
+   ("M-3" . eyebrowse-switch-to-window-config-3)
+   ("M-4" . eyebrowse-switch-to-window-config-4))
+  :config
+  (eyebrowse-mode 1))
 
 
 ;;;
 ;;; golden ratio for windows
-;;;
+;;; https://github.com/roman/golden-ratio.el
 (use-package golden-ratio
-    :defer t
-    :config
-    (setq golden-ratio-exclude-modes '(messages-buffer-mode
-                                       fundamental-mode
-                                       ediff-mode
-                                       calendar-mode
-                                       calc-mode
-                                       calc-trail-mode
-                                       magit-popup-mode))
-    (add-to-list 'golden-ratio-extra-commands 'ace-window))
+  :defer t
+  :config
+  (setq golden-ratio-exclude-modes '(messages-buffer-mode
+                                     fundamental-mode
+                                     ediff-mode
+                                     calendar-mode
+                                     calc-mode
+                                     calc-trail-mode
+                                     magit-popup-mode))
+  (add-to-list 'golden-ratio-extra-commands 'ace-window))
 
 
 ;;;
 ;;; uniquify
 ;;;
 (use-package uniquify
-    :init (setq uniquify-buffer-name-style 'forward
-                uniquify-separator "/"
-                uniquify-ignore-buffers-re "^\\*"
-                uniquify-after-kill-buffer-p t))
+  :init (setq uniquify-buffer-name-style 'forward
+              uniquify-separator "/"
+              uniquify-ignore-buffers-re "^\\*"
+              uniquify-after-kill-buffer-p t))
 
 
 ;;;
