@@ -39,7 +39,7 @@
                   gnus-alias
                   org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
                   pass auth-source-pass
-                  ivy swiper counsel smex ace-window avy dumb-jump hydra)
+                  ivy swiper counsel smex ace-window avy dumb-jump eyebrowse hydra)
   "A list of packages that will be installed as part of bootstrap process.")
 
 (defun forge/package-install (package)
