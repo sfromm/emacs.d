@@ -163,6 +163,7 @@
   (add-hook 'focus-out-hook 'forge/save-all))
 
 
+;;;
 ;;; https://www.emacswiki.org/emacs/DosToUnix
 ;;; Also consider using set-buffer-file-coding-system (C-x RET f) to "undecided-dos" or "undecided-unix"
 (defun dos2unix (buffer)
@@ -267,7 +268,7 @@
 
 ;;;
 ;;; markdown mode
-;;;
+;;; https://github.com/jrblevin/markdown-mode
 (use-package markdown-mode
   :defer t
   :commands (markdown-mode gfm-mode)
@@ -291,7 +292,6 @@
 ;;;
 ;;; web mode
 ;;; For html, css, and related files.
-;;;
 (use-package web-mode
   :defer t
   :init
@@ -336,7 +336,6 @@
 ;;; For editing ledger files.
 (use-package ledger-mode
   :defer t)
-
 
 
 ;;;
