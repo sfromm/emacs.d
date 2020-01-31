@@ -155,6 +155,15 @@
 
 
 ;;;
+;;; olivetti - emacs minor mode for a writing environment
+;;; https://github.com/rnkn/olivetti
+(use-package olivetti
+  :ensure t
+  :custom (olivetti-hide-mode-line t)
+  :commands olivetti-mode)
+
+
+;;;
 ;;; hydra
 ;;; https://github.com/abo-abo/hydra
 (use-package hydra :ensure t)
@@ -234,6 +243,7 @@
 (define-key forge-map (kbd "S") 'forge/slack/body)
 (define-key forge-map (kbd "p") 'paradox-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
+(define-key forge-map (kbd "w") 'olivetti-mode)
 (global-set-key (kbd "C-z") 'forge-map)
 
 

@@ -32,7 +32,7 @@
                   async
                   page-break-lines yasnippet flycheck company aggressive-indent undo-tree
                   anaconda-mode company-anaconda
-                  go-mode markdown-mode web-mode php-mode ledger-mode yaml-mode json-mode
+                  go-mode markdown-mode web-mode php-mode ledger-mode yaml-mode json-mode olivetti
                   elfeed
                   magit magit-annex git-annex git-timemachine
                   paredit
