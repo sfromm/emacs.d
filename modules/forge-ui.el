@@ -162,6 +162,11 @@
   :custom (olivetti-hide-mode-line t)
   :commands olivetti-mode)
 
+(defun forge-focus ()
+  "Enable features to focus."
+  (interactive)
+  (olivetti-mode))
+
 
 ;;;
 ;;; hydra
@@ -243,7 +248,7 @@
 (define-key forge-map (kbd "S") 'forge/slack/body)
 (define-key forge-map (kbd "p") 'paradox-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
-(define-key forge-map (kbd "w") 'olivetti-mode)
+(define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
 
 
