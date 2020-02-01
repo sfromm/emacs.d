@@ -202,7 +202,7 @@
   ("s" ace-swap-window "Swap window" :exit t)
   ("d" ace-delete-window "Delete window" :exit t)
   ("b" ivy-switch-buffer "Switch" :exit t)
-  ("g" golden-ratio-mode "Golden ratio" :exit t)
+  ("g" golden-ratio "Golden ratio" :exit t)
   ("v" (lambda ()
          (interactive)
          (split-window-right)
