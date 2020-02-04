@@ -271,6 +271,8 @@
 ;;; https://github.com/jrblevin/markdown-mode
 (use-package markdown-mode
   :defer t
+  :custom
+  (markdown-command "pandoc -f markdown_github+smart")
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
