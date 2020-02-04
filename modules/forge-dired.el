@@ -23,45 +23,46 @@
 
 
 (use-package dired
-    :defer t
-    :preface
-    (defun forge/dired-mode-hook ()
-      "Set misc settings in dired mode."
-      (setq-local truncate-lines t)
-      (forge/turn-on-hl-line))
+  :defer t
+  :preface
+  (defun forge/dired-mode-hook ()
+    "Set misc settings in dired mode."
+    (setq-local truncate-lines t)
+    (forge/turn-on-hl-line))
 
-    (defun forge/dired-up ()
-      "Move up a directory without opening a new buffer."
-      (interactive)
-      (find-alternate-file ".."))
+  (defun forge/dired-up ()
+    "Move up a directory without opening a new buffer."
+    (interactive)
+    (find-alternate-file ".."))
 
-    :bind
-    (("C-c d" . dired-jump)
-     :map dired-mode-map
-     ("RET" . dired-find-alternate-file)
-     ("Y" . forge/dired-rsync)
-     ("^" . forge/dired-up))
+  :bind
+  (("C-c d" . dired-jump)
+   :map dired-mode-map
+   ("RET" . dired-find-alternate-file)
+   ("Y" . forge/dired-rsync)
+   ("^" . forge/dired-up))
 
-    :diminish dired-omit-mode
+  :diminish dired-omit-mode
 
-    :custom
-    (dired-dwim-target t)
-    (dired-ls-F-marks-symlinks t)
-    (dired-recursive-copies 'always)
-    (dired-recursive-deletes 'top)
+  :custom
+  (dired-dwim-target t)
+  (dired-ls-F-marks-symlinks t)
+  (dired-listing-switches "-laFh1v --group-directories-first") ;; -F (classify), -h (human readable), -1 (one file per line), -v (version sorting)
+  (dired-recursive-copies 'always)
+  (dired-recursive-deletes 'top)
+  (global-auto-revert-non-file-buffers t) ;; auto refresh dired buffers
 
-    :config
-    (put 'dired-find-alternate-file 'disabled nil)
-    (when (forge/system-type-darwin-p)
-      (setq dired-use-ls-dired nil)
+  :config
+  (put 'dired-find-alternate-file 'disabled nil)
+  (when (forge/system-type-darwin-p)
+    (setq dired-use-ls-dired nil)
 
-      ;; This requires installing coreutils via homebrew
-      (when (executable-find "gls")
-        (setq insert-directory-program "gls"
-              dired-use-ls-dired t)))
+    ;; This requires installing coreutils via homebrew
+    (when (executable-find "gls")
+      (setq insert-directory-program "gls"
+            dired-use-ls-dired t)))
 
-    (setq global-auto-revert-non-file-buffers t ;; auto refresh dired buffers
-          auto-revert-verbose nil))
+  (setq auto-revert-verbose nil))
 
 
 ;;;
