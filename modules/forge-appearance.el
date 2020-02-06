@@ -186,6 +186,7 @@
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :ensure t
+  :disabled t
   :custom
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'relative-from-project)
@@ -195,6 +196,35 @@
   (doom-modeline-mode . size-indication-mode)
   (after-init . doom-modeline-mode))
 
+;; https://github.com/dbordak/telephone-line
+(use-package telephone-line
+  :ensure t
+  :custom
+  (telephone-line-primary-left-separator 'telephone-line-gradient)
+  (telephone-line-secondary-left-separator 'telephone-line-nil)
+  (telephone-line-primary-right-separator 'telephone-line-gradient)
+  (telephone-line-secondary-right-separator 'telephone-line-nil)
+  (telephone-line-height 24)
+  :config
+  (telephone-line-defsegment forge/telephone-line-space ()
+    "A space."
+    (telephone-line-raw "   "))
+  (telephone-line-defsegment forge/telephone-line-kbd-macro-segment ()
+    "Offer keyboard macro feedback."
+    (when (or defining-kbd-macro executing-kbd-macro)
+      (telephone-line-raw "Macro")))
+  (setq telephone-line-lhs '((accent . (forge/telephone-line-kbd-macro-segment
+                                        telephone-line-vc-segment
+                                        telephone-line-erc-modified-channels-segment
+                                        telephone-line-process-segment))
+                             (nil . (telephone-line-projectile-segment telephone-line-buffer-segment)))
+        telephone-line-rhs '((nil . (telephone-line-flycheck-segment telephone-line-misc-info-segment))
+                             (accent . (telephone-line-major-mode-segment
+                                        forge/telephone-line-space
+                                        telephone-line-airline-position-segment))))
+  (telephone-line-mode 1))
+
+;;
 (use-package nyan-mode
   :ensure t
   :defer t
@@ -205,8 +235,8 @@
 ;;;
 ;;;
 (use-package rainbow-mode
-    :ensure t
-    :defer t)
+  :ensure t
+  :defer t)
 
 
 ;;;
