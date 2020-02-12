@@ -147,8 +147,8 @@
 
                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org") "* %?\n%U\n" )
 
-                                ("b" "Bookmark" entry (file+olp+datetree "~/forge/journal.org")
-                                 "* [[%^{Link}][%^{Description}]] :bookmark: \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                ("b" "Bookmark" entry (file+headline "~/forge/notebook.org" "Unfiled")
+                                 "* %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ("r" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* REFERENCE %? %a\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
@@ -208,8 +208,8 @@
 
 (use-package org-bullets
   :defer t
-  :after org
-  :init (add-hook 'org-mode-hook 'org-bullets-mode))
+  :hook (org-mode . org-bullets-mode)
+  :after org)
 
 (use-package org-id
   :defer 2
