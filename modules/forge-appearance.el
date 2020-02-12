@@ -219,9 +219,8 @@
                                         telephone-line-process-segment))
                              (nil . (telephone-line-projectile-segment telephone-line-buffer-segment)))
         telephone-line-rhs '((nil . (telephone-line-flycheck-segment telephone-line-misc-info-segment))
-                             (accent . (telephone-line-major-mode-segment
-                                        forge/telephone-line-space
-                                        telephone-line-airline-position-segment))))
+                             (evil . (telephone-line-major-mode-segment))
+                             (accent . (telephone-line-airline-position-segment))))
   (telephone-line-mode 1))
 
 ;;
