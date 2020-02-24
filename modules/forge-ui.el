@@ -118,6 +118,7 @@
 ;;; https://github.com/wasamasa/eyebrowse
 (use-package eyebrowse
   :defer t
+  :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
   :ensure t
   :bind
   (("M-1" . eyebrowse-switch-to-window-config-1)
