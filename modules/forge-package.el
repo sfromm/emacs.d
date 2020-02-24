@@ -30,7 +30,7 @@
   '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode jabber emojify
                   paradox exec-path-from-shell
                   async
-                  page-break-lines yasnippet flycheck company aggressive-indent undo-tree
+                  page-break-lines yasnippet flycheck company aggressive-indent undo-tree expand-region
                   anaconda-mode company-anaconda
                   go-mode markdown-mode web-mode php-mode ledger-mode yaml-mode json-mode olivetti
                   elfeed
