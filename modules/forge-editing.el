@@ -33,11 +33,11 @@
 ;;; - https://ericjmritz.wordpress.com/2015/08/29/using-page-breaks-in-gnu-emacs/
 ;;;
 (use-package page-break-lines
-    :ensure t
-    :commands (turn-on-page-break-lines-mode)
-    :diminish page-break-lines-mode
-    :init
-    (add-hook 'emacs-lisp-mode-hook #'turn-on-page-break-lines-mode))
+  :ensure t
+  :commands (turn-on-page-break-lines-mode)
+  :diminish page-break-lines-mode
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'turn-on-page-break-lines-mode))
 
 
 ;;;
@@ -79,23 +79,23 @@
 ;;; Make buffer names legible
 ;;;
 (use-package uniquify
-    :defer t
-    :init
-    (setq
-     uniquify-buffer-name-style 'forward
-     uniquify-separator "/"
-     uniquify-ignore-buffers-re "^\\*"
-     uniquify-after-kill-buffer-p t))
+  :defer t
+  :init
+  (setq
+   uniquify-buffer-name-style 'forward
+   uniquify-separator "/"
+   uniquify-ignore-buffers-re "^\\*"
+   uniquify-after-kill-buffer-p t))
 
 
 ;;;
 ;;; ediff
 ;;;
 (use-package ediff
-    :defer t
-    :init
-    (setq ediff-split-window-function 'split-window-horizontally
-          ediff-window-setup-function 'ediff-setup-windows-plain))
+  :defer t
+  :init
+  (setq ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain))
 
 
 ;;;
@@ -257,10 +257,10 @@
 ;;; shell scripts
 ;;;
 (use-package shell-script
-    :defer t
-    :hook
-    (shell-script . forge/whitespace-visualize)
-    (shell-script . forge/turn-on-delete-trailing-whitespace))
+  :defer t
+  :hook
+  (shell-script . forge/whitespace-visualize)
+  (shell-script . forge/turn-on-delete-trailing-whitespace))
 
 
 
