@@ -191,7 +191,7 @@
 (use-package wttrin
   :ensure t
   :custom
-  (wttrin-default-cities '("Eugene" "Portland" "Sonoma"))
+  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
   (wttrin-default-accept-language '("Accept-Language" . "en-US")))
 
 ;;;
