@@ -4,18 +4,20 @@ VERSION = 26.1_1
 ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
     PKGMGR = apt-get install
+    PKG = emacs
     PKGFLAGS =
     FONTS = fonts-hack-ttf fonts-firacode
 endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
     PKGMGR = brew cask install
+    PKG = emacs
     PKGFLAGS =
     FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-symbola
 endif
 
 install: fonts
-	$(PKGMGR) emacs $(PKGFLAGS)
+	$(PKGMGR) $(PKG) $(PKGFLAGS)
 
 bootstrap:
 	$(EMACS) -f "forge/bootstrap-packages"
