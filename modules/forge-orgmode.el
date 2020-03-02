@@ -128,15 +128,35 @@
   (setq org-agenda-sticky t
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
+        org-agenda-compact-blocks t
         org-agenda-files (list
                           (concat org-directory "/journal.org")
                           (concat org-directory "/tasks.org")
                           (concat org-directory "/work.org")
                           (concat org-directory "/personal.org")
-                          (concat org-directory "/notebook.org"))
+                          (concat org-directory "/notebook.org"))                                        ;
+        ;; There's a lot to org-agenda-custom-commands
+        ;; For type:
+        ;;   type     The command type, any of the following symbols:
+        ;;     agenda      The daily/weekly agenda.
+        ;;     todo        Entries with a specific TODO keyword, in all agenda files.
+        ;;     search      Entries containing search words entry or headline.
+        ;;     tags        Tags/Property/TODO match in all agenda files.
+        ;;     tags-todo   Tags/P/T match in all agenda files, TODO entries only.
+        ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
+        ;;     tags-tree   Sparse tree with all tags matches in *current* file.
+        ;;     occur-tree  Occur sparse tree for *current* file.
         org-agenda-custom-commands '(("i" "Inbox"
                                       ((tags-todo "REFILE"
                                                   ((org-agenda-overriding-header "Inbox")))))
+                                     ("x" "Agenda"
+                                      ((agenda "" nil)
+                                       (tags "REFILE"
+                                             ((org-agenda-overriding-header "Tasks To Refile")))
+                                       (todo "PROJECT"
+                                             ((org-agenda-overriding-header "Projects")))
+                                       (tags-todo "-CANCELLED/!"
+                                                  ((org-agenda-overriding-header "Stuck Projects")))))
                                      ("P" "Projects"
                                       ((todo "PROJECT"
                                              ((org-agenda-overriding-header "Projects")))))))
@@ -145,7 +165,11 @@
   ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
   (setq org-capture-templates '(("l" "Log" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
 
-                                ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org") "* %?\n%U\n" )
+                                ("m" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* MEETING %? :MEETING:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+
+                                ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
+                                 "* %?\n%U\n" :clock-in t :clock-resume t)
 
                                 ("b" "Bookmark" entry (file+headline "~/forge/notebook.org" "Unfiled")
                                  "* %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
@@ -159,6 +183,11 @@
                                 ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %(forge/capture-current-song) :music:\n%U\n")))
 
+  ;; Workflow states
+  ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)")
+                            (sequence "PROJECT" "|" "DONE(d)")
+                            (sequence "|" "MEETING" "REFERENCE(r)")))
   ;;
   (setq org-clock-out-remove-zero-time-clocks t
         org-ellipsis "⤵"
@@ -174,7 +203,6 @@
         org-src-window-setup 'current-window                    ;; use current window when editing a source block
         org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
         org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
-        org-todo-keywords '((sequence "TODO(t)" "PROJECT(p)" "WAITING(w)" "SOMEDAY(m)" "|" "REFERENCE(r)" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)"))
         org-publish-project-alist '(("public"
                                      :base-directory "~/forge"
                                      :publishing-directory "~/Documents")))
