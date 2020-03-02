@@ -186,7 +186,6 @@
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :ensure t
-  :disabled t
   :custom
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'relative-from-project)
@@ -199,6 +198,7 @@
 ;; https://github.com/dbordak/telephone-line
 (use-package telephone-line
   :ensure t
+  :disabled t
   :custom
   (telephone-line-primary-left-separator 'telephone-line-gradient)
   (telephone-line-secondary-left-separator 'telephone-line-nil)
