@@ -21,7 +21,7 @@ bootstrap:
 	$(EMACS) -f "forge/bootstrap-packages"
 
 update:
-	git pull --rebase
+	git diff-files --quiet && git pull --rebase
 
 upgrade: update
 	$(EMACS) -f "forge/upgrade-packages"
