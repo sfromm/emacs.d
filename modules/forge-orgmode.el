@@ -134,7 +134,7 @@
                           (concat org-directory "/tasks.org")
                           (concat org-directory "/work.org")
                           (concat org-directory "/personal.org")
-                          (concat org-directory "/notebook.org"))                                        ;
+                          (concat org-directory "/notebook.org"))
         ;; There's a lot to org-agenda-custom-commands
         ;; For type:
         ;;   type     The command type, any of the following symbols:
