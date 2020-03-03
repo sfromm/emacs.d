@@ -165,7 +165,7 @@
   ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
   (setq org-capture-templates '(("l" "Log" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
 
-                                ("m" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
+                                ("M" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
                                  "* MEETING %? :MEETING:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
 
                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
