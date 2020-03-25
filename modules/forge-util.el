@@ -107,6 +107,13 @@
   ("C" emms-playlist-clear "Clear")
   ("q" nil "Quit"))
 
+
+;;;
+;;; gist
+;;; https://github.com/defunkt/gist.el
+(use-package gist
+  :defer t
+  :custom (gist-view-gist t))
 
 
 ;;;
