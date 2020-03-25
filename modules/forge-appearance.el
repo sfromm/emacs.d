@@ -100,13 +100,15 @@
 (defun forge/install-themes ()
   "Install a mix of themes."
   (interactive)
-  (dolist (p '(doom-themes      ;; https://github.com/hlissner/emacs-doom-themes
-               leuven-theme     ;; https://github.com/fniessen/emacs-leuven-theme
-               material-theme   ;; https://github.com/cpaulik/emacs-material-theme
-               poet-theme       ;; https://github.com/kunalb/poet
-               solarized-theme  ;; https://github.com/bbatsov/solarized-emacs
-               spacemacs-theme  ;; https://github.com/nashamri/spacemacs-theme
-               zenburn-theme))  ;; https://github.com/bbatsov/zenburn-emacs
+  (dolist (p '(doom-themes           ;; https://github.com/hlissner/emacs-doom-themes
+               leuven-theme          ;; https://github.com/fniessen/emacs-leuven-theme
+               material-theme        ;; https://github.com/cpaulik/emacs-material-theme
+               modus-operandi-theme  ;; https://gitlab.com/protesilaos/modus-themes
+               modus-vivendi-theme   ;; https://gitlab.com/protesilaos/modus-themes
+               poet-theme            ;; https://github.com/kunalb/poet
+               solarized-theme       ;; https://github.com/bbatsov/solarized-emacs
+               spacemacs-theme       ;; https://github.com/nashamri/spacemacs-theme
+               zenburn-theme))       ;; https://github.com/bbatsov/zenburn-emacs
     (progn (forge/package-install p)))
   (when (forge/system-type-darwin-p)
     (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))))
@@ -121,14 +123,12 @@
 (unless forge-theme
   (setq forge-theme 'darktooth))
 
-;; Customize zenburn package
 (use-package zenburn-theme
   :defer t
   :custom
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t))
 
-;; Customize solarized
 (use-package solarized-theme
   :defer t
   :custom
