@@ -1,6 +1,6 @@
 ;;; forge-web.el -- Set up editing of web-related files.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018, 2019 Stephen Fromm
+;; Copyright (C) 2018-2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 
@@ -23,12 +23,12 @@
 
 
 (use-package web-mode
-    :ensure t
-    :mode ("\\.html\\'" . web-mode)
-    :custom
-    (web-mode-css-indent-offset 2)
-    (web-mode-markup-indent-offset 2)
-    (web-mode-code-indent-offset 2))
+  :ensure t
+  :mode ("\\.html\\'" . web-mode)
+  :custom
+  (web-mode-css-indent-offset 2)
+  (web-mode-markup-indent-offset 2)
+  (web-mode-code-indent-offset 2))
 
 
 ;;

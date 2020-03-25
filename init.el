@@ -1,6 +1,6 @@
 ;;; init.el -- Forge configuration initialization
 
-;; Copyright (C) 2018, 2019 Stephen Fromm
+;; Copyright (C) 2018-2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

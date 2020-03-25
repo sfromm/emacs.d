@@ -1,6 +1,6 @@
 ;;; forge-elfeed.el --- Configure elfeed RSS reader.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018, 2019 Stephen Fromm
+;; Copyright (C) 2018, 2019, 2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 
@@ -22,7 +22,7 @@
 ;;; Code:
 
 (use-package youtube-dl
-    :init (setq youtube-dl-directory "~/annex/Video/youtube"))
+  :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 
 (use-package elfeed
   :ensure elfeed

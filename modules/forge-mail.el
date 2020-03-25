@@ -1,6 +1,6 @@
 ;;; forge-mail.el -- Configure email.  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018, 2019 Stephen Fromm
+;; Copyright (C) 2018-2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

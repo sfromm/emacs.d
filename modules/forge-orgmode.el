@@ -1,6 +1,6 @@
 ;;; forge-orgmode.el --- This is an Emacs Lisp file with Emacs Lisp code. -*- lexical-binding: t -*-
 
-;; Copyright (C) Stephen Fromm
+;; Copyright (C) 2018-2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 

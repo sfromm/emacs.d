@@ -1,6 +1,6 @@
 ;;; notmuch-watcher.el --- Run and watch a notmuch process. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Stephen Fromm
+;; Copyright (C) 2018-2020 Stephen Fromm
 
 ;; Author: Stephen Fromm
 
