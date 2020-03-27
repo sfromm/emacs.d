@@ -160,13 +160,15 @@
 ;;; https://github.com/rnkn/olivetti
 (use-package olivetti
   :ensure t
-  :custom (olivetti-hide-mode-line t)
-  :commands olivetti-mode)
-
-(defun forge-focus ()
-  "Enable features to focus."
-  (interactive)
-  (olivetti-mode))
+  :custom
+  (olivetti-hide-mode-line t)
+  (olivetti-body-width 80)
+  :commands olivetti-mode
+  :preface
+  (defun forge-focus ()
+    "Enable features to focus."
+    (interactive)
+    (olivetti-mode)))
 
 
 ;;;
