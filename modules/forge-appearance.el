@@ -121,7 +121,7 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'darktooth))
+  (setq forge-theme 'doom-darktooth))
 
 (use-package zenburn-theme
   :defer t
@@ -140,15 +140,6 @@
   :config
   (doom-themes-org-config))
 
-(use-package darktooth-theme
-  :custom
-  (darktooth-headings-use-variable-pitch t)
-  (darktooth-headings-highlight t)
-  (darktooth-headings-scale t)
-  :quelpa
-  ((darktooth-theme :fetcher github
-                    :repo "sfromm/emacs-theme-darktooth")
-   :upgrade t))
 
 
 ;;;
