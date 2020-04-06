@@ -33,6 +33,9 @@
 (defvar forge-personal-dir (concat forge-emacs-dir "user/")
   "Path to user's personal configuration.")
 
+(defvar forge-themes-dir (concat forge-emacs-dir "themes/")
+  "Path to user themes.")
+
 (defvar forge-state-dir (concat forge-emacs-dir "var/")
   "Path to Emacs' persistent data files.")
 
@@ -48,6 +51,7 @@
 
 (add-to-list 'load-path forge-modules-dir)
 (add-to-list 'load-path forge-site-dir)
+(add-to-list 'custom-theme-load-path forge-themes-dir)
 
 
 ;;;
