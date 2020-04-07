@@ -10,14 +10,17 @@ ifeq ($(OS),Linux)
 endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
-    PKGMGR = brew cask install
-    PKG = emacs
+    PKGMGR = brew install
+    PKG = emacs-plus
     PKGFLAGS =
     FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-symbola
 endif
 
 install: fonts
 	$(PKGMGR) $(PKG) $(PKGFLAGS)
+
+tap:
+	brew tap d12frosted/$(PKG)
 
 bootstrap:
 	$(EMACS) -f "forge/bootstrap-packages"
