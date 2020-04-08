@@ -187,6 +187,7 @@
         twittering-use-icon-storage t
         twittering-timer-interval 300
         twittering-number-of-tweets-on-retrieval 80
+        twittering-initial-timeline-spec-string '("#emacs" ":home")
         twittering-icon-storage-file (concat forge-state-dir "twittering/icons.gz")
         twittering-user-id-db-file (concat forge-state-dir "twittering/user-id-info.gz")
         twittering-private-info-file (concat forge-state-dir "twittering/private.gpg")))
