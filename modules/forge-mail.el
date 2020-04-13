@@ -109,144 +109,143 @@
   "Path to Fcc mail.")
 
 (use-package notmuch
-    :commands (notmuch)
-    :bind
-    (:map notmuch-search-mode-map
-          ("y" . notmuch-search-archive-thread)
-          ("S-SPC" . notmuch-search-scroll-down))
-    (:map notmuch-show-mode-map
-          ("y" . notmuch-show-archive-message-then-next-or-next-thread)
-          ("Y" . notmuch-show-archive-thread-then-next)
-          ("S-SPC" . notmuch-show-rewind))
-    (:map notmuch-show-part-map
-          ("c" . forge/notmuch-show-calendar-invite))
+  :commands (notmuch)
+  :bind
+  (:map notmuch-search-mode-map
+        ("y" . notmuch-search-archive-thread)
+        ("S-SPC" . notmuch-search-scroll-down))
+  (:map notmuch-show-mode-map
+        ("y" . notmuch-show-archive-message-then-next-or-next-thread)
+        ("Y" . notmuch-show-archive-thread-then-next)
+        ("S-SPC" . notmuch-show-rewind))
+  (:map notmuch-show-part-map
+        ("c" . forge/notmuch-show-calendar-invite))
 
-    :init
-    (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-    (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk")
-          notmuch-crypto-process-mime t
-          notmuch-fcc-dirs forge-fcc-dirs
-          notmuch-hello-thousands-separator ","
-          notmuch-search-oldest-first nil
-          notmuch-show-part-button-default-action 'notmuch-show-view-part
-          notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
-                                   (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
-                                   (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
-                                   (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
-                                   (:name "7 days"          :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
-                                   (:name "This week"       :key "y" :query "date:7d..1d and ( tag:inbox or tag:unread )")
-                                   (:name "This month"      :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")
-                                   (:name "Old messages"    :key "o" :query "date:..1M and ( tag:inbox or tag:bulk or tag:unread ) ")
-                                   (:name "Needs attention" :key "!" :query "tag:inbox and ( tag:abuse or tag:flagged )")
-                                   (:name "Sent"            :key "s" :query "tag:sent")
-                                   (:name "Attachments"     :key "A" :query "tag:attachment")
-                                   (:name "Bulk"            :key "B" :query "tag:bulk")
-                                   (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")))
+  :init
+  (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
+  (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk")
+        notmuch-crypto-process-mime t
+        notmuch-fcc-dirs forge-fcc-dirs
+        notmuch-hello-thousands-separator ","
+        notmuch-search-oldest-first nil
+        notmuch-show-part-button-default-action 'notmuch-show-view-part
+        notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
+                                 (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
+                                 (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                 (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
+                                 (:name "Last 7 days"     :key "7" :query "date:7d..1d and ( tag:inbox or tag:unread )")
+                                 (:name "Last 30 days"    :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")
+                                 (:name "Old messages"    :key "o" :query "date:..1M and ( tag:inbox or tag:bulk or tag:unread ) ")
+                                 (:name "Needs attention" :key "!" :query "tag:inbox and ( tag:abuse or tag:flagged )")
+                                 (:name "Sent"            :key "s" :query "tag:sent")
+                                 (:name "Attachments"     :key "A" :query "tag:attachment")
+                                 (:name "Bulk"            :key "B" :query "tag:bulk")
+                                 (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar")))
 
-    :config
-    (defmacro forge-notmuch-show-tag (tags)
-      "Macro to take list of tags and apply to query."
-      `(progn
-         (notmuch-show-add-tag ,tags)
-         (unless (notmuch-show-next-open-message)
-           (notmuch-show-next-thread t))))
+  :config
+  (defmacro forge-notmuch-show-tag (tags)
+    "Macro to take list of tags and apply to query."
+    `(progn
+       (notmuch-show-add-tag ,tags)
+       (unless (notmuch-show-next-open-message)
+         (notmuch-show-next-thread t))))
 
-    (defmacro forge-notmuch-search-tag (tags)
-      "Macro to take list of tags and apply to query."
-      `(progn
-         (notmuch-search-tag ,tags)
-         (notmuch-search-next-thread)))
+  (defmacro forge-notmuch-search-tag (tags)
+    "Macro to take list of tags and apply to query."
+    `(progn
+       (notmuch-search-tag ,tags)
+       (notmuch-search-next-thread)))
 
-    (defmacro forge-notmuch-show-toggle-tag (tag)
-      "Macro to toggle presence of tag for query."
-      `(progn
-         (if (member ,tag (notmuch-show-get-tags))
-             (notmuch-show-remove-tag (list (concat "-" ,tag)))
-           (notmuch-show-add-tag (list (concat "+" ,tag))))))
+  (defmacro forge-notmuch-show-toggle-tag (tag)
+    "Macro to toggle presence of tag for query."
+    `(progn
+       (if (member ,tag (notmuch-show-get-tags))
+           (notmuch-show-remove-tag (list (concat "-" ,tag)))
+         (notmuch-show-add-tag (list (concat "+" ,tag))))))
 
-    (defmacro forge-notmuch-search-toggle-tag (tag)
-      "Macro to toggle presence of tag for query."
-      `(progn
-         (if (member ,tag (notmuch-search-get-tags))
-             (notmuch-search-tag (list (concat "-" ,tag)))
-           (notmuch-search-tag (list (concat "+" ,tag))))))
+  (defmacro forge-notmuch-search-toggle-tag (tag)
+    "Macro to toggle presence of tag for query."
+    `(progn
+       (if (member ,tag (notmuch-search-get-tags))
+           (notmuch-search-tag (list (concat "-" ,tag)))
+         (notmuch-search-tag (list (concat "+" ,tag))))))
 
-    (define-key notmuch-show-mode-map (kbd "d")
-      (lambda ()
-        "mark message for trash"
-        (interactive)
-        (forge-notmuch-show-tag (list "+trash" "-inbox" "-unread" "-archive"))))
+  (define-key notmuch-show-mode-map (kbd "d")
+    (lambda ()
+      "mark message for trash"
+      (interactive)
+      (forge-notmuch-show-tag (list "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-search-mode-map (kbd "d")
-      (lambda ()
-        "mark thread for trash"
-        (interactive)
-        (forge-notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))))
+  (define-key notmuch-search-mode-map (kbd "d")
+    (lambda ()
+      "mark thread for trash"
+      (interactive)
+      (forge-notmuch-search-tag (list "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-show-mode-map (kbd "I")
-      (lambda ()
-        "mark message for inbox and delete trash, if present."
-        (interactive)
-        (forge-notmuch-show-tag (list "-trash" "+inbox"))))
+  (define-key notmuch-show-mode-map (kbd "I")
+    (lambda ()
+      "mark message for inbox and delete trash, if present."
+      (interactive)
+      (forge-notmuch-show-tag (list "-trash" "+inbox"))))
 
-    (define-key notmuch-search-mode-map (kbd "I")
-      (lambda ()
-        "mark message for inbox and delete trash tag, if present."
-        (interactive)
-        (forge-notmuch-search-tag (list "-trash" "+inbox"))))
+  (define-key notmuch-search-mode-map (kbd "I")
+    (lambda ()
+      "mark message for inbox and delete trash tag, if present."
+      (interactive)
+      (forge-notmuch-search-tag (list "-trash" "+inbox"))))
 
-    (define-key notmuch-show-mode-map (kbd "J")
-      (lambda ()
-        "mark message as junk"
-        (interactive)
-        (forge-notmuch-show-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))))
+  (define-key notmuch-show-mode-map (kbd "J")
+    (lambda ()
+      "mark message as junk"
+      (interactive)
+      (forge-notmuch-show-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-search-mode-map (kbd "J")
-      (lambda ()
-        "mark thread as junk"
-        (interactive)
-        (forge-notmuch-search-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))))
+  (define-key notmuch-search-mode-map (kbd "J")
+    (lambda ()
+      "mark thread as junk"
+      (interactive)
+      (forge-notmuch-search-tag (list "+bulk" "+trash" "-inbox" "-unread" "-archive"))))
 
-    (define-key notmuch-show-mode-map (kbd "F")
-      (lambda ()
-        "toggle message as flagged"
-        (interactive)
-        (forge-notmuch-show-toggle-tag "flagged")))
+  (define-key notmuch-show-mode-map (kbd "F")
+    (lambda ()
+      "toggle message as flagged"
+      (interactive)
+      (forge-notmuch-show-toggle-tag "flagged")))
 
-    (define-key notmuch-search-mode-map (kbd "F")
-      (lambda ()
-        "toggle thread as flagged"
-        (interactive)
-        (forge-notmuch-search-toggle-tag "flagged")))
+  (define-key notmuch-search-mode-map (kbd "F")
+    (lambda ()
+      "toggle thread as flagged"
+      (interactive)
+      (forge-notmuch-search-toggle-tag "flagged")))
 
-    (define-key notmuch-show-mode-map (kbd "M")
-      (lambda ()
-        "toggle message as muted"
-        (interactive)
-        (forge-notmuch-show-toggle-tag "mute")))
+  (define-key notmuch-show-mode-map (kbd "M")
+    (lambda ()
+      "toggle message as muted"
+      (interactive)
+      (forge-notmuch-show-toggle-tag "mute")))
 
-    (define-key notmuch-search-mode-map (kbd "Y")
-      (lambda ()
-        "Archive all messages in search results."
-        (interactive)
-        (call-interactively 'mark-whole-buffer)
-        (notmuch-search-archive-thread)))
+  (define-key notmuch-search-mode-map (kbd "Y")
+    (lambda ()
+      "Archive all messages in search results."
+      (interactive)
+      (call-interactively 'mark-whole-buffer)
+      (notmuch-search-archive-thread)))
 
-    (define-key notmuch-search-mode-map (kbd "M")
-      (lambda ()
-        "toggle thread as muted"
-        (interactive)
-        (forge-notmuch-search-toggle-tag "mute")))
+  (define-key notmuch-search-mode-map (kbd "M")
+    (lambda ()
+      "toggle thread as muted"
+      (interactive)
+      (forge-notmuch-search-toggle-tag "mute")))
 
-    (define-key notmuch-show-mode-map (kbd "b")
-      (lambda (&optional address)
-        "Bounce the current message"
-        (interactive "sBounce to: ")
-        (notmuch-show-view-raw-message)
-        (message-resend address)))
+  (define-key notmuch-show-mode-map (kbd "b")
+    (lambda (&optional address)
+      "Bounce the current message"
+      (interactive "sBounce to: ")
+      (notmuch-show-view-raw-message)
+      (message-resend address)))
 
-    (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
-    (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer))
+  (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
+  (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer))
 
 
 ;;;
