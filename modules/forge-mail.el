@@ -67,22 +67,22 @@
 ;;; SMTP
 ;;;
 (use-package smtpmail
-    :defer t
-    :disabled t
-    :config
-    (setq smtpmail-stream-type 'ssl
-          smtpmail-default-smtp-server forge-smtp-server-work
-          smtpmail-smtp-server forge-smtp-server-work
-          smtpmail-smtp-service 465
-          smtpmail-smtp-user forge-smtp-user-work
-          smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
+  :defer t
+  :disabled t
+  :config
+  (setq smtpmail-stream-type 'ssl
+        smtpmail-default-smtp-server forge-smtp-server-work
+        smtpmail-smtp-server forge-smtp-server-work
+        smtpmail-smtp-service 465
+        smtpmail-smtp-user forge-smtp-user-work
+        smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
 
 (use-package sendmail
-    :defer t
-    :custom
-    (mail-specify-envelope-from t)
-    (mail-envelope-from 'header)
-    (sendmail-program (executable-find "smtpmail.py")))
+  :defer t
+  :custom
+  (mail-specify-envelope-from t)
+  (mail-envelope-from 'header)
+  (sendmail-program (executable-find "smtpmail.py")))
 
 
 
@@ -432,13 +432,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :group 'forge)
 
 (use-package gnus-alias
-    :ensure t
-    :custom
-    (gnus-alias-default-identity "work")
-    :hook (message-setup . gnus-alias-determine-identity)
-    :init
-    (setq gnus-alias-identity-alist forge-gnus-alias-identity
-          gnus-alias-identity-rules forge-gnus-alias-identity-rules))
+  :ensure t
+  :custom
+  (gnus-alias-default-identity "work")
+  :hook (message-setup . gnus-alias-determine-identity)
+  :init
+  (setq gnus-alias-identity-alist forge-gnus-alias-identity
+        gnus-alias-identity-rules forge-gnus-alias-identity-rules))
 
 
 ;;;
@@ -447,10 +447,10 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 ;;; http://gnus.org/manual/gnus_129.html
 ;;;
 (use-package gnus-dired
-    :defer t
-    :hook (dired-mode . turn-on-gnus-dired-mode)
-    :init
-    (setq gnus-dired-mail-mode 'notmuch-user-agent))
+  :defer t
+  :hook (dired-mode . turn-on-gnus-dired-mode)
+  :init
+  (setq gnus-dired-mail-mode 'notmuch-user-agent))
 
 (provide 'forge-mail)
 ;;; forge-mail.el ends here
