@@ -31,21 +31,31 @@
   (web-mode-code-indent-offset 2))
 
 
-;;
-;; restclient
-;; https://github.com/pashky/restclient.el
-;;
+;;;
+;;; restclient
+;;; https://github.com/pashky/restclient.el
 (use-package restclient
-    :ensure t
-    :defer t)
+  :ensure t
+  :defer t)
 
-;;
-;; request
-;; https://github.com/tkf/emacs-request/
-;;
+;;;
+;;; request
+;;; https://github.com/tkf/emacs-request/
 (use-package request
-    :ensure t
-    :defer t)
+  :ensure t
+  :defer t)
+
+
+;;;
+;;; eww
+;;; https://www.gnu.org/software/emacs/manual/html_mono/eww.html
+(use-package eww
+  :defer t
+  :bind (:map eww-mode-map
+              ("j" . next-line)
+              ("k" . previous-line))
+  :hook ((eww-mode . (lambda () (url-cookie-delete-cookies nil)))
+         (eww-mode . olivetti-mode)))
 
 
 (provide 'forge-web)
