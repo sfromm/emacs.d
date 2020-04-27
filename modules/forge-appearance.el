@@ -189,6 +189,7 @@
 ;;
 (use-package nyan-mode
   :ensure t
+  :disabled t
   :defer t
   :hook (doom-modeline-mode . nyan-mode))
 
