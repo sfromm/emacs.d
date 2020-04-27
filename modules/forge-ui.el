@@ -35,6 +35,7 @@
 ;;; https://github.com/justbur/emacs-which-key
 (use-package which-key
   :ensure t
+  :custom (which-key-idle-delay 1.5)
   :defer 5
   :diminish
   :commands which-key-mode
