@@ -1,39 +1,39 @@
-;;; doom-lighttooth-theme.el --- inspired by Darktooth -*- no-byte-compile: t; -*-
+;;; doom-filbert-light-theme.el --- attempt at a light version of darktooth -*- no-byte-compile: t; -*-
 (require 'doom-themes)
 
-(defgroup doom-lighttooth-theme nil
+(defgroup doom-filbert-light-theme nil
   "Options for doom-themes"
   :group 'doom-themes)
 
-(defcustom doom-lighttooth-brighter-modeline nil
+(defcustom doom-filbert-light-brighter-modeline nil
   "If non-nil, more vivid colors will be used to style the mode-line."
-  :group 'doom-lighttooth-theme
+  :group 'doom-filbert-light-theme
   :type 'boolean)
 
-(defcustom doom-lighttooth-brighter-comments nil
+(defcustom doom-filbert-light-brighter-comments nil
   "If non-nil, comments will be highlighted in more vivid colors."
-  :group 'doom-lighttooth-theme
+  :group 'doom-filbert-light-theme
   :type 'boolean)
 
-(defcustom doom-lighttooth-comment-bg doom-lighttooth-brighter-comments
+(defcustom doom-filbert-light-comment-bg doom-filbert-light-brighter-comments
   "If non-nil, comments will have a subtle, darker background. Enhancing their
 legibility."
-  :group 'doom-lighttooth-theme
+  :group 'doom-filbert-light-theme
   :type 'boolean)
 
-(defcustom doom-lighttooth-padded-modeline doom-themes-padded-modeline
+(defcustom doom-filbert-light-padded-modeline doom-themes-padded-modeline
   "If non-nil, adds a 4px padding to the mode-line. Can be an integer to
 determine the exact padding."
-  :group 'doom-lighttooth-theme
+  :group 'doom-filbert-light-theme
   :type '(choice integer boolean))
 
 ;;
-(def-doom-theme doom-lighttooth
+(def-doom-theme doom-filbert-light
   "A light theme inspired by Darktooth"
 
   ;; name        default   256       16
-  ((bg         '("#fdf4c1" "#ffffaf" "brightwhite"  ))
-   (bg-alt     '("#ebd8b2" "#ffdfaf" "white"        ))
+  ((bg         '("#fefcef" "#ffffaf" "brightwhite"  ))
+   (bg-alt     '("#fef9e0" "#ffdfaf" "white"        ))
    (base0      '("#d5c4a1" "#bcbcbc" "white"        ))
    (base1      '("#bdae93" "#a8a8a8" "white"  ))
    (base2      '("#a89984" "#949494" "brightblack"  ))
@@ -50,49 +50,65 @@ determine the exact padding."
    (red        '("#FB4934" "#D75F5F" "red"          ))
    (orange     '("#FE8019" "#FF8700" "brightred"    ))
    (yellow     '("#FABD2F" "#FFAF00" "yellow"       ))
-   (green      '("#556C21" "#878700" "green"        ))
+   (green      '("#b8bb26" "#73af00" "green"        ))
    (teal       '("#8ec07c" "#87af87" "brightgreen"  ))
    (blue       '("#83A598" "#87AFAF" "brightblue"   ))
    (magenta    '("#D3879B" "#d787af" "brightmagenta"))
    (violet     '("#D3869B" "#D787AF" "magenta"      ))
-   (cyan       '("#18a7af" "#18a7af" "brightcyan"   ))
-   (dark-blue  '("#076678" "#005f87" "blue"         ))
-   (dark-cyan  '("#205161" "#205161" "cyan"         ))
+   (cyan       '("#3fd7e5" "#00d7ff" "brightcyan"   ))
 
-   (faded-red    '("#9D0006" "#870000" nil          ))
-   (faded-orange '("#AF3A03" "#af5f00" sienna       ))
-   (faded-yellow '("#B57614" "#af8700" nil          ))
-   (faded-green  '("#79740E" "#878700" nil          ))
-   (faded-teal   '("#427B58" "#5f8787" nil          ))
-   (faded-blue   '("#076678" "#005f87" nil          ))
-   (faded-purple '("#8F3F71" "#875f87" nil          ))
-   (faded-cyan   '("#00A7AF" "#00afaf" nil          ))
+   (bright-red      '("#FB4933" "#d75f5f" nil ))
+   (bright-orange   '("#FE8019" "#ff8700" nil ))
+   (bright-yellow   '("#FABD2F" "#ffaf00" nil ))
+   (bright-green    '("#B8BB26" "#afaf00" nil ))
+   (bright-teal     '("#8EC07C" "#87af87" nil ))
+   (bright-blue     '("#83A598" "#87afaf" nil ))
+   (bright-purple   '("#D3869B" "#d787af" nil ))
+   (bright-cyan     '("#3FD7E5" "#00d7ff" nil ))
 
-   (muted-red    '("#901A1E" "#870000" nil          ))
-   (muted-orange '("#A24921" "#af5f00" nil          ))
-   (muted-yellow '("#A87933" "#af8700" nil          ))
-   (muted-green  '("#556C21" "#878700" nil          ))
-   (muted-teal   '("#506E59" "#5f8787" nil          ))
-   (muted-blue   '("#1B5C6B" "#005f87" nil          ))
-   (muted-purple '("#82526E" "#875f87" nil          ))
-   (muted-cyan   '("#18A7AF" "#00afaf" nil          ))
+   (neutral-red     '("#FB4934" "#D75F5F" nil ))
+   (neutral-orange  '("#FE8019" "#FF8700" nil ))
+   (neutral-yellow  '("#FABD2F" "#FFAF00" nil ))
+   (neutral-green   '("#B8BB26" "#73AF00" nil ))
+   (neutral-teal    '("#8EC07C" "#87AF87" nil ))
+   (neutral-blue    '("#83A598" "#87AFAF" nil ))
+   (neutral-purple  '("#D3869B" "#D787AF" nil ))
+   (neutral-cyan    '("#17CCD5" "#17CCD5" nil ))
 
-   (dark-red     '("#421E1E" "#5f0000" nil          ))
-   (dark-orange  '("#613620" "#af5f00" nil          ))
-   (dark-yellow  '("#4D3B27" "#5f5f00" nil          ))
-   (dark-green   '("#232B0F" "#005f00" nil          ))
-   (dark-teal    '("#36473A" "#005f5f" nil          ))
-   (dark-blue    '("#2B3C44" "#00005f" nil          ))
-   (dark-purple  '("#4E3D45" "#5f00af" nil          ))
-   (dark-cyan    '("#205161" "#005f87" nil          ))
+   (faded-red       '("#9D0006" "#870000" nil ))
+   (faded-orange    '("#AF3A03" "#af5f00" sienna ))
+   (faded-yellow    '("#B57614" "#af8700" nil    ))
+   (faded-green     '("#79740E" "#878700" nil    ))
+   (faded-teal      '("#427B58" "#5f8787" nil    ))
+   (faded-blue      '("#076678" "#005f87" nil    ))
+   (faded-purple    '("#8F3F71" "#875f87" nil    ))
+   (faded-cyan      '("#00A7AF" "#00afaf" nil    ))
+
+   (muted-red       '("#901A1E" "#870000" nil    ))
+   (muted-orange    '("#A24921" "#af5f00" nil    ))
+   (muted-yellow    '("#A87933" "#af8700" nil    ))
+   (muted-green     '("#556C21" "#878700" nil    ))
+   (muted-teal      '("#506E59" "#5f8787" nil    ))
+   (muted-blue      '("#1B5C6B" "#005f87" nil    ))
+   (muted-purple    '("#82526E" "#875f87" nil    ))
+   (muted-cyan      '("#18A7AF" "#00afaf" nil    ))
+
+   (dark-red        '("#421E1E" "#5f0000" nil    ))
+   (dark-orange     '("#613620" "#af5f00" nil    ))
+   (dark-yellow     '("#4D3B27" "#5f5f00" nil    ))
+   (dark-green      '("#232B0F" "#005f00" nil    ))
+   (dark-teal       '("#36473A" "#005f5f" nil    ))
+   (dark-blue       '("#2B3C44" "#00005f" nil    ))
+   (dark-purple     '("#4E3D45" "#5f00af" nil    ))
+   (dark-cyan       '("#205161" "#005f87" nil    ))
 
    ;; face categories -- required for all themes
    (highlight      cyan)
    (vertical-bar   (doom-darken bg 0.25))
-   (selection      faded-blue)
+   (selection      neutral-blue)
    (builtin        orange)
-   (comments       (if doom-lighttooth-brighter-comments muted-cyan base5))
-   (doc-comments   (doom-lighten (if doom-lighttooth-brighter-comments muted-cyan base5) 0.25))
+   (comments       (if doom-filbert-light-brighter-comments muted-cyan base5))
+   (doc-comments   (doom-lighten (if doom-filbert-light-brighter-comments muted-cyan base5) 0.25))
    (constants      base5)
    (functions      blue)
    (keywords       orange)
@@ -112,10 +128,10 @@ determine the exact padding."
 
    ;; custom categories
    (hidden     `(,(car bg-alt) "black" "black"))
-   (-modeline-bright doom-lighttooth-brighter-modeline)
+   (-modeline-bright doom-filbert-light-brighter-modeline)
    (-modeline-pad
-    (when doom-lighttooth-padded-modeline
-      (if (integerp doom-lighttooth-padded-modeline) doom-lighttooth-padded-modeline 4)))
+    (when doom-filbert-light-padded-modeline
+      (if (integerp doom-filbert-light-padded-modeline) doom-filbert-light-padded-modeline 4)))
 
 
    ;; --- Modeline config -------------------
@@ -142,7 +158,7 @@ determine the exact padding."
 
    (font-lock-comment-face
     :foreground comments
-    :background (if doom-lighttooth-comment-bg (doom-lighten bg 0.05)))
+    :background (if doom-filbert-light-comment-bg (doom-lighten bg 0.05)))
    (font-lock-doc-face
     :inherit 'font-lock-comment-face
     :foreground doc-comments)
@@ -180,6 +196,10 @@ determine the exact padding."
 
    ;; eshell
    (eshell-prompt            :foreground orange :weight 'bold)
+
+   ;; magit
+   (magit-section-heading    :foreground base2 :background dark_blue)
+   (magit-diff-hunk-heading-highlight :background orange)
 
    ;; markdown-mode
    (markdown-markup-face :foreground base5)
@@ -220,4 +240,4 @@ determine the exact padding."
 ;; Local Variables:
 ;; eval: (when (require 'rainbow-mode nil t) (rainbow-mode 1))
 ;; End:
-;;; doom-lighttooth-theme.el ends here
+;;; doom-filbert-light-theme.el ends here
