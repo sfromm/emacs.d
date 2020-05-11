@@ -179,7 +179,7 @@
   :ensure t
   :custom
   (doom-modeline-github nil "Disable github integration")
-  (doom-modeline-buffer-file-name-style 'relative-from-project)
+  (doom-modeline-buffer-file-name-style 'buffer-name)
   (doom-modeline-lsp nil "Disable integration with lsp")
   :hook
   (doom-modeline-mode . column-number-mode)
