@@ -45,6 +45,12 @@
             (org-table-export (format "%s.csv" name) "orgtbl-to-csv"))))
     (pop-mark))
 
+  (defun forge/org-fixed-font-faces ()
+    "Keep the following with fixed-pitch fonts."
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
+
   (defun forge/tangle-org-mode-on-save ()
     "Tangle org-mode file when saving."
     (when (string= (message "%s" major-mode) "org-mode")
@@ -216,10 +222,7 @@
                                                            (shell . t)
                                                            (calc . t)))
 
-  ;; Keep tables with a fixed-pitch font.
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+  (forge/org-fixed-font-faces)
   (org-load-modules-maybe t))
 
 
