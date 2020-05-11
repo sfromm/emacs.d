@@ -55,7 +55,7 @@ determine the exact padding."
    (blue       '("#83A598" "#87AFAF" "brightblue"   ))
    (magenta    '("#D3879B" "#d787af" "brightmagenta"))
    (violet     '("#D3869B" "#D787AF" "magenta"      ))
-   (cyan       '("#3fd7e5" "#00d7ff" "brightcyan"   ))
+   (cyan       '("#3FD7E5" "#00d7ff" "brightcyan"   ))
 
    (bright-red      '("#FB4933" "#d75f5f" nil ))
    (bright-orange   '("#FE8019" "#ff8700" nil ))
@@ -198,7 +198,6 @@ determine the exact padding."
    (eshell-prompt            :foreground orange :weight 'bold)
 
    ;; magit
-   (magit-section-heading    :foreground base2 :background dark_blue)
    (magit-diff-hunk-heading-highlight :background orange)
 
    ;; markdown-mode
