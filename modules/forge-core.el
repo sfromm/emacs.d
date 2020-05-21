@@ -156,6 +156,21 @@
           (require module nil t)
           (forge/message-module-load module t1))))))
 
+;; Via jwiegley
+;; https://github.com/jwiegley/dot-emacs/blob/master/init.el
+(defun lookup-password (host user port)
+  "Look up password for HOST, USER, and PORT."
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
 ;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
 (defun forge/enable-copyright-update ()
   "Update copyright year when saving a file."
