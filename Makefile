@@ -13,7 +13,7 @@ ifeq ($(OS),Darwin)
     PKGMGR = brew install
     PKG = emacs-plus
     PKGFLAGS =
-    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-symbola
+    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-symbola font-victor-mono
 endif
 
 install: fonts
