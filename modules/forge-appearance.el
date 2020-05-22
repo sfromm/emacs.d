@@ -24,7 +24,7 @@
 ;;;
 ;;; Fonts
 ;;;
-(defcustom forge-font "Hack"
+(defcustom forge-font "Fira Code"
   "Preferred default font."
   :type 'string
   :group 'forge)
@@ -121,43 +121,44 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'doom-darktooth))
+  (setq forge-theme 'solarized-zenburn))
 
 (use-package zenburn-theme
   :defer t
+  :disabled t
   :custom
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t)
   :config
   (zenburn-with-color-variables
-    (custom-set-faces
-     ;; elfeed
-     `(elfeed-search-date-face ((t (:foreground ,zenburn-orange))))
-     `(elfeed-search-feed-face ((t (:foreground ,zenburn-yellow))))
-     `(elfeed-search-tag-face ((t (:foreground ,zenburn-fg+2))))
-     `(elfeed-search-title-face ((t (:foreground ,zenburn-fg))))
-     `(elfeed-search-unread-count-face ((t (:foreground ,zenburn-cyan :bold nil))))
-     `(elfeed-search-unread-title-face ((t (:foreground ,zenburn-fg+2 :bold nil))))
-     ;; notmuch
-     '(notmuch-hello-logo-background ((t (:inherit 'default))))
-     `(notmuch-message-summary-face ((t (:foreground ,zenburn-fg :background ,zenburn-bg-2 :weight bold))))
-     `(notmuch-search-count ((t (:inherit 'default))))
-     `(notmuch-search-date ((t (:inherit 'default))))
-     `(notmuch-search-matching-authors ((t (:inherit 'default))))
-     `(notmuch-search-non-matching-authors ((t (:inherit 'default))))
-     `(notmuch-search-subject ((t (:inherit 'default))))
-     `(notmuch-search-unread-face ((t (:weight bold))))
-     `(notmuch-search-flagged-face ((t (:foreground ,zenburn-blue))))
-     `(notmuch-tag-added ((t (:underline ,zenburn-green))))
-     `(notmuch-tag-deleted ((t (:strike-through ,zenburn-red))))
-     `(notmuch-tag-face ((t (:foreground ,zenburn-yellow))))
-     `(notmuch-tag-flagged ((t (:foreground ,zenburn-blue))))
-     `(notmuch-tag-unread ((t (:foreground ,zenburn-red))))
-     `(notmuch-tree-match-author-face ((t (:foreground ,zenburn-blue))))
-     `(notmuch-tree-match-date-face ((t (:foreground ,zenburn-yellow))))
-     `(notmuch-tree-match-tag-face ((t (:foreground ,zenburn-cyan))))
-     `(notmuch-tree-no-match-face ((t (:inherit font-lock-comment-face))))
-     )))
+   (custom-set-faces
+    ;; elfeed
+    `(elfeed-search-date-face ((t (:foreground ,zenburn-orange))))
+    `(elfeed-search-feed-face ((t (:foreground ,zenburn-yellow))))
+    `(elfeed-search-tag-face ((t (:foreground ,zenburn-fg+2))))
+    `(elfeed-search-title-face ((t (:foreground ,zenburn-fg))))
+    `(elfeed-search-unread-count-face ((t (:foreground ,zenburn-cyan :bold nil))))
+    `(elfeed-search-unread-title-face ((t (:foreground ,zenburn-fg+2 :bold nil))))
+    ;; notmuch
+    '(notmuch-hello-logo-background ((t (:inherit 'default))))
+    `(notmuch-message-summary-face ((t (:foreground ,zenburn-fg :background ,zenburn-bg-2 :weight bold))))
+    `(notmuch-search-count ((t (:inherit 'default))))
+    `(notmuch-search-date ((t (:inherit 'default))))
+    `(notmuch-search-matching-authors ((t (:inherit 'default))))
+    `(notmuch-search-non-matching-authors ((t (:inherit 'default))))
+    `(notmuch-search-subject ((t (:inherit 'default))))
+    `(notmuch-search-unread-face ((t (:weight bold))))
+    `(notmuch-search-flagged-face ((t (:foreground ,zenburn-blue))))
+    `(notmuch-tag-added ((t (:underline ,zenburn-green))))
+    `(notmuch-tag-deleted ((t (:strike-through ,zenburn-red))))
+    `(notmuch-tag-face ((t (:foreground ,zenburn-yellow))))
+    `(notmuch-tag-flagged ((t (:foreground ,zenburn-blue))))
+    `(notmuch-tag-unread ((t (:foreground ,zenburn-red))))
+    `(notmuch-tree-match-author-face ((t (:foreground ,zenburn-blue))))
+    `(notmuch-tree-match-date-face ((t (:foreground ,zenburn-yellow))))
+    `(notmuch-tree-match-tag-face ((t (:foreground ,zenburn-cyan))))
+    `(notmuch-tree-no-match-face ((t (:inherit font-lock-comment-face))))
+    )))
 
 (use-package solarized-theme
   :defer t
