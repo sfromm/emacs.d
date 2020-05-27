@@ -117,6 +117,33 @@
 
 
 ;;;
+;;; lorem-ipsum
+;;; https://github.com/jschaf/emacs-lorem-ipsum
+(use-package lorem-ipsum :defer t)
+
+
+;;;
+;;; go-jira  (https://github.com/go-jira/jira)
+;;; This is based on jwiegely's init.el.  Not an actual emacs package.
+(use-package go-jira
+  :no-require t
+  :init
+  (defvar jira-token nil)
+  (defun jira-create ()
+    "Create a ticket in Jira."
+    (interactive)
+    (unless jira-token
+      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
+    (setenv "JIRA_API_TOKEN" jira-token)
+    (require 'with-editor)
+    (start-process "go-jira" (get-buffer-create " *go-jira*")
+                   "jira" "create" "-b"
+                   "--editor"
+                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
+
+
+
+;;;
 ;;; Twitter
 ;;; Don't install by default, but provide a configuration.
 ;;; The org capture and integration is from:
