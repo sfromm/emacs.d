@@ -74,6 +74,12 @@
         recentf-max-menu-items 500
         recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "/tmp" "/ssh:")))
 
+
+;;;
+;;; with-editor
+;;; https://github.com/magit/with-editor
+(use-package with-editor   :defer t)
+
 ;;;
 ;;; uniquify
 ;;; Make buffer names legible
