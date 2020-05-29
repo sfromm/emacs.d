@@ -121,7 +121,7 @@
   :group 'forge)
 
 (unless forge-theme
-  (setq forge-theme 'solarized-zenburn))
+  (setq forge-theme 'solarized-wombat))
 
 (use-package zenburn-theme
   :defer t
