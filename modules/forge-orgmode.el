@@ -47,6 +47,7 @@
 
   (defun forge/org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
+    (interactive)
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
