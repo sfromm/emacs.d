@@ -13,10 +13,10 @@ ifeq ($(OS),Darwin)
     PKGMGR = brew install
     PKG = emacs-plus
     PKGFLAGS =
-    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-symbola font-victor-mono
+    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono
 endif
 
-install: fonts
+install: tap
 	$(PKGMGR) $(PKG) $(PKGFLAGS)
 
 tap:
@@ -35,6 +35,6 @@ fonts:
 	test -x /usr/local/bin/brew && brew tap homebrew/cask-fonts || true
 	$(PKGMGR) $(FONTS)
 
-all: install bootstrap
+all: fonts install bootstrap
 
-.PHONY: all install bootstrap update fonts
+.PHONY: all install tap bootstrap update upgrade fonts
