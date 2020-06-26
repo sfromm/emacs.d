@@ -33,7 +33,7 @@ upgrade: update
 
 fonts:
 	test -x /usr/local/bin/brew && brew tap homebrew/cask-fonts || true
-	$(PKGMGR) $(FONTS)
+	test -x /usr/local/bin/brew && brew cask install $(FONTS) || $(PKGMGR) $(FONTS)
 
 all: fonts install bootstrap
 
