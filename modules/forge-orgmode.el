@@ -174,7 +174,7 @@
   (setq org-capture-templates '(("l" "Log" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
 
                                 ("M" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
-                                 "* MEETING %? :MEETING:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+                                 "* MEETING %? \n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
 
                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %?\n%U\n" :clock-in t :clock-resume t)
@@ -183,7 +183,7 @@
                                  "* %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
                                 ("r" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
-                                 "* REFERENCE %? %a\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
+                                 "* REFERENCE %a %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
 
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
