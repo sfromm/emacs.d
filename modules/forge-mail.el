@@ -82,7 +82,7 @@
   :custom
   (mail-specify-envelope-from t)
   (mail-envelope-from 'header)
-  (sendmail-program (executable-find "smtpmail.py")))
+  (sendmail-program (executable-find "sendmail.py")))
 
 
 
