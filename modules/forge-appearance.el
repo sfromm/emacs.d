@@ -242,6 +242,8 @@
   (when forge-theme
     (load-theme forge-theme t))
   (when (display-graphic-p)
+    (when (forge/system-type-darwin-p)
+      (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
     (forge/install-themes)
     (forge/font-update)
     (line-number-mode t)                ;; show line number in modeline
