@@ -211,6 +211,27 @@ end tell")
   (when (not (one-window-p))
     (delete-window)))
 
+;; connect vpn
+(defun forge/vpn-connect (cfg)
+  "Connect to VPN configuration CFG."
+  (interactive "sConfiguration:")
+  (setq forge-vpn-config cfg)
+  (when (forge/system-type-darwin-p)
+    (let ((osatmpl ""))
+      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                            "    connect \"" cfg "\"\n"
+                            "end tell"))
+      (do-applescript osatmpl))))
+
+(defun forge/vpn-disconnect ()
+  "Disconnect from VPN."
+  (interactive)
+  (let ((osatmpl ""))
+    (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                          "    disconnect \"" forge-vpn-config "\"\n"
+                          "end tell"))
+    (do-applescript osatmpl)))
+
 
 ;; Peek at queries
 
