@@ -1,5 +1,6 @@
 ;;; eos-mode.el --- edit Arista EOS configuration files
 
+;; Copyright (C) 2020 Stephen Fromm <sfromm at gmail.com>
 ;; Copyright (C) 2004 Noufal Ibrahim <nkv at nibrahim.net.in>
 ;;
 ;; This program is not part of Gnu Emacs
@@ -31,7 +32,7 @@
       ((eos-mode-map (make-keymap)))
     (define-key eos-mode-map "\C-j" 'newline-and-indent)
     eos-mode-map)
-  "Keymap for Cisco router configuration major mode")
+  "Keymap for Arista router configuration major mode")
 
 ;; Font locking definitions.
 (defvar eos-command-face 'eos-command-face "Face for basic router commands")
@@ -80,7 +81,7 @@
    '("\\<\\(no\\)\\>" . eos-no-face)
    '("\\<\\([0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\)\\>" . eos-ipadd-face)
    )
-  "Font locking definitions for cisco router mode")
+  "Font locking definitions for Arista eos mode")
 
 ;; Imenu definitions.
 (defvar eos-imenu-expression
@@ -95,7 +96,7 @@
 
 ;; Indentation definitions.
 (defun eos-indent-line ()
-  "Indent current line as cisco router config line"
+  "Indent current line as arista eos config line"
   (let ((indent0 "^interface\\|redundancy\\|^line\\|^ip vrf \\|^controller\\|^class-map\\|^policy-map\\|router\\|access-list\\|route-map")
 	(indent1 " *main-cpu\\| *class\\W"))
     (beginning-of-line)
@@ -127,7 +128,7 @@
 
 ;; Custom syntax table
 (defvar eos-mode-syntax-table (make-syntax-table)
-  "Syntax table for cisco router mode")
+  "Syntax table for Arista eos mode")
 
 (modify-syntax-entry ?_ "w" eos-mode-syntax-table) ;All _'s are part of words.
 (modify-syntax-entry ?- "w" eos-mode-syntax-table) ;All -'s are part of words.
@@ -150,7 +151,7 @@
   (set (make-local-variable 'imenu-generic-expression) eos-imenu-expression)
   (imenu-add-to-menubar "Imenu")
   (setq major-mode 'eos-mode
-	mode-name "IOS configuration")
+	mode-name "EOS configuration")
   (run-hooks eos-mode-hook))
 
 ;; (add-to-list 'auto-mode-alist '("\\.cfg\\'" . eos-mode))
