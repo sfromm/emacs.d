@@ -64,6 +64,14 @@
     )
   "Face for basic router commands")
 
+(defface eos-shutdown-face
+  '(
+    (((type tty) (class color)) (:foreground "red"))
+    (((type graphic) (class color)) (:foreground "red"))
+    (t (:foreground "red" ))
+    )
+  "Face for shutdown commands")
+
 (defface eos-no-face
   '(
     (t (:underline t))
@@ -79,7 +87,8 @@
    '( "\\<\\(access-list\\|c\\(?:lass-map\\|ontroller\\)\\|i\\(?:nterface\\|p vrf\\)\\|line\\|policy-map\\|r\\(?:edundancy\\|oute\\(?:-map\\|r\\)\\)\\)\\>". eos-toplevel-face)
    '( "\\<\\(alias\\|boot\\|card\\|diagnostic\\|^enable\\|hostname\\|logging\\|s\\(?:ervice\\|nmp-server\\)\\|v\\(?:ersion\\|tp\\)\\)\\>" . eos-command-face)
    '("\\<\\(no\\)\\>" . eos-no-face)
-   '("\\<\\([0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\)\\>" . eos-ipadd-face)
+   '("\\<\\(shutdown\\)\\>" . eos-shutdown-face)
+   '("\\<\\([0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\(?:/[0-9]\\+\\)\\)\\>" . eos-ipadd-face)
    )
   "Font locking definitions for Arista eos mode")
 
