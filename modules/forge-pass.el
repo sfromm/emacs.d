@@ -27,16 +27,22 @@
 
 (use-package auth-source)
 
+(use-package auth-source-pass
+  :ensure t
+  :after auth-source
+  :init
+  (setq auth-sources '(password-store "~/.authinfo.gpg")))
+
+
+;; https://github.com/NicolasPetton/pass
 (use-package pass
+  :ensure t)
+
+;; https://github.com/ecraven/ivy-pass
+(use-package ivy-pass
   :ensure t
   :bind
-  ("C-c p" . pass))
-
-(use-package auth-source-pass
-    :ensure t
-    :after auth-source
-    :init
-    (setq auth-sources '(password-store "~/.authinfo.gpg")))
+  ("C-c p" . ivy-pass))
 
 (provide 'forge-pass)
 ;;; forge-pass.el ends here
