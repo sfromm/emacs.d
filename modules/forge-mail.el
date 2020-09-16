@@ -92,7 +92,7 @@
 (defvar forge-maildir "~/.mail"
   "Path to Maildir.")
 
-(defvar forge-attachment-dir "~/Download"
+(defvar forge-attachment-dir "~/Downloads"
   "Path to where to save attachments to.")
 
 (defcustom forge-mail-abuse-poc nil
@@ -349,7 +349,7 @@
   "
 
   _A_ Forward Abuse report  _S_ Forward Spam report  _N_ Toggle compose New frame
-  _I_ Forward Infringement  _C_ Comporomised report
+  _I_ Forward Infringement  _C_ Comporomised report  _W_ Save all attachments
   _ra_ Reply to Abuse POC
   _rn_ Reply to NOC POC
   "
@@ -359,6 +359,7 @@
   ("I" forge/mail-forward-infringement-complaint)
   ("S" forge/mail-forward-spam-complaint)
   ("C" forge/mail-forward-compromised-complaint)
+  ("W" forge/notmuch-save-all-attachments)
   ("N" forge/mail-toggle-compose-new-frame))
 
 
@@ -400,8 +401,30 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                index mu4e-decryption-policy fpath))))
       (message "Nothing to extract"))))
 
+;; This is derived in part from notmuch-show-save-attachments
+;; but calls mm-save-part-to-file instead so as to save files without prompting.
+(defun forge/notmuch-save-all-attachments ()
+  "Save all attachments in MSG to attachment directory."
+  (interactive)
+  (let* ((subject (message-wash-subject (notmuch-show-get-subject)))
+         (attachdir (concat (file-name-as-directory forge-attachment-dir) subject)))
+    (with-current-notmuch-show-message
+     (let ((mm-handle (mm-dissect-buffer)))
+       (message "%s" subject)
+       (mkdir attachdir t)
+       (notmuch-foreach-mime-part
+        (lambda (p)
+          (let ((disposition (mm-handle-disposition p)))
+            (and (listp disposition)
+                 (or (equal (car disposition) "attachment")
+                     (and (equal (car disposition) "inline")
+                          (assq 'filename disposition)))
+                 (mm-save-part-to-file
+                  p (concat (file-name-as-directory attachdir) (cdr (assq 'filename disposition)))))))
+        mm-handle)))))
+
 (defun forge/twiddle-luminance (value)
-  "Twiddle the luminance value"
+  "Twiddle the luminance value to VALUE."
   (interactive "nLuminance: ")
   (message "Current luminance level: %s" shr-color-visible-luminance-min)
   (setq shr-color-visible-luminance-min value))
