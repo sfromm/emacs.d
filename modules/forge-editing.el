@@ -119,6 +119,13 @@
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-diff t))
 
+
+;;;
+;;; highlight-indent-guides
+(use-package highlight-indent-guides
+  :ensure t
+  :custom (highlight-indent-guides-method 'character))
+
 ;;;
 ;;; Misc helpers
 ;;;
@@ -361,6 +368,13 @@
 (use-package junos-mode
   :defer t
   :config (setq-local c-basic-offset 4))
+
+
+;;;
+;;; eos-mode
+(use-package eos-mode
+  :defer t
+  :hook (eos-mode . highlight-indent-guides-mode))
 
 
 ;;;
