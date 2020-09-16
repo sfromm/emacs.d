@@ -177,6 +177,9 @@
 ;;; https://github.com/abo-abo/hydra
 (use-package hydra :ensure t)
 
+(autoload 'View-scroll-half-page-forward "view")
+(autoload 'View-scroll-half-page-backward "view")
+
 (defhydra forge/navigate (:foreign-keys run)
   "[Navigate] or q to exit."
   ("a" beginning-of-line)
