@@ -24,15 +24,20 @@
 
 ;;; Code:
 
-(defvar eos-mode-hook nil
-  "Hook called by \"eos-mode\"")
+(defgroup eos-mode nil
+  "EOS Mode"
+  :group 'editing)
+
+(defcustom eos-mode-hook nil
+  "Hook called by \"eos-mode\""
+  :group 'eos-mode
+  :type 'hook)
 
 (defvar eos-mode-map
-  (let
-      ((eos-mode-map (make-keymap)))
-    (define-key eos-mode-map "\C-j" 'newline-and-indent)
-    eos-mode-map)
-  "Keymap for Arista router configuration major mode")
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-j") #'newline-and-indent)
+    map)
+  "Keymap for Arista router configuration major mode.")
 
 ;; Font locking definitions.
 (defvar eos-command-face 'eos-command-face "Face for basic router commands")
@@ -145,26 +150,19 @@
 (modify-syntax-entry ?\n ">" eos-mode-syntax-table) ;All newlines end comments.
 (modify-syntax-entry ?\r ">" eos-mode-syntax-table) ;All linefeeds end comments.
 
-;; Entry point
-(defun eos-mode  ()
+;;;###autoload
+(define-derived-mode eos-mode c-mode "EOS"
   "Major mode for Arista EOS (TM) configuration files"
-  (interactive)
-  (kill-all-local-variables)
-  (set-syntax-table eos-mode-syntax-table)
-  (use-local-map eos-mode-map)
+  :syntax-table eos-mode-syntax-table
+  :group 'eos-mode
   (set (make-local-variable 'font-lock-defaults) '(eos-font-lock-keywords))
   (set (make-local-variable 'indent-line-function) 'eos-indent-line)
   (set (make-local-variable 'comment-start) "!")
   (set (make-local-variable 'comment-start-skip) "\\(\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\)!+ *")
   (setq imenu-case-fold-search nil)
   (set (make-local-variable 'imenu-generic-expression) eos-imenu-expression)
-  (imenu-add-to-menubar "Imenu")
-  (setq major-mode 'eos-mode
-	mode-name "EOS configuration")
-  (run-hooks eos-mode-hook))
+  (imenu-add-to-menubar "Imenu"))
 
-;; (add-to-list 'auto-mode-alist '("\\.cfg\\'" . eos-mode))
 
 (provide 'eos-mode)
-
 ;;; eos-mode.el ends here
