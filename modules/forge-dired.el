@@ -134,6 +134,14 @@ read-file-name and dired-dwim-target-directory."
     ;; finally, switch to that window
     (other-window 1)))
 
+
+;;;
+;;; emacs-conflict - resolve syncthing conflicts
+;;; https://github.com/ibizaman/emacs-conflict
+;;; https://www.reddit.com/r/emacs/comments/bqqqra/quickly_find_syncthing_conflicts_and_resolve_them/
+(use-package emacs-conflict)
+
+
 ;;;
 ;;;
 ;;;
