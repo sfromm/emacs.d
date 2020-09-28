@@ -174,7 +174,7 @@
   (setq org-capture-templates '(("l" "Log" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
 
                                 ("M" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
-                                 "* MEETING %? \n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+                                 "* MEETING %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
 
                                 ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %?\n%U\n" :clock-in t :clock-resume t)
@@ -186,7 +186,7 @@
                                  "* REFERENCE %a %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
 
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
-                                 "* TODO %? :inbox:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
+                                 "* TODO %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
                                 ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
                                  "* %(forge/capture-current-song) :music:\n%U\n")))
