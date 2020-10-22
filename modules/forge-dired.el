@@ -80,6 +80,18 @@
   :config
   (add-to-list 'dired-omit-extensions ".DS_Store"))
 
+;;;
+;;; dired-aux
+;;;
+(use-package dired-aux
+  :after dired
+  :init
+  (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
+
+
+;;;
+;;; async & dired-async
+;;;
 (use-package async :ensure t)
 (autoload 'dired-async-mode "dired-async.el" nil t)
 (dired-async-mode 1)
