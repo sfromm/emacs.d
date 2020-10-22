@@ -6,7 +6,7 @@ ifeq ($(OS),Linux)
     PKGMGR = apt-get install
     PKG = emacs
     PKGFLAGS =
-    FONTS = fonts-hack-ttf fonts-firacode
+    FONTS = fonts-hack-ttf fonts-firacode fonts-ibm-plex
 endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
