@@ -80,13 +80,10 @@
     buffer))
 
 (define-derived-mode notmuch-watcher-mode fundamental-mode "NotmuchWatcher"
-                     "A major mode for notmuch interaction."
-                     :group 'notmuch
-                     (setq buffer-read-only t)
-                     (setq buffer-undo-list t)
-                     (when (> notmuch-watcher-refresh-interval 0)
-                       (setq notmuch-watcher-refresh-timer
-                             (run-at-time 60 notmuch-watcher-refresh-interval 'notmuch-watcher-refresh) )))
+  "A major mode for notmuch interaction."
+  :group 'notmuch
+  (setq buffer-read-only t)
+  (setq buffer-undo-list t))
 
 (defun notmuch-watcher-insert (process text)
   "Insert TEXT in PROCESS buffer."
@@ -141,7 +138,11 @@
                       buffer
                       notmuch-watcher-command)))
         (set-process-filter process 'notmuch-watcher-process-filter)
-        (set-process-sentinel process 'notmuch-watcher-process-sentinel)))))
+        (if (> notmuch-watcher-refresh-interval 0)
+            (set-process-sentinel process 'notmuch-watcher-process-sentinel)
+          (when (not notmuch-watcher-refresh-timer)
+            (setq notmuch-watcher-refresh-timer
+                  (run-at-time 60 notmuch-watcher-refresh-interval 'notmuch-watcher-refresh))))))))
 
 (defun notmuch-watcher-first ()
   "Go to beginning of notmuch-watcher buffer."
