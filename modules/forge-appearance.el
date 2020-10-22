@@ -171,6 +171,13 @@
   :config
   (doom-themes-org-config))
 
+(use-package modus-operandi-theme
+  :custom
+  (modus-operandi-theme-scale-headings t))
+
+(use-package modus-vivendi-theme
+  :custom
+  (modus-vivendi-theme-scale-headings t))
 
 
 ;;;
