@@ -1,4 +1,4 @@
-;;; eos-mode.el --- edit Arista EOS configuration files
+;;; eos-mode.el --- edit Arista EOS configuration files -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020 Stephen Fromm <sfromm at gmail.com>
 ;; Copyright (C) 2004 Noufal Ibrahim <nkv at nibrahim.net.in>
@@ -29,7 +29,7 @@
   :group 'editing)
 
 (defcustom eos-mode-hook nil
-  "Hook called by \"eos-mode\""
+  "Hook called by \"eos-mode\"."
   :group 'eos-mode
   :type 'hook)
 
@@ -40,18 +40,7 @@
   "Keymap for Arista router configuration major mode.")
 
 ;; Font locking definitions.
-(defvar eos-command-face 'eos-command-face "Face for basic router commands")
-(defvar eos-toplevel-face 'eos-toplevel-face "Face for top level commands")
-(defvar eos-no-face 'eos-no-face "Face for \"no\"")
-(defvar eos-ipadd-face 'eos-ipadd-face "Face for IP addresses")
-
-(defface eos-ipadd-face
-  '(
-    (((type tty) (class color)) (:foreground "yellow"))
-    (((type graphic) (class color)) (:foreground "LightGoldenrod"))
-    (t (:foreground "LightGoldenrod" ))
-    )
-  "Face for IP addresses")
+(defvar eos-command-face 'eos-command-face "Face for basic router commands.")
 
 (defface eos-command-face
   '(
@@ -61,6 +50,8 @@
     )
   "Face for basic router commands")
 
+(defvar eos-toplevel-face 'eos-toplevel-face "Face for top level commands.")
+
 (defface eos-toplevel-face
   '(
     (((type tty) (class color)) (:foreground "blue"))
@@ -68,6 +59,8 @@
     (t (:foreground "lightsteelblue" ))
     )
   "Face for basic router commands")
+
+(defvar eos-shutdown-face 'eos-shutdown-face "Face for \"shutdown\".")
 
 (defface eos-shutdown-face
   '(
@@ -77,12 +70,23 @@
     )
   "Face for shutdown commands")
 
+(defvar eos-no-face 'eos-no-face "Face for \"no\".")
+
 (defface eos-no-face
   '(
     (t (:underline t))
     )
   "Face for \"no\"")
 
+(defvar eos-ipadd-face 'eos-ipadd-face "Face for IP addresses.")
+
+(defface eos-ipadd-face
+  '(
+    (((type tty) (class color)) (:foreground "yellow"))
+    (((type graphic) (class color)) (:foreground "LightGoldenrod"))
+    (t (:foreground "LightGoldenrod" ))
+    )
+  "Face for IP addresses")
 
 ;; (regexp-opt '("interface" "ip vrf" "controller" "class-map" "redundancy" "line" "policy-map" "router" "access-list" "route-map") t)
 ;; (regexp-opt '("diagnostic" "hostname" "logging" "service" "alias" "snmp-server" "boot" "card" "vtp" "version" "enable") t)
@@ -92,7 +96,7 @@
    '( "\\<\\(access-list\\|c\\(?:lass-map\\|ontroller\\)\\|i\\(?:nterface\\|p vrf\\)\\|line\\|policy-map\\|r\\(?:edundancy\\|oute\\(?:-map\\|r\\)\\)\\)\\>". eos-toplevel-face)
    '( "\\<\\(alias\\|boot\\|card\\|diagnostic\\|^enable\\|hostname\\|logging\\|s\\(?:ervice\\|nmp-server\\)\\|v\\(?:ersion\\|tp\\)\\)\\>" . eos-command-face)
    '("\\<\\(no\\)\\>" . eos-no-face)
-   '("\\<\\(shutdown\\)\\>" . eos-shutdown-face)
+   '("^ *\\<\\(shutdown\\)\\>" . eos-shutdown-face)
    '("\\<\\([0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\(?:/[0-9]\\+\\)\\)\\>" . eos-ipadd-face)
    )
   "Font locking definitions for Arista eos mode")
@@ -142,13 +146,14 @@
 
 ;; Custom syntax table
 (defvar eos-mode-syntax-table (make-syntax-table)
-  "Syntax table for Arista eos mode")
+  "Syntax table for Arista eos mode.")
 
 (modify-syntax-entry ?_ "w" eos-mode-syntax-table) ;All _'s are part of words.
 (modify-syntax-entry ?- "w" eos-mode-syntax-table) ;All -'s are part of words.
 (modify-syntax-entry ?! "<" eos-mode-syntax-table) ;All !'s start comments.
 (modify-syntax-entry ?\n ">" eos-mode-syntax-table) ;All newlines end comments.
 (modify-syntax-entry ?\r ">" eos-mode-syntax-table) ;All linefeeds end comments.
+
 
 ;;;###autoload
 (define-derived-mode eos-mode c-mode "EOS"
