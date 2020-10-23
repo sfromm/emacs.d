@@ -45,6 +45,8 @@
 
 ;; Constants
 
+(defconst eos-mode-version "0.2" "Version of `eos-mode'.")
+
 (defconst eos-section-regex
   (concat
    "^ *"
@@ -162,6 +164,12 @@
   (set (make-local-variable 'imenu-generic-expression) eos-imenu-expression)
   (imenu-add-to-menubar "Imenu"))
 
+(defun eos-mode-version ()
+  "Display version of `eos-mode'."
+  (interactive)
+  (message "eos-mode %s" eos-mode-version)
+  eos-mode-version)
 
 (provide 'eos-mode)
+
 ;;; eos-mode.el ends here
