@@ -143,17 +143,17 @@
 
 (defvar eos-mode-syntax-table
   (let ((syntax-table (make-syntax-table)))
-    (modify-syntax-entry ?_ "w" eos-mode-syntax-table)  ;; All _'s are part of words.
-    (modify-syntax-entry ?- "w" eos-mode-syntax-table)  ;; All -'s are part of words.
-    (modify-syntax-entry ?! "<" eos-mode-syntax-table)  ;; All !'s start comments.
-    (modify-syntax-entry ?\n ">" eos-mode-syntax-table) ;; All newlines end comments.
-    (modify-syntax-entry ?\r ">" eos-mode-syntax-table) ;; All linefeeds end comments.
+    (modify-syntax-entry ?_ "w" syntax-table)  ;; All _'s are part of words.
+    (modify-syntax-entry ?- "w" syntax-table)  ;; All -'s are part of words.
+    (modify-syntax-entry ?! "<" syntax-table)  ;; All !'s start comments.
+    (modify-syntax-entry ?\n ">" syntax-table) ;; All newlines end comments.
+    (modify-syntax-entry ?\r ">" syntax-table) ;; All linefeeds end comments.
     syntax-table)
   "Syntax table for Arista `eos-mode'.")
 
 ;;;###autoload
 (define-derived-mode eos-mode text-mode "EOS"
-  "Major mode for Arista EOS (TM) configuration files"
+  "Major mode for Arista EOS (TM) configuration files."
   :syntax-table eos-mode-syntax-table
   :group 'eos-mode
   (set (make-local-variable 'font-lock-defaults) '(eos-font-lock-keywords))
