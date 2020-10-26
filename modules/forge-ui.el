@@ -218,6 +218,7 @@
          (interactive)
          (split-window-below)
          (windmove-down)) "Split Horz")
+  ("m" counsel-bookmark "Bookmark" :exit t)
   ("q" nil))
 (global-set-key (kbd "C-c n") 'forge/navigate/body)
 
