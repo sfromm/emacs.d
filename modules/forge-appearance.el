@@ -120,13 +120,10 @@
 
 (forge/install-themes)
 
-(defcustom forge-theme nil
+(defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
   :type 'symbol
   :group 'forge)
-
-(unless forge-theme
-  (setq forge-theme 'solarized-wombat-dark))
 
 (use-package zenburn-theme
   :defer t
