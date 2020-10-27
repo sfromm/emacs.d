@@ -374,6 +374,7 @@
 ;;; eos-mode
 (use-package eos-mode
   :defer t
+  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :hook (eos-mode . highlight-indent-guides-mode))
 
 
