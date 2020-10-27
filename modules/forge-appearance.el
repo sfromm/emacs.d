@@ -39,6 +39,11 @@
   :type 'string
   :group 'forge)
 
+(defcustom forge-variable-pitch-scale 1.1
+  "Preferred variable pitch font."
+  :type 'decimal
+  :group 'forge)
+
 (defcustom forge-unicode-font "Fira Sans"
   "Preferred Unicode font."
   :type 'string
@@ -75,9 +80,9 @@
       (message "Font: %s" (forge/font-name-and-size))
       ;; (set-frame-font forge-font)
       (set-face-attribute 'default nil :family forge-font :height (* forge-font-size 10))
-      (set-face-attribute 'fixed-pitch nil :family forge-font :height (* forge-font-size 10))
+      (set-face-attribute 'fixed-pitch nil :family forge-font :height 1.0)
       (when forge-variable-pitch-font
-        (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font))
+        (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font :height forge-variable-pitch-scale))
       (when (fontp forge-unicode-font)
         (set-fontset-font t 'unicode (font-spec :family forge-unicode-font) nil 'prepend)))))
 
