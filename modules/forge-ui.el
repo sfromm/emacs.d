@@ -97,6 +97,11 @@
   (("M-g g" . avy-goto-line)
    ("M-s" . avy-goto-word-1)))
 
+;;; windmove
+(use-package windmove
+  :custom (windmove-wrap-around t)
+  :config (windmove-default-keybindings 'super))
+
 ;;; dump-jump
 ;;; https://github.com/jacktasia/dumb-jump
 (use-package dumb-jump
