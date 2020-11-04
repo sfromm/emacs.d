@@ -45,9 +45,16 @@
   :group 'forge)
 
 (defcustom forge-unicode-font "Fira Sans"
-  "Preferred Unicode font."
+  "Preferred Unicode font.  This takes precedence over `forge-unicode-extra-fonts'."
   :type 'string
   :group 'forge)
+
+(defvar forge-unicode-extra-fonts
+  (list "all-the-icons"
+        "FontAwesome"
+        "github-octicons"
+        "Weather Icons")
+  "List of extra Unicode fonts.")
 
 (defun forge/font-name-and-size ()
   "Compute font name and size string."
@@ -83,8 +90,9 @@
       (set-face-attribute 'fixed-pitch nil :family forge-font :height 1.0)
       (when forge-variable-pitch-font
         (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font :height forge-variable-pitch-scale))
-      (when (fontp forge-unicode-font)
-        (set-fontset-font t 'unicode (font-spec :family forge-unicode-font) nil 'prepend)))))
+      (when (fboundp 'set-fontset-font) ;; from doom-emacs
+        (dolist (font (append (list forge-unicode-font) forge-unicode-extra-fonts))
+          (set-fontset-font t 'unicode (font-spec :family font) nil 'prepend))))))
 
 (forge/font-update)
 
