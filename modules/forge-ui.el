@@ -140,6 +140,9 @@
 ;;; https://github.com/roman/golden-ratio.el
 (use-package golden-ratio
   :defer t
+  :hook
+  (ediff-before-setup-windows . (lambda () (golden-ratio-mode -1)))
+  (ediff-quit (lambda () (golden-ratio-mode 1)))
   :config
   (setq golden-ratio-exclude-modes '(messages-buffer-mode
                                      fundamental-mode
