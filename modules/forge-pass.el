@@ -33,6 +33,11 @@
   :init
   (setq auth-sources '(password-store "~/.authinfo.gpg")))
 
+;; https://github.com/ccrusius/auth-source-xoauth2
+(use-package auth-source-xoauth2
+  :ensure t
+  :after auth-source)
+
 
 ;; https://github.com/NicolasPetton/pass
 (use-package pass
