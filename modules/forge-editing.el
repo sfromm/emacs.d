@@ -108,6 +108,7 @@
 ;;; diff-hl
 ;;; https://github.com/dgutov/diff-hl
 (use-package diff-hl
+  :ensure t
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
