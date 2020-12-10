@@ -261,7 +261,6 @@
   (when (display-graphic-p)
     (when (forge/system-type-darwin-p)
       (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
-    (forge/install-themes)
     (forge/font-update)
     (line-number-mode t)                ;; show line number in modeline
     (column-number-mode t)              ;; show column number in modeline
@@ -281,8 +280,9 @@
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 
-(add-hook 'after-make-frame-functions 'forge/setup-ui-in-daemon)
-(forge/setup-ui)
+(when (daemonp)
+  (add-hook 'after-make-frame-functions #'forge/setup-ui-in-daemon))
+(add-hook 'after-init-hook #'forge/setup-ui)
 
 (provide 'forge-appearance)
 ;;; forge-appearance ends here
