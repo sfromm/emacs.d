@@ -211,20 +211,31 @@ end tell")
   (when (not (one-window-p))
     (delete-window)))
 
-;; connect vpn
-(defun forge/vpn-connect (cfg)
-  "Connect to VPN configuration CFG."
-  (interactive "sConfiguration:")
-  (setq forge-vpn-config cfg)
-  (when (forge/system-type-darwin-p)
-    (let ((osatmpl ""))
-      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                            "    connect \"" cfg "\"\n"
-                            "end tell"))
-      (do-applescript osatmpl))))
+
+;;;
+;;; VPN helpers
 
-(defun forge/vpn-disconnect ()
-  "Disconnect from VPN."
+(defvar forge-vpn-config ""
+  "Name of the OpenVPN VPN configuration to use.")
+
+(defun vpn-connect (&optional cfg)
+  "Connect to VPN configuration CFG.
+Assumes you are on MacOS and using Tunnelblick to connect."
+  (interactive)
+  (let ((cfg (completing-read "Config: "
+                              (mapcar #'file-name-sans-extension
+                                      (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
+    (setq forge-vpn-config cfg)
+    (when (forge/system-type-darwin-p)
+      (let ((osatmpl ""))
+        (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                              "    connect \"" cfg "\"\n"
+                              "end tell"))
+        (do-applescript osatmpl)))))
+
+(defun vpn-disconnect ()
+  "Disconnect from VPN.
+Assumes you are on MacOS and using Tunnelblick to manage your VPN."
   (interactive)
   (let ((osatmpl ""))
     (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
