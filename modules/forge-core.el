@@ -63,7 +63,7 @@
 ;; Reset after init
 (setq file-name-handler-alist nil
       message-log-max 16384
-      gc-cons-threshold 536870912 ;; 512mb
+      gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
 
 ;; only run garbage collection after 50MB of allocated data.
