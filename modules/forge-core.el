@@ -222,6 +222,7 @@ end tell")
   "Connect to VPN configuration CFG.
 Assumes you are on MacOS and using Tunnelblick to connect."
   (interactive)
+  (require 'em-glob)
   (let ((cfg (completing-read "Config: "
                               (mapcar #'file-name-sans-extension
                                       (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
