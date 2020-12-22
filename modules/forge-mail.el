@@ -244,6 +244,25 @@
       (notmuch-show-view-raw-message)
       (message-resend address)))
 
+  (defun notmuch-search-attachment (ext)
+    "Search for attachments with extension EXT.
+
+You can provide a space-delimited list of extensions to search for.
+Will open a notmuch search buffer of the search results."
+    (interactive "sExtension: ")
+    (notmuch-search
+     (mapconcat 'identity
+                (mapcar (lambda (arg) (concat "attachment:" arg)) (split-string ext)) " or ")))
+
+  (defvar notmuch-search-helper-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "a" 'notmuch-search-attachment)
+      (define-key map "?" 'notmuch-subkeymap-help)
+      map)
+    "Submap for search commands.")
+  (fset 'notmuch-search-helper-map notmuch-search-helper-map)
+  (define-key notmuch-search-mode-map (kbd "S") 'notmuch-search-helper-map)
+
   (define-key notmuch-search-mode-map (kbd "g") 'notmuch-refresh-this-buffer)
   (define-key notmuch-hello-mode-map  (kbd "g") 'notmuch-refresh-this-buffer))
 
