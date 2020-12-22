@@ -230,6 +230,8 @@
 
 (use-package ol-git-link :defer t)
 
+(use-package ol-eww :defer 5 :after org)
+
 (use-package org-contacts
   :defer t
   :after org
