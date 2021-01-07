@@ -58,5 +58,14 @@
          (eww-mode . olivetti-mode)))
 
 
+;;;
+;;; url-vars
+(use-package url-vars
+  :custom
+  (url-privacy-level '(email agent cookies lastloc)))
+
+
+;;;
+
 (provide 'forge-web)
 ;;; forge-web.el ends here
