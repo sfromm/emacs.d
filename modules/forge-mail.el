@@ -254,9 +254,29 @@ Will open a notmuch search buffer of the search results."
      (mapconcat 'identity
                 (mapcar (lambda (arg) (concat "attachment:" arg)) (split-string ext)) " or ")))
 
+  (defun notmuch-search-last-week (query)
+    "Search for recent mail with QUERY.
+
+Search notmuch for QUERY and this will amend the search to
+limit it to the last 7 days.
+Will open a notmuch search buffer of the search results."
+    (interactive "sQuery: ")
+    (notmuch-search (concat "date:7d.. AND " query)))
+
+  (defun notmuch-search-last-month (query)
+    "Search for recent mail with QUERY.
+
+Search notmuch for QUERY and this will amend the search to
+limit it to the last month.
+Will open a notmuch search buffer of the search results."
+    (interactive "sQuery: ")
+    (notmuch-search (concat "date:1M.. AND " query)))
+
   (defvar notmuch-search-helper-map
     (let ((map (make-sparse-keymap)))
       (define-key map "a" 'notmuch-search-attachment)
+      (define-key map "w" 'notmuch-search-last-week)
+      (define-key map "m" 'notmuch-search-last-month)
       (define-key map "?" 'notmuch-subkeymap-help)
       map)
     "Submap for search commands.")
