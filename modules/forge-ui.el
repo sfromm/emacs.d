@@ -99,6 +99,11 @@
 
 ;;; windmove
 (use-package windmove
+  :bind
+  (("s-l" . windmove-right)
+   ("s-h" . windmove-left)
+   ("s-k" . windmove-up)
+   ("s-j" . windmove-down))
   :custom (windmove-wrap-around t)
   :config (windmove-default-keybindings 'super))
 
