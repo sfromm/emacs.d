@@ -82,6 +82,21 @@
     (forge/org-set-uuid)
     (forge/org-set-created))
 
+  (defun forge/org-clip-web-page ()
+    "Clip web page for org capture."
+    (interactive)
+    (when (derived-mode-p 'eww-mode)
+      (require 'ol-eww)
+      (org-eww-copy-for-org-mode)
+      (concat
+       "* REFERENCE %a %? :ARTICLE:
+:PROPERTIES:
+:ID:       %(shell-command-to-string \"uuidgen\")
+:CREATED:  %U
+:URL:      " (eww-current-url) "
+:END:\n\n" (car kill-ring))))
+
+
   ;; via https://vxlabs.com/2018/10/29/importing-orgmode-notes-into-apple-notes/
   (defun forge/org-html-publish-to-html-for-apple-notes (plist filename pub-dir)
     "Convert exported files to format that plays nicely with Apple Notes. Takes PLIST, FILENAME, and PUB-DIR."
@@ -182,8 +197,12 @@
                                 ("b" "Bookmark" entry (file+headline "~/forge/notebook.org" "Unfiled")
                                  "* %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
 
-                                ("r" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
+                                ("r" "Reference")
+                                ("rr" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* REFERENCE %a %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
+
+                                ("rw" "Web Page" entry (file+olp+datetree "~/forge/journal.org")
+                                 (function forge/org-clip-web-page) :prepend t)
 
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* TODO %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
