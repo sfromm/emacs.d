@@ -178,71 +178,26 @@
     (setq copyright-names-regexp "Free Software")
     (add-hook 'before-save-hook #'copyright-update)))
 
-;;;
-;;; look up current playing song in itunes
-;;; useful resources:
-;;; - https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
-;;; - https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
-;;;
-(defun forge/get-current-song-itunes ()
-  "Get current song playing via itunes."
-  (let ((as-tmpl "")
-        (cursong nil))
-    (setq as-tmpl "tell application \"Music\"
-	if player state is not stopped then
-		set ct to (properties of current track)
-		set this_song to \"\"
-		if (class of ct is URL track) and (get current stream title) is not missing value then
-			set this_song to (get current stream title)
-		else
-			set this_song to artist in ct & \" - \" & name in ct
-		end if
-		this_song
-	end if
-end tell")
-    (condition-case nil
-        (setq cursong (split-string (do-applescript as-tmpl) " - "))
-      (error nil))
-    cursong))
-
 ;; Delete window if not the only one.
 (defun forge/delete-window ()
   "Delete window if it is not the only one."
   (when (not (one-window-p))
     (delete-window)))
 
-
-;;;
-;;; VPN helpers
-
-(defvar forge-vpn-config ""
-  "Name of the OpenVPN VPN configuration to use.")
-
-(defun vpn-connect (&optional cfg)
-  "Connect to VPN configuration CFG.
-Assumes you are on MacOS and using Tunnelblick to connect."
-  (interactive)
-  (require 'em-glob)
-  (let ((cfg (completing-read "Config: "
-                              (mapcar #'file-name-sans-extension
-                                      (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
-    (setq forge-vpn-config cfg)
-    (when (forge/system-type-darwin-p)
-      (let ((osatmpl ""))
-        (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                              "    connect \"" cfg "\"\n"
-                              "end tell"))
-        (do-applescript osatmpl)))))
-
-(defun vpn-disconnect ()
-  "Disconnect from VPN.
-Assumes you are on MacOS and using Tunnelblick to manage your VPN."
-  (interactive)
-  (let ((osatmpl ""))
-    (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                          "    disconnect \"" forge-vpn-config "\"\n"
-                          "end tell"))
-    (do-applescript osatmpl)))
+(defun forge/dig-ext (domain)
+  "Query for DNS records for DOMAIN of QUERY-TYPE."
+  (interactive "sHost: ")
+  (let ((query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR")))
+        (query-class)
+        (query-option)
+        (dig-option)
+        (server))
+    (pop-to-buffer-same-window
+     (dig-invoke domain query-type query-class query-option dig-option server))
+    (goto-char (point-min))
+    (and (search-forward ";; ANSWER SECTION:" nil t)
+         (forward-line))
+    (dig-mode)))
 
 
 ;; Peek at queries
@@ -358,6 +313,7 @@ Assumes you are on MacOS and using Tunnelblick to manage your VPN."
   (require 'dbus))
 
 (when (forge/system-type-darwin-p)
+  (require 'forge-darwin)
   (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
     (progn
       (setenv "PATH" (concat path ":" (getenv "PATH")))
