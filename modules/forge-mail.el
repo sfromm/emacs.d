@@ -263,6 +263,15 @@ Will open a notmuch search buffer of the search results."
     (let* ((query (or query (notmuch-read-query "Query: "))))
       (notmuch-search (concat "date:" period ".. AND " query))))
 
+  (defun notmuch-search-last-day (&optional query)
+    "Search recent mail for prompted query.
+
+Search notmuch for QUERY and this will amend the search to
+limit it to the last day.
+Will open a notmuch search buffer of the search results."
+    (interactive)
+    (notmuch-search-recent "1d" query))
+
   (defun notmuch-search-last-week (&optional query)
     "Search recent mail for prompted query.
 
@@ -284,6 +293,7 @@ Will open a notmuch search buffer of the search results."
   (defvar notmuch-search-helper-map
     (let ((map (make-sparse-keymap)))
       (define-key map "a" 'notmuch-search-attachment)
+      (define-key map "d" 'notmuch-search-last-day)
       (define-key map "w" 'notmuch-search-last-week)
       (define-key map "m" 'notmuch-search-last-month)
       (define-key map "?" 'notmuch-subkeymap-help)
