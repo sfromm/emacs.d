@@ -43,10 +43,55 @@
 
 
 ;;;
+;;; completion frameworks
+
+;; https://github.com/raxod502/selectrum
+(use-package selectrum
+  :ensure t
+  :config
+  (selectrum-mode 1))
+
+;; https://github.com/raxod502/prescient.el
+(use-package prescient
+  :ensure t
+  :config
+  (setq prescient-history-length 200)
+  (setq prescient-save-file (concat forge-state-dir "prescient-items"))
+  (prescient-persist-mode 1))
+
+;; https://github.com/raxod502/selectrum
+(use-package selectrum-prescient
+  :ensure t
+  :after (:all selectrum prescient)
+  :config
+  (selectrum-prescient-mode +1))
+
+;; https://github.com/minad/consult
+(use-package consult
+  :ensure t
+  :bind
+  (("M-g g" . consult-goto-line)
+   ("C-x b" . consult-buffer)
+   ("C-c f" . consult-find)))
+
+;; https://github.com/minad/marginalia
+(use-package marginalia
+  :ensure t
+  :bind (:map minibuffer-local-map
+              ("C-M-a" . marginalia-cycle))
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :config
+  (marginalia-mode))
+
+
+
+;;;
 ;;; ivy, swiper, and counsel
 ;;; https://github.com/abo-abo/swiper
 (use-package ivy
   :ensure t
+  :disabled t
   :diminish (ivy-mode . "")
   :bind
   (("C-c C-r" . ivy-resume))
@@ -59,11 +104,13 @@
 
 (use-package swiper
   :ensure t
+  :disabled t
   :diminish
   :bind (("C-s" . swiper-isearch)))
 
 (use-package counsel
   :ensure t
+  :disabled t
   :requires ivy
   :bind
   (("C-c f" . counsel-git)
@@ -78,6 +125,7 @@
 ;;; https://github.com/nonsequitur/smex/
 (use-package smex
   :ensure t
+  :disabled t
   :init
   (setq smex-completion-method 'ivy
         smex-save-file (concat forge-state-dir "smex-items")))
@@ -93,6 +141,7 @@
 ;;; https://github.com/abo-abo/avy
 (use-package avy
   :ensure t
+  :disabled t
   :bind
   (("M-g g" . avy-goto-line)
    ("M-s" . avy-goto-word-1)))
