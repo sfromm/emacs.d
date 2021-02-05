@@ -217,6 +217,8 @@
                             (sequence "|" "MEETING" "REFERENCE(r)")))
   ;;
   (setq org-clock-out-remove-zero-time-clocks t
+        org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
+
         org-ellipsis "⤵"
         org-log-done t
 
