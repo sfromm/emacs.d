@@ -1592,6 +1592,12 @@ read-file-name and dired-dwim-target-directory."
 
 (use-package notmuch
   :commands (notmuch)
+  :custom
+  (notmuch-search-oldest-first nil)
+  (notmuch-hello-thousands-separator ",")
+  (notmuch-crypto-process-mime t)
+  (notmuch-show-part-button-default-action 'notmuch-show-view-part)
+
   :preface
   (defmacro forge-notmuch-show-tag (tags)
     "Macro to take list of tags and apply to query."
@@ -1732,10 +1738,6 @@ Will open a notmuch search buffer of the search results."
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
   (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk")
-        notmuch-crypto-process-mime t
-        notmuch-hello-thousands-separator ","
-        notmuch-search-oldest-first nil
-        notmuch-show-part-button-default-action 'notmuch-show-view-part
         notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                  (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
                                  (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
