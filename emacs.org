@@ -2812,7 +2812,7 @@ package via the Org ELPA package repository.
   :bind
   (:map org-mode-map
         ("M-q" . endless/fill-or-unfill)
-        ("RET" . org-return-indent))
+        ("RET" . org-return))
 
   :init
   (setq org-directory "~/forge"

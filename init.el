@@ -1947,7 +1947,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :bind
   (:map org-mode-map
         ("M-q" . endless/fill-or-unfill)
-        ("RET" . org-return-indent))
+        ("RET" . org-return))
 
   :init
   (setq org-directory "~/forge"
