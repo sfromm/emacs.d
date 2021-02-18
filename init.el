@@ -11,25 +11,22 @@
 
 (add-hook 'emacs-startup-hook #'forge/report-startup-time)
 
-(defvar forge-emacs-dir (file-truename user-emacs-directory)
-  "Path to this emacs.d directory.")
-
-(defvar forge-site-dir (concat forge-emacs-dir "site-lisp/")
+(defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
 
-(defvar forge-personal-dir (concat forge-emacs-dir "user/")
+(defvar forge-personal-dir (expand-file-name "user/" user-emacs-directory)
   "Path to user's personal configuration.")
 
-(defvar forge-themes-dir (concat forge-emacs-dir "themes/")
+(defvar forge-themes-dir (expand-file-name "themes/" user-emacs-directory)
   "Path to user themes.")
 
-(defvar forge-state-dir (concat forge-emacs-dir "var/")
+(defvar forge-state-dir (expand-file-name "var/" user-emacs-directory)
   "Path to Emacs' persistent data files.")
 
-(defvar forge-backup-dir (concat forge-state-dir "backup/")
+(defvar forge-backup-dir (expand-file-name "backup/" forge-state-dir)
   "Path to Emacs' backup and autosave files.")
 
-(defvar forge-log-dir (concat forge-state-dir "log/")
+(defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
 (add-to-list 'load-path forge-site-dir)
@@ -39,16 +36,16 @@
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq gamegrid-user-score-file-directory (concat forge-state-dir "games")
-          bookmark-default-file (concat forge-state-dir "bookmarks")
-          transient-history-file (concat forge-state-dir "transient/history.el")
-          transient-levels-file (concat forge-personal-dir "transient/levels.el")
-          transient-values-file (concat forge-personal-dir "transient/values.el")
-          message-auto-save-directory (concat forge-state-dir "messages")
-          tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
-          tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el")
-          url-cache-directory (concat forge-state-dir "url/cache/")
-          url-configuration-directory (concat forge-state-dir "url/configuration/"))))
+    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+          bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
+          transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
+          transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir)
+          transient-values-file (expand-file-name "transient/values.el" forge-personal-dir)
+          message-auto-save-directory (expand-file-name "messages" forge-state-dir)
+          tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir)
+          tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir)
+          url-cache-directory (expand-file-name "url/cache/" forge-state-dir)
+          url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
 (defun forge/initialize ()
   "Initialize paths and session for this Emacs instance."
@@ -80,6 +77,11 @@
 (defun forge/system-type-linux-p ()
   "Return non-nil if system is GNU/Linux."
   (string-equal system-type "gnu/linux"))
+
+(defun forge/reload-emacs-configuration ()
+  "Reload emacs configuration."
+  (interactive)
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
 
 (defun forge/turn-on-hl-line ()
   "Turn on `hl-line-mode'."
@@ -445,7 +447,7 @@ end tell")
 
 (use-package quelpa
   :init
-  (setq quelpa-dir (concat forge-state-dir "quelpa")
+  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
         quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
         quelpa-update-melpa-p nil))
 
@@ -535,7 +537,7 @@ end tell")
 
 (use-package emojify
   :ensure t
-  :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))
+  :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
 (defun forge/install-themes ()
   "Install a mix of themes."
@@ -777,7 +779,7 @@ end tell")
   :ensure t
   :config
   (setq prescient-history-length 200)
-  (setq prescient-save-file (concat forge-state-dir "prescient-items"))
+  (setq prescient-save-file (expand-file-name "prescient-items" forge-state-dir))
   (prescient-persist-mode 1))
 
 ;; https://github.com/raxod502/selectrum
@@ -852,7 +854,7 @@ end tell")
   :disabled t
   :init
   (setq smex-completion-method 'ivy
-        smex-save-file (concat forge-state-dir "smex-items")))
+        smex-save-file (expand-file-name "smex-items" forge-state-dir)))
 
 ;;; windmove
 (use-package windmove
@@ -950,7 +952,7 @@ end tell")
 
 (require 'savehist)
 (with-eval-after-load 'savehist
-  (setq savehist-file (concat forge-state-dir "savehist")
+  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
         savehist-save-minibuffer-history 1
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
         history-length 1000
@@ -999,7 +1001,7 @@ end tell")
   :init
   (yas-global-mode 1)
   :config
-  (add-to-list 'yas-snippet-dirs (concat forge-personal-dir "snippets"))
+  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" forge-personal-dir))
   (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
 
 (use-package expand-region
@@ -1203,8 +1205,8 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   :config
   ;; jabber-account-list is set via customize.
   (setq jabber-auto-reconnect t  ; reconnect automatically
-        jabber-avatar-cache-directory (concat forge-state-dir "jabber/avatar-cache")
-        jabber-history-dir (concat forge-log-dir "jabber")
+        jabber-avatar-cache-directory (expand-file-name "jabber/avatar-cache" forge-state-dir)
+        jabber-history-dir (expand-file-name "jabber" forge-log-dir)
         jabber-history-enabled t ; enable logging
         jabber-history-muc-enabled t
         jabber-use-global-history nil
@@ -1254,7 +1256,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
         erc-autoaway-use-emacs-idle t
         ;; logging
         erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
-        erc-log-channels-directory (concat forge-log-dir "erc")
+        erc-log-channels-directory (expand-file-name "erc" forge-log-dir)
         erc-log-insert-log-on-open nil
         erc-prompt-for-nickserv-password nil
         erc-save-buffer-on-part t))
@@ -1435,7 +1437,7 @@ read-file-name and dired-dwim-target-directory."
   :ensure t
   :mode ("\\.epub\\'" . nov-mode)
   :init
-  (setq nov-save-place-file (concat forge-state-dir "nov-places")))
+  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 
 (use-package go-jira
   :no-require t
@@ -1588,7 +1590,7 @@ read-file-name and dired-dwim-target-directory."
         smtpmail-smtp-server forge-smtp-server-work
         smtpmail-smtp-service 465
         smtpmail-smtp-user forge-smtp-user-work
-        smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
+        smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 
 (use-package notmuch
   :commands (notmuch)
@@ -1850,7 +1852,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :config
   (emms-all)
   (emms-history-load)
-  (setq emms-directory (concat forge-state-dir "emms")
+  (setq emms-directory (expand-file-name "emms" forge-state-dir)
         emms-player-list (list emms-player-mpv)
         emms-stream-info-backend 'mplayer
         emms-source-file-default-directory (expand-file-name "~/annex/Audio")
@@ -2452,7 +2454,7 @@ It will not remove entries from the source org file."
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
   (setq url-queue-timeout 30
-        elfeed-db-directory (concat forge-state-dir "elfeed")
+        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
         ;; create timer to update elfeed
         elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
@@ -2496,7 +2498,7 @@ It will not remove entries from the source org file."
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
   (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
   (setq tramp-default-method "ssh"
-        eshell-directory-name (concat forge-state-dir "eshell")
+        eshell-directory-name (expand-file-name "eshell" forge-state-dir)
         eshell-visual-commands '("less" "tmux" "htop" "top" "docker" "nethack")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
         eshell-prompt-function (lambda ()
@@ -2594,9 +2596,9 @@ It will not remove entries from the source org file."
         twittering-timer-interval 300
         twittering-number-of-tweets-on-retrieval 80
         twittering-initial-timeline-spec-string '("#emacs" ":home")
-        twittering-icon-storage-file (concat forge-state-dir "twittering/icons.gz")
-        twittering-user-id-db-file (concat forge-state-dir "twittering/user-id-info.gz")
-        twittering-private-info-file (concat forge-state-dir "twittering/private.gpg")))
+        twittering-icon-storage-file (expand-file-name "twittering/icons.gz" forge-state-dir)
+        twittering-user-id-db-file (expand-file-name "twittering/user-id-info.gz" forge-state-dir)
+        twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)))
 
 (use-package lorem-ipsum :defer t)
 
@@ -2612,6 +2614,6 @@ It will not remove entries from the source org file."
 
 (use-package with-editor :defer t)
 
-(setq custom-file (concat forge-personal-dir "custom.el"))
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 
 (forge/load-directory-modules forge-personal-dir)

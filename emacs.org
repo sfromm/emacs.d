@@ -175,25 +175,22 @@ and basically comes from [[https://github.com/emacscollective/no-littering][no-l
 pulling this package in.
 
 #+begin_src emacs-lisp
-(defvar forge-emacs-dir (file-truename user-emacs-directory)
-  "Path to this emacs.d directory.")
-
-(defvar forge-site-dir (concat forge-emacs-dir "site-lisp/")
+(defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
 
-(defvar forge-personal-dir (concat forge-emacs-dir "user/")
+(defvar forge-personal-dir (expand-file-name "user/" user-emacs-directory)
   "Path to user's personal configuration.")
 
-(defvar forge-themes-dir (concat forge-emacs-dir "themes/")
+(defvar forge-themes-dir (expand-file-name "themes/" user-emacs-directory)
   "Path to user themes.")
 
-(defvar forge-state-dir (concat forge-emacs-dir "var/")
+(defvar forge-state-dir (expand-file-name "var/" user-emacs-directory)
   "Path to Emacs' persistent data files.")
 
-(defvar forge-backup-dir (concat forge-state-dir "backup/")
+(defvar forge-backup-dir (expand-file-name "backup/" forge-state-dir)
   "Path to Emacs' backup and autosave files.")
 
-(defvar forge-log-dir (concat forge-state-dir "log/")
+(defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
 (add-to-list 'load-path forge-site-dir)
@@ -203,16 +200,16 @@ pulling this package in.
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq gamegrid-user-score-file-directory (concat forge-state-dir "games")
-          bookmark-default-file (concat forge-state-dir "bookmarks")
-          transient-history-file (concat forge-state-dir "transient/history.el")
-          transient-levels-file (concat forge-personal-dir "transient/levels.el")
-          transient-values-file (concat forge-personal-dir "transient/values.el")
-          message-auto-save-directory (concat forge-state-dir "messages")
-          tramp-auto-save-directory (concat forge-state-dir "tramp/auto-save")
-          tramp-persistency-file-name (concat forge-state-dir "tramp/persistency.el")
-          url-cache-directory (concat forge-state-dir "url/cache/")
-          url-configuration-directory (concat forge-state-dir "url/configuration/"))))
+    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+          bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
+          transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
+          transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir)
+          transient-values-file (expand-file-name "transient/values.el" forge-personal-dir)
+          message-auto-save-directory (expand-file-name "messages" forge-state-dir)
+          tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir)
+          tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir)
+          url-cache-directory (expand-file-name "url/cache/" forge-state-dir)
+          url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
 (defun forge/initialize ()
   "Initialize paths and session for this Emacs instance."
@@ -255,6 +252,11 @@ The following are several helper functions that are used across the configuratio
 #+end_src
 *** Feature related helpers
 #+begin_src emacs-lisp
+(defun forge/reload-emacs-configuration ()
+  "Reload emacs configuration."
+  (interactive)
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
+
 (defun forge/turn-on-hl-line ()
   "Turn on `hl-line-mode'."
   (interactive)
@@ -697,7 +699,7 @@ installs the package, if not already present, and then sets it up.
 #+begin_src emacs-lisp
 (use-package quelpa
   :init
-  (setq quelpa-dir (concat forge-state-dir "quelpa")
+  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
         quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
         quelpa-update-melpa-p nil))
 
@@ -810,7 +812,7 @@ Emojis and emoticons.
 
 (use-package emojify
   :ensure t
-  :init (setq emojify-emojis-dir (concat forge-state-dir "emojis")))
+  :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
 #+end_src
 ** Themes
@@ -1095,7 +1097,7 @@ perspective, integrates well with Emacs.
   :ensure t
   :config
   (setq prescient-history-length 200)
-  (setq prescient-save-file (concat forge-state-dir "prescient-items"))
+  (setq prescient-save-file (expand-file-name "prescient-items" forge-state-dir))
   (prescient-persist-mode 1))
 
 ;; https://github.com/raxod502/selectrum
@@ -1175,7 +1177,7 @@ disabled while I try out Selectrum and friends.  This also disables [[https://gi
   :disabled t
   :init
   (setq smex-completion-method 'ivy
-        smex-save-file (concat forge-state-dir "smex-items")))
+        smex-save-file (expand-file-name "smex-items" forge-state-dir)))
 #+end_src
 
 ** Navigation
@@ -1348,7 +1350,7 @@ Resources:
 #+begin_src emacs-lisp
 (require 'savehist)
 (with-eval-after-load 'savehist
-  (setq savehist-file (concat forge-state-dir "savehist")
+  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
         savehist-save-minibuffer-history 1
         savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
         history-length 1000
@@ -1450,7 +1452,7 @@ is =~/.emacs.d/user/snippets=.
   :init
   (yas-global-mode 1)
   :config
-  (add-to-list 'yas-snippet-dirs (concat forge-personal-dir "snippets"))
+  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" forge-personal-dir))
   (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
 #+end_src
 ** Expand region semantically with =expand-region=
@@ -1781,8 +1783,8 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   :config
   ;; jabber-account-list is set via customize.
   (setq jabber-auto-reconnect t  ; reconnect automatically
-        jabber-avatar-cache-directory (concat forge-state-dir "jabber/avatar-cache")
-        jabber-history-dir (concat forge-log-dir "jabber")
+        jabber-avatar-cache-directory (expand-file-name "jabber/avatar-cache" forge-state-dir)
+        jabber-history-dir (expand-file-name "jabber" forge-log-dir)
         jabber-history-enabled t ; enable logging
         jabber-history-muc-enabled t
         jabber-use-global-history nil
@@ -1837,7 +1839,7 @@ IRC configuration.  As a default, use =user-login-name= as the default for
         erc-autoaway-use-emacs-idle t
         ;; logging
         erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
-        erc-log-channels-directory (concat forge-log-dir "erc")
+        erc-log-channels-directory (expand-file-name "erc" forge-log-dir)
         erc-log-insert-log-on-open nil
         erc-prompt-for-nickserv-password nil
         erc-save-buffer-on-part t))
@@ -2085,7 +2087,7 @@ I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for refer
   :ensure t
   :mode ("\\.epub\\'" . nov-mode)
   :init
-  (setq nov-save-place-file (concat forge-state-dir "nov-places")))
+  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 #+end_src
 
 ** Jira
@@ -2366,7 +2368,7 @@ Here is an example of my deprecated =smtpmail= configuration.
         smtpmail-smtp-server forge-smtp-server-work
         smtpmail-smtp-service 465
         smtpmail-smtp-user forge-smtp-user-work
-        smtpmail-queue-dir (expand-file-name (concat forge-state-dir "queue"))))
+        smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 #+end_src
 *** Notmuch configuration
 Before I get into how I have Emacs configured to work with /notmuch/, the
@@ -2707,7 +2709,7 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
   :config
   (emms-all)
   (emms-history-load)
-  (setq emms-directory (concat forge-state-dir "emms")
+  (setq emms-directory (expand-file-name "emms" forge-state-dir)
         emms-player-list (list emms-player-mpv)
         emms-stream-info-backend 'mplayer
         emms-source-file-default-directory (expand-file-name "~/annex/Audio")
@@ -3356,7 +3358,7 @@ articles every 2 hours.
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
   (setq url-queue-timeout 30
-        elfeed-db-directory (concat forge-state-dir "elfeed")
+        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
         ;; create timer to update elfeed
         elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
@@ -3431,7 +3433,7 @@ Resources:
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
   (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
   (setq tramp-default-method "ssh"
-        eshell-directory-name (concat forge-state-dir "eshell")
+        eshell-directory-name (expand-file-name "eshell" forge-state-dir)
         eshell-visual-commands '("less" "tmux" "htop" "top" "docker" "nethack")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
         eshell-prompt-function (lambda ()
@@ -3547,9 +3549,9 @@ A couple things of note:
         twittering-timer-interval 300
         twittering-number-of-tweets-on-retrieval 80
         twittering-initial-timeline-spec-string '("#emacs" ":home")
-        twittering-icon-storage-file (concat forge-state-dir "twittering/icons.gz")
-        twittering-user-id-db-file (concat forge-state-dir "twittering/user-id-info.gz")
-        twittering-private-info-file (concat forge-state-dir "twittering/private.gpg")))
+        twittering-icon-storage-file (expand-file-name "twittering/icons.gz" forge-state-dir)
+        twittering-user-id-db-file (expand-file-name "twittering/user-id-info.gz" forge-state-dir)
+        twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)))
 
 #+end_src
 
@@ -3587,7 +3589,7 @@ long it took to load the configuration.
 
 #+name: cleanup
 #+begin_src emacs-lisp
-(setq custom-file (concat forge-personal-dir "custom.el"))
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 
 (forge/load-directory-modules forge-personal-dir)
 #+end_src
