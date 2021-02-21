@@ -715,7 +715,7 @@ end tell")
     ("o" ace-delete-other-windows "Delete other windows " :exit t)
     ("s" ace-swap-window "Swap window" :exit t)
     ("d" ace-delete-window "Delete window" :exit t)
-    ("b" consultp-buffer "Switch" :exit t)
+    ("b" consult-buffer "Switch" :exit t)
     ("g" golden-ratio "Golden ratio" :exit t)
     ("v" (lambda ()
            (interactive)
@@ -794,6 +794,7 @@ end tell")
   :ensure t
   :bind
   (("M-g g" . consult-goto-line)
+   ("M-s l" . consult-line)
    ("M-y" . consult-yank-pop)
    ("C-x b" . consult-buffer)
    ("C-c f" . consult-find)))
@@ -1758,6 +1759,12 @@ Will open a notmuch search buffer of the search results."
   (interactive "nLuminance: ")
   (message "Current luminance level: %s" shr-color-visible-luminance-min)
   (setq shr-color-visible-luminance-min value))
+
+(defcustom forge-attachment-dir
+  (expand-file-name "Downloads" "~/")
+  "Directory to save attachments from email."
+  :group 'forge
+  :type 'string)
 
 (defun forge/mu4e-save-all-attachments (&optional msg)
   "Save all attachments in MSG to attachment directory.

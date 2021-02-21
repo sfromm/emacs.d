@@ -1,6 +1,6 @@
 #+TITLE: Emacs configuration file
 #+AUTHOR: Stephen Fromm
-#+OPTIONS: toc:4 h;4
+#+OPTIONS: toc:4 h:3
 #+PROPERTY: header-args:emacs-lisp :tangle "init.el" :results silent :exports code
 #+MACRO: export-date (eval (format-time-string "%F %R %z" (current-time)))
 
@@ -1024,7 +1024,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
     ("o" ace-delete-other-windows "Delete other windows " :exit t)
     ("s" ace-swap-window "Swap window" :exit t)
     ("d" ace-delete-window "Delete window" :exit t)
-    ("b" consultp-buffer "Switch" :exit t)
+    ("b" consult-buffer "Switch" :exit t)
     ("g" golden-ratio "Golden ratio" :exit t)
     ("v" (lambda ()
            (interactive)
@@ -1112,6 +1112,7 @@ perspective, integrates well with Emacs.
   :ensure t
   :bind
   (("M-g g" . consult-goto-line)
+   ("M-s l" . consult-line)
    ("M-y" . consult-yank-pop)
    ("C-x b" . consult-buffer)
    ("C-c f" . consult-find)))
@@ -2603,6 +2604,12 @@ The following helpers, one for /notmuch/ and a legacy one for /mu4e/, will save
 all attachments to a directory.
 
 #+begin_src emacs-lisp
+(defcustom forge-attachment-dir
+  (expand-file-name "Downloads" "~/")
+  "Directory to save attachments from email."
+  :group 'forge
+  :type 'string)
+
 (defun forge/mu4e-save-all-attachments (&optional msg)
   "Save all attachments in MSG to attachment directory.
 The sub-directory in `forge-attachment-dir' is derived from the subject of the email message."
