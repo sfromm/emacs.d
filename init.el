@@ -2280,6 +2280,10 @@ It will not remove entries from the source org file."
   :custom
   (org-startup-indented t))
 
+(use-package htmlize
+  :ensure t
+  :defer t)
+
 (use-package ox-twbs :defer t)
 
 (use-package ox-reveal

@@ -3206,6 +3206,12 @@ It will not remove entries from the source org file."
 
 #+end_src
 *** Odds and ends
+- [[https://github.com/marsmining/ox-twbs][Org Export to Twitter Bootstrap]]
+  - Uses [[https://github.com/hniksic/emacs-htmlize][htmlize]] to fontify some sections.
+- [[https://github.com/dakrone/ox-tufte][Org Export to Tufte]]
+  - You will need the CSS and fonts from [[https://github.com/edwardtufte/tufte-css][tufte-css]].
+- [[https://github.com/yjwen/org-reveal][Org Export to Reveal JS]]
+
 #+begin_src emacs-lisp
 (use-package ol-git-link :defer t)
 
@@ -3237,6 +3243,10 @@ It will not remove entries from the source org file."
   :diminish t
   :custom
   (org-startup-indented t))
+
+(use-package htmlize
+  :ensure t
+  :defer t)
 
 (use-package ox-twbs :defer t)
 
