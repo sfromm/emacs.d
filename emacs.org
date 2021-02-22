@@ -74,6 +74,7 @@ those configurations that caught my eye.
 
 - [[http://sachachua.com/blog/][Sacha Chua]]'s [[http://sachac.github.io/.emacs.d/Sacha.html][emacs configuration]]
 - [[https://github.com/jwiegley/dot-emacs][John Wiegley]]
+- [[https://protesilaos.com/][Protesilaos Stavrou]]: [[https://protesilaos.com/dotemacs/][dotemacs]]
 - [[http://doc.norang.ca/org-mode.html][Bernt Hansen (norang.ca) Org Mode]] (Organize Your Life in Plain Text)
 - [[http://eschulte.github.io/emacs24-starter-kit/][Emacs Starter Kit]]
 - [[https://www.wisdomandwonder.com][Grant Rettke]]:  [[https://github.com/grettke/lolsmacs][lolsmacs]], and previously [[https://github.com/grettke/home/blob/master/ALEC.org][ALEC]]
