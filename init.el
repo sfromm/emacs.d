@@ -628,8 +628,7 @@ end tell")
 
 (use-package nyan-mode
   :ensure t
-  :defer t
-  :hook (doom-modeline-mode . nyan-mode))
+  :defer t)
 
 (defun forge/setup-ui ()
   "Set up the look and feel."

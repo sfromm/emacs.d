@@ -917,8 +917,7 @@ The following are modes I no longer use.  Configuration is here for reference.
 
 (use-package nyan-mode
   :ensure t
-  :defer t
-  :hook (doom-modeline-mode . nyan-mode))
+  :defer t)
 #+end_src
 ** Look and feel
 #+begin_src emacs-lisp
