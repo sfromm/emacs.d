@@ -7,7 +7,6 @@
 * Overview
 ** Official links to this document
 
-- HTML version :: https://github.com/sfromm/emacs.d/emacs.html
 - Git repository ::  https://github.com/sfromm/emacs.d
 
 ** What is this?
@@ -2123,10 +2122,12 @@ There are basically three parts to my email configuration:
 
 *** Fetching email
 I use a couple tools to fetch my email, depending on who the service provider
-is.  For those providers where I can use IMAP, I use [[http://isync.sourceforge.net/][mbsync]] to sync mail to my
-workstation.  I also use [[https://github.com/gauteh/lieer][lieer]] to pull and push email & labels from a Gmail
-account.  I recommend reviewing the [[https://github.com/gauteh/lieer/blob/master/docs/index.md][instructions]] for more on how to setup and
-configure /lieer/.
+is.  For those providers where I can use IMAP, I use [[http://isync.sourceforge.net/][mbsync]], aka isync, to sync
+mail to my workstation.  While you can use /mbsync/ to pull mail from Gmail, I
+use [[https://github.com/gauteh/lieer][lieer]] to pull and push email & labels from a Gmail account.  I recommend
+reviewing the [[https://github.com/gauteh/lieer/blob/master/docs/index.md][instructions]] for more on how to setup and configure /lieer/.
+
+I provide an example configuration for /mbsync/ to use with Gmail below.
 
 **** Example /mbsyncrc/ configuration
 A couple notes about this configuration:
@@ -2138,24 +2139,24 @@ Create Both
 Expunge Both
 SyncState *
 
-IMAPAccount Work
+IMAPAccount Provider1
 Host mail.example.com
 User myusername
 PassCmd "~/bin/auth-source-query.py myusername mail.example.com 993"
 SSLType IMAPS
 CertificateFile ~/.mail/.certs.pem
 
-IMAPStore work-remote
-Account Work
+IMAPStore provider1-remote
+Account Provider1
 
-MaildirStore work-local
-Path ~/.mail/Work/
-Inbox ~/.mail/Work/INBOX
+MaildirStore provider1-local
+Path ~/.mail/Provider1/
+Inbox ~/.mail/Provider1/INBOX
 Flatten .
 
-Channel work
-Master :work-remote:
-Slave :work-local:
+Channel provider1
+Master :provider1-remote:
+Slave :provider1-local:
 #+end_example
 
 **** Example /lieer/ configuration
@@ -2169,6 +2170,77 @@ pushd ~/bin
 ln -s ~/src/lieer/gmi gmi
 popd
 #+end_src
+
+**** Example /mbsyncrc/ with Gmail
+The Arch Wiki has some nice [[https://wiki.archlinux.org/index.php/Isync][information]] on configuring Isync with Gmail.  One
+approach is to, by default, exclude all of the special /[Gmail]/ folders and
+then include /Drafts/, /Sent Mail/, /Trash/, and /Starred/.
+
+The following is the configuration I had when I used /mbsync/ to pull from
+Gmail.  The reason I pulled out the individual channels is because I didn't want
+/[Gmail]/ in the path name and this provided a way to manage that.  For example,
+/[Gmail]/All Mail/ as the remote folder would become /Archive/ on my
+workstation.
+
+#+begin_example
+IMAPAccount Gmail
+Host imap.gmail.com
+User myusername@gmail.com
+PassCmd "~/bin/auth-source-query.py myusername imap.gmail.com 993"
+SSLType IMAPS
+CertificateFile ~/.mail/.certs.pem
+
+IMAPStore gmail-remote
+Account Gmail
+
+MaildirStore gmail-local
+Path ~/.mail/Gmail/
+Inbox ~/.mail/Gmail/INBOX
+
+Channel gmail-inbox
+Master :gmail-remote:INBOX
+Slave :gmail-local:INBOX
+MaxMessages 5000
+
+Channel gmail-archive
+Master :gmail-remote:"[Gmail]/All Mail"
+Slave :gmail-local:Archive
+
+Channel gmail-drafts
+Master :gmail-remote:"[Gmail]/Drafts"
+Slave :gmail-local:Drafts
+
+Channel gmail-sent
+Master :gmail-remote:"[Gmail]/Sent Mail"
+Slave :gmail-local:Sent
+
+Channel gmail-trash
+Master :gmail-remote:"[Gmail]/Trash"
+Slave :gmail-local:Trash
+MaxMessages 5000
+
+Channel gmail-flagged
+Master :gmail-remote:"[Gmail]/Starred"
+Slave :gmail-local:flagged
+
+Group Gmail
+Channel gmail-inbox
+Channel gmail-archive
+Channel gmail-drafts
+Channel gmail-sent
+Channel gmail-trash
+Channel gmail-flagged
+
+#+end_example
+
+The other thing of interest is that I used /MaxMessages/ to limit
+how much to keep locally.  The man page says:
+
+#+begin_quote
+Sets the maximum number of messages to keep in each Slave mailbox.  This is
+useful for mailboxes where you keep a complete archive on the server, but want
+to mirror only the last messages (for instance, for mailing lists).
+#+end_quote
 
 *** Composing email
 [[https://www.gnu.org/software/emacs/manual/html_mono/message.html][message-mode]] is the Emacs message composition mode.
