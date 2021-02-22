@@ -423,8 +423,7 @@ end tell")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
 (require 'package)
-(when (version< emacs-version "27.0")
-  (package-initialize))
+(package-initialize)
 
 (dolist (package init--core-packages)
   (progn (forge/package-install package)))
@@ -1946,6 +1945,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-export-allow-bind-keywords t)
   (org-export-coding-system 'utf-8)
   (org-log-reschedule "note")
+  (org-src-fontify-natively t)
 
   :bind
   (("<f8>" . org-cycle-agenda-files)

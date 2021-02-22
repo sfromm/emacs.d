@@ -664,8 +664,7 @@ This defines what package archives are used and then initializes =package=.
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
 (require 'package)
-(when (version< emacs-version "27.0")
-  (package-initialize))
+(package-initialize)
 #+end_src
 ** =use-package=
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
@@ -2811,6 +2810,7 @@ package via the Org ELPA package repository.
   (org-export-allow-bind-keywords t)
   (org-export-coding-system 'utf-8)
   (org-log-reschedule "note")
+  (org-src-fontify-natively t)
 
   :bind
   (("<f8>" . org-cycle-agenda-files)
