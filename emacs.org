@@ -2182,6 +2182,10 @@ Gmail.  The reason I pulled out the individual channels is because I didn't want
 /[Gmail]/All Mail/ as the remote folder would become /Archive/ on my
 workstation.
 
+I'll finally note that you may need to create an [[https://support.google.com/accounts/answer/185833?hl=en][application-specific password]]
+for Gmail.  Follow Google's instructions for creating the password and then
+store that in your password database.
+
 #+begin_example
 IMAPAccount Gmail
 Host imap.gmail.com
