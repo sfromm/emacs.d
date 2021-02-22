@@ -13,6 +13,7 @@ user/
 *~
 *.elc
 .*.lock
+*.html
 \#*
 savehist
 session.*
