@@ -2137,6 +2137,7 @@ I provide an example configuration for /mbsync/ to use with Gmail below.
 A couple notes about this configuration:
 - It uses a utility I have to query =auth-source= from the CLI to look up credentials.
 - It stores mail in =~/.mail=.
+- Recent releases of /mbsync/ use the terminology /Far/Near/ instead of /Master/Slave/.
 
 #+begin_example
 Create Both
@@ -2159,8 +2160,8 @@ Inbox ~/.mail/Provider1/INBOX
 Flatten .
 
 Channel provider1
-Master :provider1-remote:
-Slave :provider1-local:
+Far :provider1-remote:
+Near :provider1-local:
 #+end_example
 
 **** Example /lieer/ configuration
@@ -2206,30 +2207,30 @@ Path ~/.mail/Gmail/
 Inbox ~/.mail/Gmail/INBOX
 
 Channel gmail-inbox
-Master :gmail-remote:INBOX
-Slave :gmail-local:INBOX
+Far :gmail-remote:INBOX
+Near :gmail-local:INBOX
 MaxMessages 5000
 
 Channel gmail-archive
-Master :gmail-remote:"[Gmail]/All Mail"
-Slave :gmail-local:Archive
+Far :gmail-remote:"[Gmail]/All Mail"
+Near :gmail-local:Archive
 
 Channel gmail-drafts
-Master :gmail-remote:"[Gmail]/Drafts"
-Slave :gmail-local:Drafts
+Far :gmail-remote:"[Gmail]/Drafts"
+Near :gmail-local:Drafts
 
 Channel gmail-sent
-Master :gmail-remote:"[Gmail]/Sent Mail"
-Slave :gmail-local:Sent
+Far :gmail-remote:"[Gmail]/Sent Mail"
+Near :gmail-local:Sent
 
 Channel gmail-trash
-Master :gmail-remote:"[Gmail]/Trash"
-Slave :gmail-local:Trash
+Far :gmail-remote:"[Gmail]/Trash"
+Near :gmail-local:Trash
 MaxMessages 5000
 
 Channel gmail-flagged
-Master :gmail-remote:"[Gmail]/Starred"
-Slave :gmail-local:flagged
+Far :gmail-remote:"[Gmail]/Starred"
+Near :gmail-local:flagged
 
 Group Gmail
 Channel gmail-inbox
@@ -2238,7 +2239,6 @@ Channel gmail-drafts
 Channel gmail-sent
 Channel gmail-trash
 Channel gmail-flagged
-
 #+end_example
 
 The other thing of interest is that I used /MaxMessages/ to limit
