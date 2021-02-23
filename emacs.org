@@ -4,7 +4,10 @@
 #+PROPERTY: header-args:emacs-lisp :tangle "init.el" :results silent :exports code
 #+MACRO: export-date (eval (format-time-string "%F %R %z" (current-time)))
 
+Updated: *{{{export-date}}}*
+
 * Overview
+
 ** Official links to this document
 
 - Git repository ::  https://github.com/sfromm/emacs.d
