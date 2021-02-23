@@ -129,6 +129,16 @@
   (when (not (one-window-p))
     (delete-window)))
 
+(defun forge/transparency (value)
+  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+(defun forge/whitespace-visualize ()
+  "Enable whitespace visualizations."
+  (setq highlight-tabs t)
+  (setq show-trailing-whitespace t))
+
 (defun forge/dig-ext (domain)
   "Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "sHost: ")
@@ -144,15 +154,17 @@
          (forward-line))
     (dig-mode)))
 
-(defun forge/transparency (value)
-  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
+(defconst speed_of_light 299792458 "Speed of light, m/s.")
 
-(defun forge/whitespace-visualize ()
-  "Enable whitespace visualizations."
-  (setq highlight-tabs t)
-  (setq show-trailing-whitespace t))
+(defun wavelength-to-frequency (wavelength)
+  "Convert a wavelength to frequency."
+  (interactive "nWavelength: ")
+  (message "Frequency: %0.2f" (/ (/ speed_of_light wavelength) 1000)))
+
+(defun frequency-to-wavelength (frequency)
+  "Convert a frequency to wavelength (nm)."
+  (interactive "nFrequency: ")
+  (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 
 (defcustom forge-peek-buffer-name "*forge-peek*"
   "Buffer for peeking at data."
