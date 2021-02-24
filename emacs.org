@@ -3595,8 +3595,13 @@ A couple things of note:
 
 - [[https://github.com/hayamiz/twittering-mode/pull/81][Pull request 81: Integration with Org Mode]]
 - [[https://gist.github.com/danieroux/7838667][Org store link gist]]
+- [[https://github.com/hayamiz/twittering-mode/issues/154][Issue 154: epa--decode-coding-string not defined]]
+  - You might run into an issue of /Symbol's function definition is void/.  The
+    fix is to alias =decode-coding-string=.
 
 #+begin_src emacs-lisp
+(defalias 'epa--decode-coding-string 'decode-coding-string)
+
 (use-package twittering-mode
   :defer t
   :commands twit

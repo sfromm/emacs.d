@@ -2552,6 +2552,8 @@ It will not remove entries from the source org file."
     (ansi-term "/bin/bash"))
   (get-buffer-process "*ansi-term*"))
 
+(defalias 'epa--decode-coding-string 'decode-coding-string)
+
 (use-package twittering-mode
   :defer t
   :commands twit
