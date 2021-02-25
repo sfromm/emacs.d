@@ -139,7 +139,7 @@
   (setq highlight-tabs t)
   (setq show-trailing-whitespace t))
 
-(defun forge/dig-ext (domain)
+(defun dig-ext (domain)
   "Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "sHost: ")
   (let ((query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR")))

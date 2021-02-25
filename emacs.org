@@ -322,7 +322,7 @@ The following functions are not so much tied to features.  They are just various
 helpers.
 
 #+begin_src emacs-lisp
-(defun forge/dig-ext (domain)
+(defun dig-ext (domain)
   "Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "sHost: ")
   (let ((query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR")))
