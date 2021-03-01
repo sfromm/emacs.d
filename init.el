@@ -1889,7 +1889,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (use-package org
   :ensure org-plus-contrib
   :preface
-    (defun forge/org-fixed-font-faces ()
+  (defun forge/org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
     (interactive)
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
@@ -2071,6 +2071,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                      :base-directory "~/forge"
                                      :publishing-directory "~/Documents")))
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
+                                                           (dot . t)
                                                            (emacs-lisp . t)
                                                            (org . t)
                                                            (perl . t)
