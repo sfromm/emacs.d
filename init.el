@@ -445,24 +445,27 @@ end tell")
   (require 'use-package))
 
 (setq use-package-verbose t
+      use-package-compute-statistics t       ;; compute
+      use-package-always-defer t             ;; always defer loading
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
 (use-package diminish :demand t)
-(use-package bind-key)
+(use-package bind-key :demand t)
 (require 'cl)
 
 (use-package paradox
-  :defer t
   :init
   (setq paradox-execute-asynchronously t))
 
 (use-package quelpa
+  :demand t
   :init
   (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
         quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
         quelpa-update-melpa-p nil))
 
 (use-package quelpa-use-package
+  :demand t
   :after quelpa)
 
 (defcustom forge-font "IBM Plex Mono"
@@ -572,29 +575,24 @@ end tell")
   :group 'forge)
 
 (use-package zenburn-theme
-  :defer t
   :custom
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t))
 
 (use-package solarized-theme
-  :defer t
   :custom
   (solarized-use-variable-pitch t)
   (solarized-scale-org-headlines t))
 
 (use-package doom-themes
-  :defer t
   :config
   (doom-themes-org-config))
 
 (use-package modus-operandi-theme
-  :defer t
   :custom
   (modus-operandi-theme-scale-headings t))
 
 (use-package modus-vivendi-theme
-  :defer t
   :custom
   (modus-vivendi-theme-scale-headings t))
 
@@ -638,9 +636,7 @@ end tell")
   (after-load-theme . smart-mode-line-enable)
   (after-init . sml/setup))
 
-(use-package nyan-mode
-  :ensure t
-  :defer t)
+(use-package nyan-mode)
 
 (defun forge/setup-ui ()
   "Set up the look and feel."
@@ -671,7 +667,7 @@ end tell")
 (use-package which-key
   :ensure t
   :custom (which-key-idle-delay 1.5)
-  :defer 5
+  :demand t
   :diminish
   :commands which-key-mode
   :config (which-key-mode))
@@ -696,6 +692,7 @@ end tell")
 
 (use-package hydra
   :ensure t
+  :demand t
   :config
   (defhydra forge/navigate (:foreign-keys run)
     "[Navigate] or q to exit."
@@ -781,12 +778,14 @@ end tell")
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum
   :ensure t
+  :demand t
   :config
   (selectrum-mode 1))
 
 ;; https://github.com/raxod502/prescient.el
 (use-package prescient
   :ensure t
+  :demand t
   :config
   (setq prescient-history-length 200)
   (setq prescient-save-file (expand-file-name "prescient-items" forge-state-dir))
@@ -795,6 +794,7 @@ end tell")
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum-prescient
   :ensure t
+  :demand t
   :after (:all selectrum prescient)
   :config
   (selectrum-prescient-mode +1))
@@ -802,6 +802,7 @@ end tell")
 ;; https://github.com/minad/consult
 (use-package consult
   :ensure t
+  :demand t
   :bind
   (("M-g g" . consult-goto-line)
    ("M-s l" . consult-line)
@@ -812,6 +813,7 @@ end tell")
 ;; https://github.com/minad/marginalia
 (use-package marginalia
   :ensure t
+  :demand t
   :bind (:map minibuffer-local-map
               ("C-M-a" . marginalia-cycle))
   :custom
@@ -878,7 +880,6 @@ end tell")
   :config (windmove-default-keybindings 'super))
 
 (use-package dumb-jump
-  :defer t
   :ensure t
   :bind
   (("M-g o" . dumb-jump-go-other-window)
@@ -892,7 +893,6 @@ end tell")
   (setq dumb-jump-selector 'ivy))
 
 (use-package eyebrowse
-  :defer t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
   :bind
   (("M-1" . eyebrowse-switch-to-window-config-1)
@@ -903,7 +903,6 @@ end tell")
   (eyebrowse-mode 1))
 
 (use-package golden-ratio
-  :defer t
   :hook
   (ediff-before-setup-windows . (lambda () (golden-ratio-mode -1)))
   (ediff-quit . (lambda () (golden-ratio-mode 1)))
@@ -971,7 +970,6 @@ end tell")
   (add-hook 'after-init-hook #'savehist-mode))
 
 (use-package undo-tree
-  :defer t
   :diminish undo-tree-mode
   :bind
   (("C-/" . undo-tree-undo)
@@ -1016,7 +1014,6 @@ end tell")
   (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
 
 (use-package expand-region
-  :defer t
   :bind ("C-=" . er/expand-region))
 
 (use-package highlight-indent-guides
@@ -1024,7 +1021,6 @@ end tell")
   :custom (highlight-indent-guides-method 'character))
 
 (use-package recentf
-  :defer 2
   :bind ("<f7>" . consult-recent-file)
   :custom
   (recentf-save-file (expand-file-name "recentf" forge-state-dir))
@@ -1043,18 +1039,15 @@ end tell")
       (replace-match (string ?\C-j) nil t))))
 
 (use-package flycheck
-  :defer t
   :diminish flycheck-mode
   :custom (flycheck-global-modes '(not org-mode))
   :init (global-flycheck-mode))
 
 (use-package company
-  :defer t
   :hook (prog-mode . company-mode)
   :diminish company-mode)
 
 (use-package ediff
-  :defer t
   :init
   (setq ediff-split-window-function 'split-window-horizontally
         ediff-window-setup-function 'ediff-setup-windows-plain))
@@ -1098,18 +1091,15 @@ end tell")
     (previous-line)))
 
 (use-package aggressive-indent
-  :defer t
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (use-package lisp-mode
-  :defer t
   :hook
   (before-save . forge/turn-on-delete-trailing-whitespace)
   :config
   (setq lisp-indent-offset nil))
 
 (use-package eldoc
-  :defer t
   :diminish eldoc-mode
   :init
   (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
@@ -1118,7 +1108,6 @@ end tell")
   (setq eldoc-idle-delay 0.3))
 
 (use-package python
-  :defer t
   :interpreter ("python" . python-mode)
   :hook
   (python-mode . forge/turn-on-delete-trailing-whitespace)
@@ -1127,30 +1116,25 @@ end tell")
   (setq-default python-indent-offset 4))
 
 (use-package anaconda-mode
-  :defer t
   :after python
   :hook python-mode
   :init
   (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
 
 (use-package company-anaconda
-  :defer t
   :after anaconda-mode)
 
 (use-package go-mode
   :mode "\\.go\\ '"
-  :defer t
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 (use-package shell-script
-  :defer t
   :hook
   (shell-script . forge/whitespace-visualize)
   (shell-script . forge/turn-on-delete-trailing-whitespace))
 
 (use-package web-mode
-  :defer t
   :init
   (progn
     (setq
@@ -1160,20 +1144,16 @@ end tell")
     (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
 
 (use-package restclient
-  :defer t
   :mode ("\\.http\\'" . restclient-mode))
 
-(use-package php-mode
-  :defer t)
+(use-package php-mode)
 
 (use-package json-mode
-  :defer t
   :hook
   (json-mode . forge/turn-on-delete-trailing-whitespace)
   (json-mode . forge/whitespace-visualize))
 
 (use-package yaml-mode
-  :defer t
   :hook
   (yaml-mode . forge/turn-on-delete-trailing-whitespace)
   (yaml-mode . forge/whitespace-visualize)
@@ -1181,16 +1161,13 @@ end tell")
   (setq yaml-indent-offset 2))
 
 (use-package junos-mode
-  :defer t
   :config (setq-local c-basic-offset 4))
 
 (use-package eos-mode
-  :defer t
   :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :hook (eos-mode . highlight-indent-guides-mode))
 
-(use-package ledger-mode
-  :defer t)
+(use-package ledger-mode)
 
 (require 'notifications)
 (require 'tls)
@@ -1235,7 +1212,6 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
     (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
 (use-package erc
-  :defer t
   :preface
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
@@ -1309,19 +1285,17 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   "Slack client token.")
 
 (use-package slack
-    :defer t
-    :commands (slack-start)
-    :bind (:map slack-mode-map
-                ("C-c C-e" . slack-message-edit)
-                ("C-c C-k" . slack-channel-leave)
-                ("@" . slack-message-embed-mention)
-                ("#" . slack-message-embed-channel))
-    :init
-    (setq slack-buffer-emojify t
-          slack-prefer-current-team t))
+  :commands (slack-start)
+  :bind (:map slack-mode-map
+              ("C-c C-e" . slack-message-edit)
+              ("C-c C-k" . slack-channel-leave)
+              ("@" . slack-message-embed-mention)
+              ("#" . slack-message-embed-channel))
+  :init
+  (setq slack-buffer-emojify t
+        slack-prefer-current-team t))
 
 (use-package dired
-  :defer t
   :preface
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
@@ -1436,12 +1410,11 @@ read-file-name and dired-dwim-target-directory."
   :init
   (setq magit-last-seen-setup-instructions "1.4.0"))
 
-(use-package git-timemachine :defer t)
+(use-package git-timemachine)
 
-(use-package magit-annex :defer t)
+(use-package magit-annex)
 
 (use-package git-annex
-  :defer 1
   :after dired)
 
 (use-package nov
@@ -1501,7 +1474,6 @@ read-file-name and dired-dwim-target-directory."
   (message-setup . gnus-alias-determine-identity))
 
 (use-package gnus-dired
-  :defer t
   :hook (dired-mode . turn-on-gnus-dired-mode)
   :init
   (setq gnus-dired-mail-mode 'notmuch-user-agent))
@@ -1586,14 +1558,12 @@ read-file-name and dired-dwim-target-directory."
 (global-set-key (kbd "C-c m") 'forge/hydra-email/body)
 
 (use-package sendmail
-  :defer t
   :custom
   (mail-specify-envelope-from t)
   (mail-envelope-from 'header)
   (sendmail-program (executable-find "sendmail.py")))
 
 (use-package smtpmail
-  :defer t
   :disabled t
   :config
   (setq smtpmail-stream-type 'ssl
@@ -1851,7 +1821,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (use-package mingus
   :disabled t
   :ensure t
-  :defer t
   :preface
   (defun forge/get-current-song-mpd ()
     "Get the current song playing via MPD."
@@ -1865,7 +1834,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 (use-package emms
   :ensure t
-  :defer t
   :config
   (emms-all)
   (emms-history-load)
@@ -2089,14 +2057,12 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (:any org notmuch))
 
 (use-package org-mime
-  :defer t
   :hook
   (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
   :init
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
 
 (use-package org-pomodoro
-  :defer t
   :bind
   (("C-c C-x C-i" . org-pomodoro)
    ("C-c C-x C-o" . org-pomodoro))
@@ -2121,7 +2087,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
 
 (use-package org-tree-slide
-  :defer t
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
               ("<f9>" . org-tree-slide-move-previous-tree)
@@ -2262,12 +2227,11 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
-(use-package ol-git-link :defer t)
+(use-package ol-git-link)
 
 (use-package ol-eww :defer 5 :after org)
 
 (use-package org-contacts
-  :defer t
   :after org
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
@@ -2276,39 +2240,33 @@ It will not remove entries from the source org file."
                                         "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 
 (use-package org-bullets
-  :defer t
   :hook (org-mode . org-bullets-mode)
   :after org)
 
 (use-package org-id
-  :defer 2
   :after org
   :config
   (setq org-id-method 'uuid
         org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
 (use-package org-indent
-  :defer t
   :diminish t
   :custom
   (org-startup-indented t))
 
 (use-package htmlize
-  :ensure t
-  :defer t)
+  :ensure t)
 
-(use-package ox-twbs :defer t)
+(use-package ox-twbs)
 
 (use-package ox-reveal
-  :defer t
   :init
   (setq org-reveal-note-key-char nil))
 
-(use-package ox-tufte :defer t)
+(use-package ox-tufte)
 
 (use-package org-journal
   :disabled t
-  :defer t
   :preface
   (defun org-journal-find-location ()
     "Open today's journal file."
@@ -2346,12 +2304,10 @@ It will not remove entries from the source org file."
 
 ;;
 (use-package pass
-  :defer t
   :ensure t)
 
 ;; https://github.com/ecraven/ivy-pass
 (use-package ivy-pass
-  :defer t
   :ensure t
   :bind
   ("C-c p" . ivy-pass))
@@ -2508,7 +2464,6 @@ It will not remove entries from the source org file."
       (eshell-send-input)))
 
   (use-package em-unix
-    :defer t
     :config
     (unintern 'eshell/su nil)
     (unintern 'eshell/sudo nil))
@@ -2556,7 +2511,6 @@ It will not remove entries from the source org file."
 (defalias 'epa--decode-coding-string 'decode-coding-string)
 
 (use-package twittering-mode
-  :defer t
   :commands twit
   :bind
   (:map twittering-mode-map
@@ -2625,10 +2579,9 @@ It will not remove entries from the source org file."
         twittering-user-id-db-file (expand-file-name "twittering/user-id-info.gz" forge-state-dir)
         twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)))
 
-(use-package lorem-ipsum :defer t)
+(use-package lorem-ipsum)
 
 (use-package gist
-  :defer t
   :custom (gist-view-gist t))
 
 (use-package wttrin
@@ -2637,7 +2590,7 @@ It will not remove entries from the source org file."
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
   (wttrin-default-accept-language '("Accept-Language" . "en-US")))
 
-(use-package with-editor :defer t)
+(use-package with-editor)
 
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 
