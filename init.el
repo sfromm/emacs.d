@@ -259,6 +259,11 @@
   (interactive)
   (forge-mkhome-target "git"))
 
+(defun forge-mkhome-www ()
+  "Run mkhome www."
+  (interactive)
+  (forge-mkhome-target "www"))
+
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
   (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
@@ -674,6 +679,7 @@ end tell")
 
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-git)
+(define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
