@@ -3048,9 +3048,13 @@ Miscellaneous notes:
 *** Org Pomodoro
 #+begin_src emacs-lisp
 (use-package org-pomodoro
-  :bind
-  (("C-c C-x C-i" . org-pomodoro)
-   ("C-c C-x C-o" . org-pomodoro))
+  :commands (org-pomodoro)
+  :custom
+  (org-pomodoro-audio-player "mpv")
+  (org-pomodoro-finished-sound "~/annex/Music/drip.ogg")
+  ;; :bind
+  ;; (("C-c C-x C-i" . org-pomodoro)
+  ;;  ("C-c C-x C-o" . org-pomodoro))
 
   :preface
   (defun forge/notify-pomodoro (title message)
@@ -3065,11 +3069,7 @@ Miscellaneous notes:
   (org-pomodoro-break-finished . (lambda ()
                                    (forge/notify-pomodoro "Break completed" "Ready for another?")))
   (org-pomodoro-long-break-finished . (lambda ()
-                                        (forge/notify-pomodoro "Long break completed" "Ready for another?")))
-
-  :init
-  (setq org-pomodoro-audio-player "mpv"
-        org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
+                                        (forge/notify-pomodoro "Long break completed" "Ready for another?"))))
 
 #+end_src
 *** Org Tree Slide for presentations from Org

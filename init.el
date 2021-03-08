@@ -2070,9 +2070,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
 
 (use-package org-pomodoro
-  :bind
-  (("C-c C-x C-i" . org-pomodoro)
-   ("C-c C-x C-o" . org-pomodoro))
+  :commands (org-pomodoro)
+  :custom
+  (org-pomodoro-audio-player "mpv")
+  (org-pomodoro-finished-sound "~/annex/Music/drip.ogg")
+  ;; :bind
+  ;; (("C-c C-x C-i" . org-pomodoro)
+  ;;  ("C-c C-x C-o" . org-pomodoro))
 
   :preface
   (defun forge/notify-pomodoro (title message)
@@ -2087,11 +2091,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-pomodoro-break-finished . (lambda ()
                                    (forge/notify-pomodoro "Break completed" "Ready for another?")))
   (org-pomodoro-long-break-finished . (lambda ()
-                                        (forge/notify-pomodoro "Long break completed" "Ready for another?")))
-
-  :init
-  (setq org-pomodoro-audio-player "mpv"
-        org-pomodoro-finished-sound "~/annex/Music/drip.ogg"))
+                                        (forge/notify-pomodoro "Long break completed" "Ready for another?"))))
 
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map
