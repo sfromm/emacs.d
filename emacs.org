@@ -97,6 +97,7 @@ those configurations that caught my eye.
 - [[https://github.com/hlissner][Henrik Lissner]] [[https://github.com/hlissner/doom-emacs][Doom Emacs]]
 - [[https://gitlab.com/ambrevar/dotfiles][Ambrevar]]
 - [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB]]
+- [[https://luca.cambiaghi.me/vanilla-emacs/readme.html][Luca Cambiaghi]]
 ** COPYING
 
 #+begin_quote
