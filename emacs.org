@@ -2258,6 +2258,11 @@ to mirror only the last messages (for instance, for mailing lists).
 *** Composing email
 [[https://www.gnu.org/software/emacs/manual/html_mono/message.html][message-mode]] is the Emacs message composition mode.
 
+Notes:
+- =message-forward-as-mime= defaults to /nil/.  If set to /t/, Emacs will
+  forward messages as rfc822 attachments.  When /nil/, it forwards the message
+  directly inline.
+
 #+begin_src emacs-lisp
 (require 'message)
 (with-eval-after-load 'message
