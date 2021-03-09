@@ -2996,7 +2996,7 @@ Miscellaneous notes:
                                 ("rr" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* REFERENCE %a %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
 
-                                ("rw" "Web Page" entry (file+olp+datetree "~/forge/journal.org")
+                                ("rw" "Web Page" entry (file+olp+datetree "~/forge/articles.org")
                                  (function forge/org-clip-web-page) :prepend t)
 
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
