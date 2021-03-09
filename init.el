@@ -2031,7 +2031,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)")
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)")
                             (sequence "PROJECT" "|" "DONE(d)")
                             (sequence "|" "MEETING" "REFERENCE(r)")))
   ;;
