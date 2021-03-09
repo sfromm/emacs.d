@@ -2073,7 +2073,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :commands (org-pomodoro)
   :custom
   (org-pomodoro-audio-player "mpv")
-  (org-pomodoro-finished-sound "~/annex/Music/drip.ogg")
+  (org-pomodoro-finished-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
   ;; :bind
   ;; (("C-c C-x C-i" . org-pomodoro)
   ;;  ("C-c C-x C-o" . org-pomodoro))
@@ -2320,7 +2320,8 @@ It will not remove entries from the source org file."
   ("C-c p" . ivy-pass))
 
 (use-package elfeed
-  :ensure elfeed
+  :ensure t
+  :commands (elfeed)
   :bind
   (:map elfeed-search-mode-map
         ("j" . next-line)

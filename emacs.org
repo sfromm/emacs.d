@@ -3057,7 +3057,7 @@ Miscellaneous notes:
   :commands (org-pomodoro)
   :custom
   (org-pomodoro-audio-player "mpv")
-  (org-pomodoro-finished-sound "~/annex/Music/drip.ogg")
+  (org-pomodoro-finished-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
   ;; :bind
   ;; (("C-c C-x C-i" . org-pomodoro)
   ;;  ("C-c C-x C-o" . org-pomodoro))
@@ -3341,7 +3341,8 @@ articles every 2 hours.
 
 #+begin_src emacs-lisp
 (use-package elfeed
-  :ensure elfeed
+  :ensure t
+  :commands (elfeed)
   :bind
   (:map elfeed-search-mode-map
         ("j" . next-line)
