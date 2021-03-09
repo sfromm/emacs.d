@@ -2883,7 +2883,7 @@ Miscellaneous notes:
       (require 'ol-eww)
       (org-eww-copy-for-org-mode)
       (concat
-       "* REFERENCE %a %? :ARTICLE:
+       "* %a %? :ARTICLE:
 :PROPERTIES:
 :ID:       %(shell-command-to-string \"uuidgen\")
 :CREATED:  %U

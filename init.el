@@ -1907,7 +1907,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
       (require 'ol-eww)
       (org-eww-copy-for-org-mode)
       (concat
-       "* REFERENCE %a %? :ARTICLE:
+       "* %a %? :ARTICLE:
 :PROPERTIES:
 :ID:       %(shell-command-to-string \"uuidgen\")
 :CREATED:  %U
