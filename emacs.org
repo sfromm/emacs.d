@@ -2330,7 +2330,7 @@ headers/ field can be useful if you need to add headers on the outgoing email.
 
 #+end_src
 
-Sometimes it  is convenient to open a new frame and compose an email there.
+Sometimes it is convenient to open a new frame and compose an email there.
 
 #+begin_src emacs-lisp
 (defun forge/mail-toggle-compose-new-frame ()
