@@ -3461,6 +3461,7 @@ articles every 2 hours.
     "Marks a starred Elfeed entry.")
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
+  (elfeed-org)
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
         ;; create timer to update elfeed
@@ -3474,11 +3475,12 @@ one's list of feeds.  I find this approach preferable.
 
 #+begin_src emacs-lisp
 (use-package elfeed-org
-    :ensure t
-    :after (:all org elfeed)
-    :config
-    (setq rmh-elfeed-org-files (list (concat org-directory "/elfeed.org")))
-    (elfeed-org))
+  :ensure t
+  :after (:all org elfeed)
+  :commands (elfeed-org)
+  :config
+  (setq rmh-elfeed-org-files (list (expand-file-name "elfeed.org" org-directory)))
+  (elfeed-org))
 #+end_src
 *** Youtube download manager
 Lastly, the following will helps with downloading videos from Youtube when they

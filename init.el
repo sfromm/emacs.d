@@ -2440,17 +2440,19 @@ It will not remove entries from the source org file."
     "Marks a starred Elfeed entry.")
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
+  (elfeed-org)
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
         ;; create timer to update elfeed
         elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
 (use-package elfeed-org
-    :ensure t
-    :after (:all org elfeed)
-    :config
-    (setq rmh-elfeed-org-files (list (concat org-directory "/elfeed.org")))
-    (elfeed-org))
+  :ensure t
+  :after (:all org elfeed)
+  :commands (elfeed-org)
+  :config
+  (setq rmh-elfeed-org-files (list (expand-file-name "elfeed.org" org-directory)))
+  (elfeed-org))
 
 (use-package youtube-dl
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
