@@ -2829,6 +2829,12 @@ Miscellaneous notes:
   can then turn on column view with =C-c C-x C-c=.  In column view, =g= will
   refresh and =q= will exit. You can also optionally also [[https://orgmode.org/manual/Scope-of-column-definitions.html#Scope-of-column-definitions][define]] different columns
   in an outline's =PROPERTIES=.
+- [[https://orgmode.org/manual/Initial-visibility.html][Initial visibility]] can be managed using the =org-startup-folded= variable and
+  on a per-file basis with /#+STARTUP:/ in the file.  Allowed values are
+  /overview/, /content/, /showall/, and /showeverything/.  I've modified the
+  default from /showeverything/ to /content/ so that it shows all headings when
+  first visiting a file.
+
 #+begin_example
 :PROPERTIES:
 :COLUMNS: %25ITEM %TAGS %PRIORITY %TODO
