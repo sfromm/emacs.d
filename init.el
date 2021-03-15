@@ -1933,6 +1933,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-log-reschedule "note")
   (org-src-fontify-natively t)
   (org-startup-folded 'content)
+  (org-babel-python-command "python3")
 
   :bind
   (("<f8>" . org-cycle-agenda-files)
