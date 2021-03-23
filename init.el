@@ -139,20 +139,18 @@
   (setq highlight-tabs t)
   (setq show-trailing-whitespace t))
 
-(defun dig-ext (domain)
-  "Query for DNS records for DOMAIN of QUERY-TYPE."
-  (interactive "sHost: ")
-  (let ((query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR")))
-        (query-class)
-        (query-option)
-        (dig-option)
-        (server))
-    (pop-to-buffer-same-window
-     (dig-invoke domain query-type query-class query-option dig-option server))
-    (goto-char (point-min))
-    (and (search-forward ";; ANSWER SECTION:" nil t)
-         (forward-line))
-    (dig-mode)))
+(defun dig-extended (fn &optional
+                        domain query-type query-class query-option dig-option server)
+  "Wrapper for `dig'.
+Query for DNS records for DOMAIN of QUERY-TYPE."
+  (message "domain: '%s'" domain)
+  (unless domain
+    (setq domain (read-string "Host: ")))
+  (unless query-type
+    (setq query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR"))))
+  (funcall fn domain query-type query-class query-option dig-option server))
+
+(advice-add 'dig :around #'dig-extended)
 
 (defconst speed_of_light 299792458 "Speed of light, m/s.")
 
