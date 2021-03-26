@@ -2252,9 +2252,10 @@ It will not remove entries from the source org file."
 
 (use-package org-id
   :after org
-  :config
-  (setq org-id-method 'uuid
-        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+  :custom
+  (org-id-method 'uuid)
+  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (org-id-locations-file (expand-file "org/id-locations.el" forge-state-dir)))
 
 (use-package org-indent
   :diminish t
