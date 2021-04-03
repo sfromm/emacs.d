@@ -3272,7 +3272,11 @@ It will not remove entries from the source org file."
 (use-package htmlize
   :ensure t)
 
-(use-package ox-twbs)
+(use-package ox-twbs
+  :after org
+  :commands (org-twbs-export-to-html
+             org-twbs-export-as-html
+             org-twbs-convert-region-to-html))
 
 (use-package ox-reveal
   :init
