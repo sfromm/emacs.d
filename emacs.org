@@ -913,6 +913,7 @@ At this point, I've been fairly happy with using [[https://github.com/seagle0128
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'buffer-name)
   (doom-modeline-lsp nil "Disable integration with lsp")
+  (doom-modeline-workspace-name t)
   :hook
   (doom-modeline-mode . column-number-mode)
   (doom-modeline-mode . size-indication-mode)
@@ -1255,6 +1256,33 @@ still using the now obsolete commands & options.
   (setq dumb-jump-selector 'ivy))
 #+end_src
 ** Buffer & window management
+*** Tab bar
+The Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Tab-Bars.html][tab bar]] provides a way to have virtual workspaces inside a single
+Emacs frame.  Each tab can have its own window arrangement.  In that way, it is
+similar to =eyebrowse= but is something built-in.  The keys for int
+
+| Command | Description                    |
+|---------+--------------------------------|
+| C-x t b | Open a buffer in a new tab     |
+| C-x t d | Open a directory in a new tab  |
+| C-x t f | Open a file in a new tab       |
+| C-x t 0 | Close current tab              |
+| C-x t 1 | Close all other tabs           |
+| C-x t 2 | Open current buffer in new tab |
+
+#+begin_src emacs-lisp
+(progn
+  (unless (require 'tab-bar nil 'noerror)
+    (display-warning 'forge "Failed to load tab-bar" :warning))
+  (tab-bar-mode)
+  (setq tab-bar-close-tab-select 'recent)
+  (setq tab-bar-new-tab-choice t)
+  (setq tab-bar-new-tab-to 'right)
+  (setq tab-bar-position nil)
+  (setq tab-bar-show t))
+
+#+end_src
+
 *** Workspace management with =eyebrowse=
 [[https://depp.brause.cc/eyebrowse/][eyebrowse]] is a global minor mode that allows you to organize window
 configurations into workspaces, similar to a window manager.  This configuration
@@ -1262,6 +1290,7 @@ is here for reference.
 
 #+begin_src emacs-lisp
 (use-package eyebrowse
+  :disabled t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
   :bind
   (("M-1" . eyebrowse-switch-to-window-config-1)
@@ -1323,7 +1352,6 @@ the window contents.
     (interactive)
     (olivetti-mode)))
 #+end_src
-
 ** Scrolling
 This is an attempt to make scrolling a bit smoother and friendlier.
 

@@ -606,6 +606,7 @@ end tell")
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'buffer-name)
   (doom-modeline-lsp nil "Disable integration with lsp")
+  (doom-modeline-workspace-name t)
   :hook
   (doom-modeline-mode . column-number-mode)
   (doom-modeline-mode . size-indication-mode)
@@ -897,7 +898,18 @@ end tell")
   :config
   (setq dumb-jump-selector 'ivy))
 
+(progn
+  (unless (require 'tab-bar nil 'noerror)
+    (display-warning 'forge "Failed to load tab-bar" :warning))
+  (tab-bar-mode)
+  (setq tab-bar-close-tab-select 'recent)
+  (setq tab-bar-new-tab-choice t)
+  (setq tab-bar-new-tab-to 'right)
+  (setq tab-bar-position nil)
+  (setq tab-bar-show t))
+
 (use-package eyebrowse
+  :disabled t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
   :bind
   (("M-1" . eyebrowse-switch-to-window-config-1)
