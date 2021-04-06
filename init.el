@@ -915,8 +915,11 @@ end tell")
             (alist-get 'name tab))
           (tab-bar--tabs-recent)))
 
-(defun forge/dwim-switch-tab ()
-  "Do-What-I-Mean (DWIM) switch to other tab."
+(defun forge/switch-tab-dwim ()
+  "Do-What-I-Mean (DWIM) switch to other tab.
+This will create a new tab if no tabs exist, switch
+to the other tab if there are only 2 tabs, and finally
+prompt for what tab to switch to."
   (interactive)
   (let ((tabs (prot-tab--tab-bar-tabs)))
     (cond ((eq tabs nil)
@@ -925,6 +928,8 @@ end tell")
            (tab-next))
           (t
            (call-interactively #'tab-bar-select-tab-by-name)))))
+
+(global-set-key (kbd "C-x t t") #'forge/switch-tab-dwim)
 
 (use-package eyebrowse
   :disabled t
