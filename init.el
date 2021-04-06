@@ -908,6 +908,24 @@ end tell")
   (setq tab-bar-position nil)
   (setq tab-bar-show t))
 
+;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-tab.el
+(defun prot-tab--tab-bar-tabs ()
+  "Return a list of `tab-bar' tabs, minus the current one."
+  (mapcar (lambda (tab)
+            (alist-get 'name tab))
+          (tab-bar--tabs-recent)))
+
+(defun forge/dwim-switch-tab ()
+  "Do-What-I-Mean (DWIM) switch to other tab."
+  (interactive)
+  (let ((tabs (prot-tab--tab-bar-tabs)))
+    (cond ((eq tabs nil)
+           (tab-new))
+          ((eq (length tabs) 1)
+           (tab-next))
+          (t
+           (call-interactively #'tab-bar-select-tab-by-name)))))
+
 (use-package eyebrowse
   :disabled t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
