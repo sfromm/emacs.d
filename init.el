@@ -2495,6 +2495,7 @@ It will not remove entries from the source org file."
   (elfeed-org))
 
 (use-package youtube-dl
+  :commands (youtube-dl)
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 
 (use-package eshell

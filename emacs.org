@@ -3555,6 +3555,7 @@ are part of a RSS feed.
 
 #+begin_src emacs-lisp
 (use-package youtube-dl
+  :commands (youtube-dl)
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 #+end_src
 ** Terminal-like applications
