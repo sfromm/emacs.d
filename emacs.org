@@ -2970,6 +2970,7 @@ Miscellaneous notes:
   (org-src-fontify-natively t)
   (org-startup-folded 'content)
   (org-babel-python-command "python3")
+  (org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 
   :bind
   (("<f8>" . org-cycle-agenda-files)
