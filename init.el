@@ -1975,8 +1975,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
    ("C-c c" . org-capture)
    ("C-c a" . org-agenda)
    ("C-c b" . org-switchb))
-
-  :bind
   (:map org-mode-map
         ("M-q" . endless/fill-or-unfill)
         ("RET" . org-return))
