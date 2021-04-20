@@ -2285,6 +2285,7 @@ It will not remove entries from the source org file."
   :after org)
 
 (use-package org-id
+  :defer 5
   :after org
   :custom
   (org-id-method 'uuid)
@@ -2300,12 +2301,14 @@ It will not remove entries from the source org file."
   :ensure t)
 
 (use-package ox-twbs
+  :defer 5
   :after org
   :commands (org-twbs-export-to-html
              org-twbs-export-as-html
              org-twbs-convert-region-to-html))
 
 (use-package ox-reveal
+  :defer 5
   :init
   (setq org-reveal-note-key-char nil))
 
