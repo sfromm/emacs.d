@@ -902,6 +902,10 @@ looks good.  It will also define a default theme to start with.
   :custom
   (modus-vivendi-theme-scale-headings t))
 
+(use-package tron-legacy-theme
+  :custom
+  (tron-legacy-theme-vivid-cursor t)
+  (tron-legacy-theme-softer-bg t))
 #+end_src
 ** Modeline
 At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.

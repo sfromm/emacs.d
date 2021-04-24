@@ -600,6 +600,11 @@ end tell")
   :custom
   (modus-vivendi-theme-scale-headings t))
 
+(use-package tron-legacy-theme
+  :custom
+  (tron-legacy-theme-vivid-cursor t)
+  (tron-legacy-theme-softer-bg t))
+
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :ensure t
