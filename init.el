@@ -567,6 +567,7 @@ end tell")
                poet-theme            ;; https://github.com/kunalb/poet
                solarized-theme       ;; https://github.com/bbatsov/solarized-emacs
                spacemacs-theme       ;; https://github.com/nashamri/spacemacs-theme
+               tron-legacy-theme     ;; https://github.com/ianpan870102/tron-legacy-emacs-theme
                zenburn-theme))       ;; https://github.com/bbatsov/zenburn-emacs
     (progn (forge/package-install p))))
 
