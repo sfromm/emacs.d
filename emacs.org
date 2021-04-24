@@ -1276,9 +1276,7 @@ as part of a DWIM function to switch tabs.
 | C-x t 2 | ~tab-new~                    | Open current buffer in new tab |
 
 #+begin_src emacs-lisp
-(progn
-  (unless (require 'tab-bar nil 'noerror)
-    (display-warning 'forge "Failed to load tab-bar" :warning))
+(when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
   (setq tab-bar-close-tab-select 'recent)
   (setq tab-bar-new-tab-choice t)

@@ -899,9 +899,7 @@ end tell")
   :config
   (setq dumb-jump-selector 'ivy))
 
-(progn
-  (unless (require 'tab-bar nil 'noerror)
-    (display-warning 'forge "Failed to load tab-bar" :warning))
+(when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
   (setq tab-bar-close-tab-select 'recent)
   (setq tab-bar-new-tab-choice t)
