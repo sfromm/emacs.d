@@ -2272,6 +2272,8 @@ It will not remove entries from the source org file."
 
 (use-package ol-eww :defer 5 :after org)
 
+(use-package ol-man :defer 5 :after org) ;; support links to manual pages
+
 (use-package org-contacts
   :after org
   :config
