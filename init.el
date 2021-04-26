@@ -504,10 +504,12 @@ end tell")
   "List of extra Unicode fonts.")
 
 (defun forge/font-name-and-size ()
-  "Compute font name and size string."
+  "Compute and return font name and size string."
   (interactive)
   (let* ((size (number-to-string forge-font-size))
-         (name (concat forge-font "-" size))) name))
+         (name (concat forge-font "-" size)))
+    (if (interactive-p) (message "Font: %s" name))
+    name))
 
 (defun forge/font-ok-p ()
   "Is configured font valid?"

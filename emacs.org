@@ -791,10 +791,12 @@ Resources:
 *** Helper functions for configuring fonts
 #+begin_src emacs-lisp
 (defun forge/font-name-and-size ()
-  "Compute font name and size string."
+  "Compute and return font name and size string."
   (interactive)
   (let* ((size (number-to-string forge-font-size))
-         (name (concat forge-font "-" size))) name))
+         (name (concat forge-font "-" size)))
+    (if (interactive-p) (message "Font: %s" name))
+    name))
 
 (defun forge/font-ok-p ()
   "Is configured font valid?"
