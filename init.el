@@ -1,5 +1,20 @@
 ;;; init.el --- Init File -*- lexical-binding: t -*-
 
+;; Copyright (C) 2021 by Stephen Fromm
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 (message "Loading up Emacs...")
 (defvar forge-core-start-time (current-time))
 
@@ -437,9 +452,6 @@ end tell")
                          ("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
 
-(require 'package)
-(package-initialize)
-
 (dolist (package init--core-packages)
   (progn (forge/package-install package)))
 
@@ -448,7 +460,7 @@ end tell")
   (require 'use-package))
 
 (setq use-package-verbose t
-      use-package-compute-statistics t       ;; compute
+      use-package-compute-statistics t       ;; compute stats
       use-package-always-defer t             ;; always defer loading
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 

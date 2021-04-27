@@ -42,22 +42,23 @@ without tangling it with something like the following:
 
 ** COPYING
 
-#+begin_quote
-Copyright (C) 2021 by Stephen Fromm
+#+NAME: license
+#+begin_src emacs-lisp :tangle no
+;; Copyright (C) 2021 by Stephen Fromm
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#+end_quote
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
 
 ** Installation
 First things first.  Clone the git repository:
@@ -118,10 +119,18 @@ those configurations that caught my eye.
 - [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB]]
 - [[https://luca.cambiaghi.me/vanilla-emacs/readme.html][Luca Cambiaghi]]
 * Early initialization
+This uses =package-quickstart= to help with loading packages.  See [[https://git.savannah.gnu.org/cgit/emacs.git/commit/etc/NEWS?id=6dfdf0c9e8e4aca77b148db8d009c862389c64d3][the commit]]
+for more information.  To go with this, it is important to precompute the
+autoload file using =(package-quickstart-refresh)=.  The quickstart file is
+relocated to /.emacs.d/var/.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp :tangle early-init.el :noweb yes
 ;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
-(setq package-enable-at-startup nil)          ;; we initialize this later.
+<<license>>
+
+(setq package-enable-at-startup t)            ;; initialize now with package-quickstart
+(setq package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
+(setq package-quickstart t)
 (setq gc-cons-threshold most-positive-fixnum) ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                  ;; Turn up logging settings
 #+end_src
@@ -155,10 +164,12 @@ to achieve a minor speed up.
 #+end_src
 
 * Startup
-Do some housekeeping to measure start up time.
+Do some housekeeping to measure start up time.  See [[https://nullprogram.com/blog/2016/12/22/][this post]] on using /lexical binding/.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
 ;;; init.el --- Init File -*- lexical-binding: t -*-
+
+<<license>>
 
 (message "Loading up Emacs...")
 (defvar forge-core-start-time (current-time))
@@ -691,9 +702,6 @@ This defines what package archives are used and then initializes =package=.
 (setq package-archives '(("org" . "https://orgmode.org/elpa/")
                          ("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
-
-(require 'package)
-(package-initialize)
 #+end_src
 ** =use-package=
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
@@ -714,7 +722,7 @@ Additional notes:
   (require 'use-package))
 
 (setq use-package-verbose t
-      use-package-compute-statistics t       ;; compute
+      use-package-compute-statistics t       ;; compute stats
       use-package-always-defer t             ;; always defer loading
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
