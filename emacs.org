@@ -1245,22 +1245,19 @@ based on vim and intended to keep my hand on the home row.
 #+end_src
 
 *** Navigation between definitions with =dumb-jump=
-[[https://github.com/jacktasia/dumb-jump][dumb-jump]] is a utility to jump to a definition.  The configuration below is
-still using the now obsolete commands & options.
+[[https://github.com/jacktasia/dumb-jump][dumb-jump]] is a utility to jump to a definition.  =dumb-jump= hooks into the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
+backend to perform a search.  This can be invoked with =M-.=.
 
 #+begin_src emacs-lisp
 (use-package dumb-jump
   :ensure t
-  :bind
-  (("M-g o" . dumb-jump-go-other-window)
-   ("M-g j" . dumb-jump-go)
-   ("M-g i" . dumb-jump-go-prompt)
-   ("M-g b" . dumb-jump-back)
-   ("M-g q" . dumb-jump-quick-look)
-   ("M-g x" . dumb-jump-go-prefer-external)
-   ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :demand t
+  :commands (xref-find-definitions)
   :config
-  (setq dumb-jump-selector 'ivy))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  ;; this requires at least xref-1.1.0, which comes with emacs-28.1 or newer
+  (when (version<= "28.1" emacs-version)
+    (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 #+end_src
 ** Buffer & window management
 *** Tab bar

@@ -895,16 +895,13 @@ end tell")
 
 (use-package dumb-jump
   :ensure t
-  :bind
-  (("M-g o" . dumb-jump-go-other-window)
-   ("M-g j" . dumb-jump-go)
-   ("M-g i" . dumb-jump-go-prompt)
-   ("M-g b" . dumb-jump-back)
-   ("M-g q" . dumb-jump-quick-look)
-   ("M-g x" . dumb-jump-go-prefer-external)
-   ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :demand t
+  :commands (xref-find-definitions)
   :config
-  (setq dumb-jump-selector 'ivy))
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+  ;; this requires at least xref-1.1.0, which comes with emacs-28.1 or newer
+  (when (version<= "28.1" emacs-version)
+    (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
