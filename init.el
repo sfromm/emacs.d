@@ -2072,6 +2072,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                 ("rw" "Web Page" entry (file+olp+datetree "~/forge/articles.org")
                                  (function forge/org-clip-web-page) :prepend t)
 
+                                ("rf" "Elfeed/News Article" entry (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %? :ARTICLE:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
+
                                 ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
                                  "* TODO %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
 
