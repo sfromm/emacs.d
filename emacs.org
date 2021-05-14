@@ -363,6 +363,29 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 #+end_src
+
+*** Network-related query functions
+These are functions to help with looking up network relaated information.
+
+The first looks up ASN information and returns a list.
+
+#+begin_src emacs-lisp
+(defun asn-query (asn)
+  "Query for an Autonomous System ASN."
+  (interactive "sASN: ")
+  (require 'dns)
+  (let* ((result (dns-query (concat "AS" asn ".asn.cymru.com") 'TXT))
+         (split-result (split-string result "|" t " *"))
+         (answer))
+    ;; (message "%s" answer)
+    (setq answer (list (cons 'asn (nth 0 split-result))
+                       (cons 'country (nth 1 split-result))
+                       (cons 'rir (nth 2 split-result))
+                       (cons 'name (nth 4 split-result))))
+    (when (called-interactively-p 'interactive)
+      (message "%s" answer))
+    answer))
+#+end_src
 *** Peek
 The following is meant to provide a way to /peek/ at information in a temporary
 window.  This probably could be simplified by using something like [[https://github.com/tumashu/posframe][posframe]].

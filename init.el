@@ -179,6 +179,22 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 
+(defun asn-query (asn)
+  "Query for an Autonomous System ASN."
+  (interactive "sASN: ")
+  (require 'dns)
+  (let* ((result (dns-query (concat "AS" asn ".asn.cymru.com") 'TXT))
+         (split-result (split-string result "|" t " *"))
+         (answer))
+    ;; (message "%s" answer)
+    (setq answer (list (cons 'asn (nth 0 split-result))
+                       (cons 'country (nth 1 split-result))
+                       (cons 'rir (nth 2 split-result))
+                       (cons 'name (nth 4 split-result))))
+    (when (called-interactively-p 'interactive)
+      (message "%s" answer))
+    answer))
+
 (defcustom forge-peek-buffer-name "*forge-peek*"
   "Buffer for peeking at data."
   :group 'forge
