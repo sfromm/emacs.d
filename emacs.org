@@ -367,7 +367,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 *** Network-related query functions
 These are functions to help with looking up network relaated information.
 
-The first looks up ASN information and returns a list.
+The first looks up information on an [[https://en.wikipedia.org/wiki/Autonomous_system_(Internet)][Autonomous System]] number and returns a list.
 
 #+begin_src emacs-lisp
 (defun asn-query (asn)
