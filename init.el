@@ -179,18 +179,80 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 
+(defun dns-cymru-txt-query (name)
+  "Look up a TXT RR NAME from Cymru and return the split result."
+  (require 'dns)
+  (split-string
+   (dns-query name 'TXT)
+   "|" t " *"))
+
+(defun reverse-ip (ip)
+  "Return IP in reversed format, typically for doing DNS PTR lookups."
+  (mapconcat 'identity (nreverse (split-string ip "\\.")) "."))
+
 (defun asn-query (asn)
   "Query for an Autonomous System ASN."
   (interactive "sASN: ")
-  (require 'dns)
-  (let* ((result (dns-query (concat "AS" asn ".asn.cymru.com") 'TXT))
-         (split-result (split-string result "|" t " *"))
+  (let* ((result (dns-cymru-txt-query (concat "AS" asn ".asn.cymru.com")))
          (answer))
     ;; (message "%s" answer)
-    (setq answer (list (cons 'asn (nth 0 split-result))
-                       (cons 'country (nth 1 split-result))
-                       (cons 'rir (nth 2 split-result))
-                       (cons 'name (nth 4 split-result))))
+    (setq answer (list (cons 'asn (nth 0 result))
+                       (cons 'country (nth 1 result))
+                       (cons 'rir (nth 2 result))
+                       (cons 'name (nth 4 result))))
+    (when (called-interactively-p 'interactive)
+      (message "%s" answer))
+    answer))
+
+(defun ip-asn-origin-query (ip)
+  (interactive "sIP: ")
+  (let* ((reverse (reverse-ip ip))
+         (result (dns-cymru-txt-query (concat reverse ".origin.asn.cymru.com")))
+         (answer))
+    (message "%s" answer)
+    (setq answer (list (cons 'asn (nth 0 result))
+                       (cons 'prefix (nth 1 result))
+                       (cons 'country (nth 2 result))
+                       (cons 'rir (nth 3 result))))
+    (when (called-interactively-p 'interactive)
+      (message "%s" answer))
+    answer))
+
+(defun ip-dns-ptr-query (ip)
+  "Return DNS PTR information on IP."
+  (interactive "sIP: ")
+  (require 'dns)
+  (let ((result (dns-query ip 'PTR t t))
+        (answer '())
+        (rr)
+        (rrtype))
+    (setq answer (list (cons 'ip ip)))
+    (setq answer (append
+                  (list
+                   ;; long-winded way to get the PTR query
+                   (cons 'query (car (car (cadr (assoc 'queries result))))))
+                  answer))
+    (when (assoc 'answers result)
+      (dolist (arg2 (cadr (assoc 'answers result)))
+        (when (cdr (assoc 'type arg2)) ;; make sure RR type is not nil
+          (setq rrtype (cadr (assoc 'type arg2)))
+          (setq rr (list (cons rrtype (cadr (assoc 'data arg2)))))
+          (setq answer (append rr answer)))))
+    (when (called-interactively-p 'interactive)
+      (message "%s" answer))
+    answer))
+
+(defun ip-query (ip)
+  "Query information on an IP.
+Will return available DNS, BGP origin, and associated ASN information."
+  (interactive "sIP: ")
+  (let* ((answer '())
+         (dns (ip-dns-ptr-query ip))
+         (origin (ip-asn-origin-query ip))
+         (asn (asn-query (cdr (assoc 'asn origin)))))
+    (setq answer (list (cons 'dns dns)
+                       (cons 'origin origin)
+                       (cons 'asn asn)))
     (when (called-interactively-p 'interactive)
       (message "%s" answer))
     answer))
@@ -1924,6 +1986,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         (delete 'emms-info-mp3info emms-info-functions))
     (add-to-list 'emms-info-functions 'emms-info-ogginfo)
     (add-to-list 'emms-info-functions 'emms-info-mp3info)))
+
+(use-package net-utils
+  :commands (ping traceroute)
+  :config
+  (setq ping-program-options (list "-c" "5")))
 
 (use-package org
   :ensure org-plus-contrib
