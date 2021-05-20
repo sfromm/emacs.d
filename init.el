@@ -910,9 +910,15 @@ end tell")
   :bind
   (("M-g g" . consult-goto-line)
    ("M-s l" . consult-line)
+   ("M-s M-i" . consult-imenu)
    ("M-y" . consult-yank-pop)
    ("C-x b" . consult-buffer)
-   ("C-c f" . consult-find)))
+   ("C-c f" . consult-find))
+  :config
+  (setq consult-project-root-function
+        (lambda ()
+          (when-let (project (project-current))
+            (car (project-roots project))))))
 
 ;; https://github.com/minad/marginalia
 (use-package marginalia
