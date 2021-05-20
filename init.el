@@ -238,6 +238,13 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
           (setq rrtype (cadr (assoc 'type arg2)))
           (setq rr (list (cons rrtype (cadr (assoc 'data arg2)))))
           (setq answer (append rr answer)))))
+    ;; pull in authority information from SOA
+    (when (assoc 'authorities result)
+      (setq answer (append
+                    (list
+                     (cons 'soa-mname (cadr (assoc 'mname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result))))))))
+                     (cons 'soa-rname (cadr (assoc 'rname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result)))))))))
+                    answer)))
     (when (called-interactively-p 'interactive)
       (message "%s" answer))
     answer))
