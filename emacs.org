@@ -1923,6 +1923,37 @@ This is really predominantly for syntax highlighting.
   :config
   (setq yaml-indent-offset 2))
 #+end_src
+*** XML
+Just enough to help recognize XML tags and then later fold xml with
+=hs-toggle-folding=.  This configures [[https://www.gnu.org/software/emacs/manual/html_node/nxml-mode/Introduction.html][nXML mode]] for viewing and editing XML
+documents.
+
+#+begin_src emacs-lisp
+(use-package nxml-mode
+  :commands nxml-mode
+  :init
+  (defalias 'xml-mode 'nxml-mode)
+  :config
+  (autoload 'sgml-skip-tag-forward "sgml-mode")
+  (add-to-list 'hs-special-modes-alist
+               '(nxml-mode
+                 "<!--\\|<[^/>]*[^/]>"
+                 "-->\\|</[^/>]*[^/]>"
+                 "<!--"
+                 sgml-skip-tag-forward
+                 nil)))
+#+end_src
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html][Hideshow]] minor mode allows you to selectively display portions of a document.
+This includes things like folding XML sections.
+
+#+begin_src emacs-lisp
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook (prog-mode . hs-minor-mode)
+  :bind (:map prog-mode-map
+              ("C-c h" . hs-toggle-hiding)))
+#+end_src
 ** Network device configurations
 *** Junos
 #+begin_src emacs-lisp

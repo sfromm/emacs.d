@@ -1306,6 +1306,26 @@ prompt for what tab to switch to."
   :config
   (setq yaml-indent-offset 2))
 
+(use-package nxml-mode
+  :commands nxml-mode
+  :init
+  (defalias 'xml-mode 'nxml-mode)
+  :config
+  (autoload 'sgml-skip-tag-forward "sgml-mode")
+  (add-to-list 'hs-special-modes-alist
+               '(nxml-mode
+                 "<!--\\|<[^/>]*[^/]>"
+                 "-->\\|</[^/>]*[^/]>"
+                 "<!--"
+                 sgml-skip-tag-forward
+                 nil)))
+
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook (prog-mode . hs-minor-mode)
+  :bind (:map prog-mode-map
+              ("C-c h" . hs-toggle-hiding)))
+
 (use-package junos-mode
   :config (setq-local c-basic-offset 4))
 
