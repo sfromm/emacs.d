@@ -1322,7 +1322,7 @@ prompt for what tab to switch to."
 
 (use-package hideshow
   :diminish hs-minor-mode
-  :hook (prog-mode . hs-minor-mode)
+  :hook ((prog-mode text-mode) . hs-minor-mode)
   :bind (:map prog-mode-map
               ("C-c h" . hs-toggle-hiding)))
 
