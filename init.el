@@ -1739,6 +1739,14 @@ read-file-name and dired-dwim-target-directory."
         smtpmail-smtp-user forge-smtp-user-work
         smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 
+(use-package mml-sec
+  :config
+  (setq mml-secure-openpgp-encrypt-to-self t
+        mml-secure-openpgp-sign-with-sender t
+        mml-secure-smime-encrypt-to-self t
+        mml-secure-smime-sign-with-sender t)
+  (add-to-list 'mml-secure-openpgp-signers "A852499F"))
+
 (use-package notmuch
   :commands (notmuch)
   :custom

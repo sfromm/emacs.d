@@ -2668,6 +2668,19 @@ Here is an example of my deprecated =smtpmail= configuration.
         smtpmail-smtp-user forge-smtp-user-work
         smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 #+end_src
+
+This configures Emacs Message Mode [[https://www.gnu.org/software/emacs/manual/html_node/message/Security.html][security]] settings.  The key points are to
+always encrypt to self and to list the OpenPGP keys that I will sign with.
+
+#+begin_src emacs-lisp
+(use-package mml-sec
+  :config
+  (setq mml-secure-openpgp-encrypt-to-self t
+        mml-secure-openpgp-sign-with-sender t
+        mml-secure-smime-encrypt-to-self t
+        mml-secure-smime-sign-with-sender t)
+  (add-to-list 'mml-secure-openpgp-signers "A852499F"))
+#+end_src
 *** Notmuch configuration
 Before I get into how I have Emacs configured to work with /notmuch/, the
 following gives an idea of how I configure /notmuch/ itself.  You will want to
