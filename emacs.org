@@ -818,9 +818,12 @@ installs the package, if not already present, and then sets it up.
 
 Additional notes:
 
-- Always defer loading packages with =use-package-always-defer=.
 - Try out =use-package-compute-statistics= to compute statistics concerned
   use-package declarations.  You can view the report with =use-package-report=.
+- There is an option to always defer loading of packages with
+  =use-package-always-defer=.  I do not have this enabled because I have some
+  times found it more tricky to get a package to load rather than defer manually
+  or let =use-package= handle it.
 
 #+begin_src emacs-lisp
 (dolist (package init--core-packages)
@@ -832,7 +835,6 @@ Additional notes:
 
 (setq use-package-verbose t
       use-package-compute-statistics t       ;; compute stats
-      use-package-always-defer t             ;; always defer loading
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
 (use-package diminish :demand t)
@@ -840,7 +842,7 @@ Additional notes:
 (require 'cl)
 #+end_src
 ** Paradox
-[[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.  L
+[[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.
 #+begin_src emacs-lisp
 (use-package paradox
   :init
@@ -968,6 +970,7 @@ Emojis and emoticons.
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
 
 (use-package emojify
+  :defer t
   :ensure t
   :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
@@ -1074,7 +1077,7 @@ The following are modes I no longer use.  Configuration is here for reference.
   (after-load-theme . smart-mode-line-enable)
   (after-init . sml/setup))
 
-(use-package nyan-mode)
+(use-package nyan-mode :defer t)
 #+end_src
 ** Look and feel
 #+begin_src emacs-lisp
@@ -1683,6 +1686,7 @@ is =~/.emacs.d/user/snippets=.
 #+begin_src emacs-lisp
 (use-package highlight-indent-guides
   :ensure t
+  :defer t
   :custom (highlight-indent-guides-method 'character))
 #+end_src
 ** Finding recent files
@@ -1813,9 +1817,9 @@ Go ahead and set up modes to help with editing Lisp files.
 
 (use-package eldoc
   :diminish eldoc-mode
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  :hook
+  (emacs-lisp-mode . eldoc-mode)
+  (lisp-interaction-mode . eldoc-mode)
   :config
   (setq eldoc-idle-delay 0.3))
 
@@ -1866,13 +1870,13 @@ I pull in this package for the formatting and font-lock features.
 
 #+begin_src emacs-lisp
 (use-package web-mode
+  :mode "\\.html\\'"
   :init
-  (progn
-    (setq
-     web-mode-css-indent-offset 2
-     web-mode-markup-indent-offset 2
-     web-mode-code-indent-offset 2)
-    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
+  (setq
+   web-mode-css-indent-offset 2
+   web-mode-markup-indent-offset 2
+   web-mode-code-indent-offset 2))
+
 #+end_src
 *** REST client
 [[https://github.com/pashky/restclient.el][restclient]] enables Emacs to act as a REST client to query web services.  This
@@ -1900,7 +1904,8 @@ See also [[http://emacsrocks.com/e15.html][Emacs Rocks: restclient-mode]] episod
 This is really predominantly for syntax highlighting.
 
 #+begin_src emacs-lisp
-(use-package php-mode)
+(use-package php-mode
+  :mode "\\.php\\'")
 #+end_src
 ** Data serialization formats
 *** JSON
@@ -1957,12 +1962,14 @@ This includes things like folding XML sections.
 *** Junos
 #+begin_src emacs-lisp
 (use-package junos-mode
+  :commands (junos-mode)
   :config (setq-local c-basic-offset 4))
 #+end_src
 *** EOS
 #+begin_src emacs-lisp
 (use-package eos-mode
   :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :commands (eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
 #+end_src
 ** Ledger
@@ -1970,7 +1977,8 @@ This includes things like folding XML sections.
 the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 
 #+begin_src emacs-lisp
-(use-package ledger-mode)
+(use-package ledger-mode
+  :commands ledger-mode)
 #+end_src
 * Applications
 ** Chat
@@ -2029,6 +2037,7 @@ IRC configuration.  As a default, use =user-login-name= as the default for
 
 #+begin_src emacs-lisp
 (use-package erc
+  :commands (erc erc-tls)
   :preface
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
@@ -2258,7 +2267,7 @@ read-file-name and dired-dwim-target-directory."
 See https://www.reddit.com/r/emacs/comments/bqqqra/quickly_find_syncthing_conflicts_and_resolve_them/
 
 #+begin_src emacs-lisp
-(use-package emacs-conflict)
+(use-package emacs-conflict :defer t)
 #+end_src
 *** Disk utilization
 [[https://gitlab.com/ambrevar/emacs-disk-usage][disk-usage]] is a handy utility to explore disk utilization.  On MacOS, this will require GNU
@@ -2266,7 +2275,7 @@ coreutils.
 
 #+begin_src emacs-lisp
 (use-package disk-usage
-    :ensure t)
+  :ensure t)
 #+end_src
 
 ** Git
@@ -2287,15 +2296,18 @@ documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.
 I also pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine]] as a way to browse history in a git repository.
 
 #+begin_src emacs-lisp
-(use-package git-timemachine)
+(use-package git-timemachine
+  :commands git-timemachine)
 #+end_src
 *** Deprecated git-annex
 I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for reference.
 
 #+begin_src emacs-lisp
-(use-package magit-annex)
+(use-package magit-annex
+  :disabled t)
 
 (use-package git-annex
+  :disabled t
   :after dired)
 #+end_src
 
@@ -3280,9 +3292,9 @@ Miscellaneous notes:
 *** Org Mode, Notmuch and mail
 #+begin_src emacs-lisp
 (use-package ol-notmuch
-    :demand t
-    :after
-    (:any org notmuch))
+  :defer t
+  :after
+  (:any org notmuch))
 #+end_src
 
 =org-mime= allows one to use Org formatting for email.
@@ -3476,7 +3488,7 @@ It will not remove entries from the source org file."
 - [[https://github.com/yjwen/org-reveal][Org Export to Reveal JS]]
 
 #+begin_src emacs-lisp
-(use-package ol-git-link)
+(use-package ol-git-link :defer 5)
 
 (use-package ol-eww :defer 5 :after org)
 
@@ -3522,8 +3534,8 @@ It will not remove entries from the source org file."
   :init
   (setq org-reveal-note-key-char nil))
 
-(use-package ox-tufte)
-
+(use-package ox-tufte
+  :defer 5)
 #+end_src
 *** Deprecated Org Journal
 I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journaling, but now just use Org's /datetree/ model.
@@ -3928,12 +3940,14 @@ The following are miscellaneous utilities that are small but useful.
 ** [[https://github.com/defunkt/gist.el][Gist]]
 #+begin_src emacs-lisp
 (use-package gist
+  :defer t
   :custom (gist-view-gist t))
 #+end_src
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp
 (use-package wttrin
   :ensure t
+  :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
   (wttrin-default-accept-language '("Accept-Language" . "en-US")))

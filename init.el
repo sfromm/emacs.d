@@ -546,7 +546,6 @@ end tell")
 
 (setq use-package-verbose t
       use-package-compute-statistics t       ;; compute stats
-      use-package-always-defer t             ;; always defer loading
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
 (use-package diminish :demand t)
@@ -652,6 +651,7 @@ end tell")
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
 
 (use-package emojify
+  :defer t
   :ensure t
   :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
@@ -745,7 +745,7 @@ end tell")
   (after-load-theme . smart-mode-line-enable)
   (after-init . sml/setup))
 
-(use-package nyan-mode)
+(use-package nyan-mode :defer t)
 
 (defun forge/setup-ui ()
   "Set up the look and feel."
@@ -1164,6 +1164,7 @@ prompt for what tab to switch to."
 
 (use-package highlight-indent-guides
   :ensure t
+  :defer t
   :custom (highlight-indent-guides-method 'character))
 
 (use-package recentf
@@ -1247,9 +1248,9 @@ prompt for what tab to switch to."
 
 (use-package eldoc
   :diminish eldoc-mode
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-  (add-hook 'lisp-interaction-mode-hook #'eldoc-mode)
+  :hook
+  (emacs-lisp-mode . eldoc-mode)
+  (lisp-interaction-mode . eldoc-mode)
   :config
   (setq eldoc-idle-delay 0.3))
 
@@ -1281,18 +1282,18 @@ prompt for what tab to switch to."
   (shell-script . forge/turn-on-delete-trailing-whitespace))
 
 (use-package web-mode
+  :mode "\\.html\\'"
   :init
-  (progn
-    (setq
-     web-mode-css-indent-offset 2
-     web-mode-markup-indent-offset 2
-     web-mode-code-indent-offset 2)
-    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))))
+  (setq
+   web-mode-css-indent-offset 2
+   web-mode-markup-indent-offset 2
+   web-mode-code-indent-offset 2))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
-(use-package php-mode)
+(use-package php-mode
+  :mode "\\.php\\'")
 
 (use-package json-mode
   :hook
@@ -1326,13 +1327,16 @@ prompt for what tab to switch to."
   :bind (("C-c h" . hs-toggle-hiding)))
 
 (use-package junos-mode
+  :commands (junos-mode)
   :config (setq-local c-basic-offset 4))
 
 (use-package eos-mode
   :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :commands (eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
 
-(use-package ledger-mode)
+(use-package ledger-mode
+  :commands ledger-mode)
 
 (require 'notifications)
 (require 'tls)
@@ -1377,6 +1381,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
     (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
 (use-package erc
+  :commands (erc erc-tls)
   :preface
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
@@ -1561,10 +1566,10 @@ read-file-name and dired-dwim-target-directory."
     ;; finally, switch to that window
     (other-window 1)))
 
-(use-package emacs-conflict)
+(use-package emacs-conflict :defer t)
 
 (use-package disk-usage
-    :ensure t)
+  :ensure t)
 
 (use-package magit
   :ensure t
@@ -1575,11 +1580,14 @@ read-file-name and dired-dwim-target-directory."
   :init
   (setq magit-last-seen-setup-instructions "1.4.0"))
 
-(use-package git-timemachine)
+(use-package git-timemachine
+  :commands git-timemachine)
 
-(use-package magit-annex)
+(use-package magit-annex
+  :disabled t)
 
 (use-package git-annex
+  :disabled t
   :after dired)
 
 (use-package nov
@@ -2235,9 +2243,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-load-modules-maybe t))
 
 (use-package ol-notmuch
-    :demand t
-    :after
-    (:any org notmuch))
+  :defer t
+  :after
+  (:any org notmuch))
 
 (use-package org-mime
   :hook
@@ -2410,7 +2418,7 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
-(use-package ol-git-link)
+(use-package ol-git-link :defer 5)
 
 (use-package ol-eww :defer 5 :after org)
 
@@ -2456,7 +2464,8 @@ It will not remove entries from the source org file."
   :init
   (setq org-reveal-note-key-char nil))
 
-(use-package ox-tufte)
+(use-package ox-tufte
+  :defer 5)
 
 (use-package org-journal
   :disabled t
@@ -2779,10 +2788,12 @@ It will not remove entries from the source org file."
 (use-package lorem-ipsum)
 
 (use-package gist
+  :defer t
   :custom (gist-view-gist t))
 
 (use-package wttrin
   :ensure t
+  :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
   (wttrin-default-accept-language '("Accept-Language" . "en-US")))
