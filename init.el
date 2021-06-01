@@ -533,9 +533,9 @@ end tell")
   (interactive)
   (byte-recompile-directory package-user-dir nil t))
 
-(setq package-archives '(("org" . "https://orgmode.org/elpa/")
-                         ("melpa" . "http://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
+(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
 
 (dolist (package init--core-packages)
   (progn (forge/package-install package)))
