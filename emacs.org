@@ -823,7 +823,7 @@ Additional notes:
 - There is an option to always defer loading of packages with
   =use-package-always-defer=.  I do not have this enabled because I have some
   times found it more tricky to get a package to load rather than defer manually
-  or let =use-package= handle it.
+  or let =use-package= handle it.  See [[https://jwiegley.github.io/use-package/keywords/#after][discussion]] at end of section on /:after/ keyword.
 
 #+begin_src emacs-lisp
 (dolist (package init--core-packages)
