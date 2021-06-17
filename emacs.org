@@ -3086,6 +3086,8 @@ Miscellaneous notes:
   /overview/, /content/, /showall/, and /showeverything/.  I've modified the
   default from /showeverything/ to /content/ so that it shows all headings when
   first visiting a file.
+- =org-tags-exclude-from-inheritance= to enumerate tags that should not be
+  inherited. See also /org-crypt/.
 
 #+begin_src emacs-lisp
 (use-package org
@@ -3265,6 +3267,8 @@ Miscellaneous notes:
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)")
                             (sequence "PROJECT" "|" "DONE(d)")
                             (sequence "|" "MEETING" "REFERENCE(r)")))
+  ;; List of tags that should never be inherited.
+  (setq org-tags-exclude-from-inheritance '("crypt"))
   ;;
   (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
         org-modules '(org-w3m org-bbdb org-bibtex org-docview
@@ -3343,6 +3347,22 @@ Miscellaneous notes:
   :init
   (setq org-tree-slide-skip-outline-level 4))
 
+#+end_src
+*** Org Crypt
+[[https://orgmode.org/manual/Org-Crypt.html][Org Crypt]] encrypts the text of an entry, but not the headline or properties
+associated with the entry.
+
+- =org-crypt-key= Either the Key ID or set to nil to use symmetric encryption.
+- Use =org-encrypt-entry= on a headline to encrypt.
+- Similarly, use =org-decrypt-entry= on a headline to decrypt.
+
+#+begin_src emacs-lisp
+(use-package org-crypt
+  :commands (org-encrypt-entry org-decrypt-entry)
+  :config
+  (org-crypt-use-before-save-magic)
+  (setq org-crypt-disable-auto-save t)
+  (setq org-crypt-key user-full-name))
 #+end_src
 *** Helper functions
 #+begin_src emacs-lisp

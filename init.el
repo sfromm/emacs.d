@@ -2218,6 +2218,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "SOMEDAY(m)" "|" "DONE(d)" "DELEGATED(l)" "CANCELLED(c)")
                             (sequence "PROJECT" "|" "DONE(d)")
                             (sequence "|" "MEETING" "REFERENCE(r)")))
+  ;; List of tags that should never be inherited.
+  (setq org-tags-exclude-from-inheritance '("crypt"))
   ;;
   (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
         org-modules '(org-w3m org-bbdb org-bibtex org-docview
@@ -2284,6 +2286,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
               ("<f10>" . org-tree-slide-move-next-tree))
   :init
   (setq org-tree-slide-skip-outline-level 4))
+
+(use-package org-crypt
+  :commands (org-encrypt-entry org-decrypt-entry)
+  :config
+  (org-crypt-use-before-save-magic)
+  (setq org-crypt-disable-auto-save t)
+  (setq org-crypt-key user-full-name))
 
 (defun forge/capture-current-song ()
   "Capture the current song details."
