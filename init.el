@@ -239,12 +239,12 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
           (setq rr (list (cons rrtype (cadr (assoc 'data arg2)))))
           (setq answer (append rr answer)))))
     ;; pull in authority information from SOA
-    (when (assoc 'authorities result)
-      (setq answer (append
-                    (list
-                     (cons 'soa-mname (cadr (assoc 'mname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result))))))))
-                     (cons 'soa-rname (cadr (assoc 'rname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result)))))))))
-                    answer)))
+    ;; (when (assoc 'authorities result)
+    ;;   (setq answer (append
+    ;;                 (list
+    ;;                  (cons 'soa-mname (cadr (assoc 'mname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result))))))))
+    ;;                  (cons 'soa-rname (cadr (assoc 'rname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result)))))))))
+    ;;                 answer)))
     (when (called-interactively-p 'interactive)
       (message "%s" answer))
     answer))
@@ -2186,32 +2186,42 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   ;; For template expansion,
   ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
-  (setq org-capture-templates '(("l" "Log" entry (file+olp+datetree "~/forge/journal.org") "* %U - %?\n" )
+  (setq org-capture-templates '(("l" "Log" entry
+                                 (file+olp+datetree "~/forge/journal.org")
+                                 "* %U - %?\n" )
 
-                                ("M" "Meeting" entry (file+olp+datetree "~/forge/journal.org")
-                                 "* MEETING %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+                                ("t" "To do" entry
+                                 (file+headline "~/forge/journal.org" "Inbox")
+                                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n" :prepend t)
 
-                                ("j" "Journal" entry (file+olp+datetree "~/forge/journal.org")
+                                ("M" "Meeting" entry
+                                 (file+olp+datetree "~/forge/journal.org")
+                                 "* MEETING %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+
+                                ("j" "Journal" entry
+                                 (file+olp+datetree "~/forge/journal.org")
                                  "* %?\n%U\n" :clock-in t :clock-resume t)
 
-                                ("b" "Bookmark" entry (file+headline "~/forge/notebook.org" "Unfiled")
-                                 "* %^L %^g \n:PROPERTIES:\n:CREATED: %U\n:END:\n\n" :prepend t)
+                                ("b" "Bookmark" entry
+                                 (file+headline "~/forge/notebook.org" "Unfiled")
+                                 "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n" :prepend t)
+
+                                ("m" "Music" entry
+                                 (file+olp+datetree "~/forge/journal.org")
+                                 "* %(forge/capture-current-song) :music:\n%U\n")
 
                                 ("r" "Reference")
-                                ("rr" "Reference" entry (file+headline "~/forge/journal.org" "Inbox")
-                                 "* REFERENCE %a %?\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
+                                ("rr" "Reference" entry
+                                 (file+headline "~/forge/journal.org" "Inbox")
+                                 "* REFERENCE %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
 
-                                ("rw" "Web Page" entry (file+olp+datetree "~/forge/articles.org")
+                                ("rw" "Web Page" entry
+                                 (file+olp+datetree "~/forge/articles.org")
                                  (function forge/org-clip-web-page) :prepend t)
 
-                                ("rf" "Elfeed/News Article" entry (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %? :ARTICLE:\n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\n" :prepend t)
-
-                                ("t" "To do" entry (file+headline "~/forge/journal.org" "Inbox")
-                                 "* TODO %? \n:PROPERTIES:\n:ID:       %(shell-command-to-string \"uuidgen\"):CREATED:  %U\n:END:\nReference: %a\n" :prepend t)
-
-                                ("m" "Music" entry (file+olp+datetree "~/forge/journal.org")
-                                 "* %(forge/capture-current-song) :music:\n%U\n")))
+                                ("rf" "Elfeed/News Article" entry
+                                 (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
@@ -2222,8 +2232,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-tags-exclude-from-inheritance '("crypt"))
   ;;
   (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
-        org-modules '(org-w3m org-bbdb org-bibtex org-docview
-                              org-gnus org-info org-irc org-mhe org-rmail org-habit)
+        org-modules '(org-id ol-eww org-bbdb org-bibtex ol-docview org-info org-irc org-habit)
         org-src-preserve-indentation t
         org-src-window-setup 'current-window                    ;; use current window when editing a source block
         org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
@@ -2241,8 +2250,10 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                                            (shell . t)
                                                            (calc . t)))
 
-  (forge/org-fixed-font-faces)
-  (org-load-modules-maybe t))
+  (forge/org-fixed-font-faces))
+
+(eval-after-load 'org
+  '(org-load-modules-maybe t))
 
 (use-package ol-notmuch
   :defer t
@@ -2585,6 +2596,21 @@ It will not remove entries from the source org file."
     "Download the current entry with youtube-dl"
     (interactive)
     (elfeed--youtube-dl elfeed-show-entry))
+
+  (defun forge/elfeed-entry-tags ()
+    "Return entry tags as a string."
+    (interactive)
+    (let ((entry))
+      (if (eq major-mode 'elfeed-show-mode)
+          (setq entry elfeed-show-entry)
+        (setq entry (car (elfeed-search-selected))))
+      (upcase (mapconcat #'symbol-name (elfeed-entry-tags entry) ":"))))
+
+  (defun forge/elfeed-get-entry-tags ()
+    "hello"
+    (interactive)
+    (with-current-buffer "*elfeed-entry*"
+      (forge/elfeed-entry-tags)))
 
   (defun elfeed-show-open-eww ()
     "Open the current entry with eww."
