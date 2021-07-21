@@ -432,6 +432,25 @@ Will return available DNS, BGP origin, and associated ASN information."
 (when (forge/system-type-darwin-p)
   (defun vpn-connect ()
     "Connect to VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (require 'em-glob)
+    (let ((cfg (completing-read "Config: "
+                                (mapcar #'file-name-sans-extension
+                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
+      (setq forge/vpn-config cfg)
+      (when (forge/system-type-darwin-p)
+        (shell-command (concat "scutil --nc start " cfg)))))
+
+  (defun vpn-disconnect ()
+    "Disconnect VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (when (forge/system-type-darwin-p)
+      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
+
+  (defun openvpn-connect ()
+    "Connect to OpenVPN configuration CFG.
 Assumes you are on MacOS and using Tunnelblick to connect."
     (interactive)
     (require 'em-glob)
@@ -446,7 +465,7 @@ Assumes you are on MacOS and using Tunnelblick to connect."
                                 "end tell"))
           (do-applescript osatmpl)))))
 
-  (defun vpn-disconnect ()
+  (defun openvpn-disconnect ()
     "Disconnect from VPN.
 Assumes you are on MacOS and using Tunnelblick to manage your VPN."
     (interactive)
