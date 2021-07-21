@@ -2510,7 +2510,7 @@ Notes:
 (with-eval-after-load 'message
   (setq mail-from-style 'angles
         message-kill-buffer-on-exit t
-        message-forward-as-mime t
+        message-forward-as-mime nil
         message-citation-line-format "On %a, %Y-%m-%d at %T %z, %N wrote:"
         message-citation-line-function (quote message-insert-formatted-citation-line)
         message-make-forward-subject-function (quote message-forward-subject-fwd)
