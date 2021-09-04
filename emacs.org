@@ -180,7 +180,7 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
   (message "Emacs is ready, finished loading after %.03fs."
            (float-time (time-subtract after-init-time before-init-time))))
 
-(add-hook 'emacs-startup-hook #'forge/report-startup-time)
+(add-hook 'after-init-hook #'forge/report-startup-time)
 #+end_src
 
 * Basics
