@@ -1299,7 +1299,9 @@ perspective, integrates well with Emacs.
    ("M-s l" . consult-line)
    ("M-s M-i" . consult-imenu)
    ("M-y" . consult-yank-pop)
-   ("C-x b" . consult-buffer)
+   ([remap switch-to-buffer] . consult-buffer)
+   ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+   ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
    ("C-c f" . consult-find))
   :config
   (setq consult-project-root-function

@@ -24,7 +24,7 @@
   (message "Emacs is ready, finished loading after %.03fs."
            (float-time (time-subtract after-init-time before-init-time))))
 
-(add-hook 'emacs-startup-hook #'forge/report-startup-time)
+(add-hook 'after-init-hook #'forge/report-startup-time)
 
 (defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
@@ -938,7 +938,9 @@ end tell")
    ("M-s l" . consult-line)
    ("M-s M-i" . consult-imenu)
    ("M-y" . consult-yank-pop)
-   ("C-x b" . consult-buffer)
+   ([remap switch-to-buffer] . consult-buffer)
+   ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+   ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
    ("C-c f" . consult-find))
   :config
   (setq consult-project-root-function
