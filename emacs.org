@@ -3109,6 +3109,7 @@ Miscellaneous notes:
   first visiting a file.
 - =org-tags-exclude-from-inheritance= to enumerate tags that should not be
   inherited. See also /org-crypt/.
+- Use =org-reverse-note-order= to refile items to the top of a document.
 
 #+begin_src emacs-lisp
 (use-package org
