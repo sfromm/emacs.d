@@ -2135,6 +2135,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-src-fontify-natively t)
   (org-startup-folded 'content)
   (org-babel-python-command "python3")
+  (org-reverse-note-order t)
   (org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 
   :bind
