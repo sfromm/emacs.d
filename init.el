@@ -2335,9 +2335,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (setq song-info (if itunes-song itunes-song mpd-song))
     (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
 
-(defun forge/org-tbl-export (name)
+(defun forge/org-table-export (name)
   "Search for table named `NAME` and export"
-  (interactive "s")
+  (interactive "sTable: ")
   (outline-show-all)
   (push-mark)
   (goto-char (point-min))
