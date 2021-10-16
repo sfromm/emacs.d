@@ -1354,6 +1354,7 @@ prompt for what tab to switch to."
 (use-package eos-mode
   :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :commands (eos-mode)
+  :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
 
 (use-package ledger-mode
