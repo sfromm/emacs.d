@@ -1305,10 +1305,10 @@ prompt for what tab to switch to."
 (use-package web-mode
   :mode "\\.html\\'"
   :init
-  (setq
-   web-mode-css-indent-offset 2
-   web-mode-markup-indent-offset 2
-   web-mode-code-indent-offset 2))
+  (setq web-mode-enable-auto-indentation nil ;; temporary for now.
+        web-mode-css-indent-offset 2
+        web-mode-markup-indent-offset 2
+        web-mode-code-indent-offset 2))
 
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
@@ -2244,7 +2244,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
                                 ("rf" "Elfeed/News Article" entry
                                  (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
+                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
+
+                                ("rt" "Twitter Post" entry
+                                 (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states

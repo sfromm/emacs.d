@@ -1893,10 +1893,10 @@ I pull in this package for the formatting and font-lock features.
 (use-package web-mode
   :mode "\\.html\\'"
   :init
-  (setq
-   web-mode-css-indent-offset 2
-   web-mode-markup-indent-offset 2
-   web-mode-code-indent-offset 2))
+  (setq web-mode-enable-auto-indentation nil ;; temporary for now.
+        web-mode-css-indent-offset 2
+        web-mode-markup-indent-offset 2
+        web-mode-code-indent-offset 2))
 
 #+end_src
 *** REST client
@@ -3294,7 +3294,11 @@ Miscellaneous notes:
 
                                 ("rf" "Elfeed/News Article" entry
                                  (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
+                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
+
+                                ("rt" "Twitter Post" entry
+                                 (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
