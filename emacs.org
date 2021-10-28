@@ -2703,8 +2703,16 @@ Here is an example of my deprecated =smtpmail= configuration.
         smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 #+end_src
 
+*** Signing and Encryption
 This configures Emacs Message Mode [[https://www.gnu.org/software/emacs/manual/html_node/message/Security.html][security]] settings.  The key points are to
 always encrypt to self and to list the OpenPGP keys that I will sign with.
+
+- =C-c C-m s s= Sign current message with S/MIME.
+- =C-c C-m s o= Sign current message with PGP.
+- =C-c C-m s p= Sign current message with PGP/MIME.
+- =C-c C-m c s= Encrypt current message using S/MIME.
+- =C-c C-m c o= Encrypt current message using PGP.
+- =C-c C-m c p= Encrypt current message using PGP/MIME.
 
 #+begin_src emacs-lisp
 (use-package mml-sec
@@ -2715,6 +2723,7 @@ always encrypt to self and to list the OpenPGP keys that I will sign with.
         mml-secure-smime-sign-with-sender t)
   (add-to-list 'mml-secure-openpgp-signers "A852499F"))
 #+end_src
+
 *** Notmuch configuration
 Before I get into how I have Emacs configured to work with /notmuch/, the
 following gives an idea of how I configure /notmuch/ itself.  You will want to
@@ -2765,7 +2774,6 @@ EOF
 echo -e "Done at $(date)."
 exit
 #+END_SRC
-
 *** Reading and organizing email
 The following is then the configuration that integrates Emacs with Notmuch.
 
