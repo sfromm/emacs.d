@@ -2259,7 +2259,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-tags-exclude-from-inheritance '("crypt"))
   ;;
   (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
-        org-modules '(org-id ol-eww org-bbdb org-bibtex ol-docview org-info org-irc org-habit)
+        org-modules '(org-id ol-eww org-bbdb org-bibtex ol-docview org-info org-irc org-habit ol-notmuch)
         org-src-preserve-indentation t
         org-src-window-setup 'current-window                    ;; use current window when editing a source block
         org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
@@ -2283,7 +2283,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   '(org-load-modules-maybe t))
 
 (use-package ol-notmuch
-  :defer t
   :after
   (:any org notmuch))
 
