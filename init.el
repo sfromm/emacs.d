@@ -1303,7 +1303,7 @@ prompt for what tab to switch to."
   (shell-script . forge/turn-on-delete-trailing-whitespace))
 
 (use-package web-mode
-  :mode "\\.html\\'"
+  :mode ("\\.html\\'" "\\.j2\\'")
   :init
   (setq web-mode-enable-auto-indentation nil ;; temporary for now.
         web-mode-css-indent-offset 2

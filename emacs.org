@@ -1891,7 +1891,7 @@ I pull in this package for the formatting and font-lock features.
 
 #+begin_src emacs-lisp
 (use-package web-mode
-  :mode "\\.html\\'"
+  :mode ("\\.html\\'" "\\.j2\\'")
   :init
   (setq web-mode-enable-auto-indentation nil ;; temporary for now.
         web-mode-css-indent-offset 2
