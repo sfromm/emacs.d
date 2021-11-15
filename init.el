@@ -2583,6 +2583,17 @@ It will not remove entries from the source org file."
         ("e" . elfeed-show-open-eww)
         ("f" . forge/elfeed-show-toggle-starred)
         ("o" . elfeed-show-mpv))
+  :preface
+  (defun forge/elfeed-stop-timer ()
+    "Cancel elfeed-update-timer."
+    (interactive)
+    (when elfeed-update-timer (cancel-timer elfeed-update-timer)))
+
+  (defun forge/elfeed-start-timer ()
+    "Start elfeed-update-timer."
+    (interactive)
+    (setq elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
+
   :config
   (defun elfeed-search-mpv ()
     "Play the current entry with mpv"
