@@ -1126,6 +1126,26 @@ The following are modes I no longer use.  Configuration is here for reference.
   (add-hook 'after-make-frame-functions #'forge/setup-ui-in-daemon))
 (add-hook 'after-init-hook #'forge/setup-ui)
 #+end_src
+** LIN
+[[https://gitlab.com/protesilaos/lin.git][LIN]]
+
+#+begin_src emacs-lisp
+(use-package lin
+  :quelpa (lin :fetcher git :url "https://gitlab.com/protesilaos/lin.git"))
+
+;; https://gitlab.com/protesilaos/lin/
+(defun forge/lin-macos-system-colors ()
+  "Change foreground and background colors of this line."
+  (interactive)
+  (when (forge/system-type-darwin-p)
+    (set-face-attribute 'lin-hl nil
+                        :background "selectedContentBackgroundColor")
+
+    ;; To also override the foreground (see `lin-override-foreground'):
+    (set-face-attribute 'lin-hl-override-fg nil
+                        :foreground "alternateSelectedControlTextColor"
+                        :background "selectedContentBackgroundColor")))
+#+end_src
 * User interface elements
 This section configures those pieces of Emacs where I can affect how I interact
 with it.  This covers a lot of ground.

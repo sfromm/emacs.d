@@ -792,6 +792,22 @@ end tell")
   (add-hook 'after-make-frame-functions #'forge/setup-ui-in-daemon))
 (add-hook 'after-init-hook #'forge/setup-ui)
 
+(use-package lin
+  :quelpa (lin :fetcher git :url "https://gitlab.com/protesilaos/lin.git"))
+
+;; https://gitlab.com/protesilaos/lin/
+(defun forge/lin-macos-system-colors ()
+  "Change foreground and background colors of this line."
+  (interactive)
+  (when (forge/system-type-darwin-p)
+    (set-face-attribute 'lin-hl nil
+                        :background "selectedContentBackgroundColor")
+
+    ;; To also override the foreground (see `lin-override-foreground'):
+    (set-face-attribute 'lin-hl-override-fg nil
+                        :foreground "alternateSelectedControlTextColor"
+                        :background "selectedContentBackgroundColor")))
+
 (use-package which-key
   :ensure t
   :custom (which-key-idle-delay 1.5)
