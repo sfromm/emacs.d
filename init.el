@@ -680,8 +680,7 @@ end tell")
   (dolist (p '(doom-themes           ;; https://github.com/hlissner/emacs-doom-themes
                leuven-theme          ;; https://github.com/fniessen/emacs-leuven-theme
                material-theme        ;; https://github.com/cpaulik/emacs-material-theme
-               modus-operandi-theme  ;; https://gitlab.com/protesilaos/modus-themes
-               modus-vivendi-theme   ;; https://gitlab.com/protesilaos/modus-themes
+               modus-themes          ;; https://gitlab.com/protesilaos/modus-themes
                poet-theme            ;; https://github.com/kunalb/poet
                solarized-theme       ;; https://github.com/bbatsov/solarized-emacs
                spacemacs-theme       ;; https://github.com/nashamri/spacemacs-theme
@@ -710,13 +709,13 @@ end tell")
   :config
   (doom-themes-org-config))
 
-(use-package modus-operandi-theme
+(use-package modus-themes
+  :hook
+  (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
-  (modus-operandi-theme-scale-headings t))
-
-(use-package modus-vivendi-theme
-  :custom
-  (modus-vivendi-theme-scale-headings t))
+  (modus-themes-scale-headings t)
+  :init
+  (modus-themes-load-themes))
 
 (use-package tron-legacy-theme
   :custom
