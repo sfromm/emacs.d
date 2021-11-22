@@ -949,9 +949,15 @@ end tell")
   :ensure t
   :demand t
   :bind
+  ;; M-g go-to map
   (("M-g g" . consult-goto-line)
+   ("M-g h" . consult-org-heading)
+   ("M-g i" . consult-imenu)
+   ;; M-s search map
    ("M-s l" . consult-line)
-   ("M-s M-i" . consult-imenu)
+   ("M-s g" . consult-grep)
+   ("M-s G" . consult-git-grep)
+   ("M-s r" . consult-ripgrep)
    ("M-y" . consult-yank-pop)
    ([remap switch-to-buffer] . consult-buffer)
    ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
