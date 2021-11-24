@@ -2736,6 +2736,7 @@ always encrypt to self and to list the OpenPGP keys that I will sign with.
 - =C-c C-m s s= Sign current message with S/MIME.
 - =C-c C-m s o= Sign current message with PGP.
 - =C-c C-m s p= Sign current message with PGP/MIME.
+- =C-c RET C-c= Encrypt current message.
 - =C-c C-m c s= Encrypt current message using S/MIME.
 - =C-c C-m c o= Encrypt current message using PGP.
 - =C-c C-m c p= Encrypt current message using PGP/MIME.
