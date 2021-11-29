@@ -714,6 +714,7 @@ end tell")
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
   (modus-themes-scale-headings t)
+  (modus-themes-mixed-fonts t)
   :init
   (modus-themes-load-themes))
 
