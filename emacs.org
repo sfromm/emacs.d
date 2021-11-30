@@ -1876,6 +1876,9 @@ Go ahead and set up modes to help with editing Lisp files.
 ** Python
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for navigation, completion, and documentation lookup.
 
+Set =python-shell-interpreter= to =python3=, if found in PATH,
+and if =python-shell-interpreter= is the default value =python=.
+
 #+begin_src emacs-lisp
 (use-package python
   :interpreter ("python" . python-mode)
@@ -1883,6 +1886,10 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for navigatio
   (python-mode . forge/turn-on-delete-trailing-whitespace)
   (python-mode . forge/whitespace-visualize)
   :config
+  ;; set python-shell-interpreter to python3
+  (when (and (executable-find "python3")
+             (string= python-shell-interpreter "python"))
+    (setq python-shell-interpreter "python3"))
   (setq-default python-indent-offset 4))
 
 (use-package anaconda-mode

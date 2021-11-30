@@ -1303,6 +1303,10 @@ prompt for what tab to switch to."
   (python-mode . forge/turn-on-delete-trailing-whitespace)
   (python-mode . forge/whitespace-visualize)
   :config
+  ;; set python-shell-interpreter to python3
+  (when (and (executable-find "python3")
+             (string= python-shell-interpreter "python"))
+    (setq python-shell-interpreter "python3"))
   (setq-default python-indent-offset 4))
 
 (use-package anaconda-mode
