@@ -352,10 +352,10 @@ Will return available DNS, BGP origin, and associated ASN information."
        (cd (getenv "HOME"))
        (compile (mapconcat 'shell-quote-argument (list "make" "-f" "Makefile.mkhome" ,target) " ")))))
 
-(defun forge-mkhome-git ()
+(defun forge-mkhome-update ()
   "Run mkhome git."
   (interactive)
-  (forge-mkhome-target "git"))
+  (forge-mkhome-target "update"))
 
 (defun forge-mkhome-www ()
   "Run mkhome www."
@@ -817,7 +817,7 @@ end tell")
   :config (which-key-mode))
 
 (define-prefix-command 'forge-mkhome-map)
-(define-key forge-mkhome-map (kbd "g") 'forge-mkhome-git)
+(define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
 (define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
 
 (define-prefix-command 'forge-map)
