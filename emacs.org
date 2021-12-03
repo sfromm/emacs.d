@@ -327,6 +327,11 @@ The following are several helper functions that are used across the configuratio
   "Enable whitespace visualizations."
   (setq highlight-tabs t)
   (setq show-trailing-whitespace t))
+
+(defun forge/untabify-buffer ()
+  "Remove tab characters from buffer."
+  (interactive)
+  (untabify (point-min) (point-max)))
 #+end_src
 
 *** Miscellaneous functions

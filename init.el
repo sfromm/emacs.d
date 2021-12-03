@@ -154,6 +154,11 @@
   (setq highlight-tabs t)
   (setq show-trailing-whitespace t))
 
+(defun forge/untabify-buffer ()
+  "Remove tab characters from buffer."
+  (interactive)
+  (untabify (point-min) (point-max)))
+
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
   "Wrapper for `dig'.
