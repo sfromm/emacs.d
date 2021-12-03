@@ -583,6 +583,11 @@ window.  This probably could be simplified by using something like [[https://git
   "Run mkhome www."
   (interactive)
   (forge-mkhome-target "www"))
+
+(defun forge-mkhome-src ()
+  "Run mkhome src."
+  (interactive)
+  (forge-mkhome-target "src"))
 #+end_src
 *** Loading modules helpers
 The following is meant to load any configuration in =forge-site-dir= or
@@ -1178,6 +1183,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
 (define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
+(define-key forge-mkhome-map (kbd "s") 'forge-mkhome-src)
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)

@@ -367,6 +367,11 @@ Will return available DNS, BGP origin, and associated ASN information."
   (interactive)
   (forge-mkhome-target "www"))
 
+(defun forge-mkhome-src ()
+  "Run mkhome src."
+  (interactive)
+  (forge-mkhome-target "src"))
+
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
   (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
@@ -824,6 +829,7 @@ end tell")
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
 (define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
+(define-key forge-mkhome-map (kbd "s") 'forge-mkhome-src)
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
