@@ -2376,6 +2376,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (setq song-info (if itunes-song itunes-song mpd-song))
     (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
 
+(defun forge/org-set-lastupdated ()
+  "Set LASTUPDATED property to today."
+  (interactive)
+  (org-set-property "LASTUPDATED" (format-time-string (org-time-stamp-format nil t))))
+
 (defun forge/org-table-export (name)
   "Search for table named `NAME` and export"
   (interactive "sTable: ")
