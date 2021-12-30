@@ -4093,11 +4093,11 @@ The following are miscellaneous utilities that are small but useful.
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp
 (use-package wttrin
-  :ensure t
+  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
-  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
-  (wttrin-default-accept-language '("Accept-Language" . "en-US")))
+  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
+  (wttrin-language "en-US"))
 #+end_src
 ** with-editor
 Try to make it easier to use =emacsclient= as the =$EDITOR= of child processes using [[https://github.com/magit/with-editor][with-editor]].

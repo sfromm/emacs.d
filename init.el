@@ -2906,11 +2906,11 @@ It will not remove entries from the source org file."
   :custom (gist-view-gist t))
 
 (use-package wttrin
-  :ensure t
+  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
-  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei"))
-  (wttrin-default-accept-language '("Accept-Language" . "en-US")))
+  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
+  (wttrin-language "en-US"))
 
 (use-package with-editor)
 
