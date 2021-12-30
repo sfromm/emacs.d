@@ -943,8 +943,7 @@ end tell")
 (use-package orderless
   :ensure t
   :demand t
-  :config
-  (setq completion-styles '(substring orderless)))
+  :custom (completion-styles '(orderless)))
 
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum
