@@ -932,8 +932,23 @@ end tell")
 
   )
 
+;; https://github.com/minad/vertico
+(use-package vertico
+  :ensure t
+  :demand t
+  :init
+  (vertico-mode))
+
+;; https://github.com/oantolin/orderless
+(use-package orderless
+  :ensure t
+  :demand t
+  :config
+  (setq completion-styles '(substring orderless)))
+
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum
+  :disabled t
   :ensure t
   :demand t
   :config
@@ -941,6 +956,7 @@ end tell")
 
 ;; https://github.com/raxod502/prescient.el
 (use-package prescient
+  :disabled t
   :ensure t
   :demand t
   :config
@@ -950,6 +966,7 @@ end tell")
 
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum-prescient
+  :disabled t
   :ensure t
   :demand t
   :after (:all selectrum prescient)
