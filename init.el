@@ -2149,6 +2149,19 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (interactive)
     (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
+
+  (defun forge/org-timer-clock-in ()
+    "Clock in when starting a org-timer."
+    (if (eq major-mode 'org-agenda-mode)
+	(call-interactively 'org-agenda-clock-in)
+      (call-interactively 'org-clock-in)))
+
+  (defun forge/org-timer-clock-out ()
+    "Clock in when starting a org-timer."
+    (if (eq major-mode 'org-agenda-mode)
+	(call-interactively 'org-agenda-clock-out)
+      (call-interactively 'org-clock-out)))
+
   (defun forge/org-set-properties ()
     "Set stock org properties for current headline."
     (interactive)
@@ -2173,6 +2186,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :hook
   ((org-mode . forge/org-mode-hook)
    (after-save . forge/tangle-org-mode-on-save)
+   (org-timer-set-hook . forge/org-timer-clock-in)
+   (org-timer-done-hook . forge/org-timer-clock-out)
+   (org-timer-stop-hook . forge/org-timer-clock-out)
    (org-mode . variable-pitch-mode))
 
   :custom
@@ -2223,13 +2239,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                        ("C" . "comment")
                                        ("e" . "example")
                                        ("E" . "export")
-                                       ("m" . "export md")
                                        ("h" . "export html")
                                        ("l" . "src emacs-lisp")
+                                       ("m" . "export md")
                                        ("p" . "src python")
-                                       ("q" . "quote")
                                        ("s" . "src")
-                                       ("v" . "verse")))
+                                       ("v" . "verse")
+                                       ("y" . "src yaml")))
   (setq org-agenda-sticky t
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
@@ -2350,30 +2366,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
   :init
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
-
-(use-package org-pomodoro
-  :commands (org-pomodoro)
-  :custom
-  (org-pomodoro-audio-player "mpv")
-  (org-pomodoro-finished-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
-  ;; :bind
-  ;; (("C-c C-x C-i" . org-pomodoro)
-  ;;  ("C-c C-x C-o" . org-pomodoro))
-
-  :preface
-  (defun forge/notify-pomodoro (title message)
-    (notifications-notify
-     :title title
-     :body message
-     :urgency 'low))
-
-  :hook
-  (org-pomodoro-finished . (lambda ()
-                             (forge/notify-pomodoro "Pomodoro completed" "Time for a break")))
-  (org-pomodoro-break-finished . (lambda ()
-                                   (forge/notify-pomodoro "Break completed" "Ready for another?")))
-  (org-pomodoro-long-break-finished . (lambda ()
-                                        (forge/notify-pomodoro "Long break completed" "Ready for another?"))))
 
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map

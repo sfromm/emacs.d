@@ -3182,6 +3182,8 @@ Miscellaneous notes:
 - =org-tags-exclude-from-inheritance= to enumerate tags that should not be
   inherited. See also /org-crypt/.
 - Use =org-reverse-note-order= to refile items to the top of a document.
+- For =org-timer-set-timer=, use =C-c-C-x ;=.  The timer is set to 25 minutes.
+  This has taken the place of /org-pomodoro/.
 
 #+begin_src emacs-lisp
 (use-package org
@@ -3217,6 +3219,19 @@ Miscellaneous notes:
     (interactive)
     (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
+
+  (defun forge/org-timer-clock-in ()
+    "Clock in when starting a org-timer."
+    (if (eq major-mode 'org-agenda-mode)
+	(call-interactively 'org-agenda-clock-in)
+      (call-interactively 'org-clock-in)))
+
+  (defun forge/org-timer-clock-out ()
+    "Clock in when starting a org-timer."
+    (if (eq major-mode 'org-agenda-mode)
+	(call-interactively 'org-agenda-clock-out)
+      (call-interactively 'org-clock-out)))
+
   (defun forge/org-set-properties ()
     "Set stock org properties for current headline."
     (interactive)
@@ -3241,6 +3256,9 @@ Miscellaneous notes:
   :hook
   ((org-mode . forge/org-mode-hook)
    (after-save . forge/tangle-org-mode-on-save)
+   (org-timer-set-hook . forge/org-timer-clock-in)
+   (org-timer-done-hook . forge/org-timer-clock-out)
+   (org-timer-stop-hook . forge/org-timer-clock-out)
    (org-mode . variable-pitch-mode))
 
   :custom
@@ -3291,13 +3309,13 @@ Miscellaneous notes:
                                        ("C" . "comment")
                                        ("e" . "example")
                                        ("E" . "export")
-                                       ("m" . "export md")
                                        ("h" . "export html")
                                        ("l" . "src emacs-lisp")
+                                       ("m" . "export md")
                                        ("p" . "src python")
-                                       ("q" . "quote")
                                        ("s" . "src")
-                                       ("v" . "verse")))
+                                       ("v" . "verse")
+                                       ("y" . "src yaml")))
   (setq org-agenda-sticky t
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
@@ -3425,33 +3443,6 @@ Miscellaneous notes:
   (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
   :init
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
-#+end_src
-*** Org Pomodoro
-#+begin_src emacs-lisp
-(use-package org-pomodoro
-  :commands (org-pomodoro)
-  :custom
-  (org-pomodoro-audio-player "mpv")
-  (org-pomodoro-finished-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
-  ;; :bind
-  ;; (("C-c C-x C-i" . org-pomodoro)
-  ;;  ("C-c C-x C-o" . org-pomodoro))
-
-  :preface
-  (defun forge/notify-pomodoro (title message)
-    (notifications-notify
-     :title title
-     :body message
-     :urgency 'low))
-
-  :hook
-  (org-pomodoro-finished . (lambda ()
-                             (forge/notify-pomodoro "Pomodoro completed" "Time for a break")))
-  (org-pomodoro-break-finished . (lambda ()
-                                   (forge/notify-pomodoro "Break completed" "Ready for another?")))
-  (org-pomodoro-long-break-finished . (lambda ()
-                                        (forge/notify-pomodoro "Long break completed" "Ready for another?"))))
-
 #+end_src
 *** Org Tree Slide for presentations from Org
 #+begin_src emacs-lisp
