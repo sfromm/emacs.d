@@ -2190,9 +2190,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :hook
   ((org-mode . forge/org-mode-hook)
    (after-save . forge/tangle-org-mode-on-save)
-   (org-timer-set-hook . forge/org-timer-clock-in)
-   (org-timer-done-hook . forge/org-timer-clock-out)
-   (org-timer-stop-hook . forge/org-timer-clock-out)
+   (org-timer-set . forge/org-timer-clock-in)
+   (org-timer-done . forge/org-timer-clock-out)
+   (org-timer-stop . forge/org-timer-clock-out)
    (org-mode . variable-pitch-mode))
 
   :custom
