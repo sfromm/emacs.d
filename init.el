@@ -52,11 +52,13 @@
   (interactive)
   (with-no-warnings
     (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+          async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
           bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
           transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
           transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir)
           transient-values-file (expand-file-name "transient/values.el" forge-personal-dir)
           message-auto-save-directory (expand-file-name "messages" forge-state-dir)
+          package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir)
           tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir)
           tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir)
           url-cache-directory (expand-file-name "url/cache/" forge-state-dir)
@@ -511,6 +513,8 @@ end tell")
 
 (defun forge/package-install (package)
   "Install PACKAGE if not yet installed."
+  (unless (fboundp 'package-installed-p)
+    (package-initialize))
   (unless (package-installed-p package)
     (message "%s" "Refreshing package database...")
     (package-refresh-contents)
