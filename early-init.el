@@ -1,5 +1,5 @@
 ;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
-;; Copyright (C) 2021 by Stephen Fromm
+;; Copyright (C) 2021, 2022 by Stephen Fromm
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

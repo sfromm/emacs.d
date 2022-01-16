@@ -45,7 +45,7 @@ without tangling it with something like the following:
 
 #+NAME: license
 #+begin_src emacs-lisp :tangle no
-;; Copyright (C) 2021 by Stephen Fromm
+;; Copyright (C) 2021, 2022 by Stephen Fromm
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
