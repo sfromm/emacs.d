@@ -11,8 +11,8 @@ endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
     PKGMGR = brew install
-    PKG = emacs-plus
-    PKGFLAGS =
+    PKG = emacs-plus@28
+    PKGFLAGS = --with-native-comp
     FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono
 endif
 
