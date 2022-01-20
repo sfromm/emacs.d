@@ -14,9 +14,21 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
+;; native compilation
+(when (forge/native-comp-p)
+  (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln-cache"))
+  (setq native-comp-deferred-compilation t))
+
+;; package quickstart
 (setq package-enable-at-startup t)            ;; initialize now with package-quickstart
 (setq package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 (setq package-quickstart t)
+
+;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum) ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                  ;; Turn up logging settings
 

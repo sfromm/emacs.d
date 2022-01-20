@@ -129,9 +129,21 @@ relocated to /.emacs.d/var/.
 ;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
 <<license>>
 
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
+;; native compilation
+(when (forge/native-comp-p)
+  (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln-cache"))
+  (setq native-comp-deferred-compilation t))
+
+;; package quickstart
 (setq package-enable-at-startup t)            ;; initialize now with package-quickstart
 (setq package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 (setq package-quickstart t)
+
+;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum) ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                  ;; Turn up logging settings
 #+end_src
@@ -185,7 +197,22 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 #+end_src
 
 * Basics
-** Variables for path information
+** Platform helpers
+#+begin_src emacs-lisp
+;;; Platform specific details.
+(defun forge/system-type-darwin-p ()
+  "Return non-nil if system is Darwin/MacOS."
+  (string-equal system-type "darwin"))
+
+(defun forge/system-type-windows-p ()
+  "Return non-nil if system is Windows."
+  (string-equal system-type "windows-nt"))
+
+(defun forge/system-type-linux-p ()
+  "Return non-nil if system is GNU/Linux."
+  (string-equal system-type "gnu/linux"))
+#+end_src
+** Define paths
 The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
 and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
 pulling this package in.
@@ -208,9 +235,11 @@ pulling this package in.
 
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
+#+end_src
 
-(add-to-list 'load-path forge-site-dir)
-(add-to-list 'custom-theme-load-path forge-themes-dir)
+** Configure basic behavior
+Configure Emacs to use the above defined paths.  Also configure some basic behavior
+#+begin_src emacs-lisp
 
 (defun forge/clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
@@ -235,6 +264,14 @@ pulling this package in.
     (unless (file-directory-p dir)
       (make-directory dir t)))
   (forge/clean-user-emacs-directory)
+  ;; when native compilation is available ...
+  (when (forge/native-comp-p)
+    (setq native-comp-deferred-compilation t
+          native-comp-async-report-warnings-errors nil
+          package-native-compile t))
+  ;;
+  (add-to-list 'load-path forge-site-dir)
+  (add-to-list 'custom-theme-load-path forge-themes-dir)
   (setq inhibit-splash-screen t
         ;; always load the newer version of a file
         load-prefer-newer t
@@ -251,23 +288,189 @@ Create a customization group for variables specific to this configuration.
   "Forge custom settings."
   :group 'environment)
 #+end_src
-** Helper functions
-The following are several helper functions that are used across the configuration.
-*** Platform helpers
+** Module loading and site configuration
+*** Helpers to load modules from a path or directory
+The following is meant to load any configuration in =forge-site-dir= or =forge-personal-dir=.
+
 #+begin_src emacs-lisp
-;;; Platform specific details.
-(defun forge/system-type-darwin-p ()
-  "Return non-nil if system is Darwin/MacOS."
-  (string-equal system-type "darwin"))
+(defun forge/message-module-load (mod time)
+  "Log message on how long it took to load module MOD from TIME."
+  (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
 
-(defun forge/system-type-windows-p ()
-  "Return non-nil if system is Windows."
-  (string-equal system-type "windows-nt"))
+(defun forge/load-directory-modules (path)
+  "Load Lisp files in PATH directory."
+  (let ((t1 (current-time)))
+    (when (file-exists-p path)
+      (message "Loading lisp files in %s..." path)
+      (mapc 'load (directory-files path 't "^[^#\.].*el$"))
+      (forge/message-module-load path t1))))
 
-(defun forge/system-type-linux-p ()
-  "Return non-nil if system is GNU/Linux."
-  (string-equal system-type "gnu/linux"))
+(defun forge/load-modules (&rest modules)
+  "Load forge modules MODULES."
+  (interactive)
+  (dolist (module (cons '() modules ))
+    (when module
+      (let ((t1 (current-time)))
+        (unless (featurep module)
+          (require module nil t)
+          (forge/message-module-load module t1))))))
+
 #+end_src
+*** Site configuration
+Before going to much further, go ahead and load any site configuration.
+
+#+begin_src emacs-lisp
+(forge/load-directory-modules forge-site-dir)
+#+end_src
+** Platform-dependent configuration
+The following are a couple elements that are only loaded if on MacOS or on Linux.
+
+*** Linux
+This only has the helper function to check for network connectivity.
+
+#+begin_src emacs-lisp
+;; dbus is a linux thing -- only load on that platform
+(when (forge/system-type-linux-p)
+  (require 'dbus)
+
+  (defun forge/network-online-p ()
+    "Check if we have a working network connection"
+    (interactive)
+    (let ((nm-service "org.freedesktop.NetworkManager")
+          (nm-path "/org/freedesktop/NetworkManager")
+          (nm-interface "org.freedesktop.NetworkManager")
+          (nm-state-connected-global 70))
+      (eq nm-state-connected-global
+          (dbus-get-property :system nm-service nm-path nm-interface "State"))))
+  )
+#+end_src
+*** MacOS
+This section is various helper functions for when on MacOS.
+
+**** Set up PATH
+#+begin_src emacs-lisp
+;;; exec-path-from-shell
+;;; Set exec-path based on shell PATH.
+;;; Some platforms, such as MacOSX, do not get this done correctly.
+(with-eval-after-load 'exec-path-from-shell
+  (exec-path-from-shell-initialize))
+
+(when (forge/system-type-darwin-p)
+  (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
+    (progn
+      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+      (setenv "PATH" (concat path ":" (getenv "PATH")))
+      (add-to-list 'exec-path path))))
+
+#+end_src
+
+**** Check for network connectivity
+Helper to test if there is network connectivity.  This is MacOS specific.
+
+#+begin_src emacs-lisp
+(when (forge/system-type-darwin-p)
+  (defun forge/network-online-p ()
+    "Check if online."
+    (interactive)
+    (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
+           (netsetup (split-string output "\n")))
+      (catch 'found
+        (dolist (elt netsetup)
+          (when (> (length elt) 0)
+            (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
+                   (netif (match-string 1 elt)))
+              (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
+                (throw 'found netif)))))))))
+#+end_src
+
+**** VPN helpers
+Helpers to connect and disconnect from a VPN session.
+
+#+begin_src emacs-lisp
+(defvar forge/vpn-config ""
+  "Name of the OpenVPN VPN configuration to use.")
+
+(when (forge/system-type-darwin-p)
+  (defun vpn-connect ()
+    "Connect to VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (require 'em-glob)
+    (let ((cfg (completing-read "Config: "
+                                (mapcar #'file-name-sans-extension
+                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
+      (setq forge/vpn-config cfg)
+      (when (forge/system-type-darwin-p)
+        (shell-command (concat "scutil --nc start " cfg)))))
+
+  (defun vpn-disconnect ()
+    "Disconnect VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (when (forge/system-type-darwin-p)
+      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
+
+  (defun openvpn-connect ()
+    "Connect to OpenVPN configuration CFG.
+Assumes you are on MacOS and using Tunnelblick to connect."
+    (interactive)
+    (require 'em-glob)
+    (let ((cfg (completing-read "Config: "
+                                (mapcar #'file-name-sans-extension
+                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
+      (setq forge/vpn-config cfg)
+      (when (forge/system-type-darwin-p)
+        (let ((osatmpl ""))
+          (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                                "    connect \"" cfg "\"\n"
+                                "end tell"))
+          (do-applescript osatmpl)))))
+
+  (defun openvpn-disconnect ()
+    "Disconnect from VPN.
+Assumes you are on MacOS and using Tunnelblick to manage your VPN."
+    (interactive)
+    (let ((osatmpl ""))
+      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                            "    disconnect \"" forge/vpn-config "\"\n"
+                            "end tell"))
+      (do-applescript osatmpl))))
+
+#+end_src
+
+**** Get currently playing song
+Lastly, this returns the currently playing song in iTunes.
+
+Useful resources:
+- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
+- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
+
+#+begin_src emacs-lisp
+(when (forge/system-type-darwin-p)
+  (defun forge/get-current-song-itunes ()
+    "Get current song playing via itunes."
+    (let ((osa-tmpl "")
+          (cursong nil))
+      (setq osa-tmpl "tell application \"Music\"
+	if player state is not stopped then
+		set ct to (properties of current track)
+		set this_song to \"\"
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
+	end if
+end tell")
+      (condition-case nil
+          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
+        (error nil))
+      cursong)))
+
+#+end_src
+** Helper functions
+
 *** Feature related helpers
 #+begin_src emacs-lisp
 (defun forge/reload-emacs-configuration ()
@@ -591,187 +794,6 @@ window.  This probably could be simplified by using something like [[https://git
   "Run mkhome src."
   (interactive)
   (forge-mkhome-target "src"))
-#+end_src
-*** Loading modules helpers
-The following is meant to load any configuration in =forge-site-dir= or
-=forge-personal-dir=.
-
-#+begin_src emacs-lisp
-(defun forge/message-module-load (mod time)
-  "Log message on how long it took to load module MOD from TIME."
-  (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
-
-(defun forge/load-directory-modules (path)
-  "Load Lisp files in PATH directory."
-  (let ((t1 (current-time)))
-    (when (file-exists-p path)
-      (message "Loading lisp files in %s..." path)
-      (mapc 'load (directory-files path 't "^[^#\.].*el$"))
-      (forge/message-module-load path t1))))
-
-(defun forge/load-modules (&rest modules)
-  "Load forge modules MODULES."
-  (interactive)
-  (dolist (module (cons '() modules ))
-    (when module
-      (let ((t1 (current-time)))
-        (unless (featurep module)
-          (require module nil t)
-          (forge/message-module-load module t1))))))
-
-#+end_src
-** Platform-dependent configuration
-The following are a couple elements that are only loaded if on MacOS or on Linux.
-
-*** Linux
-This only has the helper function to check for network connectivity.
-
-#+begin_src emacs-lisp
-;; dbus is a linux thing -- only load on that platform
-(when (forge/system-type-linux-p)
-  (require 'dbus)
-
-  (defun forge/network-online-p ()
-    "Check if we have a working network connection"
-    (interactive)
-    (let ((nm-service "org.freedesktop.NetworkManager")
-          (nm-path "/org/freedesktop/NetworkManager")
-          (nm-interface "org.freedesktop.NetworkManager")
-          (nm-state-connected-global 70))
-      (eq nm-state-connected-global
-          (dbus-get-property :system nm-service nm-path nm-interface "State"))))
-  )
-#+end_src
-*** MacOS
-This section is various helper functions for when on MacOS.
-
-**** Set up PATH
-#+begin_src emacs-lisp
-;;; exec-path-from-shell
-;;; Set exec-path based on shell PATH.
-;;; Some platforms, such as MacOSX, do not get this done correctly.
-(with-eval-after-load 'exec-path-from-shell
-  (exec-path-from-shell-initialize))
-
-(when (forge/system-type-darwin-p)
-  (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
-    (progn
-      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      (setenv "PATH" (concat path ":" (getenv "PATH")))
-      (add-to-list 'exec-path path))))
-
-#+end_src
-
-**** Check for network connectivity
-Helper to test if there is network connectivity.  This is MacOS specific.
-
-#+begin_src emacs-lisp
-(when (forge/system-type-darwin-p)
-  (defun forge/network-online-p ()
-    "Check if online."
-    (interactive)
-    (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
-           (netsetup (split-string output "\n")))
-      (catch 'found
-        (dolist (elt netsetup)
-          (when (> (length elt) 0)
-            (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
-                   (netif (match-string 1 elt)))
-              (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
-                (throw 'found netif)))))))))
-#+end_src
-
-**** VPN helpers
-Helpers to connect and disconnect from a VPN session.
-
-#+begin_src emacs-lisp
-(defvar forge/vpn-config ""
-  "Name of the OpenVPN VPN configuration to use.")
-
-(when (forge/system-type-darwin-p)
-  (defun vpn-connect ()
-    "Connect to VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (shell-command (concat "scutil --nc start " cfg)))))
-
-  (defun vpn-disconnect ()
-    "Disconnect VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (when (forge/system-type-darwin-p)
-      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
-
-  (defun openvpn-connect ()
-    "Connect to OpenVPN configuration CFG.
-Assumes you are on MacOS and using Tunnelblick to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (let ((osatmpl ""))
-          (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                                "    connect \"" cfg "\"\n"
-                                "end tell"))
-          (do-applescript osatmpl)))))
-
-  (defun openvpn-disconnect ()
-    "Disconnect from VPN.
-Assumes you are on MacOS and using Tunnelblick to manage your VPN."
-    (interactive)
-    (let ((osatmpl ""))
-      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                            "    disconnect \"" forge/vpn-config "\"\n"
-                            "end tell"))
-      (do-applescript osatmpl))))
-
-#+end_src
-
-**** Get currently playing song
-Lastly, this returns the currently playing song in iTunes.
-
-Useful resources:
-- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
-- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
-
-#+begin_src emacs-lisp
-(when (forge/system-type-darwin-p)
-  (defun forge/get-current-song-itunes ()
-    "Get current song playing via itunes."
-    (let ((osa-tmpl "")
-          (cursong nil))
-      (setq osa-tmpl "tell application \"Music\"
-	if player state is not stopped then
-		set ct to (properties of current track)
-		set this_song to \"\"
-		if (class of ct is URL track) and (get current stream title) is not missing value then
-			set this_song to (get current stream title)
-		else
-			set this_song to artist in ct & \" - \" & name in ct
-		end if
-		this_song
-	end if
-end tell")
-      (condition-case nil
-          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
-        (error nil))
-      cursong)))
-
-#+end_src
-** Site configuration
-Before going to much further, go ahead and load any site configuration.
-
-#+begin_src emacs-lisp
-(forge/load-directory-modules forge-site-dir)
 #+end_src
 * Packages via ELPA and friends
 ** Helper functions for packaging
