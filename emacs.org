@@ -2407,6 +2407,7 @@ I also pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine
 
 #+begin_src emacs-lisp
 (use-package git-timemachine
+  :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
 #+end_src
 *** Deprecated git-annex

@@ -1665,6 +1665,7 @@ read-file-name and dired-dwim-target-directory."
   (setq magit-last-seen-setup-instructions "1.4.0"))
 
 (use-package git-timemachine
+  :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
 
 (use-package magit-annex
