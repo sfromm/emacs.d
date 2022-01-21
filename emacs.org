@@ -3210,7 +3210,7 @@ Miscellaneous notes:
   inherited. See also /org-crypt/.
 - Use =org-reverse-note-order= to refile items to the top of a document.
 - For =org-timer-set-timer=, use =C-c-C-x ;=.  The timer is set to 25 minutes.
-  This has taken the place of /org-pomodoro/.
+  This has taken the place of /org-pomodoro/.  See [[https://orgmode.org/manual/Timers.html][Org timers]].
 
 #+begin_src emacs-lisp
 (use-package org
