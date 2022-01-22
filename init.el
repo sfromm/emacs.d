@@ -1411,6 +1411,7 @@ prompt for what tab to switch to."
 
 (use-package junos-mode
   :commands (junos-mode)
+  :magic ("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode)
   :config (setq-local c-basic-offset 4))
 
 (use-package eos-mode

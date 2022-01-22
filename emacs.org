@@ -2072,6 +2072,7 @@ This includes things like folding XML sections.
 #+begin_src emacs-lisp
 (use-package junos-mode
   :commands (junos-mode)
+  :magic ("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode)
   :config (setq-local c-basic-offset 4))
 #+end_src
 *** EOS
