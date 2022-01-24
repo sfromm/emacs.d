@@ -2102,13 +2102,14 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 (use-package emms
   :ensure t
+  :custom
+  (emms-directory (expand-file-name "emms" forge-state-dir))
+  (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
   :config
   (emms-all)
   (emms-history-load)
-  (setq emms-directory (expand-file-name "emms" forge-state-dir)
-        emms-player-list (list emms-player-mpv)
+  (setq emms-player-list (list emms-player-mpv)
         emms-stream-info-backend 'mplayer
-        emms-source-file-default-directory (expand-file-name "~/annex/Audio")
         emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
         emms-browser-covers 'emms-browser-cache-thumbnail)
   (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
