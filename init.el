@@ -242,15 +242,10 @@ end tell")
   (interactive)
   (load-file (expand-file-name "init.el" user-emacs-directory)))
 
-(defun forge/turn-on-hl-line ()
-  "Turn on `hl-line-mode'."
+(defun forge/toggle-highlight-line ()
+  "Toggle `hl-line-mode'."
   (interactive)
-  (hl-line-mode 1))
-
-(defun forge/turn-off-hl-line ()
-  "Turn off `hl-line-mode'."
-  (interactive)
-  (hl-line-mode nil))
+  (if (bound-and-true-p hl-line-mode) (hl-line-mode -1) (hl-line-mode t)))
 
 (defun forge/turn-on-delete-trailing-whitespace ()
   "Turn on `delete-trailing-whitespace' when saving files."
@@ -1378,6 +1373,12 @@ prompt for what tab to switch to."
 (use-package php-mode
   :mode "\\.php\\'")
 
+(use-package csv-mode
+  :hook
+  (csv-mode . forge/toggle-highlight-line)
+  (csv-mode . forge/turn-on-delete-trailing-whitespace)
+  (csv-mode . forge/whitespace-visualize))
+
 (use-package json-mode
   :hook
   (json-mode . forge/turn-on-delete-trailing-whitespace)
@@ -1555,7 +1556,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
     (setq-local truncate-lines t)
-    (forge/turn-on-hl-line))
+    (forge/toggle-highlight-line))
 
   (defun forge/dired-up ()
     "Move up a directory without opening a new buffer."

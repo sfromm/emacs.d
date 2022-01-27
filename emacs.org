@@ -478,15 +478,10 @@ end tell")
   (interactive)
   (load-file (expand-file-name "init.el" user-emacs-directory)))
 
-(defun forge/turn-on-hl-line ()
-  "Turn on `hl-line-mode'."
+(defun forge/toggle-highlight-line ()
+  "Toggle `hl-line-mode'."
   (interactive)
-  (hl-line-mode 1))
-
-(defun forge/turn-off-hl-line ()
-  "Turn off `hl-line-mode'."
-  (interactive)
-  (hl-line-mode nil))
+  (if (bound-and-true-p hl-line-mode) (hl-line-mode -1) (hl-line-mode t)))
 
 (defun forge/turn-on-delete-trailing-whitespace ()
   "Turn on `delete-trailing-whitespace' when saving files."
@@ -2017,6 +2012,14 @@ This is really predominantly for syntax highlighting.
   :mode "\\.php\\'")
 #+end_src
 ** Data serialization formats
+*** CSV
+#+begin_src emacs-lisp
+(use-package csv-mode
+  :hook
+  (csv-mode . forge/toggle-highlight-line)
+  (csv-mode . forge/turn-on-delete-trailing-whitespace)
+  (csv-mode . forge/whitespace-visualize))
+#+end_src
 *** JSON
 [[https://www.json.org/][JSON]] is one data-serialization format.
 
@@ -2262,7 +2265,7 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
     (setq-local truncate-lines t)
-    (forge/turn-on-hl-line))
+    (forge/toggle-highlight-line))
 
   (defun forge/dired-up ()
     "Move up a directory without opening a new buffer."
