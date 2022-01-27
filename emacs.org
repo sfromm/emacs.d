@@ -3917,9 +3917,9 @@ articles every 2 hours.
 
   (elfeed-org)
   (setq url-queue-timeout 30
-        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
+        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)))
         ;; create timer to update elfeed
-        elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
+        ;; elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
 #+end_src
 *** Elfeed feed organizer with [[https://github.com/remyhonig/elfeed-org][elfeed-org]]

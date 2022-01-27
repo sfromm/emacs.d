@@ -2777,9 +2777,9 @@ It will not remove entries from the source org file."
 
   (elfeed-org)
   (setq url-queue-timeout 30
-        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)
+        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)))
         ;; create timer to update elfeed
-        elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
+        ;; elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
 (use-package elfeed-org
   :ensure t
