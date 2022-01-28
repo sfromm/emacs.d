@@ -1125,7 +1125,6 @@ prompt for what tab to switch to."
 (use-package golden-ratio
   :hook
   (ediff-before-setup-windows . (lambda () (golden-ratio-mode -1)))
-  (ediff-quit . (lambda () (golden-ratio-mode 1)))
   :config
   (setq golden-ratio-exclude-modes '(messages-buffer-mode
                                      fundamental-mode
