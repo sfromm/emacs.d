@@ -1153,12 +1153,15 @@ prompt for what tab to switch to."
     (interactive)
     (olivetti-mode)))
 
-(setq scroll-step 1                       ;; keyboard scroll one line at a time
-      scroll-conservatively 10000
-      scroll-preserve-screen-position 1
+(setq hscroll-margin 2
+      hscroll-step 1
+      scroll-conservatively 101
+      scroll-preserve-screen-position t
+      auto-window-vscroll nil
       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))))
+      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+      mouse-wheel-scroll-amount-horizontal 2)
 
 (defun forge/save-all ()
   "Save any file-related buffers."

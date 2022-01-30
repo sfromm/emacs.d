@@ -1606,12 +1606,15 @@ the window contents.
 This is an attempt to make scrolling a bit smoother and friendlier.
 
 #+begin_src emacs-lisp
-(setq scroll-step 1                       ;; keyboard scroll one line at a time
-      scroll-conservatively 10000
-      scroll-preserve-screen-position 1
+(setq hscroll-margin 2
+      hscroll-step 1
+      scroll-conservatively 101
+      scroll-preserve-screen-position t
+      auto-window-vscroll nil
       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control))))
+      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+      mouse-wheel-scroll-amount-horizontal 2)
 #+end_src
 
 ** Saving files, backups, etc
