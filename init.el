@@ -1177,8 +1177,11 @@ prompt for what tab to switch to."
 
 (setq backup-directory-alist (list (cons ".*" forge-backup-dir)) ;; make backups of files to the backup directory
       auto-save-file-name-transforms `((".*" ,forge-backup-dir t))   ;;
-      delete-old-versions -1
+      backup-by-copying t
+      delete-old-versions t
       version-control t
+      kept-new-versions 7      ;; Number of newest versions to keep when a new numbered backup is made.
+      kept-old-versions 3      ;; Number of oldest versions to keep when a new numbered backup is made.
       auto-save-timeout 120
       auto-save-interval 1000)
 
