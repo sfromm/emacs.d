@@ -1606,16 +1606,17 @@ the window contents.
 #+begin_src emacs-lisp
 (use-package ibuffer
   :bind ("C-x C-b" . ibuffer)
+  :init
+  (add-hook 'ibuffer-mode-hook #'(lambda () (ibuffer-switch-to-saved-filter-groups "default")))
   :custom
+  (ibuffer-show-empty-filter-groups nil)
   (ibuffer-saved-filter-groups
    '(("default"
-      ("Magit"
+      ("Notmuch"
        (or
-        (mode . magit-status-mode)
-        (mode . magit-log-mode)
-        (name . "\\*magit")
-        (name . "magit-")
-        (name . "git-monitor")))
+        (name . "\\*notmuch-")
+        (mode . notmuch-search)
+        (mode . notmuch-show)))
       ("Org"
        (or
         (name . "^\\*Calendar\\*$")
@@ -1623,7 +1624,13 @@ the window contents.
         (name . "^ \\*Agenda")
         (name . "^diary$")
         (mode . org-mode)))
-      ("Dired" (mode . dired-mode))
+      ("Magit"
+       (or
+        (mode . magit-status-mode)
+        (mode . magit-log-mode)
+        (name . "\\*magit")
+        (name . "magit-")
+        (name . "git-monitor")))
       ("Commands"
        (or
         (mode . shell-mode)
@@ -1632,6 +1639,7 @@ the window contents.
         (mode . compilation-mode)))
       ("Lisp"
        (mode . emacs-lisp-mode))
+      ("Dired" (mode . dired-mode))
       ("Emacs"
        (or
         (filename . ".emacs.d/emacs.org")

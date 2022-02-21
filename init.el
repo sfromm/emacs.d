@@ -1155,16 +1155,17 @@ prompt for what tab to switch to."
 
 (use-package ibuffer
   :bind ("C-x C-b" . ibuffer)
+  :init
+  (add-hook 'ibuffer-mode-hook #'(lambda () (ibuffer-switch-to-saved-filter-groups "default")))
   :custom
+  (ibuffer-show-empty-filter-groups nil)
   (ibuffer-saved-filter-groups
    '(("default"
-      ("Magit"
+      ("Notmuch"
        (or
-        (mode . magit-status-mode)
-        (mode . magit-log-mode)
-        (name . "\\*magit")
-        (name . "magit-")
-        (name . "git-monitor")))
+        (name . "\\*notmuch-")
+        (mode . notmuch-search)
+        (mode . notmuch-show)))
       ("Org"
        (or
         (name . "^\\*Calendar\\*$")
@@ -1172,7 +1173,13 @@ prompt for what tab to switch to."
         (name . "^ \\*Agenda")
         (name . "^diary$")
         (mode . org-mode)))
-      ("Dired" (mode . dired-mode))
+      ("Magit"
+       (or
+        (mode . magit-status-mode)
+        (mode . magit-log-mode)
+        (name . "\\*magit")
+        (name . "magit-")
+        (name . "git-monitor")))
       ("Commands"
        (or
         (mode . shell-mode)
@@ -1181,6 +1188,7 @@ prompt for what tab to switch to."
         (mode . compilation-mode)))
       ("Lisp"
        (mode . emacs-lisp-mode))
+      ("Dired" (mode . dired-mode))
       ("Emacs"
        (or
         (filename . ".emacs.d/emacs.org")
