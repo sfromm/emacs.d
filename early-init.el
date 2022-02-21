@@ -20,7 +20,7 @@
 
 ;; native compilation
 (when (forge/native-comp-p)
-  (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln-cache"))
+  (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
   (setq native-comp-deferred-compilation t))
 
 ;; package quickstart
