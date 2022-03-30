@@ -83,7 +83,7 @@
   ;; when native compilation is available ...
   (when (forge/native-comp-p)
     (setq native-comp-deferred-compilation t
-          native-comp-async-report-warnings-errors nil
+          native-comp-async-report-warnings-errors 'silent
           package-native-compile t))
   ;;
   (add-to-list 'load-path forge-site-dir)
@@ -2049,7 +2049,7 @@ Will open a notmuch search buffer of the search results."
                                  (:name "Needs attention" :key "!" :query "tag:inbox and ( tag:abuse or tag:flagged )")
                                  (:name "Sent"            :key "s" :query "tag:sent")
                                  (:name "Attachments"     :key "A" :query "tag:attachment")
-                                 (:name "Bulk"            :key "B" :query "tag:bulk")
+                                 (:name "Bulk"            :key "B" :query "tag:bulk and tag:unread")
                                  (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar"))))
 
 (defun forge/twiddle-luminance (value)

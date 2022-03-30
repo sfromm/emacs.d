@@ -21,7 +21,8 @@
 ;; native compilation
 (when (forge/native-comp-p)
   (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
-  (setq native-comp-deferred-compilation t))
+  (setq native-comp-deferred-compilation t)
+  (setq native-comp-async-report-warnings-errors 'silent))
 
 ;; package quickstart
 (setq package-enable-at-startup t)            ;; initialize now with package-quickstart
