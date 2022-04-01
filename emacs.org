@@ -2871,7 +2871,7 @@ always encrypt to self and to list the OpenPGP keys that I will sign with.
   (add-to-list 'mml-secure-openpgp-signers "A852499F"))
 #+end_src
 
-*** Notmuch configuration
+*** Notmuch base configuration
 Before I get into how I have Emacs configured to work with /notmuch/, the
 following gives an idea of how I configure /notmuch/ itself.  You will want to
 run =notmuch setup= first, which will create =~/.notmuch-config=.
@@ -2921,7 +2921,7 @@ EOF
 echo -e "Done at $(date)."
 exit
 #+END_SRC
-*** Reading and organizing email
+*** Notmuch reading and organizing email
 The following is then the configuration that integrates Emacs with Notmuch.
 
 #+begin_src emacs-lisp
@@ -3076,6 +3076,7 @@ Will open a notmuch search buffer of the search results."
         notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                  (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
                                  (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                 (:name "Unread"          :key "u" :query "tag:unread")
                                  (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
                                  (:name "Last 7 days"     :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
                                  (:name "Last 30 days"    :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")

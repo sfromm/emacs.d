@@ -2042,6 +2042,7 @@ Will open a notmuch search buffer of the search results."
         notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                  (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
                                  (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                 (:name "Unread"          :key "u" :query "tag:unread")
                                  (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
                                  (:name "Last 7 days"     :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
                                  (:name "Last 30 days"    :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")
