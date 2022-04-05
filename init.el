@@ -1239,6 +1239,7 @@ prompt for what tab to switch to."
   (add-hook 'after-init-hook #'savehist-mode))
 
 (use-package undo-tree
+  :disabled t
   :diminish undo-tree-mode
   :bind
   (("C-/" . undo-tree-undo)

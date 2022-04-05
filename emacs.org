@@ -1727,13 +1727,16 @@ Resources:
 
 #+end_src
 ** Undo
-[[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] is an undo system for Emacs.
+For now, I have disabled [[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] and am working with the default [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Undo.html][Undo]] system
+built-in to Emacs.  Undo is a chain and you can go forwards and backwards, that
+is, you can undo and redo.
 
 Articles:
 - [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
 
 #+begin_src emacs-lisp
 (use-package undo-tree
+  :disabled t
   :diminish undo-tree-mode
   :bind
   (("C-/" . undo-tree-undo)
