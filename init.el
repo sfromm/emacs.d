@@ -82,9 +82,9 @@
   (forge/clean-user-emacs-directory)
   ;; when native compilation is available ...
   (when (forge/native-comp-p)
-    (setq native-comp-deferred-compilation t
+    (setq native-comp-deferred-compilation nil
           native-comp-async-report-warnings-errors 'silent
-          package-native-compile t))
+          package-native-compile nil))
   ;;
   (add-to-list 'load-path forge-site-dir)
   (add-to-list 'custom-theme-load-path forge-themes-dir)

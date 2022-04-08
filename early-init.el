@@ -21,13 +21,13 @@
 ;; native compilation
 (when (forge/native-comp-p)
   (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
-  (setq native-comp-deferred-compilation t)
+  (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))
 
 ;; package quickstart
-(setq package-enable-at-startup t)            ;; initialize now with package-quickstart
+(setq package-enable-at-startup nil)            ;; initialize now with package-quickstart
 (setq package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
-(setq package-quickstart t)
+(setq package-quickstart nil)
 
 ;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum) ;; Set garbage collection to highest threshold
