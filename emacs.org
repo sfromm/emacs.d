@@ -823,6 +823,55 @@ window.  This probably could be simplified by using something like [[https://git
     (progn (forge/package-install package)))
   (all-the-icons-install-fonts))
 #+end_src
+** Bootstrap straight
+Go ahead and set up [[https://github.com/raxod502/straight.el][straight.el]] so that we can use it to manage Emacs packages.
+
+#+begin_src emacs-lisp
+(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
+      straight-build-dir (format "build-%s" emacs-version)
+      straight-use-package-by-default t
+      straight-vc-git-default-clone-depth 1
+      straight-recipes-gnu-elpa-use-mirror t
+      straight-check-for-modifications nil)
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" straight-base-dir))
+      (bootstrap-version 5))
+  (make-directory (file-name-directory bootstrap-file) 'recursive)
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+** Set up =use-package=
+I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
+installs the package, if not already present, and then sets it up.
+
+Additional notes:
+
+- Try out =use-package-compute-statistics= to compute statistics concerned
+  use-package declarations.  You can view the report with =use-package-report=.
+- There is an option to always defer loading of packages with
+  =use-package-always-defer=.  I do not have this enabled because I have some
+  times found it more tricky to get a package to load rather than defer manually
+  or let =use-package= handle it.  See [[https://jwiegley.github.io/use-package/keywords/#after][discussion]] at end of section on /:after/ keyword.
+
+#+begin_src emacs-lisp
+(setq use-package-verbose t
+      use-package-compute-statistics t       ;; compute stats
+      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
+
+(straight-use-package 'use-package)
+(straight-use-package 'diminish)
+(straight-use-package 'bind-key)
+#+end_src
+** Packages
+
 ** List of packages that are used in this configuration
 #+begin_src emacs-lisp
 (defvar init--core-packages '(use-package quelpa quelpa-use-package)
@@ -1164,7 +1213,7 @@ The following are modes I no longer use.  Configuration is here for reference.
 
 #+begin_src emacs-lisp
 (use-package lin
-  :quelpa (lin :fetcher git :url "https://gitlab.com/protesilaos/lin.git")
+  :straight (lin :type git :host gitlab :repo "protesilaos/lin")
   :config
   (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
@@ -2137,7 +2186,7 @@ This includes things like folding XML sections.
 *** EOS
 #+begin_src emacs-lisp
 (use-package eos-mode
-  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :straight (eos-mode :type git :host github :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -4195,7 +4244,7 @@ The following are miscellaneous utilities that are small but useful.
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp
 (use-package wttrin
-  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
+  :straight (wttrin :type git :host github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))

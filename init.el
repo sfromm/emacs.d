@@ -540,6 +540,35 @@ Will return available DNS, BGP origin, and associated ASN information."
     (progn (forge/package-install package)))
   (all-the-icons-install-fonts))
 
+(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
+      straight-build-dir (format "build-%s" emacs-version)
+      straight-use-package-by-default t
+      straight-vc-git-default-clone-depth 1
+      straight-recipes-gnu-elpa-use-mirror t
+      straight-check-for-modifications nil)
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" straight-base-dir))
+      (bootstrap-version 5))
+  (make-directory (file-name-directory bootstrap-file) 'recursive)
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(setq use-package-verbose t
+      use-package-compute-statistics t       ;; compute stats
+      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
+
+(straight-use-package 'use-package)
+(straight-use-package 'diminish)
+(straight-use-package 'bind-key)
+
 (defvar init--core-packages '(use-package quelpa quelpa-use-package)
   "A list of core packages that will be automatically installed.")
 
@@ -807,7 +836,7 @@ Will return available DNS, BGP origin, and associated ASN information."
 (add-hook 'after-init-hook #'forge/setup-ui)
 
 (use-package lin
-  :quelpa (lin :fetcher git :url "https://gitlab.com/protesilaos/lin.git")
+  :straight (lin :type git :host gitlab :repo "protesilaos/lin")
   :config
   (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
@@ -1466,7 +1495,7 @@ prompt for what tab to switch to."
   :config (setq-local c-basic-offset 4))
 
 (use-package eos-mode
-  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :straight (eos-mode :type git :host github :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -2984,7 +3013,7 @@ It will not remove entries from the source org file."
   :custom (gist-view-gist t))
 
 (use-package wttrin
-  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
+  :straight (wttrin :type git :host github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
