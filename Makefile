@@ -23,7 +23,8 @@ tap:
 	brew tap d12frosted/$(PKG)
 
 bootstrap:
-	$(EMACS) -f "forge/bootstrap-packages"
+	mkdir -p ~/.emacs.d/var/straight/repos
+	git clone https://github.com/raxod502/straight.el ~/.emacs.d/var/straight/repos/straight.el
 
 update:
 	git diff-files --quiet && git pull --rebase
