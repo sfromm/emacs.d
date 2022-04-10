@@ -57,6 +57,43 @@
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
+(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
+      straight-build-dir (format "build-%s" emacs-version)
+      straight-use-package-by-default t
+      straight-vc-git-default-clone-depth 1
+      straight-recipes-gnu-elpa-use-mirror t
+      straight-check-for-modifications nil)
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" forge-state-dir))
+      (bootstrap-version 5))
+  (make-directory (file-name-directory bootstrap-file) t)
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+	(url-retrieve-synchronously
+	 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	 'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(setq use-package-verbose t
+      use-package-compute-statistics t       ;; compute stats
+      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
+
+(straight-use-package 'use-package)
+(straight-use-package 'diminish)
+(straight-use-package 'bind-key)
+
+(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
+
+(use-package paradox
+  :init
+  (setq paradox-execute-asynchronously t))
+
 (defun forge/clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
@@ -236,6 +273,42 @@ end tell")
           (setq cursong (split-string (do-applescript osa-tmpl) " - "))
         (error nil))
       cursong)))
+
+(defun forge/package-install (package)
+  "Install PACKAGE if not yet installed."
+  (unless (fboundp 'package-installed-p)
+    (package-initialize))
+  (unless (package-installed-p package)
+    (message "%s" "Refreshing package database...")
+    (package-refresh-contents)
+    (message "%s" " done.")
+    (package-install package)
+    (message "Installed package %s." package)
+    (delete-other-windows)))
+
+(defun forge/upgrade-packages ()
+  "Upgrade all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
+    (message "Packages updated.")))
+
+(defun forge/bootstrap-packages ()
+  "Bootstrap packages to install for Emacs."
+  (interactive)
+  (dolist (package init--bootstrap-packages)
+    (progn (forge/package-install package)))
+  (all-the-icons-install-fonts))
+
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun forge/recompile-elpa ()
+  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
 
 (defun forge/reload-emacs-configuration ()
   "Reload emacs configuration."
@@ -511,124 +584,6 @@ Will return available DNS, BGP origin, and associated ASN information."
   (interactive)
   (forge-mkhome-target "src"))
 
-(defun forge/package-install (package)
-  "Install PACKAGE if not yet installed."
-  (unless (fboundp 'package-installed-p)
-    (package-initialize))
-  (unless (package-installed-p package)
-    (message "%s" "Refreshing package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    (package-install package)
-    (message "Installed package %s." package)
-    (delete-other-windows)))
-
-(defun forge/upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-(defun forge/bootstrap-packages ()
-  "Bootstrap packages to install for Emacs."
-  (interactive)
-  (dolist (package init--bootstrap-packages)
-    (progn (forge/package-install package)))
-  (all-the-icons-install-fonts))
-
-(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
-      straight-build-dir (format "build-%s" emacs-version)
-      straight-use-package-by-default t
-      straight-vc-git-default-clone-depth 1
-      straight-recipes-gnu-elpa-use-mirror t
-      straight-check-for-modifications nil)
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" straight-base-dir))
-      (bootstrap-version 5))
-  (make-directory (file-name-directory bootstrap-file) 'recursive)
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(setq use-package-verbose t
-      use-package-compute-statistics t       ;; compute stats
-      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
-
-(straight-use-package 'use-package)
-(straight-use-package 'diminish)
-(straight-use-package 'bind-key)
-
-(defvar init--core-packages '(use-package quelpa quelpa-use-package)
-  "A list of core packages that will be automatically installed.")
-
-(defvar forge-bootstrap-packages
-  '(all-the-icons all-the-icons-dired smart-mode-line doom-modeline rainbow-mode jabber emojify
-                  paradox exec-path-from-shell
-                  async
-                  page-break-lines yasnippet flycheck company aggressive-indent undo-tree expand-region
-                  anaconda-mode company-anaconda
-                  go-mode markdown-mode web-mode php-mode ledger-mode yaml-mode json-mode olivetti
-                  elfeed
-                  magit magit-annex git-annex git-timemachine
-                  paredit
-                  gnus-alias
-                  org-plus-contrib org-mime org-bullets ox-twbs ox-reveal ox-tufte org-present org-pomodoro
-                  pass auth-source-pass
-                  ivy swiper counsel smex ace-window avy dumb-jump eyebrowse hydra)
-  "A list of packages that will be installed as part of bootstrap process.")
-
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun forge/recompile-elpa ()
-  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
-
-(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
-
-(dolist (package init--core-packages)
-  (progn (forge/package-install package)))
-
-;; https://github.com/jwiegley/use-package
-(eval-when-compile
-  (require 'use-package))
-
-(setq use-package-verbose t
-      use-package-compute-statistics t       ;; compute stats
-      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
-
-(use-package diminish :demand t)
-(use-package bind-key :demand t)
-(require 'cl)
-
-(use-package paradox
-  :init
-  (setq paradox-execute-asynchronously t))
-
-(use-package quelpa
-  :demand t
-  :init
-  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
-        quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
-        quelpa-update-melpa-p nil))
-
-(use-package quelpa-use-package
-  :demand t
-  :after quelpa)
-
 (defcustom forge-font "IBM Plex Mono"
   "Preferred default font."
   :type 'string
@@ -701,10 +656,9 @@ Will return available DNS, BGP origin, and associated ASN information."
         (dolist (font (append (list forge-unicode-font) forge-unicode-extra-fonts))
           (set-fontset-font t 'unicode (font-spec :family font) nil 'prepend))))))
 
-(use-package all-the-icons :ensure t)
+(use-package all-the-icons)
 
 (use-package all-the-icons-dired
-  :ensure t
   :hook
   (dired-mode . all-the-icons-dired-mode))
 
@@ -713,8 +667,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
 
 (use-package emojify
-  :defer t
-  :ensure t
   :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
 (defun forge/install-themes ()
@@ -731,7 +683,7 @@ Will return available DNS, BGP origin, and associated ASN information."
                zenburn-theme))       ;; https://github.com/bbatsov/zenburn-emacs
     (progn (forge/package-install p))))
 
-(forge/install-themes)
+;; (forge/install-themes)
 
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
@@ -768,7 +720,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
-  :ensure t
   :custom
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'buffer-name)
@@ -782,7 +733,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
   :disabled t
-  :ensure t
   :custom
   (powerline-default-separator 'slant)
   (powerline-default-separator-dir (quote (left . right)))
@@ -796,7 +746,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;; https://github.com/Malabarba/smart-mode-line
 (use-package smart-mode-line
   :disabled t
-  :ensure t
   :custom
   (sml/no-confirm-load-theme t)
   (sml/theme 'respectful)
@@ -807,7 +756,7 @@ Will return available DNS, BGP origin, and associated ASN information."
   (after-load-theme . smart-mode-line-enable)
   (after-init . sml/setup))
 
-(use-package nyan-mode :defer t)
+(use-package nyan-mode)
 
 (defun forge/setup-ui ()
   "Set up the look and feel."
@@ -852,7 +801,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 (add-hook 'ns-system-appearance-change-functions #'forge/lin-macos-system-colors)
 
 (use-package which-key
-  :ensure t
   :custom (which-key-idle-delay 1.5)
   :demand t
   :diminish
@@ -881,7 +829,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 (global-set-key (kbd "C-z") 'forge-map)
 
 (use-package hydra
-  :ensure t
   :demand t
   :config
   (defhydra forge/navigate (:foreign-keys run)
@@ -967,21 +914,18 @@ Will return available DNS, BGP origin, and associated ASN information."
 
 ;; https://github.com/minad/vertico
 (use-package vertico
-  :ensure t
   :demand t
   :init
   (vertico-mode))
 
 ;; https://github.com/oantolin/orderless
 (use-package orderless
-  :ensure t
   :demand t
   :custom (completion-styles '(orderless)))
 
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum
   :disabled t
-  :ensure t
   :demand t
   :config
   (selectrum-mode 1))
@@ -989,7 +933,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;; https://github.com/raxod502/prescient.el
 (use-package prescient
   :disabled t
-  :ensure t
   :demand t
   :config
   (setq prescient-history-length 200)
@@ -999,7 +942,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;; https://github.com/raxod502/selectrum
 (use-package selectrum-prescient
   :disabled t
-  :ensure t
   :demand t
   :after (:all selectrum prescient)
   :config
@@ -1007,7 +949,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 
 ;; https://github.com/minad/consult
 (use-package consult
-  :ensure t
   :demand t
   :bind
   ;; M-g go-to map
@@ -1032,7 +973,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 
 ;; https://github.com/minad/marginalia
 (use-package marginalia
-  :ensure t
   :demand t
   :bind (:map minibuffer-local-map
               ("C-M-a" . marginalia-cycle))
@@ -1044,7 +984,6 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;;; ivy, swiper, and counsel
 ;;; https://github.com/abo-abo/swiper
 (use-package ivy
-  :ensure t
   :disabled t
   :diminish (ivy-mode . "")
   :bind
@@ -1057,13 +996,11 @@ Will return available DNS, BGP origin, and associated ASN information."
         enable-recursive-minibuffers t))
 
 (use-package swiper
-  :ensure t
   :disabled t
   :diminish
   :bind (("C-s" . swiper-isearch)))
 
 (use-package counsel
-  :ensure t
   :disabled t
   :requires ivy
   :bind
@@ -1076,14 +1013,12 @@ Will return available DNS, BGP origin, and associated ASN information."
 ;;; avy
 ;;;
 (use-package avy
-  :ensure t
   :disabled t
   :bind
   (("M-g g" . avy-goto-line)
    ("M-s" . avy-goto-word-1)))
 
 (use-package smex
-  :ensure t
   :disabled t
   :init
   (setq smex-completion-method 'ivy
@@ -1100,7 +1035,6 @@ Will return available DNS, BGP origin, and associated ASN information."
   :config (windmove-default-keybindings 'super))
 
 (use-package dumb-jump
-  :ensure t
   :demand t
   :commands (xref-find-definitions)
   :config
@@ -1165,13 +1099,13 @@ prompt for what tab to switch to."
   (add-to-list 'golden-ratio-extra-commands 'ace-window))
 
 (use-package uniquify
+  :straight (:type built-in)
   :init (setq uniquify-buffer-name-style 'forward
               uniquify-separator "/"
               uniquify-ignore-buffers-re "^\\*"
               uniquify-after-kill-buffer-p t))
 
 (use-package olivetti
-  :ensure t
   :custom
   (olivetti-hide-mode-line t)
   (olivetti-body-width 80)
@@ -1304,7 +1238,6 @@ prompt for what tab to switch to."
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
 (use-package yasnippet
-  :ensure t
   :diminish yasnippet-minor-mode
   :init
   (yas-global-mode 1)
@@ -1316,8 +1249,6 @@ prompt for what tab to switch to."
   :bind ("C-=" . er/expand-region))
 
 (use-package highlight-indent-guides
-  :ensure t
-  :defer t
   :custom (highlight-indent-guides-method 'character))
 
 (use-package recentf
@@ -1353,12 +1284,10 @@ prompt for what tab to switch to."
         ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package diff-hl
-  :ensure t
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
 (use-package markdown-mode
-  :ensure t
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
@@ -1394,6 +1323,7 @@ prompt for what tab to switch to."
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (use-package lisp-mode
+  :straight (:type built-in)
   :hook
   (before-save . forge/turn-on-delete-trailing-whitespace)
   :config
@@ -1434,6 +1364,7 @@ prompt for what tab to switch to."
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 (use-package shell-script
+  :straight (:type built-in)
   :hook
   (shell-script . forge/whitespace-visualize)
   (shell-script . forge/turn-on-delete-trailing-whitespace))
@@ -1470,7 +1401,7 @@ prompt for what tab to switch to."
   :config
   (setq yaml-indent-offset 2))
 
-(use-package nxml-mode
+(use-package emacs
   :commands nxml-mode
   :init
   (defalias 'xml-mode 'nxml-mode)
@@ -1512,7 +1443,6 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (alert text :title title :id 'new-jabber-alert))
 
 (use-package jabber
-  :ensure t
   :preface
   (defun forge/jabber-start-or-switch ()
     "Connect to Jabber services"
@@ -1546,6 +1476,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
     (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
 (use-package erc
+  :straight (:type built-in)
   :commands (erc erc-tls)
   :preface
   (defun sf/erc-connect ()
@@ -1581,13 +1512,9 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
         erc-log-channels-directory (expand-file-name "erc" forge-log-dir)
         erc-log-insert-log-on-open nil
         erc-prompt-for-nickserv-password nil
+        erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                                  "324" "329" "333" "353" "477")
         erc-save-buffer-on-part t))
-
-(use-package erc-match
-  :after erc
-  :config
-  (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                                  "324" "329" "333" "353" "477")))
 
 (defun bitlbee-netrc-identify ()
   "Auto-identify for Bitlbee channels using authinfo or netrc.
@@ -1631,6 +1558,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
         slack-prefer-current-team t))
 
 (use-package dired
+  :straight (:type built-in)
   :preface
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
@@ -1671,12 +1599,13 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
 
   (setq auto-revert-verbose nil))
 
-(use-package async :ensure t)
+(use-package async)
 (autoload 'dired-async-mode "dired-async.el" nil t)
 (dired-async-mode 1)
 
 (use-package dired-x
   :after dired
+  :straight (:type built-in)
   :custom
   (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
                                       '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
@@ -1689,6 +1618,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
 
 (use-package dired-aux
   :after dired
+  :straight (:type built-in)
   :init
   (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
 
@@ -1731,13 +1661,11 @@ read-file-name and dired-dwim-target-directory."
     ;; finally, switch to that window
     (other-window 1)))
 
-(use-package emacs-conflict :defer t)
+;;(use-package emacs-conflict :commands (emacs-conflict-show-conflicts-dired))
 
-(use-package disk-usage
-  :ensure t)
+(use-package disk-usage)
 
 (use-package magit
-  :ensure t
   :commands magit-status
   :bind ("C-x g" . magit-status)
   :custom
@@ -1757,13 +1685,13 @@ read-file-name and dired-dwim-target-directory."
   :after dired)
 
 (use-package nov
-  :ensure t
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 
 (use-package go-jira
   :no-require t
+  :straight (:type built-in)
   :init
   (defvar jira-token nil)
   (defun jira-create ()
@@ -1807,13 +1735,13 @@ read-file-name and dired-dwim-target-directory."
         mm-discouraged-alternatives '("text/html" "text/richtext")))
 
 (use-package gnus-alias
-  :ensure t
   :custom
   (gnus-alias-default-identity "work")
   :hook
   (message-setup . gnus-alias-determine-identity))
 
 (use-package gnus-dired
+  :straight (:type built-in)
   :hook (dired-mode . turn-on-gnus-dired-mode)
   :init
   (setq gnus-dired-mail-mode 'notmuch-user-agent))
@@ -1898,6 +1826,7 @@ read-file-name and dired-dwim-target-directory."
 (global-set-key (kbd "C-c m") 'forge/hydra-email/body)
 
 (use-package sendmail
+  :straight (:type built-in)
   :custom
   (mail-specify-envelope-from t)
   (mail-envelope-from 'header)
@@ -1905,6 +1834,7 @@ read-file-name and dired-dwim-target-directory."
 
 (use-package smtpmail
   :disabled t
+  :straight (:type built-in)
   :config
   (setq smtpmail-stream-type 'ssl
         smtpmail-default-smtp-server forge-smtp-server-work
@@ -1914,6 +1844,7 @@ read-file-name and dired-dwim-target-directory."
         smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 
 (use-package mml-sec
+  :straight (:type built-in)
   :config
   (setq mml-secure-openpgp-encrypt-to-self t
         mml-secure-openpgp-sign-with-sender t
@@ -2169,7 +2100,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 (use-package mingus
   :disabled t
-  :ensure t
   :preface
   (defun forge/get-current-song-mpd ()
     "Get the current song playing via MPD."
@@ -2182,7 +2112,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
       cursong)))
 
 (use-package emms
-  :ensure t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
   (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
@@ -2209,8 +2138,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :config
   (setq ping-program-options (list "-c" "5")))
 
+(straight-use-package 'org)
+(straight-use-package 'org-contrib)
 (use-package org
-  :ensure org-plus-contrib
   :preface
   (defun forge/org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
@@ -2303,6 +2233,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
   (org-reverse-note-order t)
   (org-src-fontify-natively t)
+  (org-startup-indented t)
   (org-startup-folded 'content)
   (org-timer-default-timer 25)
   (org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
@@ -2345,7 +2276,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         org-agenda-compact-blocks t
         org-agenda-files (list
                           (concat org-directory "/journal.org")
-                          (concat org-directory "/tasks.org")
                           (concat org-directory "/work.org")
                           (concat org-directory "/personal.org")
                           (concat org-directory "/notebook.org"))
@@ -2469,6 +2399,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-tree-slide-skip-outline-level 4))
 
 (use-package org-crypt
+  :straight (:type built-in)
   :commands (org-encrypt-entry org-decrypt-entry)
   :config
   (org-crypt-use-before-save-magic)
@@ -2613,14 +2544,14 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
-(use-package ol-git-link :defer 5)
+(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
-(use-package ol-eww :defer 5 :after org)
+(use-package ol-eww :straight (org-contrib :includes ol-eww))
 
-(use-package ol-man :defer 5 :after org) ;; support links to manual pages
+(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
 
 (use-package org-contacts
-  :after org
+  :straight (org-contrib :includes org-contacts)
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
   (add-to-list 'org-capture-templates '("c" "Contacts" entry
@@ -2628,39 +2559,27 @@ It will not remove entries from the source org file."
                                         "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 
 (use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :after org)
+  :hook (org-mode . org-bullets-mode))
 
 (use-package org-id
-  :defer 5
-  :after org
+  :straight (org-contrib :includes org-id)
   :custom
   (org-id-method 'uuid)
   (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
 
-(use-package org-indent
-  :diminish t
-  :custom
-  (org-startup-indented t))
-
-(use-package htmlize
-  :ensure t)
+(use-package htmlize)
 
 (use-package ox-twbs
-  :defer 5
-  :after org
   :commands (org-twbs-export-to-html
              org-twbs-export-as-html
              org-twbs-convert-region-to-html))
 
 (use-package ox-reveal
-  :defer 5
   :init
   (setq org-reveal-note-key-char nil))
 
-(use-package ox-tufte
-  :defer 5)
+(use-package ox-tufte)
 
 (use-package org-journal
   :disabled t
@@ -2689,28 +2608,23 @@ It will not remove entries from the source org file."
 (use-package auth-source)
 
 (use-package auth-source-pass
-  :ensure t
   :after auth-source
   :init
   (setq auth-sources '(password-store "~/.authinfo.gpg")))
 
 ;; https://github.com/ccrusius/auth-source-xoauth2
 (use-package auth-source-xoauth2
-  :ensure t
   :after auth-source)
 
 ;;
-(use-package pass
-  :ensure t)
+(use-package pass)
 
 ;; https://github.com/ecraven/ivy-pass
 (use-package ivy-pass
-  :ensure t
   :bind
   ("C-c p" . ivy-pass))
 
 (use-package elfeed
-  :ensure t
   :commands (elfeed)
   :bind
   (:map elfeed-search-mode-map
@@ -2863,7 +2777,6 @@ It will not remove entries from the source org file."
         ;; elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
 (use-package elfeed-org
-  :ensure t
   :after (:all org elfeed)
   :commands (elfeed-org)
   :config
@@ -2875,6 +2788,7 @@ It will not remove entries from the source org file."
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 
 (use-package eshell
+  :straight (:type built-in)
   :commands (eshell eshell-command)
   :preface
   (defun eshell-here ()
@@ -2891,6 +2805,7 @@ It will not remove entries from the source org file."
       (eshell-send-input)))
 
   (use-package em-unix
+    :straight (:type built-in)
     :config
     (unintern 'eshell/su nil)
     (unintern 'eshell/sudo nil))
@@ -3009,7 +2924,6 @@ It will not remove entries from the source org file."
 (use-package lorem-ipsum)
 
 (use-package gist
-  :defer t
   :custom (gist-view-gist t))
 
 (use-package wttrin
