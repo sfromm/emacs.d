@@ -1401,7 +1401,8 @@ prompt for what tab to switch to."
   :config
   (setq yaml-indent-offset 2))
 
-(use-package emacs
+(use-package nxml
+  :straight (:type built-in)
   :commands nxml-mode
   :init
   (defalias 'xml-mode 'nxml-mode)

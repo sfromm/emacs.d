@@ -2077,7 +2077,8 @@ Just enough to help recognize XML tags and then later fold xml with
 documents.
 
 #+begin_src emacs-lisp
-(use-package emacs
+(use-package nxml
+  :straight (:type built-in)
   :commands nxml-mode
   :init
   (defalias 'xml-mode 'nxml-mode)
