@@ -1812,6 +1812,16 @@ is =~/.emacs.d/user/snippets=.
   :bind ("C-=" . er/expand-region))
 
 #+end_src
+** Hide Show / Folding
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html][Hideshow]] minor mode allows you to selectively display portions of a document.
+This includes things like folding XML sections.
+
+#+begin_src emacs-lisp
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook ((prog-mode) . hs-minor-mode)
+  :bind (("C-c h" . hs-toggle-hiding)))
+#+end_src
 ** Highlight indentation
 [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] provides a handy visual cue for indentation.
 
@@ -2093,15 +2103,6 @@ documents.
                  nil)))
 #+end_src
 
-[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html][Hideshow]] minor mode allows you to selectively display portions of a document.
-This includes things like folding XML sections.
-
-#+begin_src emacs-lisp
-(use-package hideshow
-  :diminish hs-minor-mode
-  :hook ((prog-mode) . hs-minor-mode)
-  :bind (("C-c h" . hs-toggle-hiding)))
-#+end_src
 ** Network device configurations
 *** Junos
 #+begin_src emacs-lisp
@@ -2713,6 +2714,14 @@ Sometimes it is convenient to open a new frame and compose an email there.
           (setq mu4e-compose-in-new-frame nil)
         (progn (setq mu4e-compose-in-new-frame t) (setq frame "new"))))
     (message "Compose mail in %s frame" frame)))
+#+end_src
+
+**** Boxquote
+Sometimes it is handy to quote text when drafting an email and boxquote does
+this well.
+
+#+begin_src emacs-lisp
+(use-package boxquote)
 #+end_src
 
 **** Functions to facilitate abuse reports

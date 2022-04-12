@@ -1248,6 +1248,11 @@ prompt for what tab to switch to."
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook ((prog-mode) . hs-minor-mode)
+  :bind (("C-c h" . hs-toggle-hiding)))
+
 (use-package highlight-indent-guides
   :custom (highlight-indent-guides-method 'character))
 
@@ -1415,11 +1420,6 @@ prompt for what tab to switch to."
                  "<!--"
                  sgml-skip-tag-forward
                  nil)))
-
-(use-package hideshow
-  :diminish hs-minor-mode
-  :hook ((prog-mode) . hs-minor-mode)
-  :bind (("C-c h" . hs-toggle-hiding)))
 
 (use-package junos-mode
   :commands (junos-mode)
@@ -1759,6 +1759,8 @@ read-file-name and dired-dwim-target-directory."
           (setq mu4e-compose-in-new-frame nil)
         (progn (setq mu4e-compose-in-new-frame t) (setq frame "new"))))
     (message "Compose mail in %s frame" frame)))
+
+(use-package boxquote)
 
 (defun forge/mail-forward-complaint (template)
   "Forward an abuse complaint using TEMPLATE."
