@@ -1136,6 +1136,19 @@ prompt for what tab to switch to."
         (name . "^ \\*Agenda")
         (name . "^diary$")
         (mode . org-mode)))
+      ("RANCID"
+       (or
+        (filename . "-rancid/")
+        (mode . eos-mode)))
+      ("Lisp"
+       (mode . emacs-lisp-mode))
+      ("Dired" (mode . dired-mode))
+      ("Commands"
+       (or
+        (mode . shell-mode)
+        (mode . eshell-mode)
+        (mode . term-mode)
+        (mode . compilation-mode)))
       ("Magit"
        (or
         (mode . magit-status-mode)
@@ -1143,15 +1156,6 @@ prompt for what tab to switch to."
         (name . "\\*magit")
         (name . "magit-")
         (name . "git-monitor")))
-      ("Commands"
-       (or
-        (mode . shell-mode)
-        (mode . eshell-mode)
-        (mode . term-mode)
-        (mode . compilation-mode)))
-      ("Lisp"
-       (mode . emacs-lisp-mode))
-      ("Dired" (mode . dired-mode))
       ("Emacs"
        (or
         (filename . ".emacs.d/emacs.org")

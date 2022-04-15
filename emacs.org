@@ -1607,6 +1607,19 @@ the window contents.
         (name . "^ \\*Agenda")
         (name . "^diary$")
         (mode . org-mode)))
+      ("RANCID"
+       (or
+        (filename . "-rancid/")
+        (mode . eos-mode)))
+      ("Lisp"
+       (mode . emacs-lisp-mode))
+      ("Dired" (mode . dired-mode))
+      ("Commands"
+       (or
+        (mode . shell-mode)
+        (mode . eshell-mode)
+        (mode . term-mode)
+        (mode . compilation-mode)))
       ("Magit"
        (or
         (mode . magit-status-mode)
@@ -1614,15 +1627,6 @@ the window contents.
         (name . "\\*magit")
         (name . "magit-")
         (name . "git-monitor")))
-      ("Commands"
-       (or
-        (mode . shell-mode)
-        (mode . eshell-mode)
-        (mode . term-mode)
-        (mode . compilation-mode)))
-      ("Lisp"
-       (mode . emacs-lisp-mode))
-      ("Dired" (mode . dired-mode))
       ("Emacs"
        (or
         (filename . ".emacs.d/emacs.org")
@@ -1630,7 +1634,6 @@ the window contents.
         (name . "^\\*Messages\\*$")
         (name . "^\\*\\(Customize\\|Help\\)")
         (name . "\\*\\(Echo\\|Minibuf\\)")))))))
-
 #+end_src
 ** Scrolling
 This is an attempt to make scrolling a bit smoother and friendlier.
@@ -3977,7 +3980,11 @@ I predominantly use =eshell= for terminal like needs.  I used to use
 =ansi-term=, but less so nowadays.
 
 I also, on occasion, have a need to use serial console access.  The way to
-access this is via =serial-term=.
+access this is via =serial-term=.  If using something like =ansi-term= or
+=serial-term=, keep in mind the following keybindings.  You probably normally
+want to be in /terminal character mode/.
+- ~C-x C-j~ Terminal line mode
+- ~C-x C-k~ Terminal character mode.
 
 Some notes:
 - One of the helpers here is =eshell-here=, which will open an =eshell= buffer
