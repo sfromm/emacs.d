@@ -3975,6 +3975,14 @@ are part of a RSS feed.
   :commands (youtube-dl)
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 #+end_src
+** Search
+*** Ripgrep
+[[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
+
+#+begin_src emacs-lisp
+(use-package rg)
+#+end_src
+
 ** Terminal-like applications
 I predominantly use =eshell= for terminal like needs.  I used to use
 =ansi-term=, but less so nowadays.
@@ -4067,7 +4075,6 @@ buffer if it exists; otherwise, create one and switch to it.
     (ansi-term "/bin/bash"))
   (get-buffer-process "*ansi-term*"))
 #+end_src
-
 ** Twitter
 The following configuration is for [[https://github.com/hayamiz/twittering-mode][twittering]], an emacs mode for Twitter.  This
 package is not installed by default. You will have to go through the process of

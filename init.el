@@ -2794,6 +2794,8 @@ It will not remove entries from the source org file."
   :commands (youtube-dl)
   :init (setq youtube-dl-directory "~/annex/Video/youtube"))
 
+(use-package rg)
+
 (use-package eshell
   :straight (:type built-in)
   :commands (eshell eshell-command)
