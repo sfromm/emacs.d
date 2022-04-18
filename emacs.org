@@ -2004,6 +2004,12 @@ I pull in this package for the formatting and font-lock features.
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 #+end_src
+** R & ESS
+[[https://ess.r-project.org][ESS]] is a package that supports various statistical analysis programs.
+
+#+begin_src emacs-lisp
+(use-package ess)
+#+end_src
 ** Shell scripts
 #+begin_src emacs-lisp
 (use-package shell-script

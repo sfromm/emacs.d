@@ -1372,6 +1372,8 @@ prompt for what tab to switch to."
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 
+(use-package ess)
+
 (use-package shell-script
   :straight (:type built-in)
   :hook
