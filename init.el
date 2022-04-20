@@ -1074,6 +1074,9 @@ prompt for what tab to switch to."
 
 (global-set-key (kbd "C-x t t") #'forge/switch-tab-dwim)
 
+(use-package ace-window)
+(use-package transpose-frame)
+
 (use-package eyebrowse
   :disabled t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))

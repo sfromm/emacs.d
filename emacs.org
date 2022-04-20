@@ -1517,6 +1517,15 @@ prompt for what tab to switch to."
 (global-set-key (kbd "C-x t t") #'forge/switch-tab-dwim)
 #+end_src
 
+*** Window management
+The =forge/window= /hydra/ defined above uses functions from [[https://github.com/abo-abo/ace-window][ace-window]] and
+[[https://www.emacswiki.org/emacs/TransposeFrame][transpose-frame]].  Go ahead and pull those in for the helper functions.  I
+
+#+begin_src emacs-lisp
+(use-package ace-window)
+(use-package transpose-frame)
+#+end_src
+
 *** Workspace management with =eyebrowse=
 [[https://depp.brause.cc/eyebrowse/][eyebrowse]] is a global minor mode that allows you to organize window
 configurations into workspaces, similar to a window manager.  This configuration
