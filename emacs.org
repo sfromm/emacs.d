@@ -2207,8 +2207,8 @@ IRC configuration.  As a default, use =user-login-name= as the default for
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
     (interactive)
-    (when (y-or-n-p "Connect to freenode? ")
-      (erc-tls :server "irc.freenode.net" :port 6697))
+    (when (y-or-n-p "Connect to libera? ")
+      (erc-tls :server "irc.libera.chat" :port 6697))
     (when (y-or-n-p "Connect to bitlbee? ")
       (progn
         (use-package bitlbee :demand t)
@@ -2217,8 +2217,12 @@ IRC configuration.  As a default, use =user-login-name= as the default for
         (erc :server "localhost" :port 6667))))
   :custom
   (erc-nick user-login-name)
+  (erc-server "irc.libera.chat")
   (erc-away-nickname (concat erc-nick "|afk"))
   (erc-user-full-name erc-nick)
+  (erc-fill-column 100)
+  (erc-fill-static-center 16)
+  (erc-fill-function 'erc-fill-static)
   :config
   (setq erc-modules '(autojoin autoaway button completion fill irccontrols
                                list log match menu move-to-prompt netsplit
@@ -2226,7 +2230,8 @@ IRC configuration.  As a default, use =user-login-name= as the default for
                                services smiley spelling stamp track))
   (erc-services-mode t)
   ;; use customize for `erc-keywords', and `erc-auto-join-channels-alist'
-  (setq erc-insert-timestamp-function 'erc-insert-timestamp-left
+  (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))
+        erc-insert-timestamp-function 'erc-insert-timestamp-left
         erc-timestamp-format "%H:%M:%S "
         erc-kill-buffer-on-part t         ;; kill buffer after channel /part
         erc-kill-server-buffer-on-quit t  ;; kill buffer for server messages after /quit
