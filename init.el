@@ -2806,6 +2806,20 @@ It will not remove entries from the source org file."
 
 (use-package rg)
 
+(defun forge/multi-term-here ()
+  "Open up a multi-term window."
+  (interactive)
+  (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
+         (height (/ (window-total-height) 3))
+         (name (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (multi-term)))
+
+(use-package multi-term
+  :config
+  (setq multi-term-program "/bin/zsh"))
+
 (use-package eshell
   :straight (:type built-in)
   :commands (eshell eshell-command)
