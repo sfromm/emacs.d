@@ -1723,6 +1723,12 @@ read-file-name and dired-dwim-target-directory."
 
 (require 'message)
 (with-eval-after-load 'message
+  (defun forge/mail-toggle-forward-mime ()
+    "Toggle whether to forward as MIME or inline."
+    (interactive)
+    (if (bound-and-true-p message-forward-as-mime)
+        (setq message-forward-as-mime nil)
+      (setq message-forward-as-mime t)))
   (setq mail-from-style 'angles
         message-kill-buffer-on-exit t
         message-forward-as-mime t

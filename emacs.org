@@ -2653,10 +2653,18 @@ Notes:
 - =message-forward-as-mime= defaults to /nil/.  If set to /t/, Emacs will
   forward messages as rfc822 attachments.  When /nil/, it forwards the message
   directly inline.
+- Add function =forge/mail-toggle-forward-mime= to toggle whether to forward
+  inline or as MIME.
 
 #+begin_src emacs-lisp
 (require 'message)
 (with-eval-after-load 'message
+  (defun forge/mail-toggle-forward-mime ()
+    "Toggle whether to forward as MIME or inline."
+    (interactive)
+    (if (bound-and-true-p message-forward-as-mime)
+        (setq message-forward-as-mime nil)
+      (setq message-forward-as-mime t)))
   (setq mail-from-style 'angles
         message-kill-buffer-on-exit t
         message-forward-as-mime t
