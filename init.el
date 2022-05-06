@@ -396,90 +396,10 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 
-(defun dns-cymru-txt-query (name)
-  "Look up a TXT RR NAME from Cymru and return the split result."
-  (require 'dns)
-  (split-string
-   (dns-query name 'TXT)
-   "|" t " *"))
-
-(defun reverse-ip (ip)
-  "Return IP in reversed format, typically for doing DNS PTR lookups."
-  (mapconcat 'identity (nreverse (split-string ip "\\.")) "."))
-
-(defun asn-query (asn)
-  "Query for an Autonomous System ASN."
-  (interactive "sASN: ")
-  (let* ((result (dns-cymru-txt-query (concat "AS" asn ".asn.cymru.com")))
-         (answer))
-    ;; (message "%s" answer)
-    (setq answer (list (cons 'asn (nth 0 result))
-                       (cons 'country (nth 1 result))
-                       (cons 'rir (nth 2 result))
-                       (cons 'name (nth 4 result))))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-
-(defun ip-asn-origin-query (ip)
-  (interactive "sIP: ")
-  (let* ((reverse (reverse-ip ip))
-         (result (dns-cymru-txt-query (concat reverse ".origin.asn.cymru.com")))
-         (answer))
-    (message "%s" answer)
-    (setq answer (list (cons 'asn (nth 0 result))
-                       (cons 'prefix (nth 1 result))
-                       (cons 'country (nth 2 result))
-                       (cons 'rir (nth 3 result))))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-
-(defun ip-dns-ptr-query (ip)
-  "Return DNS PTR information on IP."
-  (interactive "sIP: ")
-  (require 'dns)
-  (let ((result (dns-query ip 'PTR t t))
-        (answer '())
-        (rr)
-        (rrtype))
-    (setq answer (list (cons 'ip ip)))
-    (setq answer (append
-                  (list
-                   ;; long-winded way to get the PTR query
-                   (cons 'query (car (car (cadr (assoc 'queries result))))))
-                  answer))
-    (when (assoc 'answers result)
-      (dolist (arg2 (cadr (assoc 'answers result)))
-        (when (cdr (assoc 'type arg2)) ;; make sure RR type is not nil
-          (setq rrtype (cadr (assoc 'type arg2)))
-          (setq rr (list (cons rrtype (cadr (assoc 'data arg2)))))
-          (setq answer (append rr answer)))))
-    ;; pull in authority information from SOA
-    ;; (when (assoc 'authorities result)
-    ;;   (setq answer (append
-    ;;                 (list
-    ;;                  (cons 'soa-mname (cadr (assoc 'mname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result))))))))
-    ;;                  (cons 'soa-rname (cadr (assoc 'rname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result)))))))))
-    ;;                 answer)))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-
-(defun ip-query (ip)
-  "Query information on an IP.
-Will return available DNS, BGP origin, and associated ASN information."
-  (interactive "sIP: ")
-  (let* ((answer '())
-         (dns (ip-dns-ptr-query ip))
-         (origin (ip-asn-origin-query ip))
-         (asn (asn-query (cdr (assoc 'asn origin)))))
-    (setq answer (list (cons 'dns dns)
-                       (cons 'origin origin)
-                       (cons 'asn asn)))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
+(use-package ip-query
+  :straight (ip-query :type git :host github :repo "sfromm/ip-query")
+  :commands (ip-query)
+  :hook (ip-query-mode . page-break-lines-mode))
 
 (defcustom forge-peek-buffer-name "*forge-peek*"
   "Buffer for peeking at data."

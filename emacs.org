@@ -698,114 +698,17 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 #+end_src
 
-*** Network-related query functions
+*** Network-related helpers
 These are functions to help with looking up network relaated information.
 Several functions depend upon the [[https://team-cymru.com/community-services/ip-asn-mapping/][IP to ASN Mapping Service]] provided by [[https://team-cymru.com/][Team Cymru]].
 
-Let's first set take care of some support functions.
-
 #+begin_src emacs-lisp
-(defun dns-cymru-txt-query (name)
-  "Look up a TXT RR NAME from Cymru and return the split result."
-  (require 'dns)
-  (split-string
-   (dns-query name 'TXT)
-   "|" t " *"))
-
-(defun reverse-ip (ip)
-  "Return IP in reversed format, typically for doing DNS PTR lookups."
-  (mapconcat 'identity (nreverse (split-string ip "\\.")) "."))
+(use-package ip-query
+  :straight (ip-query :type git :host github :repo "sfromm/ip-query")
+  :commands (ip-query)
+  :hook (ip-query-mode . page-break-lines-mode))
 #+end_src
 
-This will look up information on an [[https://en.wikipedia.org/wiki/Autonomous_system_(Internet)][Autonomous System]] number and return a list.
-
-#+begin_src emacs-lisp
-(defun asn-query (asn)
-  "Query for an Autonomous System ASN."
-  (interactive "sASN: ")
-  (let* ((result (dns-cymru-txt-query (concat "AS" asn ".asn.cymru.com")))
-         (answer))
-    ;; (message "%s" answer)
-    (setq answer (list (cons 'asn (nth 0 result))
-                       (cons 'country (nth 1 result))
-                       (cons 'rir (nth 2 result))
-                       (cons 'name (nth 4 result))))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-#+end_src
-
-This will look up the BGP origin ASN for an IP address.
-
-#+begin_src emacs-lisp
-(defun ip-asn-origin-query (ip)
-  (interactive "sIP: ")
-  (let* ((reverse (reverse-ip ip))
-         (result (dns-cymru-txt-query (concat reverse ".origin.asn.cymru.com")))
-         (answer))
-    (message "%s" answer)
-    (setq answer (list (cons 'asn (nth 0 result))
-                       (cons 'prefix (nth 1 result))
-                       (cons 'country (nth 2 result))
-                       (cons 'rir (nth 3 result))))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-#+end_src
-
-Look up =PTR= information for an IP.
-
-#+begin_src emacs-lisp
-(defun ip-dns-ptr-query (ip)
-  "Return DNS PTR information on IP."
-  (interactive "sIP: ")
-  (require 'dns)
-  (let ((result (dns-query ip 'PTR t t))
-        (answer '())
-        (rr)
-        (rrtype))
-    (setq answer (list (cons 'ip ip)))
-    (setq answer (append
-                  (list
-                   ;; long-winded way to get the PTR query
-                   (cons 'query (car (car (cadr (assoc 'queries result))))))
-                  answer))
-    (when (assoc 'answers result)
-      (dolist (arg2 (cadr (assoc 'answers result)))
-        (when (cdr (assoc 'type arg2)) ;; make sure RR type is not nil
-          (setq rrtype (cadr (assoc 'type arg2)))
-          (setq rr (list (cons rrtype (cadr (assoc 'data arg2)))))
-          (setq answer (append rr answer)))))
-    ;; pull in authority information from SOA
-    ;; (when (assoc 'authorities result)
-    ;;   (setq answer (append
-    ;;                 (list
-    ;;                  (cons 'soa-mname (cadr (assoc 'mname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result))))))))
-    ;;                  (cons 'soa-rname (cadr (assoc 'rname (cadr (assoc 'data (nth 0 (cadr (assoc 'authorities result)))))))))
-    ;;                 answer)))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-#+end_src
-
-Putting all these together for a general IP query function.
-
-#+begin_src emacs-lisp
-(defun ip-query (ip)
-  "Query information on an IP.
-Will return available DNS, BGP origin, and associated ASN information."
-  (interactive "sIP: ")
-  (let* ((answer '())
-         (dns (ip-dns-ptr-query ip))
-         (origin (ip-asn-origin-query ip))
-         (asn (asn-query (cdr (assoc 'asn origin)))))
-    (setq answer (list (cons 'dns dns)
-                       (cons 'origin origin)
-                       (cons 'asn asn)))
-    (when (called-interactively-p 'interactive)
-      (message "%s" answer))
-    answer))
-#+end_src
 *** Peek
 The following is meant to provide a way to /peek/ at information in a temporary
 window.  This probably could be simplified by using something like [[https://github.com/tumashu/posframe][posframe]].
