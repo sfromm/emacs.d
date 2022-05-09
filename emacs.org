@@ -705,8 +705,7 @@ Several functions depend upon the [[https://team-cymru.com/community-services/ip
 #+begin_src emacs-lisp
 (use-package ip-query
   :straight (ip-query :type git :host github :repo "sfromm/ip-query")
-  :commands (ip-query)
-  :hook (ip-query-mode . page-break-lines-mode))
+  :commands (ip-query))
 #+end_src
 
 *** Peek
@@ -1696,12 +1695,11 @@ Resources:
 - http://endlessparentheses.com/improving-page-navigation.html
 - https://ericjmritz.wordpress.com/2015/08/29/using-page-breaks-in-gnu-emacs/
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package page-break-lines
   :diminish page-break-lines-mode
   :hook
   (emacs-lisp-mode turn-on-page-break-lines-mode))
-
 #+end_src
 ** Snippets
 [[https://github.com/joaotavora/yasnippet][Yasnippet]] is a template system for Emacs.  You type in an abbreviation and

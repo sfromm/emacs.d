@@ -398,8 +398,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (use-package ip-query
   :straight (ip-query :type git :host github :repo "sfromm/ip-query")
-  :commands (ip-query)
-  :hook (ip-query-mode . page-break-lines-mode))
+  :commands (ip-query))
 
 (defcustom forge-peek-buffer-name "*forge-peek*"
   "Buffer for peeking at data."
@@ -1163,6 +1162,11 @@ prompt for what tab to switch to."
     (call-interactively #'fill-paragraph)))
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
+
+(use-package page-break-lines
+  :diminish page-break-lines-mode
+  :hook
+  (emacs-lisp-mode turn-on-page-break-lines-mode))
 
 (use-package yasnippet
   :diminish yasnippet-minor-mode
