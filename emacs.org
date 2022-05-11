@@ -570,7 +570,13 @@ These are probably not used as much now that I migrated to =straight=.
     (message "Installed package %s." package)
     (delete-other-windows)))
 
-(defun forge/upgrade-packages ()
+(defun forge/straight-upgrade-packages ()
+  "Upgrade all installed packages with straight."
+  (interactive)
+  (save-window-excursion
+    (straight-pull-all)))
+
+(defun forge/package-upgrade-packages ()
   "Upgrade all installed packages."
   (interactive)
   (save-window-excursion
@@ -672,6 +678,11 @@ helpers.
   mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
 #+begin_src emacs-lisp
+(use-package net-utils
+  :straight (:type built-in)
+  :custom
+  (traceroute-program-options '("-I")))
+
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
   "Wrapper for `dig'.

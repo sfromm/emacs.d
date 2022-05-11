@@ -286,7 +286,13 @@ end tell")
     (message "Installed package %s." package)
     (delete-other-windows)))
 
-(defun forge/upgrade-packages ()
+(defun forge/straight-upgrade-packages ()
+  "Upgrade all installed packages with straight."
+  (interactive)
+  (save-window-excursion
+    (straight-pull-all)))
+
+(defun forge/package-upgrade-packages ()
   "Upgrade all installed packages."
   (interactive)
   (save-window-excursion
@@ -370,6 +376,11 @@ end tell")
   "Remove tab characters from buffer."
   (interactive)
   (untabify (point-min) (point-max)))
+
+(use-package net-utils
+  :straight (:type built-in)
+  :custom
+  (traceroute-program-options '("-I")))
 
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
