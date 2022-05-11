@@ -380,7 +380,7 @@ end tell")
 (use-package net-utils
   :straight (:type built-in)
   :custom
-  (traceroute-program-options '("-I")))
+  (traceroute-program-options (list "-I")))
 
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
