@@ -570,6 +570,10 @@ These are probably not used as much now that I migrated to =straight=.
     (message "Installed package %s." package)
     (delete-other-windows)))
 
+(defun forge/straight-package-install (package)
+  "Install PACKAGE via straight."
+  (straight-use-package package))
+
 (defun forge/straight-upgrade-packages ()
   "Upgrade all installed packages with straight."
   (interactive)
@@ -909,7 +913,7 @@ Resources:
     (progn
       (message "Font: %s" (forge/font-name-and-size))
       ;; (set-frame-font forge-font)
-      (set-face-attribute 'default nil :family forge-font :height (* forge-font-size 10))
+      (set-face-attribute 'default nil :family forge-font :weight 'semi-light :height (* forge-font-size 10))
       (set-face-attribute 'fixed-pitch nil :family forge-font :height 1.0)
       (when forge-variable-pitch-font
         (set-face-attribute 'variable-pitch nil :family forge-variable-pitch-font :height forge-variable-pitch-scale))
@@ -945,41 +949,23 @@ This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.
 
 #+begin_src emacs-lisp
-(defun forge/install-themes ()
-  "Install a mix of themes."
-  (interactive)
-  (dolist (p '(doom-themes           ;; https://github.com/hlissner/emacs-doom-themes
-               leuven-theme          ;; https://github.com/fniessen/emacs-leuven-theme
-               material-theme        ;; https://github.com/cpaulik/emacs-material-theme
-               modus-themes          ;; https://gitlab.com/protesilaos/modus-themes
-               poet-theme            ;; https://github.com/kunalb/poet
-               solarized-theme       ;; https://github.com/bbatsov/solarized-emacs
-               spacemacs-theme       ;; https://github.com/nashamri/spacemacs-theme
-               tron-legacy-theme     ;; https://github.com/ianpan870102/tron-legacy-emacs-theme
-               zenburn-theme))       ;; https://github.com/bbatsov/zenburn-emacs
-    (progn (forge/package-install p))))
-
-;; (forge/install-themes)
-
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
   :type 'symbol
   :group 'forge)
 
-(use-package zenburn-theme
-  :custom
-  (zenburn-use-variable-pitch t)
-  (zenburn-scale-org-headlines t))
-
-(use-package solarized-theme
-  :custom
-  (solarized-use-variable-pitch t)
-  (solarized-scale-org-headlines t))
-
+;; https://github.com/hlissner/emacs-doom-themes
 (use-package doom-themes
   :config
   (doom-themes-org-config))
 
+;; https://github.com/fniessen/emacs-leuven-theme
+(use-package leuven-theme)
+
+;; https://github.com/cpaulik/emacs-material-theme
+(use-package material-theme)
+
+;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
   :hook
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
@@ -989,10 +975,30 @@ looks good.  It will also define a default theme to start with.
   :init
   (modus-themes-load-themes))
 
+;; https://github.com/rougier/nano-theme
+(use-package nano-theme
+  :straight (nano-theme :type git :host github :repo "rougier/nano-theme"))
+
+;; https://github.com/kunalb/poet
+(use-package poet-theme)
+
+;; https://github.com/bbatsov/solarized-emacs
+(use-package solarized-theme
+  :custom
+  (solarized-use-variable-pitch t)
+  (solarized-scale-org-headlines t))
+
+;; https://github.com/ianpan870102/tron-legacy-emacs-theme
 (use-package tron-legacy-theme
   :custom
   (tron-legacy-theme-vivid-cursor t)
   (tron-legacy-theme-softer-bg t))
+
+;; https://github.com/bbatsov/zenburn-emacs
+(use-package zenburn-theme
+  :custom
+  (zenburn-use-variable-pitch t)
+  (zenburn-scale-org-headlines t))
 #+end_src
 ** Modeline
 At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.
@@ -1825,6 +1831,37 @@ allows you to jump between changes and revert them.
 
 #+end_src
 
+** Docker
+[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] for editing Dockerfiles.
+
+#+begin_src emacs-lisp
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" . dockerfile-mode))
+#+end_src
+
+** Lisp
+Go ahead and set up modes to help with editing Lisp files.
+
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  :hook (emacs-lisp-mode . aggressive-indent-mode))
+
+(use-package lisp-mode
+  :straight (:type built-in)
+  :hook
+  (before-save . forge/turn-on-delete-trailing-whitespace)
+  :config
+  (setq lisp-indent-offset nil))
+
+(use-package eldoc
+  :diminish eldoc-mode
+  :hook
+  (emacs-lisp-mode . eldoc-mode)
+  (lisp-interaction-mode . eldoc-mode)
+  :config
+  (setq eldoc-idle-delay 0.3))
+#+end_src
+
 ** Markdown
 [[https://github.com/jrblevin/markdown-mode][markdown-mode]]
 
@@ -1861,29 +1898,6 @@ allows you to jump between changes and revert them.
     (previous-line)
     (previous-line)))
 
-#+end_src
-
-** Lisp
-Go ahead and set up modes to help with editing Lisp files.
-
-#+begin_src emacs-lisp
-(use-package aggressive-indent
-  :hook (emacs-lisp-mode . aggressive-indent-mode))
-
-(use-package lisp-mode
-  :straight (:type built-in)
-  :hook
-  (before-save . forge/turn-on-delete-trailing-whitespace)
-  :config
-  (setq lisp-indent-offset nil))
-
-(use-package eldoc
-  :diminish eldoc-mode
-  :hook
-  (emacs-lisp-mode . eldoc-mode)
-  (lisp-interaction-mode . eldoc-mode)
-  :config
-  (setq eldoc-idle-delay 0.3))
 #+end_src
 
 ** Python
