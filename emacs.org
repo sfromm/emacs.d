@@ -929,8 +929,7 @@ Resources:
 (use-package all-the-icons)
 
 (use-package all-the-icons-dired
-  :hook
-  (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 *** Emojis
 Emojis and emoticons.
@@ -954,10 +953,17 @@ looks good.  It will also define a default theme to start with.
   :type 'symbol
   :group 'forge)
 
+;; https://github.com/hlissner/emacs-solaire-mode
+;; Needed by doom-themes
+(use-package solaire-mode)
+
 ;; https://github.com/hlissner/emacs-doom-themes
 (use-package doom-themes
   :config
   (doom-themes-org-config))
+
+;; https://github.com/dracula/emacs
+(use-package dracula-theme)
 
 ;; https://github.com/fniessen/emacs-leuven-theme
 (use-package leuven-theme)
@@ -3756,6 +3762,7 @@ articles every 2 hours.
 #+begin_src emacs-lisp
 (use-package elfeed
   :commands (elfeed)
+  :hook (elfeed-show-mode . olivetti-mode)
   :bind
   (:map elfeed-search-mode-map
         ("j" . next-line)

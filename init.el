@@ -593,8 +593,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (use-package all-the-icons)
 
 (use-package all-the-icons-dired
-  :hook
-  (dired-mode . all-the-icons-dired-mode))
+  :hook (dired-mode . all-the-icons-dired-mode))
 
 (defun forge/emoji-shrug () "Shrug emoji." (interactive) (insert "¯\\_(ツ)_/¯"))
 (defun forge/emoji-glare () "Glare emoji." (interactive) (insert "ಠ_ಠ"))
@@ -608,10 +607,17 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :type 'symbol
   :group 'forge)
 
+;; https://github.com/hlissner/emacs-solaire-mode
+;; Needed by doom-themes
+(use-package solaire-mode)
+
 ;; https://github.com/hlissner/emacs-doom-themes
 (use-package doom-themes
   :config
   (doom-themes-org-config))
+
+;; https://github.com/dracula/emacs
+(use-package dracula-theme)
 
 ;; https://github.com/fniessen/emacs-leuven-theme
 (use-package leuven-theme)
@@ -2593,6 +2599,7 @@ It will not remove entries from the source org file."
 
 (use-package elfeed
   :commands (elfeed)
+  :hook (elfeed-show-mode . olivetti-mode)
   :bind
   (:map elfeed-search-mode-map
         ("j" . next-line)
