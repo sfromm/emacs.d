@@ -3023,7 +3023,7 @@ Will open a notmuch search buffer of the search results."
 
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
-  (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk")
+  (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk" "-spam")
         notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
                                  (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
                                  (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
