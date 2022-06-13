@@ -1720,9 +1720,7 @@ Resources:
 
 #+begin_src emacs-lisp
 (use-package page-break-lines
-  :diminish page-break-lines-mode
-  :hook
-  (emacs-lisp-mode turn-on-page-break-lines-mode))
+  :diminish page-break-lines-mode)
 #+end_src
 ** Snippets
 [[https://github.com/joaotavora/yasnippet][Yasnippet]] is a template system for Emacs.  You type in an abbreviation and

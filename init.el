@@ -1187,9 +1187,7 @@ prompt for what tab to switch to."
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
 (use-package page-break-lines
-  :diminish page-break-lines-mode
-  :hook
-  (emacs-lisp-mode turn-on-page-break-lines-mode))
+  :diminish page-break-lines-mode)
 
 (use-package yasnippet
   :diminish yasnippet-minor-mode
