@@ -1088,12 +1088,7 @@ prompt for what tab to switch to."
       ("Lisp"
        (mode . emacs-lisp-mode))
       ("Dired" (mode . dired-mode))
-      ("Commands"
-       (or
-        (mode . shell-mode)
-        (mode . eshell-mode)
-        (mode . term-mode)
-        (mode . compilation-mode)))
+      ("SSH"   (filename . "^/ssh:*"))
       ("Magit"
        (or
         (mode . magit-status-mode)
@@ -1101,6 +1096,12 @@ prompt for what tab to switch to."
         (name . "\\*magit")
         (name . "magit-")
         (name . "git-monitor")))
+      ("Commands"
+       (or
+        (mode . shell-mode)
+        (mode . eshell-mode)
+        (mode . term-mode)
+        (mode . compilation-mode)))
       ("Emacs"
        (or
         (filename . ".emacs.d/emacs.org")
