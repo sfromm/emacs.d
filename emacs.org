@@ -943,6 +943,10 @@ Emojis and emoticons.
   :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
 #+end_src
+*** [[https://jblevins.org/log/rainbow-mode][Rainbow mode]] to visualize color codes.
+#+begin_src emacs-lisp
+(use-package rainbow-mode)
+#+end_src
 ** Themes
 This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.

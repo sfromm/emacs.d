@@ -602,6 +602,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (use-package emojify
   :init (setq emojify-emojis-dir (expand-file-name "emojis" forge-state-dir)))
 
+(use-package rainbow-mode)
+
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
   :type 'symbol
