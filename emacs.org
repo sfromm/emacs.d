@@ -2878,6 +2878,9 @@ exit
 *** Notmuch reading and organizing email
 The following is then the configuration that integrates Emacs with Notmuch.
 
+- Update on  [2022-06-24 Fri 09:45] \\
+  Remove ability to mark whole buffer as read.  Too easy to accidentally invoke.
+
 #+begin_src emacs-lisp
 (use-package notmuch
   :commands (notmuch)
@@ -2995,11 +2998,7 @@ Will open a notmuch search buffer of the search results."
   (:map notmuch-search-mode-map
         ("g" . notmuch-refresh-this-buffer)
         ("y" . notmuch-search-archive-thread)
-        ("Y" . (lambda ()
-                 "Archive all messages in search results."
-                 (interactive)
-                 (call-interactively 'mark-whole-buffer)
-                 (notmuch-search-archive-thread)))
+        ("Y" . notmuch-search-archive-thread)
         ("d" . (lambda ()
                  "mark thread for trash"
                  (interactive)

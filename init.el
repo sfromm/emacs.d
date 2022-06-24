@@ -1942,11 +1942,7 @@ Will open a notmuch search buffer of the search results."
   (:map notmuch-search-mode-map
         ("g" . notmuch-refresh-this-buffer)
         ("y" . notmuch-search-archive-thread)
-        ("Y" . (lambda ()
-                 "Archive all messages in search results."
-                 (interactive)
-                 (call-interactively 'mark-whole-buffer)
-                 (notmuch-search-archive-thread)))
+        ("Y" . notmuch-search-archive-thread)
         ("d" . (lambda ()
                  "mark thread for trash"
                  (interactive)
