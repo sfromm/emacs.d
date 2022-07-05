@@ -2592,7 +2592,9 @@ It will not remove entries from the source org file."
   :after auth-source)
 
 ;;
-(use-package pass)
+(use-package pass
+  :config
+  (advice-add 'pass-quit :after 'forge/delete-window))
 
 ;; https://github.com/ecraven/ivy-pass
 (use-package ivy-pass
