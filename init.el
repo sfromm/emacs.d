@@ -1395,6 +1395,11 @@ prompt for what tab to switch to."
 (use-package ledger-mode
   :commands ledger-mode)
 
+(use-package calendar
+  :straight (:type built-in)
+  :commands (calendar)
+  :custom (diary-file (expand-file-name "diary" org-directory)))
+
 (require 'notifications)
 (require 'tls)
 
@@ -2185,6 +2190,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
    (org-mode . variable-pitch-mode))
 
   :custom
+  (org-directory "~/forge")
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -2192,6 +2198,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-clock-out-remove-zero-time-clocks t)
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
+  (org-default-notes-file (concat org-directory "/journal.org"))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
   (org-export-coding-system 'utf-8)
@@ -2220,9 +2227,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         ("RET" . org-return))
 
   :init
-  (setq org-directory "~/forge"
-        org-default-notes-file (concat org-directory "/journal.org")
-        org-file-apps (quote ((auto-mode . emacs)
+  (setq org-file-apps (quote ((auto-mode . emacs)
                               ("\\.doc\\'" . "open %s")
                               ("\\.docx\\'" . "open %s")
                               ("\\.xlsx\\'" . "open %s")

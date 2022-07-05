@@ -2081,6 +2081,15 @@ the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
   :commands ledger-mode)
 #+end_src
 * Applications
+** Calendar
+The calendar functionality is built-in.  This is to configure the /diary/ path.
+
+#+begin_src emacs-lisp
+(use-package calendar
+  :straight (:type built-in)
+  :commands (calendar)
+  :custom (diary-file (expand-file-name "diary" org-directory)))
+#+end_src
 ** Chat
 Pull in =notifications= and =tls= for all the pieces below.
 
@@ -3299,6 +3308,7 @@ Miscellaneous notes:
    (org-mode . variable-pitch-mode))
 
   :custom
+  (org-directory "~/forge")
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -3306,6 +3316,7 @@ Miscellaneous notes:
   (org-clock-out-remove-zero-time-clocks t)
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
+  (org-default-notes-file (concat org-directory "/journal.org"))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
   (org-export-coding-system 'utf-8)
@@ -3334,9 +3345,7 @@ Miscellaneous notes:
         ("RET" . org-return))
 
   :init
-  (setq org-directory "~/forge"
-        org-default-notes-file (concat org-directory "/journal.org")
-        org-file-apps (quote ((auto-mode . emacs)
+  (setq org-file-apps (quote ((auto-mode . emacs)
                               ("\\.doc\\'" . "open %s")
                               ("\\.docx\\'" . "open %s")
                               ("\\.xlsx\\'" . "open %s")
