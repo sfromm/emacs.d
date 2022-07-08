@@ -2757,14 +2757,17 @@ little simpler.
 (defhydra forge/hydra-email (:color blue)
   "
 
-  _A_ Forward Abuse report  _S_ Forward Spam report  _N_ Toggle compose New frame
-  _I_ Forward Infringement  _C_ Comporomised report  _W_ Save all attachments
-  _ra_ Reply to Abuse POC   _O_ Email Org notes
-  _rn_ Reply to NOC POC
+  _A_ Forward Abuse report  _S_  Forward Spam report  _N_  Toggle compose New frame
+  _I_ Forward Infringement  _C_  Comporomised report  _W_  Save all attachments
+  _sd_ Search last day      _sw_ Search last week     _sm_ Search last month
+  _ra_ Reply to Abuse POC   _rn_ Reply to NOC POC     _O_ Email Org notes
   "
   ("A" forge/mail-forward-abuse-complaint)
   ("ra" forge/mail-reply-to-abuse)
   ("rn" forge/mail-reply-to-noc)
+  ("sd" notmuch-search-last-day)
+  ("sw" notmuch-search-last-week)
+  ("sm" notmuch-search-last-month)
   ("O" forge/mail-org-notes)
   ("I" forge/mail-forward-infringement-complaint)
   ("S" forge/mail-forward-spam-complaint)
