@@ -2290,13 +2290,17 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                  (file+olp+datetree "~/forge/journal.org")
                                  "* %U - %?\n" )
 
+                                ("i" "Inbox" entry
+                                 (file "inbox.org")
+                                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
+
                                 ("t" "To do" entry
                                  (file+headline "~/forge/journal.org" "Inbox")
                                  "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n" :prepend t)
 
-                                ("M" "Meeting" entry
+                                ("n" "Meeting notes" entry
                                  (file+olp+datetree "~/forge/journal.org")
-                                 "* MEETING %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+                                 "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
 
                                 ("j" "Journal" entry
                                  (file+olp+datetree "~/forge/journal.org")
