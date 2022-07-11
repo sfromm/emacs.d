@@ -2389,6 +2389,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-crypt-disable-auto-save t)
   (setq org-crypt-key user-full-name))
 
+(use-package org-id
+  :straight (org-contrib :includes org-id)
+  :custom
+  (org-id-method 'uuid)
+  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
+
 (defun forge/capture-current-song ()
   "Capture the current song details."
   (let ((itunes-song (forge/get-current-song-itunes))
@@ -2527,7 +2534,7 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
-(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
+;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
 (use-package ol-eww :straight (org-contrib :includes ol-eww))
 
@@ -2543,13 +2550,6 @@ It will not remove entries from the source org file."
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
-
-(use-package org-id
-  :straight (org-contrib :includes org-id)
-  :custom
-  (org-id-method 'uuid)
-  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-  (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
 
 (use-package htmlize)
 
