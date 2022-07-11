@@ -2193,7 +2193,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
    (org-mode . variable-pitch-mode))
 
   :custom
-  (org-directory "~/forge")
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -2230,6 +2229,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         ("RET" . org-return))
 
   :init
+  (setq org-directory "~/forge")
   (setq org-file-apps (quote ((auto-mode . emacs)
                               ("\\.doc\\'" . "open %s")
                               ("\\.docx\\'" . "open %s")
@@ -2254,21 +2254,22 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         org-agenda-compact-blocks t
         org-agenda-files (list
                           (concat org-directory "/journal.org")
+                          (concat org-directory "/inbox.org")
+                          (concat org-directory "/agenda.org")
                           (concat org-directory "/work.org")
-                          (concat org-directory "/personal.org")
-                          (concat org-directory "/notebook.org"))
-        ;; There's a lot to org-agenda-custom-commands
-        ;; For type:
-        ;;   type     The command type, any of the following symbols:
-        ;;     agenda      The daily/weekly agenda.
-        ;;     todo        Entries with a specific TODO keyword, in all agenda files.
-        ;;     search      Entries containing search words entry or headline.
-        ;;     tags        Tags/Property/TODO match in all agenda files.
-        ;;     tags-todo   Tags/P/T match in all agenda files, TODO entries only.
-        ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
-        ;;     tags-tree   Sparse tree with all tags matches in *current* file.
-        ;;     occur-tree  Occur sparse tree for *current* file.
-        org-agenda-custom-commands '(("i" "Inbox"
+                          (concat org-directory "/personal.org")))
+  ;; There's a lot to org-agenda-custom-commands
+  ;; For type:
+  ;;   type     The command type, any of the following symbols:
+  ;;     agenda      The daily/weekly agenda.
+  ;;     todo        Entries with a specific TODO keyword, in all agenda files.
+  ;;     search      Entries containing search words entry or headline.
+  ;;     tags        Tags/Property/TODO match in all agenda files.
+  ;;     tags-todo   Tags/P/T match in all agenda files, TODO entries only.
+  ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
+  ;;     tags-tree   Sparse tree with all tags matches in *current* file.
+  ;;     occur-tree  Occur sparse tree for *current* file.
+  (setq org-agenda-custom-commands '(("i" "Inbox"
                                       ((tags-todo "REFILE"
                                                   ((org-agenda-overriding-header "Inbox")))))
                                      ("x" "Agenda"
