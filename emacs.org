@@ -3327,7 +3327,11 @@ Miscellaneous notes:
   (org-log-into-drawer t)
   (org-outline-path-complete-in-steps nil)
   (org-refile-use-outline-path 'file)
-  (org-refile-targets (quote ((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))))
+  (org-refile-targets '(("inbox.org" :maxlevel . 2)
+                        ("agenda.org" :maxlevel . 3)
+                        ("notebook.org" :maxlevel . 5)
+                        ("work.org" :maxlevel . 5)
+                        ("personal.org" :maxlevel . 5)))
   (org-reverse-note-order t)
   (org-src-fontify-natively t)
   (org-startup-indented t)
@@ -3367,15 +3371,20 @@ Miscellaneous notes:
                                        ("v" . "verse")
                                        ("y" . "src yaml")))
   (setq org-agenda-sticky t
+        org-agenda-hide-tags-regexp "."
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
         org-agenda-compact-blocks t
         org-agenda-files (list
-                          (concat org-directory "/journal.org")
                           (concat org-directory "/inbox.org")
                           (concat org-directory "/agenda.org")
+                          (concat org-directory "/journal.org")
                           (concat org-directory "/work.org")
-                          (concat org-directory "/personal.org")))
+                          (concat org-directory "/personal.org"))
+        org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+                                   (todo   . " %i %-12:c")
+                                   (tags   . " %i %-12:c")
+                                   (search . " %i %-12:c")))
   ;; There's a lot to org-agenda-custom-commands
   ;; For type:
   ;;   type     The command type, any of the following symbols:
@@ -3387,20 +3396,31 @@ Miscellaneous notes:
   ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
   ;;     tags-tree   Sparse tree with all tags matches in *current* file.
   ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands '(("i" "Inbox"
-                                      ((tags-todo "REFILE"
-                                                  ((org-agenda-overriding-header "Inbox")))))
-                                     ("x" "Agenda"
-                                      ((agenda "" nil)
-                                       (tags "REFILE"
-                                             ((org-agenda-overriding-header "Tasks To Refile")))
-                                       (todo "PROJECT"
-                                             ((org-agenda-overriding-header "Projects")))
-                                       (tags-todo "-CANCELLED/!"
-                                                  ((org-agenda-overriding-header "Stuck Projects")))))
-                                     ("P" "Projects"
-                                      ((todo "PROJECT"
-                                             ((org-agenda-overriding-header "Projects")))))))
+  (setq org-agenda-custom-commands '(("g" "Agenda"
+                                      ((agenda ""
+                                               ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                                                (org-deadline-warning-days 3)))
+
+                                       (tags-todo "inbox"
+                                                  ((org-agenda-overriding-header "\nInbox\n")
+                                                   (org-agenda-prefix-format "  %?-12t% s")))
+
+                                       (todo "NEXT"
+                                             ((org-agenda-overriding-header "\nNext\n")
+                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                                              (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+
+                                       (tags "CLOSED>=\"<today>\""
+                                             ((org-agenda-overriding-header "\nCompleted today\n")))))))
+  ;;  (agenda nil
+  ;;          ((org-agenda-entry-types '(:deadline))
+  ;;           (org-agenda-format-date "")
+  ;;           (org-deadline-warning-days 7)
+  ;;           (org-agenda-skip-function
+  ;;            '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+  ;;           (org-agenda-overriding-header "\nDeadlines")))
+
+
 
   ;; For template expansion,
   ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
@@ -3485,6 +3505,7 @@ Miscellaneous notes:
 *** Org Mode, Notmuch and mail
 #+begin_src emacs-lisp
 (use-package ol-notmuch
+  :straight (ol-notmuch :type git :host nil :repo "https://git.sr.ht/~tarsius/ol-notmuch")
   :after
   (:any org notmuch))
 #+end_src
