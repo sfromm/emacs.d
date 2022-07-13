@@ -2193,6 +2193,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
    (org-mode . variable-pitch-mode))
 
   :custom
+  (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -2278,10 +2279,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
   ;;     tags-tree   Sparse tree with all tags matches in *current* file.
   ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands '(("g" "Agenda"
+  (setq org-agenda-custom-commands '(("x" "Agenda"
                                       ((agenda ""
                                                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                                (org-deadline-warning-days 3)))
+                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
+                                                (org-deadline-warning-days 0)))
 
                                        (tags-todo "inbox"
                                                   ((org-agenda-overriding-header "\nInbox\n")
@@ -2383,17 +2385,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (eval-after-load 'org
   '(org-load-modules-maybe t))
 
-(use-package ol-notmuch
-  :straight (ol-notmuch :type git :host nil :repo "https://git.sr.ht/~tarsius/ol-notmuch")
-  :after
-  (:any org notmuch))
-
-(use-package org-mime
-  :hook
-  (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
-  :init
-  (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
-
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
@@ -2416,6 +2407,28 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-id-method 'uuid)
   (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
+
+;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
+
+(use-package ol-eww :straight (org-contrib :includes ol-eww))
+
+(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
+
+(use-package htmlize)
+
+(use-package ox-twbs
+  :commands (org-twbs-export-to-html
+             org-twbs-export-as-html
+             org-twbs-convert-region-to-html))
+
+(use-package ox-reveal
+  :init
+  (setq org-reveal-note-key-char nil))
+
+(use-package ox-tufte)
 
 (defun forge/capture-current-song ()
   "Capture the current song details."
@@ -2554,36 +2567,6 @@ It will not remove entries from the source org file."
            (goto-char (point-min))))
   (search-forward heading nil t)
   (goto-char (point-max)))
-
-;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
-
-(use-package ol-eww :straight (org-contrib :includes ol-eww))
-
-(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
-
-(use-package org-contacts
-  :straight (org-contrib :includes org-contacts)
-  :config
-  (setq org-contacts-files (list  "~/forge/contacts.org"))
-  (add-to-list 'org-capture-templates '("c" "Contacts" entry
-                                        (file "~/forge/contacts.org")
-                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
-
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
-
-(use-package htmlize)
-
-(use-package ox-twbs
-  :commands (org-twbs-export-to-html
-             org-twbs-export-as-html
-             org-twbs-convert-region-to-html))
-
-(use-package ox-reveal
-  :init
-  (setq org-reveal-note-key-char nil))
-
-(use-package ox-tufte)
 
 (use-package org-journal
   :disabled t

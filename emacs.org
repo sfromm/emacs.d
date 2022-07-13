@@ -3311,6 +3311,7 @@ Miscellaneous notes:
    (org-mode . variable-pitch-mode))
 
   :custom
+  (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -3396,10 +3397,11 @@ Miscellaneous notes:
   ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
   ;;     tags-tree   Sparse tree with all tags matches in *current* file.
   ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands '(("g" "Agenda"
+  (setq org-agenda-custom-commands '(("x" "Agenda"
                                       ((agenda ""
                                                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                                (org-deadline-warning-days 3)))
+                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
+                                                (org-deadline-warning-days 0)))
 
                                        (tags-todo "inbox"
                                                   ((org-agenda-overriding-header "\nInbox\n")
@@ -3502,22 +3504,29 @@ Miscellaneous notes:
   '(org-load-modules-maybe t))
 
 #+end_src
-*** Org Mode, Notmuch and mail
+*** COMMENT Org Mode, Notmuch and mail
 #+begin_src emacs-lisp
-(use-package ol-notmuch
-  :straight (ol-notmuch :type git :host nil :repo "https://git.sr.ht/~tarsius/ol-notmuch")
-  :after
-  (:any org notmuch))
+(use-package ol-notmuch      ;; use package from site-lisp
+  :after (:any org notmuch))
 #+end_src
 
 =org-mime= allows one to use Org formatting for email.
 
 #+begin_src emacs-lisp
 (use-package org-mime
-  :hook
-  (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
+  :hook (message-mode . (lambda () (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
   :init
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package org-contacts
+  :straight (org-contacts :type git :host nil :repo "https://repo.or.cz/org-contacts.git")
+  :config
+  (setq org-contacts-files (list  "~/forge/contacts.org"))
+  (add-to-list 'org-capture-templates '("c" "Contacts" entry
+                                        (file "~/forge/contacts.org")
+                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 #+end_src
 *** Org Tree Slide for presentations from Org
 #+begin_src emacs-lisp
@@ -3555,6 +3564,39 @@ associated with the entry.
   (org-id-method 'uuid)
   (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
+#+end_src
+*** Odds and ends
+:PROPERTIES:
+:ID:       298C200B-CA1E-4F45-AC1E-C0CC17ABE86B
+:END:
+- [[https://github.com/marsmining/ox-twbs][Org Export to Twitter Bootstrap]]
+  - Uses [[https://github.com/hniksic/emacs-htmlize][htmlize]] to fontify some sections.
+- [[https://github.com/dakrone/ox-tufte][Org Export to Tufte]]
+  - You will need the CSS and fonts from [[https://github.com/edwardtufte/tufte-css][tufte-css]].
+- [[https://github.com/yjwen/org-reveal][Org Export to Reveal JS]]
+
+#+begin_src emacs-lisp
+;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
+
+(use-package ol-eww :straight (org-contrib :includes ol-eww))
+
+(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
+
+(use-package htmlize)
+
+(use-package ox-twbs
+  :commands (org-twbs-export-to-html
+             org-twbs-export-as-html
+             org-twbs-convert-region-to-html))
+
+(use-package ox-reveal
+  :init
+  (setq org-reveal-note-key-char nil))
+
+(use-package ox-tufte)
 #+end_src
 *** Helper functions
 #+begin_src emacs-lisp
@@ -3696,47 +3738,6 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
-#+end_src
-*** Odds and ends
-:PROPERTIES:
-:ID:       298C200B-CA1E-4F45-AC1E-C0CC17ABE86B
-:END:
-- [[https://github.com/marsmining/ox-twbs][Org Export to Twitter Bootstrap]]
-  - Uses [[https://github.com/hniksic/emacs-htmlize][htmlize]] to fontify some sections.
-- [[https://github.com/dakrone/ox-tufte][Org Export to Tufte]]
-  - You will need the CSS and fonts from [[https://github.com/edwardtufte/tufte-css][tufte-css]].
-- [[https://github.com/yjwen/org-reveal][Org Export to Reveal JS]]
-
-#+begin_src emacs-lisp
-;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
-
-(use-package ol-eww :straight (org-contrib :includes ol-eww))
-
-(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
-
-(use-package org-contacts
-  :straight (org-contrib :includes org-contacts)
-  :config
-  (setq org-contacts-files (list  "~/forge/contacts.org"))
-  (add-to-list 'org-capture-templates '("c" "Contacts" entry
-                                        (file "~/forge/contacts.org")
-                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
-
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode))
-
-(use-package htmlize)
-
-(use-package ox-twbs
-  :commands (org-twbs-export-to-html
-             org-twbs-export-as-html
-             org-twbs-convert-region-to-html))
-
-(use-package ox-reveal
-  :init
-  (setq org-reveal-note-key-char nil))
-
-(use-package ox-tufte)
 #+end_src
 *** Deprecated Org Journal
 I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journaling, but now just use Org's /datetree/ model.
