@@ -3546,6 +3546,7 @@ associated with the entry.
 - =org-crypt-key= Either the Key ID or set to nil to use symmetric encryption.
 - Use =org-encrypt-entry= on a headline to encrypt.
 - Similarly, use =org-decrypt-entry= on a headline to decrypt.
+- Excluding the /crypt/ tag from inheritance prevents already encrypted text from being encrypted again.
 
 #+begin_src emacs-lisp
 (use-package org-crypt
