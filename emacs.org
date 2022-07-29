@@ -1873,11 +1873,15 @@ allows you to jump between changes and revert them.
 #+end_src
 
 ** Docker
-[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] for editing Dockerfiles.
+[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
+docker-compose files.
 
 #+begin_src emacs-lisp
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" . dockerfile-mode))
+
+(use-package docker-compose-mode
+  :mode "docker-compose.*\.yml\\'")
 #+end_src
 
 ** Lisp

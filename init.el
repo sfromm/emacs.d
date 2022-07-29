@@ -1278,6 +1278,9 @@ prompt for what tab to switch to."
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" . dockerfile-mode))
 
+(use-package docker-compose-mode
+  :mode "docker-compose.*\.yml\\'")
+
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
