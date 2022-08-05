@@ -1017,12 +1017,13 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
-  (setq tab-bar-close-tab-select 'recent)
-  (setq tab-bar-new-tab-choice t)
-  (setq tab-bar-new-tab-to 'right)
-  (setq tab-bar-position nil)
-  (setq tab-bar-select-tab-modifiers '(super meta))
-  (setq tab-bar-show t))
+  (setq tab-bar-close-tab-select 'recent
+        tab-bar-new-tab-choice 'ibuffer
+        tab-bar-new-tab-to 'right
+        tab-bar-position nil
+        tab-bar-select-tab-modifiers '(super meta)
+        tab-bar-tab-hints t
+        tab-bar-show t))
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-tab.el
 (defun prot-tab--tab-bar-tabs ()
