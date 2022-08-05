@@ -1021,6 +1021,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (setq tab-bar-new-tab-choice t)
   (setq tab-bar-new-tab-to 'right)
   (setq tab-bar-position nil)
+  (setq tab-bar-select-tab-modifiers '(super meta))
   (setq tab-bar-show t))
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-tab.el
@@ -2646,7 +2647,6 @@ It will not remove entries from the source org file."
 
 (use-package elfeed
   :commands (elfeed)
-  :hook (elfeed-show-mode . olivetti-mode)
   :bind
   (:map elfeed-search-mode-map
         ("j" . next-line)
@@ -2862,8 +2862,8 @@ It will not remove entries from the source org file."
                                  (concat
                                   "┌─["
                                   (user-login-name) "" (system-name)
-                                  " 🗁 " (abbreviate-file-name (eshell/pwd))
-                                  " 🕗 " (format-time-string "%a %b %d %H:%M" (current-time))
+                                  " " (abbreviate-file-name (eshell/pwd))
+                                  " | " (format-time-string "%a %b %d %H:%M" (current-time))
                                   "]\n"
                                   "└─>" (if (= (user-uid) 0) " # " " $ "))) )
   (add-hook 'eshell-mode-hook (lambda ()
