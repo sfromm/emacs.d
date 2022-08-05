@@ -24,14 +24,16 @@
   (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))
 
-;; package quickstart
-(setq package-enable-at-startup nil)            ;; initialize now with package-quickstart
-(setq package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
-(setq package-quickstart nil)
+;; package and package-quickstart
+;; In Emacs 27+, package initialization occurs before `user-init-file' is
+;; loaded, but after `early-init-file'.
+(setq package-quickstart nil                   ;; nope
+      package-enable-at-startup nil            ;; nope part deux
+      package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
 ;; help startup and garbage collection
-(setq gc-cons-threshold most-positive-fixnum) ;; Set garbage collection to highest threshold
-(setq message-log-max 16384)                  ;; Turn up logging settings
+(setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
+(setq message-log-max 16384)                   ;; Turn up logging settings
 
 (unless (daemonp)
   (defvar init-file-name-handler-alist file-name-handler-alist)
