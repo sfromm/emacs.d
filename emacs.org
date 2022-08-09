@@ -3569,6 +3569,7 @@ Miscellaneous notes:
 #+begin_src emacs-lisp
 (use-package org-contacts
   :straight (org-contacts :type git :host nil :repo "https://repo.or.cz/org-contacts.git")
+  :after org
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
   (add-to-list 'org-capture-templates '("c" "Contacts" entry
@@ -3626,9 +3627,14 @@ associated with the entry.
 #+begin_src emacs-lisp
 ;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
-(use-package ol-eww :straight (org-contrib :includes ol-eww))
+(use-package ol-eww
+  :straight (org-contrib :includes ol-eww)
+  :after org)
 
-(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
+;; support links to manual pages
+(use-package ol-man
+  :straight (org-contrib :includes ol-man)
+  :after org)
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
@@ -3640,11 +3646,11 @@ associated with the entry.
              org-twbs-export-as-html
              org-twbs-convert-region-to-html))
 
-(use-package ox-reveal
-  :init
-  (setq org-reveal-note-key-char nil))
+;; (use-package ox-reveal
+;;   :after org-compat
+;;   :custom (org-reveal-note-key-char nil))
 
-(use-package ox-tufte)
+;; (use-package ox-tufte :after org)
 #+end_src
 *** Helper functions
 #+begin_src emacs-lisp

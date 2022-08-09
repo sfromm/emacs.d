@@ -2444,9 +2444,14 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 ;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
-(use-package ol-eww :straight (org-contrib :includes ol-eww))
+(use-package ol-eww
+  :straight (org-contrib :includes ol-eww)
+  :after org)
 
-(use-package ol-man :straight (org-contrib :includes ol-man)) ;; support links to manual pages
+;; support links to manual pages
+(use-package ol-man
+  :straight (org-contrib :includes ol-man)
+  :after org)
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
@@ -2458,11 +2463,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
              org-twbs-export-as-html
              org-twbs-convert-region-to-html))
 
-(use-package ox-reveal
-  :init
-  (setq org-reveal-note-key-char nil))
+;; (use-package ox-reveal
+;;   :after org-compat
+;;   :custom (org-reveal-note-key-char nil))
 
-(use-package ox-tufte)
+;; (use-package ox-tufte :after org)
 
 (defun forge/capture-current-song ()
   "Capture the current song details."
