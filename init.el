@@ -2911,6 +2911,22 @@ It will not remove entries from the source org file."
         (twittering-icon-mode nil)
       (twittering-icon-mode t)))
 
+  (defun +lh/twittering-add-image-format (format-table-func status-sym prefix-sym)
+    "Adds the I format code to display images in the twittering-mode format table."
+    (let ((format-table (funcall format-table-func status-sym prefix-sym)))
+      (push `("I" .
+              (let* ((entities (cdr (assq 'entity ,status-sym)))
+                     text)
+                (mapc (lambda (url-info)
+                        (setq text (or (cdr (assq 'media-url url-info)) "")))
+                      (cdr (assq 'media entities)))
+                (if (string-equal "" text)
+                    text
+                  (let ((twittering-convert-fix-size 720))
+                    (twittering-make-icon-string nil nil text))))) format-table)))
+
+  (advice-add #'twittering-generate-format-table :around #'+lh/twittering-add-image-format)
+
   (defun org-twittering-open (id-str)
     (twittering-visit-timeline (concat ":single/" id-str)))
 
@@ -2959,11 +2975,14 @@ It will not remove entries from the source org file."
         twittering-icon-mode t
         twittering-use-icon-storage t
         twittering-timer-interval 300
+        twittering-icon-storage-limit 10000
+        twittering-convert-fix-size 40
         twittering-number-of-tweets-on-retrieval 80
         twittering-initial-timeline-spec-string '("#emacs" ":home")
         twittering-icon-storage-file (expand-file-name "twittering/icons.gz" forge-state-dir)
         twittering-user-id-db-file (expand-file-name "twittering/user-id-info.gz" forge-state-dir)
-        twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)))
+        twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)
+        twittering-status-format "%RT{%FACE[bold]{RT}}%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R%QT{\n+----\n%FOLD[|]{%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R}}\n+----}}\n%I\n "))
 
 (use-package lorem-ipsum)
 
