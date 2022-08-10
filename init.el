@@ -290,9 +290,17 @@ end tell")
   "Install PACKAGE via straight."
   (straight-use-package package))
 
+(defun forge/straight-freeze-packages ()
+  "Freeze current package list and copy it to a timestamped file."
+  (interactive)
+  (straight-freeze-versions)
+  (copy-file (concat straight-base-dir "straight/versions/default.el")
+             (concat straight-base-dir "straight/versions/default.el" (format-time-string ".%Y-%m-%d")) t))
+
 (defun forge/straight-upgrade-packages ()
   "Upgrade all installed packages with straight."
   (interactive)
+  (forge/straight-freeze-packages)
   (save-window-excursion
     (straight-pull-all)))
 
