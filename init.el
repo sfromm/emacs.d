@@ -663,6 +663,10 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 ;; https://github.com/cpaulik/emacs-material-theme
 (use-package material-theme)
 
+;; https://gitlab.com/protesilaos/ef-themes
+(use-package ef-themes
+  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes"))
+
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
   :hook
