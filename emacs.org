@@ -753,6 +753,11 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   "Convert a frequency to wavelength (nm)."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
+
+(defun forge/date-today ()
+  "Insert friendly date string for today."
+  (interactive)
+  (insert (format-time-string "%B %d, %Y" (current-time))))
 #+end_src
 
 *** Network-related helpers
@@ -3372,9 +3377,11 @@ Miscellaneous notes:
   (org-clock-out-remove-zero-time-clocks t)
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
+  (org-confirm-babel-evaluate nil)
   (org-default-notes-file (concat org-directory "/journal.org"))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
+  (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
   (org-log-done t)
   (org-log-reschedule "note")
@@ -3557,7 +3564,7 @@ Miscellaneous notes:
   '(org-load-modules-maybe t))
 
 #+end_src
-*** COMMENT Org Mode, Notmuch and mail
+*** Org Mode, Notmuch and mail
 #+begin_src emacs-lisp
 (use-package ol-notmuch      ;; use package from site-lisp
   :after (:any org notmuch))
@@ -3646,6 +3653,10 @@ associated with the entry.
 ;; support links to manual pages
 (use-package ol-man
   :straight (org-contrib :includes ol-man)
+  :after org)
+
+(use-package ox-md
+  :straight (org :includes ox-md)
   :after org)
 
 (use-package org-bullets

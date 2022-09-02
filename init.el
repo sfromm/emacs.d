@@ -447,6 +447,11 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive "nFrequency: ")
   (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
 
+(defun forge/date-today ()
+  "Insert friendly date string for today."
+  (interactive)
+  (insert (format-time-string "%B %d, %Y" (current-time))))
+
 (use-package ip-query
   :straight (ip-query :type git :host github :repo "sfromm/ip-query")
   :commands (ip-query))
@@ -2247,9 +2252,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-clock-out-remove-zero-time-clocks t)
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
+  (org-confirm-babel-evaluate nil)
   (org-default-notes-file (concat org-directory "/journal.org"))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
+  (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
   (org-log-done t)
   (org-log-reschedule "note")
@@ -2431,6 +2438,29 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (eval-after-load 'org
   '(org-load-modules-maybe t))
 
+(use-package ol-notmuch      ;; use package from site-lisp
+  :after (:any org notmuch))
+
+(use-package org-mime
+  :config
+  (add-hook 'message-mode-hook
+            (lambda ()
+              (local-set-key "\C-c\M-o" 'org-mime-htmlize)))
+  (add-hook 'org-mode-hook
+            (lambda ()
+              (local-set-key "\C-c\M-o" 'org-mime-org-buffer-htmlize)))
+  :init
+  (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
+
+(use-package org-contacts
+  :straight (org-contacts :type git :host nil :repo "https://repo.or.cz/org-contacts.git")
+  :after org
+  :config
+  (setq org-contacts-files (list  "~/forge/contacts.org"))
+  (add-to-list 'org-capture-templates '("c" "Contacts" entry
+                                        (file "~/forge/contacts.org")
+                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
+
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
@@ -2463,6 +2493,10 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 ;; support links to manual pages
 (use-package ol-man
   :straight (org-contrib :includes ol-man)
+  :after org)
+
+(use-package ox-md
+  :straight (org :includes ox-md)
   :after org)
 
 (use-package org-bullets
