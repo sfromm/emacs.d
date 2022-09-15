@@ -1886,6 +1886,7 @@ read-file-name and dired-dwim-target-directory."
   (add-to-list 'mml-secure-openpgp-signers "A852499F"))
 
 (use-package notmuch
+  :straight (:type built-in)
   :commands (notmuch)
   :custom
   (notmuch-search-oldest-first nil)

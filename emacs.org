@@ -2953,6 +2953,7 @@ The following is then the configuration that integrates Emacs with Notmuch.
 
 #+begin_src emacs-lisp
 (use-package notmuch
+  :straight (:type built-in)
   :commands (notmuch)
   :custom
   (notmuch-search-oldest-first nil)
