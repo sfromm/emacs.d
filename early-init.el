@@ -14,12 +14,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defun forge/native-comp-p ()
-  "Return non-nil native compilation is available."
-  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
-
 ;; native compilation
-(when (forge/native-comp-p)
+(when (and (fboundp 'native-comp-available-p) (native-comp-available-p))
   (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
   (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))

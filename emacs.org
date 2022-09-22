@@ -129,12 +129,8 @@ relocated to /.emacs.d/var/.
 ;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
 <<license>>
 
-(defun forge/native-comp-p ()
-  "Return non-nil native compilation is available."
-  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
-
 ;; native compilation
-(when (forge/native-comp-p)
+(when (and (fboundp 'native-comp-available-p) (native-comp-available-p))
   (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
   (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))
@@ -214,6 +210,11 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 (defun forge/system-type-linux-p ()
   "Return non-nil if system is GNU/Linux."
   (string-equal system-type "gnu/linux"))
+
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
 #+end_src
 ** Define paths
 The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
@@ -238,6 +239,7 @@ pulling this package in.
 
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
+
 #+end_src
 
 ** Bootstrap straight
@@ -259,7 +261,7 @@ Some things to note:
 (setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
       straight-build-dir (format "build-%s" emacs-version)
       straight-use-package-by-default t
-      straight-vc-git-default-clone-depth 1
+      ;; straight-vc-git-default-clone-depth 1
       straight-recipes-gnu-elpa-use-mirror t
       straight-check-for-modifications nil)
 
@@ -331,7 +333,8 @@ Configure Emacs to use the above defined paths.  Also configure some basic behav
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+    (setq custom-file (expand-file-name "custom.el" forge-personal-dir)
+          gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
           bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
           transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
@@ -4317,8 +4320,6 @@ long it took to load the configuration.
 
 #+name: cleanup
 #+begin_src emacs-lisp
-(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
-
 (forge/load-directory-modules forge-personal-dir)
 #+end_src
 

@@ -39,6 +39,10 @@
   "Return non-nil if system is GNU/Linux."
   (string-equal system-type "gnu/linux"))
 
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
 (defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
 
@@ -60,7 +64,7 @@
 (setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
       straight-build-dir (format "build-%s" emacs-version)
       straight-use-package-by-default t
-      straight-vc-git-default-clone-depth 1
+      ;; straight-vc-git-default-clone-depth 1
       straight-recipes-gnu-elpa-use-mirror t
       straight-check-for-modifications nil)
 
@@ -98,7 +102,8 @@
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+    (setq custom-file (expand-file-name "custom.el" forge-personal-dir)
+          gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
           bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
           transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
@@ -3044,7 +3049,5 @@ It will not remove entries from the source org file."
   (wttrin-language "en-US"))
 
 (use-package with-editor)
-
-(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 
 (forge/load-directory-modules forge-personal-dir)
