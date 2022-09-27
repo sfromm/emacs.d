@@ -2309,6 +2309,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                        ("l" . "src emacs-lisp")
                                        ("m" . "export md")
                                        ("p" . "src python")
+                                       ("q" . "quote")
                                        ("s" . "src")
                                        ("v" . "verse")
                                        ("y" . "src yaml")))
@@ -2374,10 +2375,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                 ("i" "Inbox" entry
                                  (file "inbox.org")
                                  "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
-
-                                ("t" "To do" entry
-                                 (file+headline "~/forge/journal.org" "Inbox")
-                                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n" :prepend t)
 
                                 ("n" "Meeting notes" entry
                                  (file+olp+datetree "~/forge/journal.org")
