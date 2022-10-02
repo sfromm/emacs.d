@@ -133,6 +133,9 @@
   (setq inhibit-splash-screen t
         ;; always load the newer version of a file
         load-prefer-newer t
+        ;; set a visible bell and squash the audio bell
+        visibile-bell t
+        ring-bell-function #'ignore
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
