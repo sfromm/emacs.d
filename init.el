@@ -757,7 +757,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive)
   (when forge-theme
     (load-theme forge-theme t))
-  (setq visibile-bell t                 ;; set a visible bell ...
+  (setq visible-bell t                 ;; set a visible bell ...
         ring-bell-function #'ignore)    ;; and squash the audio bell
   (when (display-graphic-p)
     (when (forge/system-type-darwin-p)
