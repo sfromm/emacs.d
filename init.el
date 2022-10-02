@@ -757,12 +757,11 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive)
   (when forge-theme
     (load-theme forge-theme t))
+  (setq visibile-bell t                 ;; set a visible bell ...
+        ring-bell-function #'ignore)    ;; and squash the audio bell
   (when (display-graphic-p)
     (when (forge/system-type-darwin-p)
       (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
-
-    visibile-bell t                     ;; set a visible bell ...
-    ring-bell-function #'ignore         ;; and squash the audio bell
     (forge/font-update)
     (line-number-mode t)                ;; show line number in modeline
     (column-number-mode t)              ;; show column number in modeline
