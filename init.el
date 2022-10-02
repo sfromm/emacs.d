@@ -133,9 +133,6 @@
   (setq inhibit-splash-screen t
         ;; always load the newer version of a file
         load-prefer-newer t
-        ;; set a visible bell and squash the audio bell
-        visibile-bell t
-        ring-bell-function #'ignore
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
@@ -763,6 +760,9 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (when (display-graphic-p)
     (when (forge/system-type-darwin-p)
       (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
+
+    visibile-bell t                     ;; set a visible bell ...
+    ring-bell-function #'ignore         ;; and squash the audio bell
     (forge/font-update)
     (line-number-mode t)                ;; show line number in modeline
     (column-number-mode t)              ;; show column number in modeline
