@@ -679,6 +679,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
+  :straight (modus-themes :type git :host github :repo "protesilaos/modus-themes")
   :hook
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
@@ -2420,7 +2421,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (setq org-tags-exclude-from-inheritance '("crypt"))
   ;;
   (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM"
-        org-modules '(org-id ol-eww org-bbdb org-bibtex ol-docview org-info org-irc org-habit ol-notmuch)
+        org-modules '(org-id ol-eww ol-docview ol-info ol-irc org-habit)
         org-src-preserve-indentation t
         org-src-window-setup 'current-window                    ;; use current window when editing a source block
         org-cycle-separator-lines 2                             ;; leave this many empty lines in collapsed view
