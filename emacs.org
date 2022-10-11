@@ -255,7 +255,7 @@ Some things to note:
 - Something to keep in mind when using =straight= is that, when using with
   =use-package=, consider whether you are installing and configuring a package
   or configuring a feature.  See:
-  + https://github.com/raxod502/straight.el#could-not-find-package-in-recipe-repositories
+  + https://github.com/radian-software/straight.el#could-not-find-package-in-recipe-repositories
 
 #+begin_src emacs-lisp
 (setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
@@ -273,7 +273,7 @@ Some things to note:
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
 	(url-retrieve-synchronously
-	 "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
 	 'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))

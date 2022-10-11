@@ -24,7 +24,7 @@ tap:
 
 bootstrap:
 	mkdir -p ~/.emacs.d/var/straight/repos
-	git clone https://github.com/raxod502/straight.el ~/.emacs.d/var/straight/repos/straight.el
+	git clone https://github.com/radian-software/straight.el.git ~/.emacs.d/var/straight/repos/straight.el
 
 update:
 	git diff-files --quiet && git pull --rebase
