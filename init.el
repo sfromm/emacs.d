@@ -2458,8 +2458,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :init
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
 
-(use-package org-contacts
-  :straight (org-contacts :type git :host nil :repo "https://repo.or.cz/org-contacts.git")
+(use-package org-contacts   ;; use package from site-lisp
   :after org
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
@@ -2727,6 +2726,12 @@ It will not remove entries from the source org file."
         ("f" . forge/elfeed-show-toggle-starred)
         ("o" . elfeed-show-mpv))
   :preface
+  (defun forge/elfeed-load-db ()
+    "Wrapper to load elfeed database from disk when running elfeed."
+    (elfeed-db-load))
+
+  (advice-add 'elfeed :before #'forge/elfeed-load-db)
+
   (defun forge/elfeed-stop-timer ()
     "Cancel elfeed-update-timer."
     (interactive)
@@ -2852,7 +2857,7 @@ It will not remove entries from the source org file."
 
   (elfeed-org)
   (setq url-queue-timeout 30
-        elfeed-db-directory (expand-file-name "elfeed" forge-state-dir)))
+        elfeed-db-directory (expand-file-name "elfeed" (concat (getenv "HOME") "/annex/var"))))
         ;; create timer to update elfeed
         ;; elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
 
