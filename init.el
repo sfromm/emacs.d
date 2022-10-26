@@ -89,6 +89,8 @@
 (straight-use-package 'use-package)
 (straight-use-package 'diminish)
 (straight-use-package 'bind-key)
+(straight-use-package 'org)
+(straight-use-package 'org-contrib)
 
 (setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")
@@ -2176,8 +2178,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :config
   (setq ping-program-options (list "-c" "5")))
 
-(straight-use-package 'org)
-(straight-use-package 'org-contrib)
 (use-package org
   :preface
   (defun forge/org-fixed-font-faces ()

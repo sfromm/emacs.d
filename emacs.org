@@ -286,7 +286,7 @@ file =straight/versions/default.el=.  The contents of this can then be under
 version control -- even in Org and tangled back out to that file.  With this,
 you can then restore package versions using ~M-x straight-thaw-versions~.
 
-** Set up =use-package=
+** Set up =use-package= and other critical packages
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
 installs the package, if not already present, and then sets it up.
 
@@ -298,6 +298,8 @@ Additional notes:
   =use-package-always-defer=.  I do not have this enabled because I have some
   times found it more tricky to get a package to load rather than defer manually
   or let =use-package= handle it.  See [[https://jwiegley.github.io/use-package/keywords/#after][discussion]] at end of section on /:after/ keyword.
+- Pull in =org= and =org-contrib= as early as possible to make sure ~load-path~
+  is set correctly.
 
 #+begin_src emacs-lisp
 (setq use-package-verbose t
@@ -307,6 +309,8 @@ Additional notes:
 (straight-use-package 'use-package)
 (straight-use-package 'diminish)
 (straight-use-package 'bind-key)
+(straight-use-package 'org)
+(straight-use-package 'org-contrib)
 #+end_src
 ** Set up =package= archives
 This defines what package archives are used and then initializes =package=.
@@ -3299,8 +3303,6 @@ Miscellaneous notes:
   This has taken the place of /org-pomodoro/.  See [[https://orgmode.org/manual/Timers.html][Org timers]].
 
 #+begin_src emacs-lisp
-(straight-use-package 'org)
-(straight-use-package 'org-contrib)
 (use-package org
   :preface
   (defun forge/org-fixed-font-faces ()
