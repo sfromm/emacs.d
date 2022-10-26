@@ -1031,7 +1031,9 @@ looks good.  It will also define a default theme to start with.
 
 ;; https://gitlab.com/protesilaos/ef-themes
 (use-package ef-themes
-  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes"))
+  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes")
+  :custom
+  (ef-themes-mixed-fonts t))
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes

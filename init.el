@@ -677,7 +677,9 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 ;; https://gitlab.com/protesilaos/ef-themes
 (use-package ef-themes
-  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes"))
+  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes")
+  :custom
+  (ef-themes-mixed-fonts t))
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
