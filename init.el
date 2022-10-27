@@ -679,7 +679,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (use-package ef-themes
   :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes")
   :custom
-  (ef-themes-mixed-fonts t))
+  (ef-themes-mixed-fonts t)
+  (ef-themes-variable-pitch-ui t))
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
@@ -2715,6 +2716,7 @@ It will not remove entries from the source org file."
         ("f" . forge/elfeed-search-toggle-starred)
         ("o" . elfeed-search-mpv)
         ("J" . elfeed-unjam)
+        ("S" . forge/elfeed-search-save-db)
         ("R" . forge/elfeed-search-mark-all-read)
         ("F" . forge/elfeed-search-starred)
         ("U" . forge/elfeed-search-unread)
@@ -2814,6 +2816,11 @@ It will not remove entries from the source org file."
     "Show elfeed articles tagged with unread"
     (interactive)
     (elfeed-search-set-filter "@6-months-ago +unread"))
+
+  (defun forge/elfeed-search-save-db ()
+    "Save elfeed database."
+    (interactive)
+    (elfeed-db-save))
 
   ;; from manuel uberti
   ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
