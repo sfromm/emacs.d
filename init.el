@@ -2818,7 +2818,7 @@ It will not remove entries from the source org file."
     (elfeed-search-set-filter "@6-months-ago +unread"))
 
   (defun forge/elfeed-search-save-db ()
-    "Save elfeed database."
+    "Save elfeed database to disk."
     (interactive)
     (elfeed-db-save))
 
@@ -2865,6 +2865,8 @@ It will not remove entries from the source org file."
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
   (elfeed-org)
+  (add-hook 'elfeed-tag-hooks (lambda (entrylist taglist) (elfeed-db-save)))
+  (add-hook 'elfeed-untag-hooks (lambda (entrylist taglist) (elfeed-db-save)))
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" (concat (getenv "HOME") "/annex/var"))))
         ;; create timer to update elfeed
