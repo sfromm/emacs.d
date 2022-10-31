@@ -2729,6 +2729,8 @@ It will not remove entries from the source org file."
         ("e" . elfeed-show-open-eww)
         ("f" . forge/elfeed-show-toggle-starred)
         ("o" . elfeed-show-mpv))
+  :hook
+  (elfeed-search-update . forge/elfeed-search-save-db)
   :preface
   (defun forge/elfeed-load-db ()
     "Wrapper to load elfeed database from disk when running elfeed."
@@ -2820,7 +2822,8 @@ It will not remove entries from the source org file."
   (defun forge/elfeed-search-save-db ()
     "Save elfeed database to disk."
     (interactive)
-    (elfeed-db-save))
+    (elfeed-db-save)
+    (message "elfeed db saved."))
 
   ;; from manuel uberti
   ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
@@ -2865,8 +2868,6 @@ It will not remove entries from the source org file."
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
   (elfeed-org)
-  (add-hook 'elfeed-tag-hooks (lambda (entrylist taglist) (elfeed-db-save)))
-  (add-hook 'elfeed-untag-hooks (lambda (entrylist taglist) (elfeed-db-save)))
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" (concat (getenv "HOME") "/annex/var"))))
         ;; create timer to update elfeed
