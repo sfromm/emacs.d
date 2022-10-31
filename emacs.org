@@ -3470,15 +3470,15 @@ Miscellaneous notes:
   ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
   ;;     tags-tree   Sparse tree with all tags matches in *current* file.
   ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands '(("x" "Agenda"
-                                      ((agenda ""
+  (setq org-agenda-custom-commands '(("g" "Agenda"
+                                      ((tags-todo "inbox"
+                                                  ((org-agenda-overriding-header "Inbox\n")
+                                                   (org-agenda-prefix-format "  %?-12t% s")))
+
+                                       (agenda ""
                                                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                                                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
                                                 (org-deadline-warning-days 0)))
-
-                                       (tags-todo "inbox"
-                                                  ((org-agenda-overriding-header "\nInbox\n")
-                                                   (org-agenda-prefix-format "  %?-12t% s")))
 
                                        (todo "NEXT"
                                              ((org-agenda-overriding-header "\nNext\n")
