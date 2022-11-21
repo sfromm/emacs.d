@@ -2270,6 +2270,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-export-allow-bind-keywords t)
   (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
+  (org-html-checkbox-type 'html)
   (org-log-done t)
   (org-log-reschedule "note")
   (org-log-into-drawer t)
