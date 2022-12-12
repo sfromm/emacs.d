@@ -1148,6 +1148,10 @@ prompt for what tab to switch to."
        (or
         (filename . "-rancid/")
         (mode . eos-mode)))
+      ("DNS"
+       (or
+        (mode . dns-mode)
+        (filename . "dns-zones/")))
       ("Lisp"
        (mode . emacs-lisp-mode))
       ("Dired" (mode . dired-mode))
