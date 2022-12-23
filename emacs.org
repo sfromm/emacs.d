@@ -242,50 +242,14 @@ pulling this package in.
 
 #+end_src
 
-** Bootstrap straight
-Go ahead and set up [[https://github.com/raxod502/straight.el][straight.el]] so that we can use it to manage Emacs packages.
-
-Some things to note:
-
-- I move =straight-base-dir= to be under =forge-state-dir= to keep =~/.emacs.d/= tidy.
-- Following /Doom Emacs/, I set =straight-build-dir= to be based on =emacs-version=.
-- Help =use-package= to use =straight=.
-- For now, leave =straight-check-for-modifications= as =nil=.  I may later want
-  to consider using =check-on-save=.  See [[https://github.com/raxod502/straight.el#summary-of-options-for-package-modification-detection][docs]].
-- Something to keep in mind when using =straight= is that, when using with
-  =use-package=, consider whether you are installing and configuring a package
-  or configuring a feature.  See:
-  + https://github.com/radian-software/straight.el#could-not-find-package-in-recipe-repositories
+** Set up =package= archives
+This defines what package archives are used and then initializes =package=.
 
 #+begin_src emacs-lisp
-(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
-      straight-build-dir (format "build-%s" emacs-version)
-      straight-use-package-by-default t
-      ;; straight-vc-git-default-clone-depth 1
-      straight-recipes-gnu-elpa-use-mirror t
-      straight-check-for-modifications nil)
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" forge-state-dir))
-      (bootstrap-version 5))
-  (make-directory (file-name-directory bootstrap-file) t)
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-	(url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	 'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
 #+end_src
-
-** Straight lockfile
-With =straight=, you can now run ~M-x straight-freeze-versions~ to write the
-file =straight/versions/default.el=.  The contents of this can then be under
-version control -- even in Org and tangled back out to that file.  With this,
-you can then restore package versions using ~M-x straight-thaw-versions~.
-
 ** Set up =use-package= and other critical packages
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
 installs the package, if not already present, and then sets it up.
@@ -302,24 +266,54 @@ Additional notes:
   is set correctly.
 
 #+begin_src emacs-lisp
+(defun forge/package-install (package)
+  "Install PACKAGE if not yet installed."
+  (unless (fboundp 'package-installed-p)
+    (package-initialize))
+  (unless (package-installed-p package)
+    (message "%s" "Refreshing package database...")
+    (package-refresh-contents)
+    (message "%s" " done.")
+    (package-install package)
+    (message "Installed package %s." package)
+    (delete-other-windows)))
+
+(defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
+  "A list of core packages that will be automatically installed.")
+
+(defun forge/install-core-packages ()
+  "Install core packages to install for Emacs."
+  (interactive)
+  (dolist (package init-core-packages)
+    (progn (forge/package-install package))))
+
+(forge/install-core-packages)
+
+;; https://github.com/jwiegley/use-package
+(eval-when-compile
+  (require 'diminish)
+  (require 'use-package)
+  (require 'use-package-ensure))
+
 (setq use-package-verbose t
       use-package-compute-statistics t       ;; compute stats
+      use-package-always-ensure t
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
-(straight-use-package 'use-package)
-(straight-use-package 'diminish)
-(straight-use-package 'bind-key)
-(straight-use-package 'org)
-(straight-use-package 'org-contrib)
 #+end_src
-** Set up =package= archives
-This defines what package archives are used and then initializes =package=.
-Note that I'm still using =straight= to install and manage packages.
+** Quelpa
+Use Quelpa to install packages from source repositories.
 
 #+begin_src emacs-lisp
-(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
+(use-package quelpa
+  :init
+  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
+        quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
+        quelpa-update-melpa-p nil))
+
+(use-package quelpa-use-package
+  :demand t
+  :after quelpa)
 #+end_src
 ** Paradox
 [[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.
@@ -328,6 +322,27 @@ Note that I'm still using =straight= to install and manage packages.
 (use-package paradox
   :init
   (setq paradox-execute-asynchronously t))
+#+end_src
+** Helper functions for managing packages
+Sometimes installing a new package will bork packages.  This will recompile the /.el/ files.
+
+#+begin_src emacs-lisp
+(defun forge/package-upgrade-packages ()
+  "Upgrade all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
+    (message "Packages updated.")))
+
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun forge/recompile-elpa ()
+  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
 #+end_src
 ** Configure basic behavior
 Configure Emacs to use the above defined paths.  Also configure some basic behavior
@@ -563,69 +578,6 @@ end tell")
 
 #+end_src
 ** Helper functions
-*** Helper functions for packaging
-These are probably not used as much now that I migrated to =straight=.
-
-#+begin_src emacs-lisp
-(defun forge/package-install (package)
-  "Install PACKAGE if not yet installed."
-  (unless (fboundp 'package-installed-p)
-    (package-initialize))
-  (unless (package-installed-p package)
-    (message "%s" "Refreshing package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    (package-install package)
-    (message "Installed package %s." package)
-    (delete-other-windows)))
-
-(defun forge/straight-package-install (package)
-  "Install PACKAGE via straight."
-  (straight-use-package package))
-
-(defun forge/straight-freeze-packages ()
-  "Freeze current package list and copy it to a timestamped file."
-  (interactive)
-  (straight-freeze-versions)
-  (copy-file (concat straight-base-dir "straight/versions/default.el")
-             (concat straight-base-dir "straight/versions/default.el" (format-time-string ".%Y-%m-%d")) t))
-
-(defun forge/straight-upgrade-packages ()
-  "Upgrade all installed packages with straight."
-  (interactive)
-  (forge/straight-freeze-packages)
-  (save-window-excursion
-    (straight-pull-all)))
-
-(defun forge/package-upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-(defun forge/bootstrap-packages ()
-  "Bootstrap packages to install for Emacs."
-  (interactive)
-  (dolist (package init--bootstrap-packages)
-    (progn (forge/package-install package)))
-  (all-the-icons-install-fonts))
-#+end_src
-*** Helper functions for managing packages
-Sometimes installing a new package will bork packages.  This will recompile the
-/.el/ files.
-
-#+begin_src emacs-lisp
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun forge/recompile-elpa ()
-  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
-#+end_src
 *** Feature related helpers
 #+begin_src emacs-lisp
 (defun forge/reload-emacs-configuration ()
@@ -731,10 +683,8 @@ helpers.
   mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
 #+begin_src emacs-lisp
-(use-package net-utils
-  :straight (:type built-in)
-  :custom
-  (traceroute-program-options (list "-I")))
+(with-eval-after-load 'net-utils
+  (setq traceroute-program-options (list "-I")))
 
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
@@ -773,7 +723,7 @@ Several functions depend upon the [[https://team-cymru.com/community-services/ip
 
 #+begin_src emacs-lisp
 (use-package ip-query
-  :straight (ip-query :type git :host github :repo "sfromm/ip-query")
+  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
   :commands (ip-query))
 #+end_src
 
@@ -1031,14 +981,12 @@ looks good.  It will also define a default theme to start with.
 
 ;; https://gitlab.com/protesilaos/ef-themes
 (use-package ef-themes
-  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes")
   :custom
   (ef-themes-mixed-fonts t)
   (ef-themes-variable-pitch-ui t))
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
-  :straight (modus-themes :type git :host github :repo "protesilaos/modus-themes")
   :hook
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
@@ -1048,8 +996,7 @@ looks good.  It will also define a default theme to start with.
   (modus-themes-load-themes))
 
 ;; https://github.com/rougier/nano-theme
-(use-package nano-theme
-  :straight (nano-theme :type git :host github :repo "rougier/nano-theme"))
+(use-package nano-theme)
 
 ;; https://github.com/kunalb/poet
 (use-package poet-theme)
@@ -1154,7 +1101,6 @@ The following are modes I no longer use.  Configuration is here for reference.
 
 #+begin_src emacs-lisp
 (use-package lin
-  :straight (lin :type git :host gitlab :repo "protesilaos/lin")
   :config
   (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
@@ -1567,12 +1513,11 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][Uniquify]] helps make it easier to navigate between buffers that have identically named files.
 
 #+begin_src emacs-lisp
-(use-package uniquify
-  :straight (:type built-in)
-  :init (setq uniquify-buffer-name-style 'forward
-              uniquify-separator "/"
-              uniquify-ignore-buffers-re "^\\*"
-              uniquify-after-kill-buffer-p t))
+(with-eval-after-load 'uniquify
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator "/"
+        uniquify-ignore-buffers-re "^\\*"
+        uniquify-after-kill-buffer-p t))
 #+end_src
 
 The next is [[https://github.com/rnkn/olivetti][olivetti]], which cleans up the window so that one can focus more on
@@ -1930,12 +1875,9 @@ Go ahead and set up modes to help with editing Lisp files.
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
-(use-package lisp-mode
-  :straight (:type built-in)
-  :hook
-  (before-save . forge/turn-on-delete-trailing-whitespace)
-  :config
-  (setq lisp-indent-offset nil))
+(with-eval-after-load 'lisp-mode
+  (add-hook 'before-save-hook #'forge/turn-on-delete-trailing-whitespace)
+    (setq lisp-indent-offset nil))
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -2031,11 +1973,9 @@ I pull in this package for the formatting and font-lock features.
 #+end_src
 ** Shell scripts
 #+begin_src emacs-lisp
-(use-package shell-script
-  :straight (:type built-in)
-  :hook
-  (shell-script . forge/whitespace-visualize)
-  (shell-script . forge/turn-on-delete-trailing-whitespace))
+(with-eval-after-load 'shell-script-mode
+  (add-hook 'shell-script-hook #'forge/whitespace-visualize)
+  (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
 #+end_src
 ** Web-related
 *** web-mode
@@ -2115,12 +2055,8 @@ Just enough to help recognize XML tags and then later fold xml with
 documents.
 
 #+begin_src emacs-lisp
-(use-package nxml
-  :straight (:type built-in)
-  :commands nxml-mode
-  :init
+(with-eval-after-load 'nxml
   (defalias 'xml-mode 'nxml-mode)
-  :config
   (autoload 'sgml-skip-tag-forward "sgml-mode")
   (add-to-list 'hs-special-modes-alist
                '(nxml-mode
@@ -2134,15 +2070,14 @@ documents.
 ** Network device configurations
 *** Junos
 #+begin_src emacs-lisp
-(use-package junos-mode
-  :commands (junos-mode)
-  :magic ("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode)
-  :config (setq-local c-basic-offset 4))
+(with-eval-after-load 'junos-mode
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
+  (setq-local c-basic-offset 4))
 #+end_src
 *** EOS
 #+begin_src emacs-lisp
 (use-package eos-mode
-  :straight (eos-mode :type git :host github :repo "sfromm/eos-mode")
+  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -2160,10 +2095,8 @@ the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 The calendar functionality is built-in.  This is to configure the /diary/ path.
 
 #+begin_src emacs-lisp
-(use-package calendar
-  :straight (:type built-in)
-  :commands (calendar)
-  :custom (diary-file (expand-file-name "diary" org-directory)))
+(with-eval-after-load 'calendar
+  (setq diary-file (expand-file-name "diary" org-directory)))
 #+end_src
 ** Chat
 Pull in =notifications= and =tls= for all the pieces below.
@@ -2219,10 +2152,7 @@ IRC configuration.  As a default, use =user-login-name= as the default for
 =erc-nick= and =erc-user-full-name=.
 
 #+begin_src emacs-lisp
-(use-package erc
-  :straight (:type built-in)
-  :commands (erc erc-tls)
-  :preface
+(with-eval-after-load 'erc
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
     (interactive)
@@ -2234,20 +2164,21 @@ IRC configuration.  As a default, use =user-login-name= as the default for
         (bitlbee-start)
         (sleep-for 2)
         (erc :server "localhost" :port 6667))))
-  :custom
-  (erc-nick user-login-name)
-  (erc-server "irc.libera.chat")
-  (erc-away-nickname (concat erc-nick "|afk"))
-  (erc-user-full-name erc-nick)
-  (erc-fill-column 100)
-  (erc-fill-static-center 16)
-  (erc-fill-function 'erc-fill-static)
-  :config
-  (setq erc-modules '(autojoin autoaway button completion fill irccontrols
+
+  (setq erc-nick user-login-name
+        erc-server "irc.libera.chat"
+        erc-away-nickname (concat erc-nick "|afk")
+        erc-user-full-name erc-nick
+        erc-fill-column 100
+        erc-fill-static-center 16
+        erc-fill-function 'erc-fill-static
+        erc-modules '(autojoin autoaway button completion fill irccontrols
                                list log match menu move-to-prompt netsplit
                                networks notifications readonly ring
                                services smiley spelling stamp track))
+
   (erc-services-mode t)
+
   ;; use customize for `erc-keywords', and `erc-auto-join-channels-alist'
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))
         erc-insert-timestamp-function 'erc-insert-timestamp-left
@@ -2331,9 +2262,14 @@ reuse the same window & buffer.
 https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#orgheadline11
 
 #+begin_src emacs-lisp
-(use-package dired
-  :straight (:type built-in)
-  :preface
+(with-eval-after-load 'dired
+  (diminish 'dired-omit-mode)
+
+  (define-key global-map (kbd "C-c d") 'dired-jump)
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+  (define-key dired-mode-map (kbd "Y") 'forge/dired-rsync)
+  (define-key dired-mode-map (kbd "^") 'forge/dired-up)
+
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
     (setq-local truncate-lines t)
@@ -2344,34 +2280,24 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
     (interactive)
     (find-alternate-file ".."))
 
-  :bind
-  (("C-c d" . dired-jump)
-   :map dired-mode-map
-   ("RET" . dired-find-alternate-file)
-   ("Y" . forge/dired-rsync)
-   ("^" . forge/dired-up))
-
-  :diminish dired-omit-mode
-
-  :custom
-  (dired-dwim-target t)
-  (dired-ls-F-marks-symlinks t)
-  (dired-listing-switches "-laFh1v --group-directories-first") ;; -F (classify), -h (human readable), -1 (one file per line), -v (version sorting)
-  (dired-recursive-copies 'always)
-  (dired-recursive-deletes 'top)
-  (global-auto-revert-non-file-buffers t) ;; auto refresh dired buffers
-
-  :config
   (put 'dired-find-alternate-file 'disabled nil)
   (when (forge/system-type-darwin-p)
-    (setq dired-use-ls-dired nil)
+    (setq dired-use-ls-dired nil))
 
-    ;; This requires installing coreutils via homebrew
-    (when (executable-find "gls")
-      (setq insert-directory-program "gls"
-            dired-use-ls-dired t)))
+  (setq dired-dwim-target t
+        dired-ls-F-marks-symlinks t
+        dired-listing-switches "-laFh1v --group-directories-first"
+        ;; -F (classify), -h (human readable), -1 (one file per line), -v (version sorting)
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'top
+        global-auto-revert-non-file-buffers t) ;; auto refresh dired buffers
 
-  (setq auto-revert-verbose nil))
+  ;; This requires installing coreutils via homebrew
+  (when (executable-find "gls")
+    (setq insert-directory-program "gls"
+          dired-use-ls-dired t)))
+
+(setq auto-revert-verbose nil)
 
 #+end_src
 
@@ -2384,25 +2310,17 @@ Pull in =async= for asyncrhonous operations in =dired=.
 #+end_src
 *** Extra features for dired with [[https://www.gnu.org/software/emacs/manual/html_node/dired-x/][dired-x]]
 #+begin_src emacs-lisp
-(use-package dired-x
-  :after dired
-  :straight (:type built-in)
-  :custom
-  (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
-                                      '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
-                                      '("\\.pdf$" "open")))
-  :init
+(with-eval-after-load 'dired-x
+  (setq dired-bind-jump nil
+        dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
+                                           '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
+                                           '("\\.pdf$" "open")))
   (global-unset-key (kbd "C-x C-j"))
-  (setq dired-bind-jump nil)
-  :config
   (add-to-list 'dired-omit-extensions ".DS_Store"))
 #+end_src
 *** More features for dired with =dired-aux=
 #+begin_src emacs-lisp
-(use-package dired-aux
-  :after dired
-  :straight (:type built-in)
-  :init
+(with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
 #+end_src
 *** Dired & Rsync
@@ -2489,7 +2407,7 @@ I also pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine
 *** Deprecated git-annex
 I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for reference.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package magit-annex
   :disabled t)
 
@@ -2511,10 +2429,7 @@ I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for refer
 init.el.  Not an actual emacs package.
 
 #+begin_src emacs-lisp
-(use-package go-jira
-  :no-require t
-  :straight (:type built-in)
-  :init
+(with-eval-after-load 'go-jira
   (defvar jira-token nil)
   (defun jira-create ()
     "Create a ticket in Jira."
@@ -2741,12 +2656,9 @@ headers/ field can be useful if you need to add headers on the outgoing email.
 [[http://gnus.org/manual/gnus_129.html][gnus-dired]] is an option for attaching files to email.
 
 #+begin_src emacs-lisp
-(use-package gnus-dired
-  :straight (:type built-in)
-  :hook (dired-mode . turn-on-gnus-dired-mode)
-  :init
+(with-eval-after-load 'gnus-dired
+  (add-hook 'dired-mode #'turn-on-gnus-dired-mode)
   (setq gnus-dired-mail-mode 'notmuch-user-agent))
-
 #+end_src
 
 Sometimes it is convenient to open a new frame and compose an email there.
@@ -2866,12 +2778,10 @@ because some mail providers will require /XOAUTH2/ authentication and the native
 tools were not in a place to support this.
 
 #+begin_src emacs-lisp
-(use-package sendmail
-  :straight (:type built-in)
-  :custom
-  (mail-specify-envelope-from t)
-  (mail-envelope-from 'header)
-  (sendmail-program (executable-find "sendmail.py")))
+(with-eval-after-load 'sendmail
+  (setq mail-specify-envelope-from t
+        mail-envelope-from 'header
+        sendmail-program (executable-find "sendmail.py")))
 #+end_src
 
 Here is an example of my deprecated =smtpmail= configuration.
@@ -2879,7 +2789,6 @@ Here is an example of my deprecated =smtpmail= configuration.
 #+begin_src emacs-lisp
 (use-package smtpmail
   :disabled t
-  :straight (:type built-in)
   :config
   (setq smtpmail-stream-type 'ssl
         smtpmail-default-smtp-server forge-smtp-server-work
@@ -2902,9 +2811,7 @@ always encrypt to self and to list the OpenPGP keys that I will sign with.
 - =C-c C-m c p= Encrypt current message using PGP/MIME.
 
 #+begin_src emacs-lisp
-(use-package mml-sec
-  :straight (:type built-in)
-  :config
+(with-eval-after-load 'mml-sec
   (setq mml-secure-openpgp-encrypt-to-self t
         mml-secure-openpgp-sign-with-sender t
         mml-secure-smime-encrypt-to-self t
@@ -2970,7 +2877,7 @@ The following is then the configuration that integrates Emacs with Notmuch.
 
 #+begin_src emacs-lisp
 (use-package notmuch
-  :straight (:type built-in)
+  :ensure nil
   :commands (notmuch)
   :custom
   (notmuch-search-oldest-first nil)
@@ -3629,22 +3536,17 @@ associated with the entry.
 - Excluding the /crypt/ tag from inheritance prevents already encrypted text from being encrypted again.
 
 #+begin_src emacs-lisp
-(use-package org-crypt
-  :straight (:type built-in)
-  :commands (org-encrypt-entry org-decrypt-entry)
-  :config
+(with-eval-after-load 'org-crypt
   (org-crypt-use-before-save-magic)
-  (setq org-crypt-disable-auto-save t)
-  (setq org-crypt-key user-full-name))
+  (setq org-crypt-disable-auto-save t
+        org-crypt-key user-full-name))
 #+end_src
 *** Org ID
 #+begin_src emacs-lisp
-(use-package org-id
-  :straight (org-contrib :includes org-id)
-  :custom
-  (org-id-method 'uuid)
-  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-  (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
+(with-eval-after-load 'org-id
+  (setq org-id-method 'uuid
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
 #+end_src
 *** Odds and ends
 :PROPERTIES:
@@ -3660,16 +3562,16 @@ associated with the entry.
 ;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
 (use-package ol-eww
-  :straight (org-contrib :includes ol-eww)
+  :ensure nil
   :after org)
 
 ;; support links to manual pages
 (use-package ol-man
-  :straight (org-contrib :includes ol-man)
+  :ensure nil
   :after org)
 
 (use-package ox-md
-  :straight (org :includes ox-md)
+  :ensure nil
   :after org)
 
 (use-package org-bullets
@@ -4081,9 +3983,8 @@ Lastly, the following will helps with downloading videos from Youtube when they
 are part of a RSS feed.
 
 #+begin_src emacs-lisp
-(use-package youtube-dl
-  :commands (youtube-dl)
-  :init (setq youtube-dl-directory "~/annex/Video/youtube"))
+(with-eval-after-load 'youtube-dl
+  (setq youtube-dl-directory "~/annex/Video/youtube"))
 #+end_src
 ** Search
 *** Ripgrep
@@ -4134,10 +4035,13 @@ Resources:
 
 #+NAME: eshell
 #+begin_src emacs-lisp
-(use-package eshell
-  :straight (:type built-in)
-  :commands (eshell eshell-command)
-  :preface
+(with-eval-after-load 'em-unix
+  (unintern 'eshell/su nil)
+  (unintern 'eshell/sudo nil))
+
+(with-eval-after-load 'eshell
+  (define-key global-map (kbd "C-!") 'eshell-here)
+
   (defun eshell-here ()
     "Opens up a new shell in the directory associated with the current buffer's file."
     (interactive)
@@ -4151,16 +4055,6 @@ Resources:
       (insert (concat "ls"))
       (eshell-send-input)))
 
-  (use-package em-unix
-    :straight (:type built-in)
-    :config
-    (unintern 'eshell/su nil)
-    (unintern 'eshell/sudo nil))
-
-  :bind
-  ("C-!" . eshell-here)
-
-  :config
   (setenv "TERM" "xterm-256color")
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
   (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
@@ -4325,7 +4219,7 @@ The following are miscellaneous utilities that are small but useful.
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp
 (use-package wttrin
-  :straight (wttrin :type git :host github :repo "sfromm/emacs-wttrin")
+  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))

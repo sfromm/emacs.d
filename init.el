@@ -61,44 +61,74 @@
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
-(setq straight-base-dir forge-state-dir  ;; straight will append 'straight/'
-      straight-build-dir (format "build-%s" emacs-version)
-      straight-use-package-by-default t
-      ;; straight-vc-git-default-clone-depth 1
-      straight-recipes-gnu-elpa-use-mirror t
-      straight-check-for-modifications nil)
-
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" forge-state-dir))
-      (bootstrap-version 5))
-  (make-directory (file-name-directory bootstrap-file) t)
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-	(url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	 'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-(setq use-package-verbose t
-      use-package-compute-statistics t       ;; compute stats
-      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
-
-(straight-use-package 'use-package)
-(straight-use-package 'diminish)
-(straight-use-package 'bind-key)
-(straight-use-package 'org)
-(straight-use-package 'org-contrib)
-
 (setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")))
 
+(defun forge/package-install (package)
+  "Install PACKAGE if not yet installed."
+  (unless (fboundp 'package-installed-p)
+    (package-initialize))
+  (unless (package-installed-p package)
+    (message "%s" "Refreshing package database...")
+    (package-refresh-contents)
+    (message "%s" " done.")
+    (package-install package)
+    (message "Installed package %s." package)
+    (delete-other-windows)))
+
+(defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
+  "A list of core packages that will be automatically installed.")
+
+(defun forge/install-core-packages ()
+  "Install core packages to install for Emacs."
+  (interactive)
+  (dolist (package init-core-packages)
+    (progn (forge/package-install package))))
+
+(forge/install-core-packages)
+
+;; https://github.com/jwiegley/use-package
+(eval-when-compile
+  (require 'diminish)
+  (require 'use-package)
+  (require 'use-package-ensure))
+
+(setq use-package-verbose t
+      use-package-compute-statistics t       ;; compute stats
+      use-package-always-ensure t
+      use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
+
+(use-package quelpa
+  :init
+  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
+        quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
+        quelpa-update-melpa-p nil))
+
+(use-package quelpa-use-package
+  :demand t
+  :after quelpa)
+
 (use-package paradox
   :init
   (setq paradox-execute-asynchronously t))
+
+(defun forge/package-upgrade-packages ()
+  "Upgrade all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
+    (message "Packages updated.")))
+
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun forge/recompile-elpa ()
+  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
 
 (defun forge/clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
@@ -281,60 +311,6 @@ end tell")
         (error nil))
       cursong)))
 
-(defun forge/package-install (package)
-  "Install PACKAGE if not yet installed."
-  (unless (fboundp 'package-installed-p)
-    (package-initialize))
-  (unless (package-installed-p package)
-    (message "%s" "Refreshing package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    (package-install package)
-    (message "Installed package %s." package)
-    (delete-other-windows)))
-
-(defun forge/straight-package-install (package)
-  "Install PACKAGE via straight."
-  (straight-use-package package))
-
-(defun forge/straight-freeze-packages ()
-  "Freeze current package list and copy it to a timestamped file."
-  (interactive)
-  (straight-freeze-versions)
-  (copy-file (concat straight-base-dir "straight/versions/default.el")
-             (concat straight-base-dir "straight/versions/default.el" (format-time-string ".%Y-%m-%d")) t))
-
-(defun forge/straight-upgrade-packages ()
-  "Upgrade all installed packages with straight."
-  (interactive)
-  (forge/straight-freeze-packages)
-  (save-window-excursion
-    (straight-pull-all)))
-
-(defun forge/package-upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-(defun forge/bootstrap-packages ()
-  "Bootstrap packages to install for Emacs."
-  (interactive)
-  (dolist (package init--bootstrap-packages)
-    (progn (forge/package-install package)))
-  (all-the-icons-install-fonts))
-
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun forge/recompile-elpa ()
-  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
-
 (defun forge/reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
@@ -424,10 +400,8 @@ end tell")
                       (derived-mode-p 'wdired-mode))
               default-directory))))))
 
-(use-package net-utils
-  :straight (:type built-in)
-  :custom
-  (traceroute-program-options (list "-I")))
+(with-eval-after-load 'net-utils
+  (setq traceroute-program-options (list "-I")))
 
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
@@ -460,7 +434,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (insert (format-time-string "%B %d, %Y" (current-time))))
 
 (use-package ip-query
-  :straight (ip-query :type git :host github :repo "sfromm/ip-query")
+  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
   :commands (ip-query))
 
 (defcustom forge-peek-buffer-name "*forge-peek*"
@@ -677,14 +651,12 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 ;; https://gitlab.com/protesilaos/ef-themes
 (use-package ef-themes
-  :straight (ef-themes :type git :host gitlab :repo "protesilaos/ef-themes")
   :custom
   (ef-themes-mixed-fonts t)
   (ef-themes-variable-pitch-ui t))
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
-  :straight (modus-themes :type git :host github :repo "protesilaos/modus-themes")
   :hook
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
@@ -694,8 +666,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (modus-themes-load-themes))
 
 ;; https://github.com/rougier/nano-theme
-(use-package nano-theme
-  :straight (nano-theme :type git :host github :repo "rougier/nano-theme"))
+(use-package nano-theme)
 
 ;; https://github.com/kunalb/poet
 (use-package poet-theme)
@@ -787,7 +758,6 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (add-hook 'after-init-hook #'forge/setup-ui)
 
 (use-package lin
-  :straight (lin :type git :host gitlab :repo "protesilaos/lin")
   :config
   (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
@@ -1106,12 +1076,11 @@ prompt for what tab to switch to."
                                      magit-popup-mode))
   (add-to-list 'golden-ratio-extra-commands 'ace-window))
 
-(use-package uniquify
-  :straight (:type built-in)
-  :init (setq uniquify-buffer-name-style 'forward
-              uniquify-separator "/"
-              uniquify-ignore-buffers-re "^\\*"
-              uniquify-after-kill-buffer-p t))
+(with-eval-after-load 'uniquify
+  (setq uniquify-buffer-name-style 'forward
+        uniquify-separator "/"
+        uniquify-ignore-buffers-re "^\\*"
+        uniquify-after-kill-buffer-p t))
 
 (use-package olivetti
   :custom
@@ -1321,12 +1290,9 @@ prompt for what tab to switch to."
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
-(use-package lisp-mode
-  :straight (:type built-in)
-  :hook
-  (before-save . forge/turn-on-delete-trailing-whitespace)
-  :config
-  (setq lisp-indent-offset nil))
+(with-eval-after-load 'lisp-mode
+  (add-hook 'before-save-hook #'forge/turn-on-delete-trailing-whitespace)
+    (setq lisp-indent-offset nil))
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -1396,11 +1362,9 @@ prompt for what tab to switch to."
 
 (use-package ess)
 
-(use-package shell-script
-  :straight (:type built-in)
-  :hook
-  (shell-script . forge/whitespace-visualize)
-  (shell-script . forge/turn-on-delete-trailing-whitespace))
+(with-eval-after-load 'shell-script-mode
+  (add-hook 'shell-script-hook #'forge/whitespace-visualize)
+  (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
 
 (use-package web-mode
   :mode ("\\.html\\'" "\\.j2\\'")
@@ -1434,12 +1398,8 @@ prompt for what tab to switch to."
   :config
   (setq yaml-indent-offset 2))
 
-(use-package nxml
-  :straight (:type built-in)
-  :commands nxml-mode
-  :init
+(with-eval-after-load 'nxml
   (defalias 'xml-mode 'nxml-mode)
-  :config
   (autoload 'sgml-skip-tag-forward "sgml-mode")
   (add-to-list 'hs-special-modes-alist
                '(nxml-mode
@@ -1449,13 +1409,12 @@ prompt for what tab to switch to."
                  sgml-skip-tag-forward
                  nil)))
 
-(use-package junos-mode
-  :commands (junos-mode)
-  :magic ("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode)
-  :config (setq-local c-basic-offset 4))
+(with-eval-after-load 'junos-mode
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
+  (setq-local c-basic-offset 4))
 
 (use-package eos-mode
-  :straight (eos-mode :type git :host github :repo "sfromm/eos-mode")
+  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -1463,10 +1422,8 @@ prompt for what tab to switch to."
 (use-package ledger-mode
   :commands ledger-mode)
 
-(use-package calendar
-  :straight (:type built-in)
-  :commands (calendar)
-  :custom (diary-file (expand-file-name "diary" org-directory)))
+(with-eval-after-load 'calendar
+  (setq diary-file (expand-file-name "diary" org-directory)))
 
 (require 'notifications)
 (require 'tls)
@@ -1509,10 +1466,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (dolist (hook '(jabber-chat-mode-hook jabber-roster-mode-hook))
     (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
-(use-package erc
-  :straight (:type built-in)
-  :commands (erc erc-tls)
-  :preface
+(with-eval-after-load 'erc
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
     (interactive)
@@ -1524,20 +1478,21 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
         (bitlbee-start)
         (sleep-for 2)
         (erc :server "localhost" :port 6667))))
-  :custom
-  (erc-nick user-login-name)
-  (erc-server "irc.libera.chat")
-  (erc-away-nickname (concat erc-nick "|afk"))
-  (erc-user-full-name erc-nick)
-  (erc-fill-column 100)
-  (erc-fill-static-center 16)
-  (erc-fill-function 'erc-fill-static)
-  :config
-  (setq erc-modules '(autojoin autoaway button completion fill irccontrols
+
+  (setq erc-nick user-login-name
+        erc-server "irc.libera.chat"
+        erc-away-nickname (concat erc-nick "|afk")
+        erc-user-full-name erc-nick
+        erc-fill-column 100
+        erc-fill-static-center 16
+        erc-fill-function 'erc-fill-static
+        erc-modules '(autojoin autoaway button completion fill irccontrols
                                list log match menu move-to-prompt netsplit
                                networks notifications readonly ring
                                services smiley spelling stamp track))
+
   (erc-services-mode t)
+
   ;; use customize for `erc-keywords', and `erc-auto-join-channels-alist'
   (setq erc-prompt (lambda () (concat "[" (buffer-name) "]"))
         erc-insert-timestamp-function 'erc-insert-timestamp-left
@@ -1596,9 +1551,14 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (setq slack-buffer-emojify t
         slack-prefer-current-team t))
 
-(use-package dired
-  :straight (:type built-in)
-  :preface
+(with-eval-after-load 'dired
+  (diminish 'dired-omit-mode)
+
+  (define-key global-map (kbd "C-c d") 'dired-jump)
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+  (define-key dired-mode-map (kbd "Y") 'forge/dired-rsync)
+  (define-key dired-mode-map (kbd "^") 'forge/dired-up)
+
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
     (setq-local truncate-lines t)
@@ -1609,56 +1569,38 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
     (interactive)
     (find-alternate-file ".."))
 
-  :bind
-  (("C-c d" . dired-jump)
-   :map dired-mode-map
-   ("RET" . dired-find-alternate-file)
-   ("Y" . forge/dired-rsync)
-   ("^" . forge/dired-up))
-
-  :diminish dired-omit-mode
-
-  :custom
-  (dired-dwim-target t)
-  (dired-ls-F-marks-symlinks t)
-  (dired-listing-switches "-laFh1v --group-directories-first") ;; -F (classify), -h (human readable), -1 (one file per line), -v (version sorting)
-  (dired-recursive-copies 'always)
-  (dired-recursive-deletes 'top)
-  (global-auto-revert-non-file-buffers t) ;; auto refresh dired buffers
-
-  :config
   (put 'dired-find-alternate-file 'disabled nil)
   (when (forge/system-type-darwin-p)
-    (setq dired-use-ls-dired nil)
+    (setq dired-use-ls-dired nil))
 
-    ;; This requires installing coreutils via homebrew
-    (when (executable-find "gls")
-      (setq insert-directory-program "gls"
-            dired-use-ls-dired t)))
+  (setq dired-dwim-target t
+        dired-ls-F-marks-symlinks t
+        dired-listing-switches "-laFh1v --group-directories-first"
+        ;; -F (classify), -h (human readable), -1 (one file per line), -v (version sorting)
+        dired-recursive-copies 'always
+        dired-recursive-deletes 'top
+        global-auto-revert-non-file-buffers t) ;; auto refresh dired buffers
 
-  (setq auto-revert-verbose nil))
+  ;; This requires installing coreutils via homebrew
+  (when (executable-find "gls")
+    (setq insert-directory-program "gls"
+          dired-use-ls-dired t)))
+
+(setq auto-revert-verbose nil)
 
 (use-package async)
 (autoload 'dired-async-mode "dired-async.el" nil t)
 (dired-async-mode 1)
 
-(use-package dired-x
-  :after dired
-  :straight (:type built-in)
-  :custom
-  (dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
-                                      '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
-                                      '("\\.pdf$" "open")))
-  :init
+(with-eval-after-load 'dired-x
+  (setq dired-bind-jump nil
+        dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
+                                           '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
+                                           '("\\.pdf$" "open")))
   (global-unset-key (kbd "C-x C-j"))
-  (setq dired-bind-jump nil)
-  :config
   (add-to-list 'dired-omit-extensions ".DS_Store"))
 
-(use-package dired-aux
-  :after dired
-  :straight (:type built-in)
-  :init
+(with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
 
 (defun forge/maybe-convert-directory-to-rsync-target (directory)
@@ -1716,22 +1658,12 @@ read-file-name and dired-dwim-target-directory."
   :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
 
-(use-package magit-annex
-  :disabled t)
-
-(use-package git-annex
-  :disabled t
-  :after dired)
-
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   :init
   (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 
-(use-package go-jira
-  :no-require t
-  :straight (:type built-in)
-  :init
+(with-eval-after-load 'go-jira
   (defvar jira-token nil)
   (defun jira-create ()
     "Create a ticket in Jira."
@@ -1785,10 +1717,8 @@ read-file-name and dired-dwim-target-directory."
   :hook
   (message-setup . gnus-alias-determine-identity))
 
-(use-package gnus-dired
-  :straight (:type built-in)
-  :hook (dired-mode . turn-on-gnus-dired-mode)
-  :init
+(with-eval-after-load 'gnus-dired
+  (add-hook 'dired-mode #'turn-on-gnus-dired-mode)
   (setq gnus-dired-mail-mode 'notmuch-user-agent))
 
 (defun forge/mail-toggle-compose-new-frame ()
@@ -1875,16 +1805,13 @@ read-file-name and dired-dwim-target-directory."
 
 (global-set-key (kbd "C-c m") 'forge/hydra-email/body)
 
-(use-package sendmail
-  :straight (:type built-in)
-  :custom
-  (mail-specify-envelope-from t)
-  (mail-envelope-from 'header)
-  (sendmail-program (executable-find "sendmail.py")))
+(with-eval-after-load 'sendmail
+  (setq mail-specify-envelope-from t
+        mail-envelope-from 'header
+        sendmail-program (executable-find "sendmail.py")))
 
 (use-package smtpmail
   :disabled t
-  :straight (:type built-in)
   :config
   (setq smtpmail-stream-type 'ssl
         smtpmail-default-smtp-server forge-smtp-server-work
@@ -1893,9 +1820,7 @@ read-file-name and dired-dwim-target-directory."
         smtpmail-smtp-user forge-smtp-user-work
         smtpmail-queue-dir (expand-file-name "queue" forge-state-dir)))
 
-(use-package mml-sec
-  :straight (:type built-in)
-  :config
+(with-eval-after-load 'mml-sec
   (setq mml-secure-openpgp-encrypt-to-self t
         mml-secure-openpgp-sign-with-sender t
         mml-secure-smime-encrypt-to-self t
@@ -1903,7 +1828,7 @@ read-file-name and dired-dwim-target-directory."
   (add-to-list 'mml-secure-openpgp-signers "A852499F"))
 
 (use-package notmuch
-  :straight (:type built-in)
+  :ensure nil
   :commands (notmuch)
   :custom
   (notmuch-search-oldest-first nil)
@@ -2482,34 +2407,29 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :init
   (setq org-tree-slide-skip-outline-level 4))
 
-(use-package org-crypt
-  :straight (:type built-in)
-  :commands (org-encrypt-entry org-decrypt-entry)
-  :config
+(with-eval-after-load 'org-crypt
   (org-crypt-use-before-save-magic)
-  (setq org-crypt-disable-auto-save t)
-  (setq org-crypt-key user-full-name))
+  (setq org-crypt-disable-auto-save t
+        org-crypt-key user-full-name))
 
-(use-package org-id
-  :straight (org-contrib :includes org-id)
-  :custom
-  (org-id-method 'uuid)
-  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-  (org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
+(with-eval-after-load 'org-id
+  (setq org-id-method 'uuid
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-id-locations-file (expand-file-name "org/id-locations.el" forge-state-dir)))
 
 ;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
 (use-package ol-eww
-  :straight (org-contrib :includes ol-eww)
+  :ensure nil
   :after org)
 
 ;; support links to manual pages
 (use-package ol-man
-  :straight (org-contrib :includes ol-man)
+  :ensure nil
   :after org)
 
 (use-package ox-md
-  :straight (org :includes ox-md)
+  :ensure nil
   :after org)
 
 (use-package org-bullets
@@ -2885,9 +2805,8 @@ It will not remove entries from the source org file."
   (setq rmh-elfeed-org-files (list (expand-file-name "elfeed.org" org-directory)))
   (elfeed-org))
 
-(use-package youtube-dl
-  :commands (youtube-dl)
-  :init (setq youtube-dl-directory "~/annex/Video/youtube"))
+(with-eval-after-load 'youtube-dl
+  (setq youtube-dl-directory "~/annex/Video/youtube"))
 
 (use-package rg)
 
@@ -2905,10 +2824,13 @@ It will not remove entries from the source org file."
   :config
   (setq multi-term-program "/bin/zsh"))
 
-(use-package eshell
-  :straight (:type built-in)
-  :commands (eshell eshell-command)
-  :preface
+(with-eval-after-load 'em-unix
+  (unintern 'eshell/su nil)
+  (unintern 'eshell/sudo nil))
+
+(with-eval-after-load 'eshell
+  (define-key global-map (kbd "C-!") 'eshell-here)
+
   (defun eshell-here ()
     "Opens up a new shell in the directory associated with the current buffer's file."
     (interactive)
@@ -2922,16 +2844,6 @@ It will not remove entries from the source org file."
       (insert (concat "ls"))
       (eshell-send-input)))
 
-  (use-package em-unix
-    :straight (:type built-in)
-    :config
-    (unintern 'eshell/su nil)
-    (unintern 'eshell/sudo nil))
-
-  :bind
-  ("C-!" . eshell-here)
-
-  :config
   (setenv "TERM" "xterm-256color")
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
   (advice-add 'eshell-life-is-too-much :after 'forge/delete-window)
@@ -3064,7 +2976,7 @@ It will not remove entries from the source org file."
   :custom (gist-view-gist t))
 
 (use-package wttrin
-  :straight (wttrin :type git :host github :repo "sfromm/emacs-wttrin")
+  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
