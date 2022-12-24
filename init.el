@@ -2970,6 +2970,10 @@ It will not remove entries from the source org file."
         twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)
         twittering-status-format "%RT{%FACE[bold]{RT}}%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R%QT{\n+----\n%FOLD[|]{%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R}}\n+----}}\n%I\n "))
 
+(use-package mastodon
+  :config
+  (mastodon-discover))
+
 (use-package lorem-ipsum)
 
 (use-package gist

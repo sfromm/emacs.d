@@ -4203,7 +4203,35 @@ A couple things of note:
 
 
 #+end_src
+** Mastodon
+https://codeberg.org/martianh/mastodon.el
 
+The following variables are set with ~customize~:
+- =mastodon-instance-url=
+- =mastodon-active-user=
+
+#+begin_src emacs-lisp
+(use-package mastodon
+  :config
+  (mastodon-discover))
+#+end_src
+
+Keybindings of note:
+
+| Keybinding | Command                                       |
+|------------+-----------------------------------------------|
+| n          | Go to next item                               |
+| p          | Go to previous item                           |
+| g, u       | Update current timeline                       |
+| M-n        | Go to next "interesting" actionable thing     |
+| M-p        | Go to previous "interesting" actionable thing |
+| F          | Open federated timeline                       |
+| H          | Open home timeline                            |
+| L          | Open local timeline                           |
+| N          | Open notifications timeline                   |
+| T          | Open thread for toot under point              |
+| A          | Open author profile under point               |
+| P          | Open profile of user under point              |
 * Miscellaneous Utilities
 The following are miscellaneous utilities that are small but useful.
 
