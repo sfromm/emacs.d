@@ -15,6 +15,7 @@ user/
 .*.lock
 *.html
 \#*
+/custom.el
 savehist
 session.*
 secrets.el.gpg

@@ -134,8 +134,7 @@
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq custom-file (expand-file-name "custom.el" forge-personal-dir)
-          gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
           bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
           transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
@@ -168,6 +167,10 @@
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
+;; Load custom and then do basic initialization.
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 (forge/initialize)
 
 (defgroup forge nil

@@ -345,15 +345,15 @@ Sometimes installing a new package will bork packages.  This will recompile the 
   (byte-recompile-directory package-user-dir nil t))
 #+end_src
 ** Configure basic behavior
-Configure Emacs to use the above defined paths.  Also configure some basic behavior
-#+begin_src emacs-lisp
+Configure Emacs to use the above defined paths.  Also configure some basic
+behavior, and load =custom.el= file, used by /customize/.
 
+#+begin_src emacs-lisp
 (defun forge/clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
-    (setq custom-file (expand-file-name "custom.el" forge-personal-dir)
-          gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
+    (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
           bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
           transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
@@ -386,6 +386,10 @@ Configure Emacs to use the above defined paths.  Also configure some basic behav
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
+;; Load custom and then do basic initialization.
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 (forge/initialize)
 #+end_src
 
@@ -4260,9 +4264,8 @@ Try to make it easier to use =emacsclient= as the =$EDITOR= of child processes u
 (use-package with-editor)
 #+end_src
 * Cleanup
-The goal here is to load the =custom.el= file, used by /customize/, load any
-personal lisp files in =forge-personal-dir= path, and then finally to report how
-long it took to load the configuration.
+The goal here is to load any personal lisp files in =forge-personal-dir= path,
+and then finally to report how long it took to load the configuration.
 
 #+name: cleanup
 #+begin_src emacs-lisp
