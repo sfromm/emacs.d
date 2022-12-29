@@ -994,7 +994,6 @@ looks good.  It will also define a default theme to start with.
   :hook
   (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
-  (modus-themes-scale-headings t)
   (modus-themes-mixed-fonts t))
 
 ;; https://github.com/rougier/nano-theme
