@@ -4213,6 +4213,8 @@ The following variables are set with ~customize~:
 
 #+begin_src emacs-lisp
 (use-package mastodon
+  :custom
+  (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))
   :config
   (mastodon-discover))
 #+end_src

@@ -2971,6 +2971,8 @@ It will not remove entries from the source org file."
         twittering-status-format "%RT{%FACE[bold]{RT}}%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R%QT{\n+----\n%FOLD[|]{%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R}}\n+----}}\n%I\n "))
 
 (use-package mastodon
+  :custom
+  (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))
   :config
   (mastodon-discover))
 
