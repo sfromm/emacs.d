@@ -4249,6 +4249,7 @@ The following are miscellaneous utilities that are small but useful.
 #+end_src
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp
+(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
 (use-package wttrin
   :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)

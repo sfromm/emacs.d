@@ -2981,6 +2981,7 @@ It will not remove entries from the source org file."
 (use-package gist
   :custom (gist-view-gist t))
 
+(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
 (use-package wttrin
   :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
