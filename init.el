@@ -759,18 +759,9 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (use-package lin
   :config
+  (setq lin-face 'lin-mac-override-fg)
   (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
-
-;; https://gitlab.com/protesilaos/lin/
-(defun forge/lin-macos-system-colors ()
-  "Change foreground and background colors of this line."
-  (interactive)
-  (when (forge/system-type-darwin-p)
-    (set-face-attribute 'hl-line nil
-                        :foreground "alternateSelectedControlTextColor"
-                        :background "selectedContentBackgroundColor")))
-(add-hook 'ns-system-appearance-change-functions #'forge/lin-macos-system-colors)
 
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
