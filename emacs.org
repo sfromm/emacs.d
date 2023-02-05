@@ -4102,7 +4102,9 @@ A couple things of note:
   - You might run into an issue of /Symbol's function definition is void/.  The
     fix is to alias =decode-coding-string=.
 
-#+begin_src emacs-lisp
+Update on [2023-02-05 Sun]: Stop tangling the twitter config.
+
+#+begin_src emacs-lisp :tangle no
 (defalias 'epa--decode-coding-string 'decode-coding-string)
 
 (use-package twittering-mode
