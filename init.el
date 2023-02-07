@@ -1123,6 +1123,12 @@ prompt for what tab to switch to."
         (name . "\\*magit")
         (name . "magit-")
         (name . "git-monitor")))
+      ("Slack"
+       (or
+        (name . "^\\*Slack Log")
+        (name . "^\\*Slack Event")
+        (mode . slack-message-buffer-mode)
+        (mode . slack-mode)))
       ("Commands"
        (or
         (mode . shell-mode)
