@@ -1220,6 +1220,9 @@ prompt for what tab to switch to."
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
+(when (fboundp 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+
 (use-package page-break-lines
   :diminish page-break-lines-mode)
 

@@ -1727,6 +1727,13 @@ re-fill a paragraph or to unfill as needed.
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 #+end_src
 
+Lastly, display line numbers any time in a programming-related buffer.
+
+#+begin_src emacs-lisp
+(when (fboundp 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+#+end_src
+
 ** Page breaks
 Using page breaks have a couple benefits.  It can provide a nice visual
 separation between sections.  It also provides a way to navigate between
