@@ -1095,8 +1095,10 @@ prompt for what tab to switch to."
       ("Notmuch"
        (or
         (name . "\\*notmuch-")
-        (mode . notmuch-search)
-        (mode . notmuch-show)))
+        (mode . notmuch-search-mode)
+        (mode . notmuch-show-mode)
+        (mode . notmuch-message-mode)
+        (mode . message-mode)))
       ("Org"
        (or
         (name . "^\\*Calendar\\*$")
