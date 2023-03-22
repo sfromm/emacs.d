@@ -2019,6 +2019,13 @@ See also [[http://emacsrocks.com/e15.html][Emacs Rocks: restclient-mode]] episod
   :mode ("\\.http\\'" . restclient-mode))
 
 #+end_src
+*** GraphQL
+[[https://github.com/davazp/graphql-mode][graphql]] is a mode to edit GraphQL schema and queries.
+
+#+begin_src emacs-lisp
+(use-package graphql-mode
+  :mode ("\\.graphql\\'" . graphql-mode))
+#+end_src
 
 *** PHP
 This is really predominantly for syntax highlighting.
@@ -3827,8 +3834,6 @@ articles every 2 hours.
         ("e" . elfeed-show-open-eww)
         ("f" . forge/elfeed-show-toggle-starred)
         ("o" . elfeed-show-mpv))
-  :hook
-  (elfeed-search-update . forge/elfeed-search-save-db)
   :preface
   (defun forge/elfeed-load-db ()
     "Wrapper to load elfeed database from disk when running elfeed."

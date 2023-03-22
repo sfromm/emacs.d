@@ -1379,6 +1379,9 @@ prompt for what tab to switch to."
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
+(use-package graphql-mode
+  :mode ("\\.graphql\\'" . graphql-mode))
+
 (use-package php-mode
   :mode "\\.php\\'")
 
@@ -2656,8 +2659,6 @@ It will not remove entries from the source org file."
         ("e" . elfeed-show-open-eww)
         ("f" . forge/elfeed-show-toggle-starred)
         ("o" . elfeed-show-mpv))
-  :hook
-  (elfeed-search-update . forge/elfeed-search-save-db)
   :preface
   (defun forge/elfeed-load-db ()
     "Wrapper to load elfeed database from disk when running elfeed."
