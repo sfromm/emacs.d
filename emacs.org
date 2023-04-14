@@ -3452,8 +3452,8 @@ Miscellaneous notes:
 
                                 ("r" "Reference")
                                 ("rr" "Reference" entry
-                                 (file+headline "~/forge/journal.org" "Inbox")
-                                 "* REFERENCE %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
+                                 (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
 
                                 ("rw" "Web Page" entry
                                  (file+olp+datetree "~/forge/articles.org")

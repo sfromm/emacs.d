@@ -2336,8 +2336,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
                                 ("r" "Reference")
                                 ("rr" "Reference" entry
-                                 (file+headline "~/forge/journal.org" "Inbox")
-                                 "* REFERENCE %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
+                                 (file+olp+datetree "~/forge/articles.org")
+                                 "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
 
                                 ("rw" "Web Page" entry
                                  (file+olp+datetree "~/forge/articles.org")
