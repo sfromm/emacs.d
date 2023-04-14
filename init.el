@@ -2212,6 +2212,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-refile-use-outline-path 'file)
   (org-refile-targets '(("inbox.org" :maxlevel . 2)
                         ("agenda.org" :maxlevel . 3)
+                        ("articles.org" :maxlevel . 3)
                         ("notebook.org" :maxlevel . 5)
                         ("work.org" :maxlevel . 5)
                         ("personal.org" :maxlevel . 5)))
