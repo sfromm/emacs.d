@@ -2296,8 +2296,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                                               (org-agenda-prefix-format "  %i %-12:c [%e] ")))
 
-                                       (tags "CLOSED>=\"<today>\""
-                                             ((org-agenda-overriding-header "\nCompleted today\n")))))))
+                                       (tags "CLOSED>=\"<-10d>\""
+                                             ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
   ;;  (agenda nil
   ;;          ((org-agenda-entry-types '(:deadline))
   ;;           (org-agenda-format-date "")
