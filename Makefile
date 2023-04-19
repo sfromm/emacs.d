@@ -13,7 +13,7 @@ ifeq ($(OS),Darwin)
     PKGMGR = brew install
     PKG = emacs-plus@28
     PKGFLAGS = --with-native-comp
-    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono
+    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono font-jetbrains-mono
 endif
 
 install: tap
