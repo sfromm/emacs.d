@@ -687,9 +687,6 @@ helpers.
   mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'net-utils
-  (setq traceroute-program-options (list "-I")))
-
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
   "Wrapper for `dig'.
@@ -3193,15 +3190,15 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
     (add-to-list 'emms-info-functions 'emms-info-mp3info)))
 
 #+end_src
-** Network related
+** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.
 
 #+begin_src emacs-lisp
 (use-package net-utils
   :commands (ping traceroute)
   :config
-  (setq ping-program-options (list "-c" "5")))
-
+  (setq ping-program-options (list "-c" "5"))
+  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 #+end_src
 ** Org Mode
 *** Org

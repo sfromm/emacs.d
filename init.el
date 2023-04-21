@@ -403,9 +403,6 @@ end tell")
                       (derived-mode-p 'wdired-mode))
               default-directory))))))
 
-(with-eval-after-load 'net-utils
-  (setq traceroute-program-options (list "-I")))
-
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
   "Wrapper for `dig'.
@@ -2113,7 +2110,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (use-package net-utils
   :commands (ping traceroute)
   :config
-  (setq ping-program-options (list "-c" "5")))
+  (setq ping-program-options (list "-c" "5"))
+  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 
 (use-package org
   :preface
