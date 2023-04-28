@@ -807,6 +807,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
     ("S-SPC" scroll-down-command)
     ("[" backward-page)
     ("]" forward-page)
+    ("{" backward-paragraph)
+    ("}" forward-paragraph)
     ("<" beginning-of-buffer)
     (">" end-of-buffer)
     ("." end-of-buffer)

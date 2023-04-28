@@ -1170,6 +1170,8 @@ This is my personal keymap that then hooks into different commands, hydras, or o
     ("S-SPC" scroll-down-command)
     ("[" backward-page)
     ("]" forward-page)
+    ("{" backward-paragraph)
+    ("}" forward-paragraph)
     ("<" beginning-of-buffer)
     (">" end-of-buffer)
     ("." end-of-buffer)
