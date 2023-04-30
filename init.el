@@ -168,7 +168,7 @@
         large-file-warning-threshold 50000000))
 
 ;; Load custom and then do basic initialization.
-(setq custom-file (locate-user-emacs-file "custom.el"))
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
 (forge/initialize)
