@@ -1721,9 +1721,9 @@ read-file-name and dired-dwim-target-directory."
   :hook
   (message-setup . gnus-alias-determine-identity))
 
-(with-eval-after-load 'gnus-dired
-  (add-hook 'dired-mode #'turn-on-gnus-dired-mode)
-  (setq gnus-dired-mail-mode 'notmuch-user-agent))
+(add-hook 'dired-mode #'turn-on-gnus-dired-mode)
+(with-eval-after-load
+    (setq gnus-dired-mail-mode 'notmuch-user-agent))
 
 (defun forge/mail-toggle-compose-new-frame ()
   "Toggle whether to compose email in new frame."
@@ -2191,6 +2191,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   :custom
   (org-agenda-skip-scheduled-if-deadline-is-shown t)
+  (org-attach-id-dir "~/annex/org/data/")
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
@@ -2296,6 +2297,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                               (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                                               (org-agenda-prefix-format "  %i %-12:c [%e] ")))
 
+                                       (todo "WAITING"
+                                             ((org-agenda-overriding-header "\nWaiting\n")
+                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                                              (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+
                                        (tags "CLOSED>=\"<-10d>\""
                                              ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
   ;;  (agenda nil
@@ -2317,6 +2323,10 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                 ("i" "Inbox" entry
                                  (file "inbox.org")
                                  "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
+
+                                ("c" "Calendar invite" entry
+                                 (file+headline "agenda.org" "Future")
+                                 (function notmuch-calendar-capture-event) :prepend t)
 
                                 ("n" "Meeting notes" entry
                                  (file+olp+datetree "~/forge/journal.org")
