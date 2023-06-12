@@ -3252,16 +3252,21 @@ Miscellaneous notes:
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
+  (defun forge/org-set-property (property value)
+    "Set arbitrary PROPERTY to VALUE for current heading."
+    (org-back-to-heading)
+    (when (not (org-element-property :CREATED (org-element-at-point)))
+      (org-set-property property value)))
+
   (defun forge/org-set-uuid ()
     "Set ID property for current headline."
     (interactive)
-    (org-set-property "ID" (org-id-uuid)))
+    (forge/org-set-property "ID" (org-id-uuid)))
 
   (defun forge/org-set-created ()
     "Set CREATED property for current headline."
     (interactive)
-    (org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
-
+    (forge/org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
   (defun forge/org-timer-clock-in ()
     "Clock in when starting a org-timer."
