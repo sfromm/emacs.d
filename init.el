@@ -2197,6 +2197,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :custom
   (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-attach-id-dir "~/annex/org/data/")
+  (org-attach-method 'mv)
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
   (org-clock-display-default-range 'thisweek)
