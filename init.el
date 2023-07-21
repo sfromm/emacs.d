@@ -1882,7 +1882,7 @@ Will open a notmuch search buffer of the search results."
     "Search for recent mail for time period PERIOD.
 
 Prompts for  QUERY and this will amend the search to
-limit it to the last 7 days.
+limit it to the provided time PERIOD.
 Will open a notmuch search buffer of the search results."
     (let* ((query (or query (notmuch-read-query "Query: "))))
       (notmuch-search (concat "date:" period ".. AND " query))))
@@ -1976,19 +1976,42 @@ Will open a notmuch search buffer of the search results."
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
   (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk" "-spam")
-        notmuch-saved-searches '((:name "Inbox"           :key "i" :query "tag:inbox")
-                                 (:name "Flagged"         :key "f" :query "tag:flagged or tag:important")
-                                 (:name "Today"           :key "t" :query "date:24h.. and ( tag:inbox or tag:unread )")
-                                 (:name "Unread"          :key "u" :query "tag:unread")
-                                 (:name "3 days"          :key "3" :query "date:3d..  and ( tag:inbox or tag:unread )")
-                                 (:name "Last 7 days"     :key "7" :query "date:7d..  and ( tag:inbox or tag:unread )")
-                                 (:name "Last 30 days"    :key "m" :query "date:1M..1d and ( tag:inbox or tag:unread )")
-                                 (:name "Old messages"    :key "o" :query "date:..1M and ( tag:inbox or tag:bulk or tag:unread ) ")
-                                 (:name "Needs attention" :key "!" :query "tag:inbox and ( tag:abuse or tag:flagged )")
-                                 (:name "Sent"            :key "s" :query "tag:sent")
-                                 (:name "Attachments"     :key "A" :query "tag:attachment")
-                                 (:name "Bulk"            :key "B" :query "tag:unread and ( tag:bulk or tag:spam )")
-                                 (:name "Meeting Invites" :key "c" :query "mimetype:text/calendar"))))
+        notmuch-saved-searches '(( :name "📥 Inbox"
+                                   :key "i"
+                                   :query "tag:inbox")
+                                 ( :name "🚩 Flagged"
+                                   :key "f"
+                                   :query "tag:flagged or tag:important")
+                                 ( :name "📅 Today"
+                                   :key "t"
+                                   :query "date:24h.. and ( tag:inbox or tag:unread )")
+                                 ( :name "💬 Unread"
+                                   :key "u"
+                                   :query "tag:unread")
+                                 ( :name "Sent"
+                                   :key "s"
+                                   :query "tag:sent")
+                                 ( :name "3 days"
+                                   :key "3"
+                                   :query "date:3d..  and ( tag:inbox or tag:unread )")
+                                 ( :name "Last 7 days"
+                                   :key "7"
+                                   :query "date:7d..  and ( tag:inbox or tag:unread )")
+                                 ( :name "Last 30 days"
+                                   :key "m"
+                                   :query "date:1M..1d and ( tag:inbox or tag:unread )")
+                                 ( :name "Old messages"
+                                   :key "o"
+                                   :query "date:..1M and ( tag:inbox or tag:bulk or tag:unread ) ")
+                                 ( :name "Attachments"
+                                   :key "A"
+                                   :query "tag:attachment")
+                                 ( :name "Bulk"
+                                   :key "B"
+                                   :query "tag:unread and ( tag:bulk or tag:spam )")
+                                 ( :name "Meeting Invites"
+                                   :key "c"
+                                   :query "mimetype:text/calendar"))))
 
 (defun forge/twiddle-luminance (value)
   "Twiddle the luminance value to VALUE."
@@ -2073,6 +2096,20 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
          ;;             (notmuch-show-view-part)))
          ;;             (notmuch-show-apply-to-current-part-handle #'mm-display-part)))
          mm-handle))))
+
+(define-prefix-command 'my-mail-search-map)
+(define-key my-mail-search-map (kbd "s") 'notmuch-search)
+(define-key my-mail-search-map (kbd "r") 'notmuch-search-last-week)
+(define-key my-mail-search-map (kbd "m") 'notmuch-search-last-month)
+(define-key my-mail-search-map (kbd "A") 'notmuch-search-attachment)
+
+(define-prefix-command 'my-mail-map)
+(define-key my-mail-map (kbd "N") 'forge/mail-toggle-compose-new-frame)
+(define-key my-mail-map (kbd "W") 'forge/notmuch-save-all-attachments)
+(define-key my-mail-map (kbd "ra") 'forge/mail-reply-to-abuse)
+(define-key my-mail-map (kbd "rn") 'forge/mail-reply-to-noc)
+(define-key my-mail-map (kbd "s") 'my-mail-search-map)
+(global-set-key (kbd "C-c m") 'my-mail-map)
 
 (use-package mingus
   :disabled t
@@ -2417,7 +2454,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :after org
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
-  (add-to-list 'org-capture-templates '("c" "Contacts" entry
+  (add-to-list 'org-capture-templates '("C" "Contacts" entry
                                         (file "~/forge/contacts.org")
                                         "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 
