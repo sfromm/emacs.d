@@ -135,6 +135,12 @@
   :init
   (setq paradox-execute-asynchronously t))
 
+(defun init-mkdirs-user-emacs-directory ()
+  "Create emacs.d directories environment."
+  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
+    (unless (file-directory-p dir)
+      (make-directory dir t))))
+
 (defun init-clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
@@ -156,9 +162,7 @@
 
 (defun my-initialize ()
   "Initialize paths and session for this Emacs instance."
-  (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
-    (unless (file-directory-p dir)
-      (make-directory dir t)))
+  (init-mkdirs-user-emacs-directory)
   (init-clean-user-emacs-directory)
   ;; when native compilation is available ...
   (when (forge/native-comp-p)
