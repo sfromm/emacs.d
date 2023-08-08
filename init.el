@@ -16,7 +16,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (message "Loading up Emacs...")
-(defvar forge-core-start-time (current-time))
+(defvar init-core-start-time (current-time))
 
 (defun init-report-startup-time ()
   "Report startup time."
@@ -65,7 +65,7 @@
                          ("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")))
 
-(defun forge/package-install (package)
+(defun my-package-install (package)
   "Install PACKAGE if not yet installed."
   (unless (fboundp 'package-installed-p)
     (package-initialize))
@@ -80,13 +80,13 @@
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
 
-(defun forge/install-core-packages ()
+(defun init-install-core-packages ()
   "Install core packages to install for Emacs."
   (interactive)
   (dolist (package init-core-packages)
-    (progn (forge/package-install package))))
+    (progn (my-package-install package))))
 
-(forge/install-core-packages)
+(init-install-core-packages)
 
 ;; https://github.com/jwiegley/use-package
 (eval-when-compile
@@ -113,7 +113,7 @@
   :init
   (setq paradox-execute-asynchronously t))
 
-(defun forge/package-upgrade-packages ()
+(defun my-package-upgrade-packages ()
   "Upgrade all installed packages."
   (interactive)
   (save-window-excursion
@@ -125,12 +125,12 @@
 
 ;; Via spacemacs/core/core-funcs.el
 ;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun forge/recompile-elpa ()
+(defun my-recompile-elpa ()
   "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
   (interactive)
   (byte-recompile-directory package-user-dir nil t))
 
-(defun forge/clean-user-emacs-directory ()
+(defun init-clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
   (interactive)
   (with-no-warnings
@@ -147,12 +147,12 @@
           url-cache-directory (expand-file-name "url/cache/" forge-state-dir)
           url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
-(defun forge/initialize ()
+(defun my-initialize ()
   "Initialize paths and session for this Emacs instance."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
     (unless (file-directory-p dir)
       (make-directory dir t)))
-  (forge/clean-user-emacs-directory)
+  (init-clean-user-emacs-directory)
   ;; when native compilation is available ...
   (when (forge/native-comp-p)
     (setq native-comp-deferred-compilation nil
@@ -171,7 +171,7 @@
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
-(forge/initialize)
+(my-initialize)
 
 (defgroup forge nil
   "Forge custom settings."
@@ -314,7 +314,7 @@ end tell")
         (error nil))
       cursong)))
 
-(defun forge/reload-emacs-configuration ()
+(defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
   (load-file (expand-file-name "init.el" user-emacs-directory)))
@@ -632,8 +632,9 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :group 'forge)
 
 ;; https://github.com/hlissner/emacs-solaire-mode
-;; Needed by doom-themes
-(use-package solaire-mode)
+;; Encouraged by doom-themes
+(use-package solaire-mode
+  :disabled t)
 
 ;; https://github.com/hlissner/emacs-doom-themes
 (use-package doom-themes
@@ -1448,6 +1449,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (alert text :title title :id 'new-jabber-alert))
 
 (use-package jabber
+  :disabled t
   :preface
   (defun forge/jabber-start-or-switch ()
     "Connect to Jabber services"
