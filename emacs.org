@@ -138,13 +138,16 @@ relocated to /.emacs.d/var/.
 ;; package and package-quickstart
 ;; In Emacs 27+, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'.
-(setq package-quickstart nil                   ;; nope
-      package-enable-at-startup nil            ;; nope part deux
+(setq package-quickstart t                   ;; nope
+      package-enable-at-startup t            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
 ;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
+
+;; Set default coding system to UTF-8
+(set-language-environment "UTF-8")
 #+end_src
 
 =file-name-handler-alist= is consulted on every =require=, =load=, and so on.
@@ -186,13 +189,13 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 (message "Loading up Emacs...")
 (defvar forge-core-start-time (current-time))
 
-(defun forge/report-startup-time ()
+(defun init-report-startup-time ()
   "Report startup time."
   (interactive)
   (message "Emacs is ready, finished loading after %.03fs."
            (float-time (time-subtract after-init-time before-init-time))))
 
-(add-hook 'after-init-hook #'forge/report-startup-time)
+(add-hook 'after-init-hook #'init-report-startup-time)
 #+end_src
 
 * Core
@@ -988,8 +991,6 @@ looks good.  It will also define a default theme to start with.
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
-  :hook
-  (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
   (modus-themes-mixed-fonts t))
 
@@ -1095,13 +1096,22 @@ The following are modes I no longer use.  Configuration is here for reference.
 (add-hook 'after-init-hook #'forge/setup-ui)
 #+end_src
 ** LIN
-[[https://gitlab.com/protesilaos/lin.git][LIN]]
+[[https://gitlab.com/protesilaos/lin.git][LIN]] - a utility to enhance the built-in ~hl-line-mode~ so that it better matches
+the selection color in MacOS or other platforms.  See the [[https://protesilaos.com/emacs/lin][manual]].
 
 #+begin_src emacs-lisp
 (use-package lin
   :config
   (setq lin-face 'lin-mac-override-fg)
-  (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
+  (dolist (hook '(dired-mode-hook
+                  elfeed-search-mode-hook
+                  log-view-mode-hook
+                  magit-log-mode-hook
+                  notmuch-search-mode-hook
+                  notmuch-tree-mode-hook
+                  occur-mode-hook
+                  org-agenda-mode-hook
+                  package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
 
 #+end_src
@@ -1394,6 +1404,15 @@ backend to perform a search.  This can be invoked with =M-.=.
   ;; this requires at least xref-1.1.0, which comes with emacs-28.1 or newer
   (when (version<= "28.1" emacs-version)
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
+#+end_src
+
+*** Avy
+[[https://github.com/abo-abo/avy][avy]] is an Emacs package for jumping to visible text using a char-based decision tree.
+
+#+begin_src emacs-lisp
+(use-package avy
+  :functions (avy-setup-default)
+  :config (avy-setup-default))
 #+end_src
 ** Buffer & window management
 *** Tab bar

@@ -18,13 +18,13 @@
 (message "Loading up Emacs...")
 (defvar forge-core-start-time (current-time))
 
-(defun forge/report-startup-time ()
+(defun init-report-startup-time ()
   "Report startup time."
   (interactive)
   (message "Emacs is ready, finished loading after %.03fs."
            (float-time (time-subtract after-init-time before-init-time))))
 
-(add-hook 'after-init-hook #'forge/report-startup-time)
+(add-hook 'after-init-hook #'init-report-startup-time)
 
 ;;; Platform specific details.
 (defun forge/system-type-darwin-p ()
@@ -657,8 +657,6 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
-  :hook
-  (modus-themes-after-load-theme . forge/lin-macos-system-colors)
   :custom
   (modus-themes-mixed-fonts t))
 
@@ -757,7 +755,15 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (use-package lin
   :config
   (setq lin-face 'lin-mac-override-fg)
-  (dolist (hook '(elfeed-search-mode-hook notmuch-search-mode-hook package-menu-mode-hook))
+  (dolist (hook '(dired-mode-hook
+                  elfeed-search-mode-hook
+                  log-view-mode-hook
+                  magit-log-mode-hook
+                  notmuch-search-mode-hook
+                  notmuch-tree-mode-hook
+                  occur-mode-hook
+                  org-agenda-mode-hook
+                  package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
 
 (use-package which-key
@@ -1004,6 +1010,10 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   ;; this requires at least xref-1.1.0, which comes with emacs-28.1 or newer
   (when (version<= "28.1" emacs-version)
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
+
+(use-package avy
+  :functions (avy-setup-default)
+  :config (avy-setup-default))
 
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)

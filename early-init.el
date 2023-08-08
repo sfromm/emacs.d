@@ -23,13 +23,16 @@
 ;; package and package-quickstart
 ;; In Emacs 27+, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'.
-(setq package-quickstart nil                   ;; nope
-      package-enable-at-startup nil            ;; nope part deux
+(setq package-quickstart t                   ;; nope
+      package-enable-at-startup t            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
 ;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
+
+;; Set default coding system to UTF-8
+(set-language-environment "UTF-8")
 
 (unless (daemonp)
   (defvar init-file-name-handler-alist file-name-handler-alist)
