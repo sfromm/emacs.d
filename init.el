@@ -61,6 +61,11 @@
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
+;; Load custom and then do basic initialization.
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 (setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")))
@@ -77,11 +82,28 @@
     (message "Installed package %s." package)
     (delete-other-windows)))
 
+(defun my-package-upgrade-packages ()
+  "Upgrade all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
+    (message "Packages updated.")))
+
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun my-recompile-elpa ()
+  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
+
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
 
 (defun init-install-core-packages ()
-  "Install core packages to install for Emacs."
+  "Install core packages to bootstrap Emacs environment."
   (interactive)
   (dolist (package init-core-packages)
     (progn (my-package-install package))))
@@ -112,23 +134,6 @@
 (use-package paradox
   :init
   (setq paradox-execute-asynchronously t))
-
-(defun my-package-upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun my-recompile-elpa ()
-  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
 
 (defun init-clean-user-emacs-directory ()
   "Set appropriate paths to keep `user-emacs-directory' clean."
@@ -169,10 +174,6 @@
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
-;; Load custom and then do basic initialization.
-(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
-(when (file-exists-p custom-file)
-  (load custom-file))
 (my-initialize)
 
 (defgroup forge nil

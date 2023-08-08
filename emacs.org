@@ -245,6 +245,13 @@ pulling this package in.
 
 #+end_src
 
+** Load user =custom= file
+#+begin_src emacs-lisp
+;; Load custom and then do basic initialization.
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+#+end_src
 ** Set up =package= archives
 This defines what package archives are used and then initializes =package=.
 
@@ -252,6 +259,40 @@ This defines what package archives are used and then initializes =package=.
 (setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("gnu" . "https://elpa.gnu.org/packages/")))
+#+end_src
+
+** Helper functions for managing packages
+Sometimes installing a new package will bork packages.  This will recompile the /.el/ files.
+
+#+begin_src emacs-lisp
+(defun my-package-install (package)
+  "Install PACKAGE if not yet installed."
+  (unless (fboundp 'package-installed-p)
+    (package-initialize))
+  (unless (package-installed-p package)
+    (message "%s" "Refreshing package database...")
+    (package-refresh-contents)
+    (message "%s" " done.")
+    (package-install package)
+    (message "Installed package %s." package)
+    (delete-other-windows)))
+
+(defun my-package-upgrade-packages ()
+  "Upgrade all installed packages."
+  (interactive)
+  (save-window-excursion
+    (package-refresh-contents)
+    (package-list-packages t)
+    (package-menu-mark-upgrades)
+    (package-menu-execute 'noquery)
+    (message "Packages updated.")))
+
+;; Via spacemacs/core/core-funcs.el
+;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
+(defun my-recompile-elpa ()
+  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
+  (interactive)
+  (byte-recompile-directory package-user-dir nil t))
 #+end_src
 ** Set up =use-package= and other critical packages
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This
@@ -269,23 +310,11 @@ Additional notes:
   is set correctly.
 
 #+begin_src emacs-lisp
-(defun my-package-install (package)
-  "Install PACKAGE if not yet installed."
-  (unless (fboundp 'package-installed-p)
-    (package-initialize))
-  (unless (package-installed-p package)
-    (message "%s" "Refreshing package database...")
-    (package-refresh-contents)
-    (message "%s" " done.")
-    (package-install package)
-    (message "Installed package %s." package)
-    (delete-other-windows)))
-
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
 
 (defun init-install-core-packages ()
-  "Install core packages to install for Emacs."
+  "Install core packages to bootstrap Emacs environment."
   (interactive)
   (dolist (package init-core-packages)
     (progn (my-package-install package))))
@@ -325,27 +354,6 @@ Use Quelpa to install packages from source repositories.
 (use-package paradox
   :init
   (setq paradox-execute-asynchronously t))
-#+end_src
-** Helper functions for managing packages
-Sometimes installing a new package will bork packages.  This will recompile the /.el/ files.
-
-#+begin_src emacs-lisp
-(defun my-package-upgrade-packages ()
-  "Upgrade all installed packages."
-  (interactive)
-  (save-window-excursion
-    (package-refresh-contents)
-    (package-list-packages t)
-    (package-menu-mark-upgrades)
-    (package-menu-execute 'noquery)
-    (message "Packages updated.")))
-
-;; Via spacemacs/core/core-funcs.el
-;; https://github.com/syl20bnr/spacemacs/blob/c7a103a772d808101d7635ec10f292ab9202d9ee/core/core-funcs.el
-(defun my-recompile-elpa ()
-  "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
-  (interactive)
-  (byte-recompile-directory package-user-dir nil t))
 #+end_src
 ** Configure basic behavior
 Configure Emacs to use the above defined paths.  Also configure some basic
@@ -391,10 +399,6 @@ behavior, and load =custom.el= file, used by /customize/.
         ;; warn when opening files bigger than 50MB
         large-file-warning-threshold 50000000))
 
-;; Load custom and then do basic initialization.
-(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
-(when (file-exists-p custom-file)
-  (load custom-file))
 (my-initialize)
 #+end_src
 
