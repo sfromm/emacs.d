@@ -4094,9 +4094,12 @@ are part of a RSS feed.
 (use-package rg)
 #+end_src
 
-** Terminal-like applications
-I predominantly use =eshell= for terminal like needs.  I used to use
-=ansi-term=, but less so nowadays.
+
+** EShell Terminal
+I predominantly use =eshell= for terminal like needs.  There's always
+=ansi-term= if for some reason =eshell= isn't a good fit, but I find I rarely
+use it nowadays.  If I need a real terminal, I will probably use a proper
+terminal application.
 
 I also, on occasion, have a need to use serial console access.  The way to
 access this is via =serial-term=.  If using something like =ansi-term= or
@@ -4116,44 +4119,59 @@ Resources:
 - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Emacs: Mastering Eshell]] by Mickey Petersen
 - [[http://howardism.org/Technical/Emacs/eshell-fun.html][Eschewing Zshell for Emacs Shell]] by Howard Abrams
 
-#+NAME: multi-term
-#+begin_src emacs-lisp
-(defun forge/multi-term-here ()
-  "Open up a multi-term window."
-  (interactive)
-  (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
-         (height (/ (window-total-height) 3))
-         (name (car (last (split-string parent "/" t)))))
-    (split-window-vertically (- height))
-    (other-window 1)
-    (multi-term)))
-
-(use-package multi-term
-  :config
-  (setq multi-term-program "/bin/zsh"))
-#+end_src
-
 #+NAME: eshell
 #+begin_src emacs-lisp
 (with-eval-after-load 'em-unix
   (unintern 'eshell/su nil)
   (unintern 'eshell/sudo nil))
 
-(with-eval-after-load 'eshell
-  (define-key global-map (kbd "C-!") 'eshell-here)
+(defun eshell-here ()
+  "Opens up a new shell in the directory associated with the current buffer's file."
+  (interactive)
+  (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
+         (height (/ (window-total-height) 3))
+         (name (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+    (insert (concat "ls"))
+    (eshell-send-input)))
 
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the current buffer's file."
-    (interactive)
-    (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
-           (height (/ (window-total-height) 3))
-           (name (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
-      (insert (concat "ls"))
-      (eshell-send-input)))
+(define-key global-map (kbd "C-!") 'eshell-here)
+
+(with-eval-after-load 'eshell
+
+  (defun my-eshell-prompt-user ()
+    "Return username on current system for use in eshell prompt."
+    (if (tramp-tramp-file-p default-directory)
+        (or (tramp-file-name-user (tramp-dissect-file-name default-directory)) (getenv "USER"))
+      (user-login-name)))
+
+  (defun my-eshell-prompt-host ()
+    "Return hostname of current system for use in eshell prompt."
+    (if (tramp-tramp-file-p default-directory)
+        (tramp-file-name-host (tramp-dissect-file-name default-directory))
+      (system-name)))
+
+  (defun my-eshell-prompt-pwd ()
+    "Return PWD on current system for use in eshell prompt."
+    (abbreviate-file-name
+     (if (tramp-tramp-file-p default-directory)
+         (nth 6 (tramp-dissect-file-name default-directory))
+       (eshell/pwd))))
+
+  (defun my-eshell-default-prompt ()
+    "Generate prompt string for eshell.  Use for `eshell-prompt-function'."
+    (let ((user (my-eshell-prompt-user))
+          (host (my-eshell-prompt-host))
+          (now (format-time-string "%b %d %H:%M" (current-time)))
+          (pwd (my-eshell-prompt-pwd)))
+      (concat
+       "┌─[" user "  " host " " pwd "]─[" now "]\n"
+       "└─>"
+       (propertize " λ" 'face (if (zerop eshell-last-command-status) 'success 'error))
+       " ")))
 
   (setenv "TERM" "xterm-256color")
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
@@ -4162,14 +4180,8 @@ Resources:
         eshell-directory-name (expand-file-name "eshell" forge-state-dir)
         eshell-visual-commands '("less" "tmux" "htop" "top" "docker" "nethack")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
-        eshell-prompt-function (lambda ()
-                                 (concat
-                                  "┌─["
-                                  (user-login-name) "" (system-name)
-                                  " " (abbreviate-file-name (eshell/pwd))
-                                  " | " (format-time-string "%a %b %d %H:%M" (current-time))
-                                  "]\n"
-                                  "└─>" (if (= (user-uid) 0) " # " " $ "))) )
+        eshell-prompt-regexp "^[^#\nλ]*[#$λ] "
+        eshell-prompt-function #'my-eshell-default-prompt)
   (add-hook 'eshell-mode-hook (lambda ()
                                 (eshell/alias "q" "exit")
                                 (eshell/alias "l" "ls -al")
@@ -4189,7 +4201,7 @@ The following is a relic from when I used =ansi-term=.  Switch to an =ansi-term=
 buffer if it exists; otherwise, create one and switch to it.
 
 #+begin_src emacs-lisp
-(defun forge/terminal ()
+(defun my-terminal ()
   "Switch to terminal; launch if non-existent."
   (interactive)
   (if (get-buffer "*ansi-term*")
@@ -4197,6 +4209,24 @@ buffer if it exists; otherwise, create one and switch to it.
     (ansi-term "/bin/bash"))
   (get-buffer-process "*ansi-term*"))
 #+end_src
+
+#+NAME: multi-term
+#+begin_src emacs-lisp :tangle no
+(defun forge/multi-term-here ()
+  "Open up a multi-term window."
+  (interactive)
+  (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
+         (height (/ (window-total-height) 3))
+         (name (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (multi-term)))
+
+(use-package multi-term
+  :config
+  (setq multi-term-program "/bin/zsh"))
+#+end_src
+
 ** Twitter
 The following configuration is for [[https://github.com/hayamiz/twittering-mode][twittering]], an emacs mode for Twitter.  This
 package is not installed by default. You will have to go through the process of

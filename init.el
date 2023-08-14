@@ -2888,39 +2888,57 @@ It will not remove entries from the source org file."
 
 (use-package rg)
 
-(defun forge/multi-term-here ()
-  "Open up a multi-term window."
+(with-eval-after-load 'em-unix
+  (unintern 'eshell/su nil)
+  (unintern 'eshell/sudo nil))
+
+(defun eshell-here ()
+  "Opens up a new shell in the directory associated with the current buffer's file."
   (interactive)
   (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
          (height (/ (window-total-height) 3))
          (name (car (last (split-string parent "/" t)))))
     (split-window-vertically (- height))
     (other-window 1)
-    (multi-term)))
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+    (insert (concat "ls"))
+    (eshell-send-input)))
 
-(use-package multi-term
-  :config
-  (setq multi-term-program "/bin/zsh"))
-
-(with-eval-after-load 'em-unix
-  (unintern 'eshell/su nil)
-  (unintern 'eshell/sudo nil))
+(define-key global-map (kbd "C-!") 'eshell-here)
 
 (with-eval-after-load 'eshell
-  (define-key global-map (kbd "C-!") 'eshell-here)
 
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the current buffer's file."
-    (interactive)
-    (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
-           (height (/ (window-total-height) 3))
-           (name (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
-      (insert (concat "ls"))
-      (eshell-send-input)))
+  (defun my-eshell-prompt-user ()
+    "Return username on current system for use in eshell prompt."
+    (if (tramp-tramp-file-p default-directory)
+        (or (tramp-file-name-user (tramp-dissect-file-name default-directory)) (getenv "USER"))
+      (user-login-name)))
+
+  (defun my-eshell-prompt-host ()
+    "Return hostname of current system for use in eshell prompt."
+    (if (tramp-tramp-file-p default-directory)
+        (tramp-file-name-host (tramp-dissect-file-name default-directory))
+      (system-name)))
+
+  (defun my-eshell-prompt-pwd ()
+    "Return PWD on current system for use in eshell prompt."
+    (abbreviate-file-name
+     (if (tramp-tramp-file-p default-directory)
+         (nth 6 (tramp-dissect-file-name default-directory))
+       (eshell/pwd))))
+
+  (defun my-eshell-default-prompt ()
+    "Generate prompt string for eshell.  Use for `eshell-prompt-function'."
+    (let ((user (my-eshell-prompt-user))
+          (host (my-eshell-prompt-host))
+          (now (format-time-string "%b %d %H:%M" (current-time)))
+          (pwd (my-eshell-prompt-pwd)))
+      (concat
+       "┌─[" user "  " host " " pwd "]─[" now "]\n"
+       "└─>"
+       (propertize " λ" 'face (if (zerop eshell-last-command-status) 'success 'error))
+       " ")))
 
   (setenv "TERM" "xterm-256color")
   (setq explicit-shell-file-name "/bin/bash") ;; this is from term.el
@@ -2929,14 +2947,8 @@ It will not remove entries from the source org file."
         eshell-directory-name (expand-file-name "eshell" forge-state-dir)
         eshell-visual-commands '("less" "tmux" "htop" "top" "docker" "nethack")
         eshell-visual-subcommands '(("git" "log" "diff" "show"))
-        eshell-prompt-function (lambda ()
-                                 (concat
-                                  "┌─["
-                                  (user-login-name) "" (system-name)
-                                  " " (abbreviate-file-name (eshell/pwd))
-                                  " | " (format-time-string "%a %b %d %H:%M" (current-time))
-                                  "]\n"
-                                  "└─>" (if (= (user-uid) 0) " # " " $ "))) )
+        eshell-prompt-regexp "^[^#\nλ]*[#$λ] "
+        eshell-prompt-function #'my-eshell-default-prompt)
   (add-hook 'eshell-mode-hook (lambda ()
                                 (eshell/alias "q" "exit")
                                 (eshell/alias "l" "ls -al")
@@ -2950,7 +2962,7 @@ It will not remove entries from the source org file."
                                 (eshell/alias "gds" "magit-diff-staged")
                                 (eshell/alias "gst" "magit-status"))))
 
-(defun forge/terminal ()
+(defun my-terminal ()
   "Switch to terminal; launch if non-existent."
   (interactive)
   (if (get-buffer "*ansi-term*")
