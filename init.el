@@ -146,19 +146,19 @@
   (interactive)
   (with-no-warnings
     (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
-          async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir)
-          bookmark-default-file (expand-file-name "bookmarks" forge-state-dir)
-          calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir)
-          transient-history-file (expand-file-name "transient/history.el" forge-state-dir)
-          transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir)
-          transient-values-file (expand-file-name "transient/values.el" forge-personal-dir)
-          message-auto-save-directory (expand-file-name "messages" forge-state-dir)
-          package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir)
-          project-list-file (expand-file-name "project-list.el" forge-state-dir)
-          tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir)
-          tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir)
-          url-cache-directory (expand-file-name "url/cache/" forge-state-dir)
-          url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
+          async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir))
+    (customize-set-variable 'bookmark-default-file (expand-file-name "bookmarks" forge-state-dir))
+    (customize-set-variable 'calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir))
+    (customize-set-variable 'transient-history-file (expand-file-name "transient/history.el" forge-state-dir))
+    (customize-set-variable 'transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir))
+    (customize-set-variable 'transient-values-file (expand-file-name "transient/values.el" forge-personal-dir))
+    (customize-set-variable 'message-auto-save-directory (expand-file-name "messages" forge-state-dir))
+    (customize-set-variable 'package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
+    (customize-set-variable 'project-list-file (expand-file-name "project-list.el" forge-state-dir))
+    (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
+    (customize-set-variable 'tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
+    (customize-set-variable 'url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
+    (customize-set-variable 'url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
 (defun my-initialize ()
   "Initialize paths and session for this Emacs instance."
@@ -2481,7 +2481,9 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
               ("<f9>" . org-tree-slide-move-previous-tree)
-              ("<f10>" . org-tree-slide-move-next-tree))
+              ("<f10>" . org-tree-slide-move-next-tree)
+              ("C-,"  . org-tree-slide-move-previous-tree)
+              ("C-." . org-tree-slide-move-next-tree))
   :init
   (setq org-tree-slide-skip-outline-level 4))
 
