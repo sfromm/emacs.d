@@ -579,7 +579,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
         "Weather Icons")
   "List of extra Unicode fonts.")
 
-(defun forge/font-name-and-size ()
+(defun my-font-name-and-size ()
   "Compute and return font name and size string."
   (interactive)
   (let* ((size (number-to-string forge-font-size))
@@ -587,29 +587,29 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
     (if (interactive-p) (message "Font: %s" name))
     name))
 
-(defun forge/font-ok-p ()
+(defun font-ok-p ()
   "Is configured font valid?"
   (interactive)
   (member forge-font (font-family-list)))
 
-(defun forge/font-size-increase ()
+(defun font-size-increase ()
   "Increase font size."
   (interactive)
   (setq forge-font-size (+ forge-font-size 1))
-  (forge/font-update))
+  (my-font-update))
 
-(defun forge/font-size-decrease ()
+(defun font-size-decrease ()
   "Decrease font size."
   (interactive)
   (setq forge-font-size (- forge-font-size 1))
-  (forge/font-update))
+  (my-font-update))
 
-(defun forge/font-update ()
+(defun my-font-update ()
   "Update font configuration."
   (interactive)
-  (when (forge/font-ok-p)
+  (when (font-ok-p)
     (progn
-      (message "Font: %s" (forge/font-name-and-size))
+      (message "Font: %s" (my-font-name-and-size))
       ;; (set-frame-font forge-font)
       (set-face-attribute 'default nil :family forge-font :weight 'semi-light :height (* forge-font-size 10))
       (set-face-attribute 'fixed-pitch nil :family forge-font :height 1.0)
@@ -742,7 +742,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (when (display-graphic-p)
     (when (forge/system-type-darwin-p)
       (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
-    (forge/font-update)
+    (my-font-update)
     (line-number-mode t)                ;; show line number in modeline
     (column-number-mode t)              ;; show column number in modeline
     (size-indication-mode t)            ;; show buffer size in modeline
