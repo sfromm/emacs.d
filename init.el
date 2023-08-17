@@ -1135,6 +1135,10 @@ prompt for what tab to switch to."
        (mode . emacs-lisp-mode))
       ("Dired" (mode . dired-mode))
       ("SSH"   (filename . "^/ssh:*"))
+      ("Docker"
+       (or
+        (mode . dockerfile-mode)
+        (mode . docker-compose-mode)))
       ("Magit"
        (or
         (mode . magit-status-mode)
