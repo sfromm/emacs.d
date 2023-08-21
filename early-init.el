@@ -23,8 +23,8 @@
 ;; package and package-quickstart
 ;; In Emacs 27+, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'.
-(setq package-quickstart t                   ;; nope
-      package-enable-at-startup t            ;; nope part deux
+(setq package-quickstart nil                   ;; nope
+      package-enable-at-startup nil            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
 ;; help startup and garbage collection

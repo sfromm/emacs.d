@@ -138,8 +138,8 @@ relocated to /.emacs.d/var/.
 ;; package and package-quickstart
 ;; In Emacs 27+, package initialization occurs before `user-init-file' is
 ;; loaded, but after `early-init-file'.
-(setq package-quickstart t                   ;; nope
-      package-enable-at-startup t            ;; nope part deux
+(setq package-quickstart nil                   ;; nope
+      package-enable-at-startup nil            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
 ;; help startup and garbage collection
@@ -256,9 +256,10 @@ pulling this package in.
 This defines what package archives are used and then initializes =package=.
 
 #+begin_src emacs-lisp
-(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa" . "https://melpa.org/packages/")))
+
 #+end_src
 
 ** Helper functions for managing packages
@@ -3386,6 +3387,7 @@ Miscellaneous notes:
   :custom
   (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-attach-id-dir "~/annex/org/data/")
+  (org-directory "~/forge")
   (org-attach-method 'mv)
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
@@ -3431,7 +3433,6 @@ Miscellaneous notes:
         ("RET" . org-return))
 
   :init
-  (setq org-directory "~/forge")
   (setq org-file-apps (quote ((auto-mode . emacs)
                               ("\\.doc\\'" . "open %s")
                               ("\\.docx\\'" . "open %s")

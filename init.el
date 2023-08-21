@@ -66,9 +66,9 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
-(setq package-archives '(("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")))
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+                         ("melpa" . "https://melpa.org/packages/")))
 
 (defun my-package-install (package)
   "Install PACKAGE if not yet installed."
@@ -2257,6 +2257,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   :custom
   (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-attach-id-dir "~/annex/org/data/")
+  (org-directory "~/forge")
   (org-attach-method 'mv)
   (org-babel-python-command "python3")
   (org-catch-invisible-edits 'smart)
@@ -2302,7 +2303,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         ("RET" . org-return))
 
   :init
-  (setq org-directory "~/forge")
   (setq org-file-apps (quote ((auto-mode . emacs)
                               ("\\.doc\\'" . "open %s")
                               ("\\.docx\\'" . "open %s")
