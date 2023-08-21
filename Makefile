@@ -1,4 +1,4 @@
-ARGS = --quick --batch --load modules/forge-core.el
+ARGS = --quick --batch --load init.el
 OS := $(shell uname)
 VERSION = 26.1_1
 ifeq ($(OS),Linux)
@@ -23,14 +23,16 @@ tap:
 	brew tap d12frosted/$(PKG)
 
 bootstrap:
-	mkdir -p ~/.emacs.d/var/straight/repos
-	git clone https://github.com/radian-software/straight.el.git ~/.emacs.d/var/straight/repos/straight.el
+	@echo "bootstrapping packages we depend on"
+	$(EMACS) -f "init-install-core-packages"
+	$(EMACS) -f "my-package-install"
 
 update:
 	git diff-files --quiet && git pull --rebase
 
 upgrade: update
-	$(EMACS) -f "forge/upgrade-packages"
+	@echo "upgrading existing emacs pacakges"
+	$(EMACS) -f "my-package-upgrade-packages"
 
 fonts:
 	test -x /usr/local/bin/brew && brew tap homebrew/cask-fonts || true
