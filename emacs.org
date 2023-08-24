@@ -259,7 +259,7 @@ This defines what package archives are used and then initializes =package=.
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")))
-
+(package-initialize)
 #+end_src
 
 ** Helper functions for managing packages
@@ -2142,7 +2142,7 @@ the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 ** Calendar
 The calendar functionality is built-in.  This is to configure the /diary/ path.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (with-eval-after-load 'calendar
   (setq diary-file (expand-file-name "diary" org-directory)))
 #+end_src
@@ -3245,6 +3245,7 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
 
 #+begin_src emacs-lisp
 (use-package emms
+  :disabled t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
   (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
@@ -3346,13 +3347,13 @@ Miscellaneous notes:
   (defun forge/org-timer-clock-in ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
-	(call-interactively 'org-agenda-clock-in)
+        (call-interactively 'org-agenda-clock-in)
       (call-interactively 'org-clock-in)))
 
   (defun forge/org-timer-clock-out ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
-	(call-interactively 'org-agenda-clock-out)
+        (call-interactively 'org-agenda-clock-out)
       (call-interactively 'org-clock-out)))
 
   (defun forge/org-set-properties ()
@@ -3369,11 +3370,11 @@ Miscellaneous notes:
       (org-eww-copy-for-org-mode)
       (concat
        "* %a %? :ARTICLE:
-:PROPERTIES:
-:ID:       %(shell-command-to-string \"uuidgen\")
-:CREATED:  %U
-:URL:      " (eww-current-url) "
-:END:\n\n" (car kill-ring))))
+  :PROPERTIES:
+  :ID:       %(shell-command-to-string \"uuidgen\")
+  :CREATED:  %U
+  :URL:      " (eww-current-url) "
+  :END:\n\n" (car kill-ring))))
 
 
   :hook
@@ -3397,7 +3398,7 @@ Miscellaneous notes:
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
   (org-confirm-babel-evaluate nil)
-  (org-default-notes-file (concat org-directory "/journal.org"))
+  (org-default-notes-file (expand-file-name "journal.org" org-directory))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
   (org-export-backends '(ascii html icalendar latex md))
@@ -3457,12 +3458,8 @@ Miscellaneous notes:
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
         org-agenda-compact-blocks t
-        org-agenda-files (list
-                          (concat org-directory "/inbox.org")
-                          (concat org-directory "/agenda.org")
-                          (concat org-directory "/journal.org")
-                          (concat org-directory "/work.org")
-                          (concat org-directory "/personal.org"))
+        org-agenda-files '("~/forge/inbox.org" "~/forge/agenda.org"
+                           "~/forge/journal.org" "~/forge/work.org" "~/forge/personal.org")
         org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
                                    (todo   . " %i %-12:c")
                                    (tags   . " %i %-12:c")
@@ -3573,7 +3570,13 @@ Miscellaneous notes:
         org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
         org-publish-project-alist '(("public"
                                      :base-directory "~/forge"
-                                     :publishing-directory "~/Documents")))
+                                     :publishing-directory "~/Documents"))))
+
+
+
+(with-eval-after-load 'org
+  (forge/org-fixed-font-faces)
+  (org-load-modules-maybe t)
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
                                                            (dot . t)
                                                            (emacs-lisp . t)
@@ -3582,12 +3585,8 @@ Miscellaneous notes:
                                                            (python . t)
                                                            (ruby . t)
                                                            (shell . t)
-                                                           (calc . t)))
+                                                           (calc . t))))
 
-  (forge/org-fixed-font-faces))
-
-(eval-after-load 'org
-  '(org-load-modules-maybe t))
 
 #+end_src
 *** Org Mode, Notmuch and mail
@@ -3841,7 +3840,7 @@ It will not remove entries from the source org file."
 *** Deprecated Org Journal
 I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journaling, but now just use Org's /datetree/ model.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package org-journal
   :disabled t
   :preface

@@ -69,6 +69,7 @@
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
 
 (defun my-package-install (package)
   "Install PACKAGE if not yet installed."
@@ -1448,9 +1449,6 @@ prompt for what tab to switch to."
 (use-package ledger-mode
   :commands ledger-mode)
 
-(with-eval-after-load 'calendar
-  (setq diary-file (expand-file-name "diary" org-directory)))
-
 (require 'notifications)
 (require 'tls)
 
@@ -2148,6 +2146,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
       cursong)))
 
 (use-package emms
+  :disabled t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
   (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
@@ -2216,13 +2215,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (defun forge/org-timer-clock-in ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
-	(call-interactively 'org-agenda-clock-in)
+        (call-interactively 'org-agenda-clock-in)
       (call-interactively 'org-clock-in)))
 
   (defun forge/org-timer-clock-out ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
-	(call-interactively 'org-agenda-clock-out)
+        (call-interactively 'org-agenda-clock-out)
       (call-interactively 'org-clock-out)))
 
   (defun forge/org-set-properties ()
@@ -2239,11 +2238,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
       (org-eww-copy-for-org-mode)
       (concat
        "* %a %? :ARTICLE:
-:PROPERTIES:
-:ID:       %(shell-command-to-string \"uuidgen\")
-:CREATED:  %U
-:URL:      " (eww-current-url) "
-:END:\n\n" (car kill-ring))))
+  :PROPERTIES:
+  :ID:       %(shell-command-to-string \"uuidgen\")
+  :CREATED:  %U
+  :URL:      " (eww-current-url) "
+  :END:\n\n" (car kill-ring))))
 
 
   :hook
@@ -2267,7 +2266,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (org-clock-persist t)
   (org-clock-sound (expand-file-name "drip.ogg" "~/annex/Music/"))
   (org-confirm-babel-evaluate nil)
-  (org-default-notes-file (concat org-directory "/journal.org"))
+  (org-default-notes-file (expand-file-name "journal.org" org-directory))
   (org-ellipsis "⤵")
   (org-export-allow-bind-keywords t)
   (org-export-backends '(ascii html icalendar latex md))
@@ -2327,12 +2326,8 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         org-agenda-restore-windows-after-quit t
         org-agenda-window-setup 'current-window
         org-agenda-compact-blocks t
-        org-agenda-files (list
-                          (concat org-directory "/inbox.org")
-                          (concat org-directory "/agenda.org")
-                          (concat org-directory "/journal.org")
-                          (concat org-directory "/work.org")
-                          (concat org-directory "/personal.org"))
+        org-agenda-files '("~/forge/inbox.org" "~/forge/agenda.org"
+                           "~/forge/journal.org" "~/forge/work.org" "~/forge/personal.org")
         org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
                                    (todo   . " %i %-12:c")
                                    (tags   . " %i %-12:c")
@@ -2443,7 +2438,13 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
         org-publish-project-alist '(("public"
                                      :base-directory "~/forge"
-                                     :publishing-directory "~/Documents")))
+                                     :publishing-directory "~/Documents"))))
+
+
+
+(with-eval-after-load 'org
+  (forge/org-fixed-font-faces)
+  (org-load-modules-maybe t)
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
                                                            (dot . t)
                                                            (emacs-lisp . t)
@@ -2452,12 +2453,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                                                            (python . t)
                                                            (ruby . t)
                                                            (shell . t)
-                                                           (calc . t)))
-
-  (forge/org-fixed-font-faces))
-
-(eval-after-load 'org
-  '(org-load-modules-maybe t))
+                                                           (calc . t))))
 
 (use-package ol-notmuch      ;; use package from site-lisp
   :after (:any org notmuch))
@@ -2669,26 +2665,6 @@ It will not remove entries from the source org file."
            (goto-char (point-min))))
   (search-forward heading nil t)
   (goto-char (point-max)))
-
-(use-package org-journal
-  :disabled t
-  :preface
-  (defun org-journal-find-location ()
-    "Open today's journal file."
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    ;; This should also get org-mode to the right place to add a heading at the correct depth
-    (org-journal-new-entry t)
-    (goto-char (point-max)))
-  ;; Position point on the journal's top-level heading so that org-capture
-  ;; will add the new entry as a child entry.
-  ;; (goto-char (point-max)))
-
-  :init
-  (setq org-journal-dir (concat org-directory "/journal/")
-        org-journal-file-type 'yearly
-        org-journal-file-format "%Y"
-        org-journal-date-format "%A, %d %B %Y"))
 
 (when (forge/system-type-darwin-p)
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
