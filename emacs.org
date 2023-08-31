@@ -201,6 +201,7 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 * Core
 ** Platform helpers
 #+begin_src emacs-lisp
+
 ;;; Platform specific details.
 (defun forge/system-type-darwin-p ()
   "Return non-nil if system is Darwin/MacOS."
@@ -247,6 +248,7 @@ pulling this package in.
 
 ** Load user =custom= file
 #+begin_src emacs-lisp
+
 ;; Load custom and then do basic initialization.
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
@@ -256,6 +258,7 @@ pulling this package in.
 This defines what package archives are used and then initializes =package=.
 
 #+begin_src emacs-lisp
+
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")))
@@ -311,6 +314,7 @@ Additional notes:
   is set correctly.
 
 #+begin_src emacs-lisp
+
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
 
@@ -338,6 +342,7 @@ Additional notes:
 Use Quelpa to install packages from source repositories.
 
 #+begin_src emacs-lisp
+
 (use-package quelpa
   :init
   (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
@@ -361,6 +366,7 @@ Configure Emacs to use the above defined paths.  Also configure some basic
 behavior, and load =custom.el= file, used by /customize/.
 
 #+begin_src emacs-lisp
+
 (defun init-mkdirs-user-emacs-directory ()
   "Create emacs.d directories environment."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
@@ -419,6 +425,7 @@ Create a customization group for variables specific to this configuration.
 The following is meant to load any configuration in =forge-site-dir= or =forge-personal-dir=.
 
 #+begin_src emacs-lisp
+
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
   (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
@@ -455,6 +462,7 @@ The following are a couple elements that are only loaded if on MacOS or on Linux
 This only has the helper function to check for network connectivity.
 
 #+begin_src emacs-lisp
+
 ;; dbus is a linux thing -- only load on that platform
 (when (forge/system-type-linux-p)
   (require 'dbus)
@@ -475,6 +483,7 @@ This section is various helper functions for when on MacOS.
 
 **** Set up PATH
 #+begin_src emacs-lisp
+
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
 ;;; Some platforms, such as MacOSX, do not get this done correctly.
@@ -598,6 +607,7 @@ end tell")
 ** Helper functions
 *** Feature related helpers
 #+begin_src emacs-lisp
+
 (defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
@@ -866,6 +876,7 @@ Resources:
 
 *** Define font variables
 #+begin_src emacs-lisp
+
 (defcustom forge-font "IBM Plex Mono"
   "Preferred default font."
   :type 'string
@@ -971,6 +982,7 @@ This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.
 
 #+begin_src emacs-lisp
+
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
   :type 'symbol
@@ -1004,7 +1016,8 @@ looks good.  It will also define a default theme to start with.
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
   :custom
-  (modus-themes-mixed-fonts t))
+  (modus-themes-mixed-fonts t)
+  (modus-themes-variable-pitch-ui t))
 
 ;; https://github.com/rougier/nano-theme
 (use-package nano-theme)
@@ -1034,6 +1047,7 @@ looks good.  It will also define a default theme to start with.
 At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.
 
 #+begin_src emacs-lisp
+
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :custom
@@ -1079,6 +1093,7 @@ The following are modes I no longer use.  Configuration is here for reference.
 #+end_src
 ** Look and feel
 #+begin_src emacs-lisp
+
 (defun forge/setup-ui ()
   "Set up the look and feel."
   (interactive)
@@ -1137,6 +1152,7 @@ with it.  This covers a lot of ground.
 For example, you can type =C-h= and it will show available completions.
 
 #+begin_src emacs-lisp
+
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
   :demand t
@@ -1173,6 +1189,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 #+end_src
 *** Hydra
 #+begin_src emacs-lisp
+
 (use-package hydra
   :demand t
   :config
@@ -1268,6 +1285,7 @@ perspective, integrates well with Emacs.
 *** Orderless, Consult, and friends
 
 #+begin_src emacs-lisp
+
 ;; https://github.com/minad/vertico
 (use-package vertico
   :demand t
@@ -1341,7 +1359,7 @@ perspective, integrates well with Emacs.
 Below is my configuration for [[https://github.com/abo-abo/swiper][Ivy, Counsel, Swiper]], and [[https://github.com/nonsequitur/smex/][smex]].  They have been
 disabled while I try out Selectrum and friends.  This also disables [[https://github.com/abo-abo/avy][avy]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;;; ivy, swiper, and counsel
 ;;; https://github.com/abo-abo/swiper
 (use-package ivy
@@ -1387,6 +1405,10 @@ disabled while I try out Selectrum and friends.  This also disables [[https://gi
 #+end_src
 
 ** Navigation
+#+begin_src emacs-lisp
+
+;;; Navigation
+#+end_src
 *** Navigation between windows
 =windmove= makes it really easy to navigate between windows.  The keys below are
 based on vim and intended to keep my hand on the home row.
@@ -1446,6 +1468,7 @@ as part of a DWIM function to switch tabs.
 | C-x t 2 | ~tab-new~                    | Open current buffer in new tab |
 
 #+begin_src emacs-lisp
+
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
   (setq tab-bar-close-tab-select 'recent
@@ -1628,6 +1651,7 @@ the window contents.
 This is an attempt to make scrolling a bit smoother and friendlier.
 
 #+begin_src emacs-lisp
+
 (setq hscroll-margin 2
       hscroll-step 1
       scroll-conservatively 101
@@ -1668,6 +1692,7 @@ under =~/.emacs.d/-= and not scattered across the filesystem.  Make backups
 regularly.
 
 #+begin_src emacs-lisp
+
 (setq backup-directory-alist (list (cons ".*" forge-backup-dir)) ;; make backups of files to the backup directory
       auto-save-file-name-transforms `((".*" ,forge-backup-dir t))   ;;
       backup-by-copying t
@@ -1689,6 +1714,7 @@ Resources:
 - https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
 
 #+begin_src emacs-lisp
+
 (require 'savehist)
 (with-eval-after-load 'savehist
   (setq savehist-file (expand-file-name "savehist" forge-state-dir)
@@ -1708,6 +1734,7 @@ Articles:
 - [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
 
 #+begin_src emacs-lisp
+
 (use-package undo-tree
   :disabled t
   :diminish undo-tree-mode
@@ -1728,6 +1755,7 @@ show matching parentheses.  Secondly, it disables using tabs and requires a
 final newline in the file.
 
 #+begin_src emacs-lisp
+
 (show-paren-mode)
 (setq-default indent-tabs-mode nil
               fill-column 80
@@ -1782,7 +1810,9 @@ Resources:
 
 #+begin_src emacs-lisp
 (use-package page-break-lines
-  :diminish page-break-lines-mode)
+  :diminish page-break-lines-mode
+  :hook
+  (emacs-lisp-mode . page-break-lines-mode))
 #+end_src
 ** Snippets
 [[https://github.com/joaotavora/yasnippet][Yasnippet]] is a template system for Emacs.  You type in an abbreviation and
@@ -1792,6 +1822,7 @@ The default for =yas-snippet-dirs= is =~/.emacs.d/snippets/=.   I add to that an
 is =~/.emacs.d/user/snippets=.
 
 #+begin_src emacs-lisp
+
 (use-package yasnippet
   :diminish yasnippet-minor-mode
   :init
@@ -1804,6 +1835,7 @@ is =~/.emacs.d/user/snippets=.
 [[https://github.com/magnars/expand-region.el][expand-region]] to quickly expand the selected region.  Use =C-== to do so.
 
 #+begin_src emacs-lisp
+
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
@@ -1813,6 +1845,7 @@ is =~/.emacs.d/user/snippets=.
 This includes things like folding XML sections.
 
 #+begin_src emacs-lisp
+
 (use-package hideshow
   :diminish hs-minor-mode
   :hook ((prog-mode) . hs-minor-mode)
@@ -1829,6 +1862,7 @@ This includes things like folding XML sections.
 [[https://www.emacswiki.org/emacs/RecentFiles][recentf]] will show recently opened files.  The state file is saved in =forge-state-dir=.
 
 #+begin_src emacs-lisp
+
 (use-package recentf
   :bind ("<f7>" . consult-recent-file)
   :custom
@@ -1847,6 +1881,7 @@ using =set-buffer-file-coding-system= (=C-x RET f=) to /undecided-dos/ or
 See also: https://www.emacswiki.org/emacs/DosToUnix
 
 #+begin_src emacs-lisp
+
 (defun dos2unix (buffer)
   "Do replacement of ^M characters with newlines in BUFFER."
   ;; This is basically: "M-% C-q C-m RET C-q C-j RET"
@@ -1861,6 +1896,7 @@ See also: https://www.emacswiki.org/emacs/DosToUnix
 will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https://pypi.org/project/pylint/][pylint]]
 
 #+begin_src emacs-lisp
+
 (use-package flycheck
   :diminish flycheck-mode
   :custom (flycheck-global-modes '(not org-mode))
@@ -1871,6 +1907,7 @@ will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https:
 [[https://company-mode.github.io/][company-mode]] is a text completion framework for Emacs.
 
 #+begin_src emacs-lisp
+
 (use-package company
   :hook (prog-mode . company-mode)
   :diminish company-mode)
@@ -1902,6 +1939,7 @@ allows you to jump between changes and revert them.
 docker-compose files.
 
 #+begin_src emacs-lisp
+
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" . dockerfile-mode))
 
@@ -1913,6 +1951,7 @@ docker-compose files.
 Go ahead and set up modes to help with editing Lisp files.
 
 #+begin_src emacs-lisp
+
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
@@ -1933,6 +1972,7 @@ Go ahead and set up modes to help with editing Lisp files.
 [[https://github.com/jrblevin/markdown-mode][markdown-mode]]
 
 #+begin_src emacs-lisp
+
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
@@ -1974,6 +2014,7 @@ Set =python-shell-interpreter= to =python3=, if found in PATH,
 and if =python-shell-interpreter= is the default value =python=.
 
 #+begin_src emacs-lisp
+
 (use-package python
   :interpreter ("python" . python-mode)
   :hook
@@ -2001,6 +2042,7 @@ and if =python-shell-interpreter= is the default value =python=.
 I pull in this package for the formatting and font-lock features.
 
 #+begin_src emacs-lisp
+
 (use-package go-mode
   :mode "\\.go\\ '"
   :config
@@ -2023,6 +2065,7 @@ I pull in this package for the formatting and font-lock features.
 [[https://web-mode.org/][web-mode]] is a mode for editing web templates, including HTML, CSS, Jinja, and other files.
 
 #+begin_src emacs-lisp
+
 (use-package web-mode
   :mode ("\\.html\\'" "\\.j2\\'")
   :init
@@ -2071,6 +2114,7 @@ This is really predominantly for syntax highlighting.
 ** Data serialization formats
 *** CSV
 #+begin_src emacs-lisp
+
 (use-package csv-mode
   :hook
   (csv-mode . forge/toggle-highlight-line)
@@ -2118,6 +2162,7 @@ documents.
 ** Network device configurations
 *** Junos
 #+begin_src emacs-lisp
+
 (with-eval-after-load 'junos-mode
   (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
   (setq-local c-basic-offset 4))
@@ -2143,6 +2188,7 @@ the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 The calendar functionality is built-in.  This is to configure the /diary/ path.
 
 #+begin_src emacs-lisp :tangle no
+
 (with-eval-after-load 'calendar
   (setq diary-file (expand-file-name "diary" org-directory)))
 #+end_src
@@ -2157,6 +2203,7 @@ Pull in =notifications= and =tls= for all the pieces below.
 My legacy Jabber configuration.  Not used much anymore.
 
 #+begin_src emacs-lisp
+
 (defun forge/jabber-notification (from buf text title)
   "Take a notification from jabber and send to `alert'.
 Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
@@ -2201,6 +2248,7 @@ IRC configuration.  As a default, use =user-login-name= as the default for
 =erc-nick= and =erc-user-full-name=.
 
 #+begin_src emacs-lisp
+
 (with-eval-after-load 'erc
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
@@ -2284,6 +2332,7 @@ Helpful resources:
 - http://endlessparentheses.com/keep-your-slack-distractions-under-control-with-emacs.html?source=rss
 
 #+begin_src emacs-lisp
+
 (defvar forge-slack-client-id nil
   "Slack Client ID.")
 
@@ -2311,6 +2360,7 @@ reuse the same window & buffer.
 https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#orgheadline11
 
 #+begin_src emacs-lisp
+
 (with-eval-after-load 'dired
   (diminish 'dired-omit-mode)
 
@@ -2437,6 +2487,7 @@ I use git for lots of things, but essentially to version control all kinds of
 documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.
 
 #+begin_src emacs-lisp
+
 (use-package magit
   :commands magit-status
   :bind ("C-x g" . magit-status)
@@ -2453,7 +2504,7 @@ I also pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine
   :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
 #+end_src
-*** Deprecated git-annex
+
 I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for reference.
 
 #+begin_src emacs-lisp :tangle no
@@ -2467,6 +2518,7 @@ I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for refer
 
 ** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
 #+begin_src emacs-lisp
+
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   :init
@@ -2475,7 +2527,7 @@ I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for refer
 
 ** Jira
 [[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
-init.el.  Not an actual emacs package.
+init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'go-jira
@@ -2640,6 +2692,7 @@ Notes:
   inline or as MIME.
 
 #+begin_src emacs-lisp
+
 (require 'message)
 (with-eval-after-load 'message
   (defun forge/mail-toggle-forward-mime ()
@@ -3227,7 +3280,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mingus]] as an Emacs interface to MPD.
 
 #+begin_src emacs-lisp
-(use-package mingus
+(use-package mingus :tangle no
   :disabled t
   :preface
   (defun forge/get-current-song-mpd ()
@@ -3244,7 +3297,7 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
 [[https://www.gnu.org/software/emms/][EMMS]] is another Emacs interface to playing multimedia.  I occasionally use this.  The docs are [[https://www.gnu.org/software/emms/manual/][here]].
 
 #+begin_src emacs-lisp
-(use-package emms
+(use-package emms :tangle no
   :disabled t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
@@ -3272,6 +3325,7 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
 A place to configure miscellaneous settings for network utilities.
 
 #+begin_src emacs-lisp
+
 (use-package net-utils
   :commands (ping traceroute)
   :config
@@ -3306,6 +3360,7 @@ Miscellaneous notes:
   This has taken the place of /org-pomodoro/.  See [[https://orgmode.org/manual/Timers.html][Org timers]].
 
 #+begin_src emacs-lisp
+
 (use-package org
   :preface
   (defun forge/org-fixed-font-faces ()
@@ -3576,7 +3631,7 @@ Miscellaneous notes:
 
 (with-eval-after-load 'org
   (forge/org-fixed-font-faces)
-  (org-load-modules-maybe t)
+  ;; (org-load-modules-maybe t)
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
                                                            (dot . t)
                                                            (emacs-lisp . t)
@@ -3870,6 +3925,7 @@ overview of the password store.  I also use [[https://github.com/ecraven/ivy-pas
 passwords to the clipboard.
 
 #+begin_src emacs-lisp
+
 (when (forge/system-type-darwin-p)
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (setq epa-pinentry-mode 'loopback))
@@ -3903,6 +3959,7 @@ to navigate a news feed.  It also sets a timer =elfeed-update-timer= to fetch
 articles every 2 hours.
 
 #+begin_src emacs-lisp
+
 (use-package elfeed
   :commands (elfeed)
   :bind
@@ -4090,14 +4147,13 @@ are part of a RSS feed.
 (with-eval-after-load 'youtube-dl
   (setq youtube-dl-directory "~/annex/Video/youtube"))
 #+end_src
-** Search
-*** Ripgrep
+** Search / Ripgrep
 [[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
 
 #+begin_src emacs-lisp
+
 (use-package rg)
 #+end_src
-
 
 ** EShell Terminal
 I predominantly use =eshell= for terminal like needs.  There's always
@@ -4125,6 +4181,7 @@ Resources:
 
 #+NAME: eshell
 #+begin_src emacs-lisp
+
 (with-eval-after-load 'em-unix
   (unintern 'eshell/su nil)
   (unintern 'eshell/sudo nil))
@@ -4247,9 +4304,11 @@ A couple things of note:
 Update on [2023-02-05 Sun]: Stop tangling the twitter config.
 
 #+begin_src emacs-lisp :tangle no
+
 (defalias 'epa--decode-coding-string 'decode-coding-string)
 
 (use-package twittering-mode
+  :disabled t
   :commands twit
   :bind
   (:map twittering-mode-map
@@ -4347,6 +4406,7 @@ The following variables are set with ~customize~:
 - =mastodon-active-user=
 
 #+begin_src emacs-lisp
+
 (use-package mastodon
   :custom
   (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))

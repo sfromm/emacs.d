@@ -26,6 +26,7 @@
 
 (add-hook 'after-init-hook #'init-report-startup-time)
 
+
 ;;; Platform specific details.
 (defun forge/system-type-darwin-p ()
   "Return non-nil if system is Darwin/MacOS."
@@ -61,11 +62,13 @@
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
+
 ;; Load custom and then do basic initialization.
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
 
+
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/")))
@@ -100,6 +103,7 @@
   (interactive)
   (byte-recompile-directory package-user-dir nil t))
 
+
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
 
@@ -122,6 +126,7 @@
       use-package-always-ensure t
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
+
 (use-package quelpa
   :init
   (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
@@ -136,6 +141,7 @@
   :init
   (setq paradox-execute-asynchronously t))
 
+
 (defun init-mkdirs-user-emacs-directory ()
   "Create emacs.d directories environment."
   (dolist (dir (list forge-site-dir forge-personal-dir forge-state-dir forge-backup-dir forge-log-dir))
@@ -185,6 +191,7 @@
   "Forge custom settings."
   :group 'environment)
 
+
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
   (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
@@ -209,6 +216,7 @@
 
 (forge/load-directory-modules forge-site-dir)
 
+
 ;; dbus is a linux thing -- only load on that platform
 (when (forge/system-type-linux-p)
   (require 'dbus)
@@ -224,6 +232,7 @@
           (dbus-get-property :system nm-service nm-path nm-interface "State"))))
   )
 
+
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
 ;;; Some platforms, such as MacOSX, do not get this done correctly.
@@ -322,6 +331,7 @@ end tell")
         (error nil))
       cursong)))
 
+
 (defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
@@ -548,6 +558,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive)
   (forge-mkhome-target "src"))
 
+
 (defcustom forge-font "IBM Plex Mono"
   "Preferred default font."
   :type 'string
@@ -634,6 +645,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (use-package rainbow-mode)
 
+
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
   :type 'symbol
@@ -667,7 +679,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 ;; https://gitlab.com/protesilaos/modus-themes
 (use-package modus-themes
   :custom
-  (modus-themes-mixed-fonts t))
+  (modus-themes-mixed-fonts t)
+  (modus-themes-variable-pitch-ui t))
 
 ;; https://github.com/rougier/nano-theme
 (use-package nano-theme)
@@ -693,6 +706,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t))
 
+
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
   :custom
@@ -733,6 +747,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (use-package nyan-mode)
 
+
 (defun forge/setup-ui ()
   "Set up the look and feel."
   (interactive)
@@ -775,6 +790,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
                   package-menu-mode-hook))
     (add-hook hook #'lin-mode)))
 
+
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
   :demand t
@@ -803,6 +819,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
 
+
 (use-package hydra
   :demand t
   :config
@@ -889,6 +906,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
   )
 
+
 ;; https://github.com/minad/vertico
 (use-package vertico
   :demand t
@@ -958,48 +976,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :config
   (marginalia-mode))
 
-;;; ivy, swiper, and counsel
-;;; https://github.com/abo-abo/swiper
-(use-package ivy
-  :disabled t
-  :diminish (ivy-mode . "")
-  :bind
-  (("C-c C-r" . ivy-resume))
-  :init
-  (ivy-mode 1)
-  :config
-  (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
-  (setq ivy-use-virtual-buffers t
-        enable-recursive-minibuffers t))
-
-(use-package swiper
-  :disabled t
-  :diminish
-  :bind (("C-s" . swiper-isearch)))
-
-(use-package counsel
-  :disabled t
-  :requires ivy
-  :bind
-  (("C-c f" . counsel-git)
-   ("M-x" . counsel-M-x)
-   ("C-x C-f" . counsel-find-file))
-  :config
-  (setq ivy-use-virtual-buffers t))
-
-;;; avy
-;;;
-(use-package avy
-  :disabled t
-  :bind
-  (("M-g g" . avy-goto-line)
-   ("M-s" . avy-goto-word-1)))
-
-(use-package smex
-  :disabled t
-  :init
-  (setq smex-completion-method 'ivy
-        smex-save-file (expand-file-name "smex-items" forge-state-dir)))
+
+;;; Navigation
 
 ;;; windmove
 (use-package windmove
@@ -1024,6 +1002,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :functions (avy-setup-default)
   :config (avy-setup-default))
 
+
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
   (setq tab-bar-close-tab-select 'recent
@@ -1167,6 +1146,7 @@ prompt for what tab to switch to."
         (name . "^\\*\\(Customize\\|Help\\)")
         (name . "\\*\\(Echo\\|Minibuf\\)")))))))
 
+
 (setq hscroll-margin 2
       hscroll-step 1
       scroll-conservatively 101
@@ -1189,6 +1169,7 @@ prompt for what tab to switch to."
 
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
+
 (setq backup-directory-alist (list (cons ".*" forge-backup-dir)) ;; make backups of files to the backup directory
       auto-save-file-name-transforms `((".*" ,forge-backup-dir t))   ;;
       backup-by-copying t
@@ -1199,6 +1180,7 @@ prompt for what tab to switch to."
       auto-save-timeout 120
       auto-save-interval 1000)
 
+
 (require 'savehist)
 (with-eval-after-load 'savehist
   (setq savehist-file (expand-file-name "savehist" forge-state-dir)
@@ -1208,6 +1190,7 @@ prompt for what tab to switch to."
         history-delete-duplicates t
   (add-hook 'after-init-hook #'savehist-mode))
 
+
 (use-package undo-tree
   :disabled t
   :diminish undo-tree-mode
@@ -1220,6 +1203,7 @@ prompt for what tab to switch to."
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-diff t))
 
+
 (show-paren-mode)
 (setq-default indent-tabs-mode nil
               fill-column 80
@@ -1248,8 +1232,11 @@ prompt for what tab to switch to."
   (add-hook 'prog-mode-hook 'display-line-numbers-mode))
 
 (use-package page-break-lines
-  :diminish page-break-lines-mode)
+  :diminish page-break-lines-mode
+  :hook
+  (emacs-lisp-mode . page-break-lines-mode))
 
+
 (use-package yasnippet
   :diminish yasnippet-minor-mode
   :init
@@ -1258,9 +1245,11 @@ prompt for what tab to switch to."
   (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" forge-personal-dir))
   (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
 
+
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
+
 (use-package hideshow
   :diminish hs-minor-mode
   :hook ((prog-mode) . hs-minor-mode)
@@ -1269,6 +1258,7 @@ prompt for what tab to switch to."
 (use-package highlight-indent-guides
   :custom (highlight-indent-guides-method 'character))
 
+
 (use-package recentf
   :bind ("<f7>" . consult-recent-file)
   :custom
@@ -1278,6 +1268,7 @@ prompt for what tab to switch to."
   :init
   (recentf-mode 1))
 
+
 (defun dos2unix (buffer)
   "Do replacement of ^M characters with newlines in BUFFER."
   ;; This is basically: "M-% C-q C-m RET C-q C-j RET"
@@ -1287,11 +1278,13 @@ prompt for what tab to switch to."
     (while (search-forward (string ?\C-m) nil t)
       (replace-match (string ?\C-j) nil t))))
 
+
 (use-package flycheck
   :diminish flycheck-mode
   :custom (flycheck-global-modes '(not org-mode))
   :init (global-flycheck-mode))
 
+
 (use-package company
   :hook (prog-mode . company-mode)
   :diminish company-mode)
@@ -1305,12 +1298,14 @@ prompt for what tab to switch to."
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
+
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" . dockerfile-mode))
 
 (use-package docker-compose-mode
   :mode "docker-compose.*\.yml\\'")
 
+
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
@@ -1326,6 +1321,7 @@ prompt for what tab to switch to."
   :config
   (setq eldoc-idle-delay 0.3))
 
+
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
@@ -1358,6 +1354,7 @@ prompt for what tab to switch to."
     (previous-line)
     (previous-line)))
 
+
 (use-package python
   :interpreter ("python" . python-mode)
   :hook
@@ -1379,6 +1376,7 @@ prompt for what tab to switch to."
 (use-package company-anaconda
   :after anaconda-mode)
 
+
 (use-package go-mode
   :mode "\\.go\\ '"
   :config
@@ -1390,6 +1388,7 @@ prompt for what tab to switch to."
   (add-hook 'shell-script-hook #'forge/whitespace-visualize)
   (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
 
+
 (use-package web-mode
   :mode ("\\.html\\'" "\\.j2\\'")
   :init
@@ -1407,6 +1406,7 @@ prompt for what tab to switch to."
 (use-package php-mode
   :mode "\\.php\\'")
 
+
 (use-package csv-mode
   :hook
   (csv-mode . forge/toggle-highlight-line)
@@ -1436,6 +1436,7 @@ prompt for what tab to switch to."
                  sgml-skip-tag-forward
                  nil)))
 
+
 (with-eval-after-load 'junos-mode
   (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
   (setq-local c-basic-offset 4))
@@ -1452,6 +1453,7 @@ prompt for what tab to switch to."
 (require 'notifications)
 (require 'tls)
 
+
 (defun forge/jabber-notification (from buf text title)
   "Take a notification from jabber and send to `alert'.
 Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
@@ -1491,6 +1493,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (dolist (hook '(jabber-chat-mode-hook jabber-roster-mode-hook))
     (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 
+
 (with-eval-after-load 'erc
   (defun sf/erc-connect ()
     "Connect to IRC via ERC"
@@ -1559,6 +1562,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
 ;; Enable the netrc authentication function for &biblbee channels.
 (add-hook 'erc-join-hook 'bitlbee-netrc-identify)
 
+
 (defvar forge-slack-client-id nil
   "Slack Client ID.")
 
@@ -1576,6 +1580,7 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
   (setq slack-buffer-emojify t
         slack-prefer-current-team t))
 
+
 (with-eval-after-load 'dired
   (diminish 'dired-omit-mode)
 
@@ -1671,6 +1676,7 @@ read-file-name and dired-dwim-target-directory."
 
 (use-package disk-usage)
 
+
 (use-package magit
   :commands magit-status
   :bind ("C-x g" . magit-status)
@@ -1683,6 +1689,7 @@ read-file-name and dired-dwim-target-directory."
   :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
 
+
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   :init
@@ -1702,6 +1709,7 @@ read-file-name and dired-dwim-target-directory."
                    "--editor"
                    (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
 
+
 (require 'message)
 (with-eval-after-load 'message
   (defun forge/mail-toggle-forward-mime ()
@@ -2132,7 +2140,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (define-key my-mail-map (kbd "s") 'my-mail-search-map)
 (global-set-key (kbd "C-c m") 'my-mail-map)
 
-(use-package mingus
+(use-package mingus :tangle no
   :disabled t
   :preface
   (defun forge/get-current-song-mpd ()
@@ -2145,7 +2153,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
         (error nil))
       cursong)))
 
-(use-package emms
+(use-package emms :tangle no
   :disabled t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
@@ -2168,12 +2176,14 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (add-to-list 'emms-info-functions 'emms-info-ogginfo)
     (add-to-list 'emms-info-functions 'emms-info-mp3info)))
 
+
 (use-package net-utils
   :commands (ping traceroute)
   :config
   (setq ping-program-options (list "-c" "5"))
   (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 
+
 (use-package org
   :preface
   (defun forge/org-fixed-font-faces ()
@@ -2444,7 +2454,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 (with-eval-after-load 'org
   (forge/org-fixed-font-faces)
-  (org-load-modules-maybe t)
+  ;; (org-load-modules-maybe t)
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
                                                            (dot . t)
                                                            (emacs-lisp . t)
@@ -2666,6 +2676,7 @@ It will not remove entries from the source org file."
   (search-forward heading nil t)
   (goto-char (point-max)))
 
+
 (when (forge/system-type-darwin-p)
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
   (setq epa-pinentry-mode 'loopback))
@@ -2691,6 +2702,7 @@ It will not remove entries from the source org file."
   :bind
   ("C-c p" . ivy-pass))
 
+
 (use-package elfeed
   :commands (elfeed)
   :bind
@@ -2866,8 +2878,10 @@ It will not remove entries from the source org file."
 (with-eval-after-load 'youtube-dl
   (setq youtube-dl-directory "~/annex/Video/youtube"))
 
+
 (use-package rg)
 
+
 (with-eval-after-load 'em-unix
   (unintern 'eshell/su nil)
   (unintern 'eshell/sudo nil))
@@ -2950,6 +2964,7 @@ It will not remove entries from the source org file."
     (ansi-term "/bin/bash"))
   (get-buffer-process "*ansi-term*"))
 
+
 (use-package mastodon
   :custom
   (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))
