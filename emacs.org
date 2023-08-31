@@ -3363,6 +3363,69 @@ Miscellaneous notes:
 
 (use-package org
   :preface
+  (defun my-org-mode-hook ()
+    "Turn on settings for org-mode."
+    (interactive)
+    (when (fboundp 'turn-on-auto-fill)
+      (turn-on-auto-fill))
+    (when (fboundp 'turn-on-flyspell)
+      (turn-on-flyspell)))
+
+  (defun my-org-init-capture-templates ()
+    "Set up org-capture-templates."
+    ;; For template expansion,
+    ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
+    (setq org-capture-templates
+          '(("l" "Log" entry
+             (file+olp+datetree "~/forge/journal.org")
+             "* %U - %?\n")
+            ("i" "Inbox" entry
+             (file "inbox.org")
+             "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
+            ("c" "Calendar invite" entry
+             (file+headline "agenda.org" "Future")
+             (function notmuch-calendar-capture-event)
+             :prepend t)
+            ("n" "Meeting notes" entry
+             (file+olp+datetree "~/forge/journal.org")
+             "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
+             :clock-in t
+             :clock-resume t)
+            ("j" "Journal" entry
+             (file+olp+datetree "~/forge/journal.org")
+             "* %?\n%U\n"
+             :clock-in t
+             :clock-resume t)
+            ("b" "Bookmark" entry
+             (file+headline "~/forge/notebook.org" "Unfiled")
+             "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+             :prepend t)
+
+            ("r" "Reference")
+            ("rm" "Music" entry
+             (file+olp+datetree "~/forge/journal.org")
+             "* %(forge/capture-current-song) :music:\n%U\n")
+            ("rr" "Reference" entry
+             (file+olp+datetree "~/forge/articles.org")
+             "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+             :prepend t)
+            ("rw" "Web Page" entry
+             (file+olp+datetree "~/forge/articles.org")
+             (function forge/org-clip-web-page)
+             :prepend t)
+            ("rf" "Elfeed/News Article" entry
+             (file+olp+datetree "~/forge/articles.org")
+             "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+             :prepend t)
+            ("rt" "Twitter Post" entry
+             (file+olp+datetree "~/forge/articles.org")
+             "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+             :prepend t))))
+
+  (defun my-org-init-hook ()
+    "Set up defaults after org.el has been loaded."
+    (my-org-init-capture-templates))
+
   (defun my-org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
     (interactive)
@@ -3375,13 +3438,6 @@ Miscellaneous notes:
     (when (string= (message "%s" major-mode) "org-mode")
       (org-babel-tangle)))
 
-  (defun my-org-mode-hook ()
-    "Turn on settings for org-mode."
-    (interactive)
-    (when (fboundp 'turn-on-auto-fill)
-      (turn-on-auto-fill))
-    (when (fboundp 'turn-on-flyspell)
-      (turn-on-flyspell)))
 
   (defun my-org-set-property (property value)
     "Set arbitrary PROPERTY to VALUE for current heading."
@@ -3434,6 +3490,7 @@ Miscellaneous notes:
 
   :hook
   ((org-mode . my-org-mode-hook)
+   (org-load . my-org-init-hook)
    (after-save . my-tangle-org-mode-on-save)
    (org-timer-set . my-org-timer-clock-in)
    (org-timer-done . my-org-timer-clock-out)
@@ -3559,72 +3616,6 @@ Miscellaneous notes:
                   ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
 
 
-  ;; For template expansion,
-  ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
-  (add-to-list 'org-capture-templates
-               '("l" "Log" entry
-                 (file+olp+datetree "~/forge/journal.org")
-                 "* %U - %?\n" ))
-  (add-to-list 'org-capture-templates
-               '("i" "Inbox" entry
-                 (file "inbox.org")
-                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n"))
-
-  (add-to-list 'org-capture-templates
-               '("c" "Calendar invite" entry
-                 (file+headline "agenda.org" "Future")
-                 (function notmuch-calendar-capture-event)
-                 :prepend t))
-
-  (add-to-list 'org-capture-templates
-               '("n" "Meeting notes" entry
-                 (file+olp+datetree "~/forge/journal.org")
-                 "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
-                 :clock-in t
-                 :clock-resume t))
-
-  (add-to-list 'org-capture-templates
-               '("j" "Journal" entry
-                 (file+olp+datetree "~/forge/journal.org")
-                 "* %?\n%U\n"
-                 :clock-in t
-                 :clock-resume t))
-
-  (add-to-list 'org-capture-templates
-               '("b" "Bookmark" entry
-                 (file+headline "~/forge/notebook.org" "Unfiled")
-                 "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
-                 :prepend t))
-
-  (add-to-list 'org-capture-templates
-               '("m" "Music" entry
-                 (file+olp+datetree "~/forge/journal.org")
-                 "* %(forge/capture-current-song) :music:\n%U\n"))
-
-  (add-to-list 'org-capture-templates
-               '("r" "Reference")
-               ("rr" "Reference" entry
-                (file+olp+datetree "~/forge/articles.org")
-                "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
-                :prepend t))
-
-  (add-to-list 'org-capture-templates
-               '("rw" "Web Page" entry
-                 (file+olp+datetree "~/forge/articles.org")
-                 (function forge/org-clip-web-page)
-                 :prepend t))
-
-  (add-to-list 'org-capture-templates
-               '("rf" "Elfeed/News Article" entry
-                 (file+olp+datetree "~/forge/articles.org")
-                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
-                 :prepend t))
-
-  (add-to-list 'org-capture-templates
-               '("rt" "Twitter Post" entry
-                 (file+olp+datetree "~/forge/articles.org")
-                 "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
-                 :prepend t))
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
@@ -3642,7 +3633,9 @@ Miscellaneous notes:
         org-table-export-default-format "orgtbl-to-csv"         ;; export tables as CSV instead of tab-delineated
         org-publish-project-alist '(("public"
                                      :base-directory "~/forge"
-                                     :publishing-directory "~/Documents"))))
+                                     :publishing-directory "~/Documents")))
+
+  )
 
 
 
