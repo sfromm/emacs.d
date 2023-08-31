@@ -1,6 +1,5 @@
 ARGS = --quick --batch --load init.el
 OS := $(shell uname)
-VERSION = 26.1_1
 ifeq ($(OS),Linux)
     EMACS = emacs $(ARGS)
     PKGMGR = apt-get install
@@ -11,7 +10,7 @@ endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
     PKGMGR = brew install
-    PKG = emacs-plus@28
+    PKG = emacs-plus@29
     PKGFLAGS = --with-native-comp
     FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono font-jetbrains-mono
 endif
