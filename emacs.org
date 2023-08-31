@@ -3363,19 +3363,19 @@ Miscellaneous notes:
 
 (use-package org
   :preface
-  (defun forge/org-fixed-font-faces ()
+  (defun my-org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
     (interactive)
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
 
-  (defun forge/tangle-org-mode-on-save ()
+  (defun my-tangle-org-mode-on-save ()
     "Tangle org-mode file when saving."
     (when (string= (message "%s" major-mode) "org-mode")
       (org-babel-tangle)))
 
-  (defun forge/org-mode-hook ()
+  (defun my-org-mode-hook ()
     "Turn on settings for org-mode."
     (interactive)
     (when (fboundp 'turn-on-auto-fill)
@@ -3383,41 +3383,41 @@ Miscellaneous notes:
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
-  (defun forge/org-set-property (property value)
+  (defun my-org-set-property (property value)
     "Set arbitrary PROPERTY to VALUE for current heading."
     (org-back-to-heading)
     (when (not (org-element-property :CREATED (org-element-at-point)))
       (org-set-property property value)))
 
-  (defun forge/org-set-uuid ()
+  (defun my-org-set-uuid ()
     "Set ID property for current headline."
     (interactive)
-    (forge/org-set-property "ID" (org-id-uuid)))
+    (my-org-set-property "ID" (org-id-uuid)))
 
-  (defun forge/org-set-created ()
+  (defun my-org-set-created ()
     "Set CREATED property for current headline."
     (interactive)
-    (forge/org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
+    (my-org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
-  (defun forge/org-timer-clock-in ()
+  (defun my-org-timer-clock-in ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
         (call-interactively 'org-agenda-clock-in)
       (call-interactively 'org-clock-in)))
 
-  (defun forge/org-timer-clock-out ()
+  (defun my-org-timer-clock-out ()
     "Clock in when starting a org-timer."
     (if (eq major-mode 'org-agenda-mode)
         (call-interactively 'org-agenda-clock-out)
       (call-interactively 'org-clock-out)))
 
-  (defun forge/org-set-properties ()
+  (defun my-org-set-properties ()
     "Set stock org properties for current headline."
     (interactive)
-    (forge/org-set-uuid)
-    (forge/org-set-created))
+    (my-org-set-uuid)
+    (my-org-set-created))
 
-  (defun forge/org-clip-web-page ()
+  (defun my-org-clip-web-page ()
     "Clip web page for org capture."
     (interactive)
     (when (derived-mode-p 'eww-mode)
@@ -3433,11 +3433,11 @@ Miscellaneous notes:
 
 
   :hook
-  ((org-mode . forge/org-mode-hook)
-   (after-save . forge/tangle-org-mode-on-save)
-   (org-timer-set . forge/org-timer-clock-in)
-   (org-timer-done . forge/org-timer-clock-out)
-   (org-timer-stop . forge/org-timer-clock-out)
+  ((org-mode . my-org-mode-hook)
+   (after-save . my-tangle-org-mode-on-save)
+   (org-timer-set . my-org-timer-clock-in)
+   (org-timer-done . my-org-timer-clock-out)
+   (org-timer-stop . my-org-timer-clock-out)
    (org-mode . variable-pitch-mode))
 
   :custom
@@ -3469,7 +3469,8 @@ Miscellaneous notes:
                         ("articles.org" :maxlevel . 3)
                         ("notebook.org" :maxlevel . 5)
                         ("work.org" :maxlevel . 5)
-                        ("personal.org" :maxlevel . 5)))
+                        ("personal.org" :maxlevel . 5)
+                        (nil . (:maxlevel 2))))
   (org-reverse-note-order t)
   (org-src-fontify-natively t)
   (org-startup-indented t)
@@ -3489,25 +3490,27 @@ Miscellaneous notes:
         ("RET" . org-return))
 
   :init
-  (setq org-file-apps (quote ((auto-mode . emacs)
-                              ("\\.doc\\'" . "open %s")
-                              ("\\.docx\\'" . "open %s")
-                              ("\\.xlsx\\'" . "open %s")
-                              ("\\.pptx\\'" . "open %s")
-                              ("\\.pdf\\'" . default))))
-  (setq org-structure-template-alist '(("a" . "export ascii")
-                                       ("c" . "center")
-                                       ("C" . "comment")
-                                       ("e" . "example")
-                                       ("E" . "export")
-                                       ("h" . "export html")
-                                       ("l" . "src emacs-lisp")
-                                       ("m" . "export md")
-                                       ("p" . "src python")
-                                       ("q" . "quote")
-                                       ("s" . "src")
-                                       ("v" . "verse")
-                                       ("y" . "src yaml")))
+  (setq org-file-apps
+        '((auto-mode . emacs)
+          ("\\.doc\\'" . "open %s")
+          ("\\.docx\\'" . "open %s")
+          ("\\.xlsx\\'" . "open %s")
+          ("\\.pptx\\'" . "open %s")
+          ("\\.pdf\\'" . default)))
+  (setq org-structure-template-alist
+        '(("a" . "export ascii")
+          ("c" . "center")
+          ("C" . "comment")
+          ("e" . "example")
+          ("E" . "export")
+          ("h" . "export html")
+          ("l" . "src emacs-lisp")
+          ("m" . "export md")
+          ("p" . "src python")
+          ("q" . "quote")
+          ("s" . "src")
+          ("v" . "verse")
+          ("y" . "src yaml")))
   (setq org-agenda-sticky t
         org-agenda-hide-tags-regexp "."
         org-agenda-restore-windows-after-quit t
@@ -3515,10 +3518,11 @@ Miscellaneous notes:
         org-agenda-compact-blocks t
         org-agenda-files '("~/forge/inbox.org" "~/forge/agenda.org"
                            "~/forge/journal.org" "~/forge/work.org" "~/forge/personal.org")
-        org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
-                                   (todo   . " %i %-12:c")
-                                   (tags   . " %i %-12:c")
-                                   (search . " %i %-12:c")))
+        org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-12t% s")
+          (todo   . " %i %-12:c")
+          (tags   . " %i %-12:c")
+          (search . " %i %-12:c")))
   ;; There's a lot to org-agenda-custom-commands
   ;; For type:
   ;;   type     The command type, any of the following symbols:
@@ -3530,84 +3534,97 @@ Miscellaneous notes:
   ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
   ;;     tags-tree   Sparse tree with all tags matches in *current* file.
   ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands '(("g" "Agenda"
-                                      ((tags-todo "inbox"
-                                                  ((org-agenda-overriding-header "Inbox\n")
-                                                   (org-agenda-prefix-format "  %?-12t% s")))
+  (setq org-agenda-custom-commands
+        '(("g" "Agenda"
+           ((tags-todo "inbox"
+                       ((org-agenda-overriding-header "Inbox\n")
+                        (org-agenda-prefix-format "  %?-12t% s")))
 
-                                       (agenda ""
-                                               ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
-                                                (org-deadline-warning-days 0)))
+            (agenda ""
+                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
+                     (org-deadline-warning-days 0)))
 
-                                       (todo "NEXT"
-                                             ((org-agenda-overriding-header "\nNext\n")
-                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                              (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "\nNext\n")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                   (org-agenda-prefix-format "  %i %-12:c [%e] ")))
 
-                                       (todo "WAITING"
-                                             ((org-agenda-overriding-header "\nWaiting\n")
-                                              (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                                              (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+            (todo "WAITING"
+                  ((org-agenda-overriding-header "\nWaiting\n")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                   (org-agenda-prefix-format "  %i %-12:c [%e] ")))
 
-                                       (tags "CLOSED>=\"<-10d>\""
-                                             ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
-  ;;  (agenda nil
-  ;;          ((org-agenda-entry-types '(:deadline))
-  ;;           (org-agenda-format-date "")
-  ;;           (org-deadline-warning-days 7)
-  ;;           (org-agenda-skip-function
-  ;;            '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
-  ;;           (org-agenda-overriding-header "\nDeadlines")))
-
+            (tags "CLOSED>=\"<-10d>\""
+                  ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
 
 
   ;; For template expansion,
   ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
-  (setq org-capture-templates '(("l" "Log" entry
-                                 (file+olp+datetree "~/forge/journal.org")
-                                 "* %U - %?\n" )
+  (add-to-list 'org-capture-templates
+               '("l" "Log" entry
+                 (file+olp+datetree "~/forge/journal.org")
+                 "* %U - %?\n" ))
+  (add-to-list 'org-capture-templates
+               '("i" "Inbox" entry
+                 (file "inbox.org")
+                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n"))
 
-                                ("i" "Inbox" entry
-                                 (file "inbox.org")
-                                 "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
+  (add-to-list 'org-capture-templates
+               '("c" "Calendar invite" entry
+                 (file+headline "agenda.org" "Future")
+                 (function notmuch-calendar-capture-event)
+                 :prepend t))
 
-                                ("c" "Calendar invite" entry
-                                 (file+headline "agenda.org" "Future")
-                                 (function notmuch-calendar-capture-event) :prepend t)
+  (add-to-list 'org-capture-templates
+               '("n" "Meeting notes" entry
+                 (file+olp+datetree "~/forge/journal.org")
+                 "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
+                 :clock-in t
+                 :clock-resume t))
 
-                                ("n" "Meeting notes" entry
-                                 (file+olp+datetree "~/forge/journal.org")
-                                 "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n" :clock-in t :clock-resume t)
+  (add-to-list 'org-capture-templates
+               '("j" "Journal" entry
+                 (file+olp+datetree "~/forge/journal.org")
+                 "* %?\n%U\n"
+                 :clock-in t
+                 :clock-resume t))
 
-                                ("j" "Journal" entry
-                                 (file+olp+datetree "~/forge/journal.org")
-                                 "* %?\n%U\n" :clock-in t :clock-resume t)
+  (add-to-list 'org-capture-templates
+               '("b" "Bookmark" entry
+                 (file+headline "~/forge/notebook.org" "Unfiled")
+                 "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+                 :prepend t))
 
-                                ("b" "Bookmark" entry
-                                 (file+headline "~/forge/notebook.org" "Unfiled")
-                                 "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n" :prepend t)
+  (add-to-list 'org-capture-templates
+               '("m" "Music" entry
+                 (file+olp+datetree "~/forge/journal.org")
+                 "* %(forge/capture-current-song) :music:\n%U\n"))
 
-                                ("m" "Music" entry
-                                 (file+olp+datetree "~/forge/journal.org")
-                                 "* %(forge/capture-current-song) :music:\n%U\n")
+  (add-to-list 'org-capture-templates
+               '("r" "Reference")
+               ("rr" "Reference" entry
+                (file+olp+datetree "~/forge/articles.org")
+                "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+                :prepend t))
 
-                                ("r" "Reference")
-                                ("rr" "Reference" entry
-                                 (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
+  (add-to-list 'org-capture-templates
+               '("rw" "Web Page" entry
+                 (file+olp+datetree "~/forge/articles.org")
+                 (function forge/org-clip-web-page)
+                 :prepend t))
 
-                                ("rw" "Web Page" entry
-                                 (file+olp+datetree "~/forge/articles.org")
-                                 (function forge/org-clip-web-page) :prepend t)
+  (add-to-list 'org-capture-templates
+               '("rf" "Elfeed/News Article" entry
+                 (file+olp+datetree "~/forge/articles.org")
+                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+                 :prepend t))
 
-                                ("rf" "Elfeed/News Article" entry
-                                 (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
-
-                                ("rt" "Twitter Post" entry
-                                 (file+olp+datetree "~/forge/articles.org")
-                                 "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)))
+  (add-to-list 'org-capture-templates
+               '("rt" "Twitter Post" entry
+                 (file+olp+datetree "~/forge/articles.org")
+                 "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+                 :prepend t))
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
@@ -3630,7 +3647,7 @@ Miscellaneous notes:
 
 
 (with-eval-after-load 'org
-  (forge/org-fixed-font-faces)
+  ;; (forge/org-fixed-font-faces)
   ;; (org-load-modules-maybe t)
   (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)
                                                            (dot . t)
@@ -3666,13 +3683,14 @@ Miscellaneous notes:
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package org-contacts   ;; use package from site-lisp
+(use-package org-contacts
   :after org
   :config
   (setq org-contacts-files (list  "~/forge/contacts.org"))
-  (add-to-list 'org-capture-templates '("C" "Contacts" entry
-                                        (file "~/forge/contacts.org")
-                                        "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
+  (add-to-list 'org-capture-templates
+               '("C" "Contacts" entry
+                 (file "~/forge/contacts.org")
+                 "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 #+end_src
 *** Org Tree Slide for presentations from Org
 #+begin_src emacs-lisp
@@ -3740,10 +3758,10 @@ associated with the entry.
 
 (use-package htmlize)
 
-(use-package ox-twbs
-  :commands (org-twbs-export-to-html
-             org-twbs-export-as-html
-             org-twbs-convert-region-to-html))
+;; (use-package ox-twbs
+;;   :commands (org-twbs-export-to-html
+;;              org-twbs-export-as-html
+;;              org-twbs-convert-region-to-html))
 
 ;; (use-package ox-reveal
 ;;   :after org-compat
