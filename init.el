@@ -2194,6 +2194,56 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
+  (defun my-org-init-agenda ()
+    "Initialze org-agenda configuration."
+    (setq org-agenda-skip-scheduled-if-deadline-is-shown t
+          org-agenda-sticky t
+          org-agenda-hide-tags-regexp "."
+          org-agenda-restore-windows-after-quit t
+          org-agenda-window-setup 'current-window
+          org-agenda-compact-blocks t
+          org-agenda-files
+          (list (concat org-directory "/inbox.org")
+                (concat org-directory "/agenda.org")
+                (concat org-directory "/journal.org")
+                (concat org-directory "/work.org")
+                (concat org-directory "/personal.org"))
+          org-agenda-prefix-format
+          '((agenda . " %i %-12:c%?-12t% s")
+            (todo   . " %i %-12:c")
+            (tags   . " %i %-12:c")
+            (search . " %i %-12:c")))
+    ;; There's a lot to org-agenda-custom-commands
+    ;; For type:
+    ;;   type     The command type, any of the following symbols:
+    ;;     agenda      The daily/weekly agenda.
+    ;;     todo        Entries with a specific TODO keyword, in all agenda files.
+    ;;     search      Entries containing search words entry or headline.
+    ;;     tags        Tags/Property/TODO match in all agenda files.
+    ;;     tags-todo   Tags/P/T match in all agenda files, TODO entries only.
+    ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
+    ;;     tags-tree   Sparse tree with all tags matches in *current* file.
+    ;;     occur-tree  Occur sparse tree for *current* file.
+    (setq org-agenda-custom-commands
+          '(("g" "Agenda"
+             ((tags-todo "inbox"
+                         ((org-agenda-overriding-header "Inbox\n")
+                          (org-agenda-prefix-format "  %?-12t% s")))
+              (agenda ""
+                      ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
+                       (org-deadline-warning-days 0)))
+              (todo "NEXT"
+                    ((org-agenda-overriding-header "\nNext\n")
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+              (todo "WAITING"
+                    ((org-agenda-overriding-header "\nWaiting\n")
+                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+              (tags "CLOSED>=\"<-10d>\""
+                    ((org-agenda-overriding-header "\nCompleted last 10 days\n"))))))))
+
   (defun my-org-init-capture-templates ()
     "Set up org-capture-templates."
     ;; For template expansion,
@@ -2247,6 +2297,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   (defun my-org-init-hook ()
     "Set up defaults after org.el has been loaded."
+    (my-org-init-agenda)
     (my-org-init-capture-templates))
 
   (defun my-org-fixed-font-faces ()
@@ -2321,7 +2372,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
    (org-mode . variable-pitch-mode))
 
   :custom
-  (org-agenda-skip-scheduled-if-deadline-is-shown t)
   (org-attach-id-dir "~/annex/org/data/")
   (org-directory "~/forge")
   (org-attach-method 'mv)
@@ -2350,7 +2400,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                         ("notebook.org" :maxlevel . 5)
                         ("work.org" :maxlevel . 5)
                         ("personal.org" :maxlevel . 5)
-                        (nil . (:maxlevel 2))))
+                        (nil :maxlevel . 2)))
   (org-reverse-note-order t)
   (org-src-fontify-natively t)
   (org-startup-indented t)
@@ -2391,54 +2441,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
           ("s" . "src")
           ("v" . "verse")
           ("y" . "src yaml")))
-  (setq org-agenda-sticky t
-        org-agenda-hide-tags-regexp "."
-        org-agenda-restore-windows-after-quit t
-        org-agenda-window-setup 'current-window
-        org-agenda-compact-blocks t
-        org-agenda-files '("~/forge/inbox.org" "~/forge/agenda.org"
-                           "~/forge/journal.org" "~/forge/work.org" "~/forge/personal.org")
-        org-agenda-prefix-format
-        '((agenda . " %i %-12:c%?-12t% s")
-          (todo   . " %i %-12:c")
-          (tags   . " %i %-12:c")
-          (search . " %i %-12:c")))
-  ;; There's a lot to org-agenda-custom-commands
-  ;; For type:
-  ;;   type     The command type, any of the following symbols:
-  ;;     agenda      The daily/weekly agenda.
-  ;;     todo        Entries with a specific TODO keyword, in all agenda files.
-  ;;     search      Entries containing search words entry or headline.
-  ;;     tags        Tags/Property/TODO match in all agenda files.
-  ;;     tags-todo   Tags/P/T match in all agenda files, TODO entries only.
-  ;;     todo-tree   Sparse tree of specific TODO keyword in *current* file.
-  ;;     tags-tree   Sparse tree with all tags matches in *current* file.
-  ;;     occur-tree  Occur sparse tree for *current* file.
-  (setq org-agenda-custom-commands
-        '(("g" "Agenda"
-           ((tags-todo "inbox"
-                       ((org-agenda-overriding-header "Inbox\n")
-                        (org-agenda-prefix-format "  %?-12t% s")))
-
-            (agenda ""
-                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
-                     (org-deadline-warning-days 0)))
-
-            (todo "NEXT"
-                  ((org-agenda-overriding-header "\nNext\n")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                   (org-agenda-prefix-format "  %i %-12:c [%e] ")))
-
-            (todo "WAITING"
-                  ((org-agenda-overriding-header "\nWaiting\n")
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                   (org-agenda-prefix-format "  %i %-12:c [%e] ")))
-
-            (tags "CLOSED>=\"<-10d>\""
-                  ((org-agenda-overriding-header "\nCompleted last 10 days\n")))))))
-
-
 
   ;; Workflow states
   ;; https://orgmode.org/manual/Workflow-states.html#Workflow-states
@@ -2557,7 +2559,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
     (setq song-info (if itunes-song itunes-song mpd-song))
     (concat (car song-info) ", \"" (car (cdr song-info)) "\"")))
 
-(defun forge/org-set-lastupdated ()
+(defun my-org-set-lastupdated ()
   "Set LASTUPDATED property to today."
   (interactive)
   (org-set-property "LASTUPDATED" (format-time-string (org-time-stamp-format nil t))))
