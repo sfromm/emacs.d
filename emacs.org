@@ -1904,14 +1904,36 @@ will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https:
 #+end_src
 
 ** Completion framework
-[[https://company-mode.github.io/][company-mode]] is a text completion framework for Emacs.
+[[https://github.com/minad/corfu][Corfu]] (COmpletion in Region FUnction) is an in-buffer completion with a small
+completion popup.
 
 #+begin_src emacs-lisp
-
-(use-package company
-  :hook (prog-mode . company-mode)
-  :diminish company-mode)
+(use-package corfu
+  :custom
+  (corfu-separator ?\s)
+  :init
+  (global-corfu-mode))
 #+end_src
+
+Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]].
+
+#+begin_src emacs-lisp
+(use-package kind-icon
+  :after corfu
+  :if (display-graphic-p)
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package emacs
+  :init
+  (setq tab-always-indent 'complete)
+  (setq completion-cycle-threshold 3))
+#+end_src
+
 ** Managing diffs between files or previous versions of a file
 *** Ediff
 [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] is a comprehensive interface to =diff= and =patch= utilities.

@@ -1284,10 +1284,24 @@ prompt for what tab to switch to."
   :custom (flycheck-global-modes '(not org-mode))
   :init (global-flycheck-mode))
 
-
-(use-package company
-  :hook (prog-mode . company-mode)
-  :diminish company-mode)
+(use-package corfu
+  :custom
+  (corfu-separator ?\s)
+  :init
+  (global-corfu-mode))
+
+(use-package kind-icon
+  :after corfu
+  :if (display-graphic-p)
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+(use-package emacs
+  :init
+  (setq tab-always-indent 'complete)
+  (setq completion-cycle-threshold 3))
 
 (use-package ediff
   :init
