@@ -938,7 +938,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
    ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
    ("C-c f" . consult-find))
   :config
-  (setq consult-project-root-function
+  (setq consult-narrow-key "<"
+        consult-project-root-function
         (lambda ()
           (when-let (project (project-current))
             (car (project-roots project))))))
@@ -1124,15 +1125,21 @@ prompt for what tab to switch to."
         (name . "\\*\\(Echo\\|Minibuf\\)")))))))
 
 
-(setq hscroll-margin 2
-      hscroll-step 1
-      scroll-conservatively 101
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode))
+
+(setq scroll-conservatively 101
       scroll-preserve-screen-position t
-      auto-window-vscroll nil
-      mouse-wheel-follow-mouse 't         ;; scroll window under mouse
-      mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-      mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
-      mouse-wheel-scroll-amount-horizontal 2)
+      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
+;; (setq hscroll-margin 2
+;;       hscroll-step 1
+;;       scroll-conservatively 101
+;;       scroll-preserve-screen-position t
+;;       auto-window-vscroll nil
+;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
+;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
+;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+;;       mouse-wheel-scroll-amount-horizontal 2)
 
 (defun forge/save-all ()
   "Save any file-related buffers."
@@ -1182,9 +1189,10 @@ prompt for what tab to switch to."
 
 
 (show-paren-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
 (setq-default indent-tabs-mode nil
               fill-column 80
-	      require-final-newline t)
+              require-final-newline t)
 
 (defun forge/join-next-line ()
   "Join the next line with the current line."
@@ -1206,7 +1214,8 @@ prompt for what tab to switch to."
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
 (when (fboundp 'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode))
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (setq-default display-line-numbers-width 3))
 
 (use-package page-break-lines
   :diminish page-break-lines-mode
