@@ -3371,14 +3371,14 @@ Miscellaneous notes:
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
-  (defun my-org-init-agenda ()
+  (defun init-my-org-agenda ()
     "Initialze org-agenda configuration."
     (setq org-agenda-skip-scheduled-if-deadline-is-shown t
           org-agenda-sticky t
           org-agenda-hide-tags-regexp "."
           org-agenda-restore-windows-after-quit t
           org-agenda-window-setup 'current-window
-          org-agenda-compact-blocks t
+          org-agenda-compact-blocks nil
           org-agenda-files
           (list (concat org-directory "/inbox.org")
                 (concat org-directory "/agenda.org")
@@ -3402,26 +3402,57 @@ Miscellaneous notes:
     ;;     tags-tree   Sparse tree with all tags matches in *current* file.
     ;;     occur-tree  Occur sparse tree for *current* file.
     (setq org-agenda-custom-commands
-          '(("g" "Agenda"
-             ((tags-todo "inbox"
-                         ((org-agenda-overriding-header "Inbox\n")
-                          (org-agenda-prefix-format "  %?-12t% s")))
+          '(("o" "Overview"
+             ((agenda ""
+                      ((org-agenda-overriding-header "🕐 Today\n")
+                       (org-agenda-span 1)
+                       (org-deadline-warning-days 0)
+                       (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
+                       (org-agenda-block-separator nil)))
               (agenda ""
-                      ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("SOMEDAY")))
-                       (org-deadline-warning-days 0)))
+                      ((org-agenda-start-on-weekday nil)
+                       (org-agenda-start-day "+1d")
+                       (org-agenda-span 3)
+                       (org-deadline-warning-days 0)
+                       (org-agenda-block-separator nil)
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                       (org-agenda-overriding-header "\n📅 Next three days\n")))
+              (agenda ""
+                      ((org-agenda-time-grid nil)
+                       (org-agenda-start-on-weekday nil)
+                       ;; We don't want to replicate the previous section's
+                       ;; three days, so we start counting from the day after.
+                       (org-agenda-start-day "+3d")
+                       (org-agenda-span 14)
+                       (org-agenda-show-all-dates nil)
+                       (org-deadline-warning-days 0)
+                       (org-agenda-block-separator nil)
+                       (org-agenda-entry-types '(:deadline))
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                       (org-agenda-overriding-header "\n🞜 Upcoming deadlines (+14d)\n")))
+              (tags-todo "inbox"
+                         ((org-agenda-prefix-format "  %?-12t% s")
+                          (org-agenda-block-separator nil)
+                          (org-agenda-overriding-header "\n📥 Inbox\n")))
               (todo "NEXT"
-                    ((org-agenda-overriding-header "\nNext\n")
-                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                     (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                     (org-agenda-block-separator nil)
+                     (org-agenda-overriding-header "\nNext\n")))
               (todo "WAITING"
-                    ((org-agenda-overriding-header "\nWaiting\n")
-                     (org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
-                     (org-agenda-prefix-format "  %i %-12:c [%e] ")))
+                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                     (org-agenda-block-separator nil)
+                     (org-agenda-overriding-header "\n💤 Waiting\n")))
+              (tags-todo "SOMEDAY"
+                         ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                          (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                          (org-agenda-block-separator nil)
+                          (org-agenda-overriding-header "\n💤 Someday\n")))
               (tags "CLOSED>=\"<-10d>\""
-                    ((org-agenda-overriding-header "\nCompleted last 10 days\n"))))))))
+                    ((org-agenda-overriding-header "\n✓ Completed last 10 days\n"))))))))
 
-  (defun my-org-init-capture-templates ()
+  (defun init-my-org-capture-templates ()
     "Set up org-capture-templates."
     ;; For template expansion,
     ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
@@ -3474,8 +3505,8 @@ Miscellaneous notes:
 
   (defun my-org-init-hook ()
     "Set up defaults after org.el has been loaded."
-    (my-org-init-agenda)
-    (my-org-init-capture-templates))
+    (init-my-org-agenda)
+    (init-my-org-capture-templates))
 
   (defun my-org-fixed-font-faces ()
     "Keep the following with fixed-pitch fonts."
