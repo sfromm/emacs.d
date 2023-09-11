@@ -916,31 +916,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 ;; https://github.com/oantolin/orderless
 (use-package orderless
   :demand t
-  :custom (completion-styles '(orderless)))
-
-;; https://github.com/raxod502/selectrum
-(use-package selectrum
-  :disabled t
-  :demand t
-  :config
-  (selectrum-mode 1))
-
-;; https://github.com/raxod502/prescient.el
-(use-package prescient
-  :disabled t
-  :demand t
-  :config
-  (setq prescient-history-length 200)
-  (setq prescient-save-file (expand-file-name "prescient-items" forge-state-dir))
-  (prescient-persist-mode 1))
-
-;; https://github.com/raxod502/selectrum
-(use-package selectrum-prescient
-  :disabled t
-  :demand t
-  :after (:all selectrum prescient)
-  :config
-  (selectrum-prescient-mode +1))
+  :custom
+  (completion-styles '(orderless basic)))
 
 ;; https://github.com/minad/consult
 (use-package consult
