@@ -1,4 +1,5 @@
 # misc top level dirs
+.DS_Store
 .org-id-locations
 var
 snippets
