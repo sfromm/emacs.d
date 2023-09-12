@@ -4255,22 +4255,31 @@ Resources:
 
 (with-eval-after-load 'eshell
 
+  (defun my-tramp-loaded-p ()
+    "Return t if tramp is loaded and nil otherwise."
+    (fboundp 'tramp-tramp-file-p))
+
+  (defun my-eshell-tramp-path-p ()
+    "Return t if path has tramp file syntax."
+    (when (my-tramp-loaded-p)
+      (tramp-tramp-file-p default-directory)))
+
   (defun my-eshell-prompt-user ()
     "Return username on current system for use in eshell prompt."
-    (if (tramp-tramp-file-p default-directory)
+    (if (my-eshell-tramp-path-p)
         (or (tramp-file-name-user (tramp-dissect-file-name default-directory)) (getenv "USER"))
       (user-login-name)))
 
   (defun my-eshell-prompt-host ()
     "Return hostname of current system for use in eshell prompt."
-    (if (tramp-tramp-file-p default-directory)
+    (if (my-eshell-tramp-path-p)
         (tramp-file-name-host (tramp-dissect-file-name default-directory))
       (system-name)))
 
   (defun my-eshell-prompt-pwd ()
     "Return PWD on current system for use in eshell prompt."
     (abbreviate-file-name
-     (if (tramp-tramp-file-p default-directory)
+     (if (my-eshell-tramp-path-p)
          (nth 6 (tramp-dissect-file-name default-directory))
        (eshell/pwd))))
 
