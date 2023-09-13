@@ -2235,11 +2235,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
               (agenda ""
                       ((org-agenda-start-on-weekday nil)
                        (org-agenda-start-day "+1d")
-                       (org-agenda-span 3)
+                       (org-agenda-span 5)
                        (org-deadline-warning-days 0)
                        (org-agenda-block-separator nil)
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                       (org-agenda-overriding-header "\n📅 Next three days\n")))
+                       (org-agenda-overriding-header "\n📅 Next five days\n")))
               (agenda ""
                       ((org-agenda-time-grid nil)
                        (org-agenda-start-on-weekday nil)
@@ -2267,6 +2267,11 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
                      (org-agenda-prefix-format "  %i %-12:c [%e] ")
                      (org-agenda-block-separator nil)
                      (org-agenda-overriding-header "\n💤 Waiting\n")))
+              (todo "PROJECT"
+                    ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                     (org-agenda-block-separator nil)
+                     (org-agenda-overriding-header "\n🚧 Projects\n")))
               (tags-todo "SOMEDAY"
                          ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                           (org-agenda-prefix-format "  %i %-12:c [%e] ")
