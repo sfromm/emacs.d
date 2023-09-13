@@ -42,9 +42,14 @@
 ;;; Code:
 
 (require 'icalendar)
+(require 'org-id)
+(require 'mm-decode)
+(require 'notmuch-show)
+(require 'notmuch)
 
+;;;###autoload
 (defun notmuch-calendar-capture-event ()
-  "Parse message body for calendar details and return string for org-capture."
+  "Parse message body for calendar details and return string for `org-capture'."
   (interactive)
   (let ((notmuch-id (notmuch-show-get-message-id))
         (notmuch-from (notmuch-show-get-from))
@@ -63,8 +68,9 @@
     (message "capture template for troubleshooting purposes: %s" result)
     result))
 
+;;;###autoload
 (defun notmuch-calendar-org-heading (ical-event notmuch-id notmuch-from notmuch-subject)
-  "With provided ICAL-EVENT, return an org-mode heading."
+  "With provided ICAL-EVENT, NOTMUCH-ID, NOTMUCH-FROM, and NOTMUCH-SUBJECT, return an `org-mode' heading."
   (concat "* " notmuch-subject " %?\n"
           ":PROPERTIES:\n"
           ":CAPTURED:    %U\n"
@@ -79,6 +85,7 @@
           "%a\n"
           ))
 
+;;;###autoload
 (defun notmuch-calendar-parse-calendar-part (mm-type mm-part)
   "Parse a message part MM-PART text/calendar with message type MM-TYPE."
   (when (equal (car mm-type) "text/calendar")
@@ -92,8 +99,9 @@
           (setq ical-event (notmuch-calendar-parse-event event zone-map)))
         ical-event))))
 
+;;;###autoload
 (defun notmuch-calendar-parse-event (event zone-map)
-  "Parse a calendar event EVENT in timezone ZONE and return something."
+  "Parse a calendar event EVENT in timezone ZONE-MAP and return something."
   (interactive)
   (let* ((summary (icalendar--get-event-property event 'SUMMARY))
          (dtstart (notmuch-calendar-parse-event-time event zone-map 'DTSTART))
@@ -102,8 +110,7 @@
          (rdate (icalendar--get-event-property event 'RDATE))
          (location (icalendar--get-event-property event 'LOCATION))
          (organizer (icalendar--get-event-property event 'ORGANIZER))
-         (attendees (icalendar--get-event-properties event 'ATTENDEE))
-         (answer))
+         (attendees (icalendar--get-event-properties event 'ATTENDEE)))
     (list (list 'summary summary)
           (list 'dtstart dtstart)
           (list 'dtend dtend)
@@ -113,6 +120,7 @@
           (list 'organizer organizer)
           (list 'attendees attendees))))
 
+;;;###autoload
 (defun notmuch-calendar-org-date (dtstart dtend rrule)
   "Return an Org-formatted date.  Arguments are DTSTART DTEND RRULE as returned by `notmuch-calendar-parse-event'."
   (let* ((start-d (datetime-to-iso dtstart))
@@ -123,16 +131,18 @@
         (format "<%s %s-%s>" start-d start-t end-t)
       (format "<%s %s>--<%s %s>" start-d start-t end-d end-t))))
 
+;;;###autoload
 (defun notmuch-calendar-parse-event-time (event zone-map property)
-  "Return a ISODATETIME in format like `decode-time' from a calendar EVENT, ZONE-MAP, and PROPERTY."
+  "Return ISODATETIME in format like `decode-time' from calendar EVENT, ZONE-MAP, and PROPERTY."
   (interactive)
   (let* ((timestamp (icalendar--get-event-property event property))
          (zone (icalendar--find-time-zone
                 (icalendar--get-event-property-attributes event property) zone-map)))
     (icalendar--decode-isodatetime timestamp nil zone)))
 
+;;;###autoload
 (defun datetime-to-iso (datetime)
-  "Convert datetime format DATETIME from `decode-time' to an Org ISO format YYYY-MM-DD."
+  "Convert datetime format DATETIME from `decode-time' to Org ISO YYYY-MM-DD."
   (if datetime
       (format "%04d-%02d-%02d"
               (nth 5 datetime)                  ; Year
