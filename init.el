@@ -2189,6 +2189,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
   (defun my-org-mode-hook ()
     "Turn on settings for org-mode."
     (interactive)
+    (auto-fill-mode -1)
     (when (fboundp 'turn-on-auto-fill)
       (turn-on-auto-fill))
     (when (fboundp 'turn-on-flyspell)
