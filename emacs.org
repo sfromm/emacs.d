@@ -3701,7 +3701,7 @@ Miscellaneous notes:
 
 
 #+end_src
-*** Org Mode, Notmuch and mail
+*** Org Contacts, Notmuch and mail
 #+begin_src emacs-lisp
 (use-package ol-notmuch      ;; use package from site-lisp
   :after (:any org notmuch))
