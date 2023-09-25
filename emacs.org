@@ -1387,9 +1387,12 @@ disabled while I try out Selectrum and friends.  This also disables [[https://gi
 
 ;;; Navigation
 #+end_src
-*** Navigation between windows
-=windmove= makes it really easy to navigate between windows.  The keys below are
+*** Navigation between windows: ~windomove~ and ~ace-window~
+~windmove~ makes it really easy to navigate between windows.  The keys below are
 based on vim and intended to keep my hand on the home row.
+
+[[https://github.com/abo-abo/ace-window][ace-window]] makes it easy to select between multiple windows and is intended to
+be as simple as ~other-window~.
 
 #+begin_src emacs-lisp
 ;;; windmove
@@ -1401,6 +1404,11 @@ based on vim and intended to keep my hand on the home row.
    ("s-j" . windmove-down))
   :custom (windmove-wrap-around t)
   :config (windmove-default-keybindings 'super))
+
+;;; ace-window
+(use-package ace-window
+  :bind
+  (([remap other-window] . ace-window)))
 #+end_src
 
 *** Navigation between definitions with =dumb-jump=
@@ -1487,7 +1495,6 @@ The =forge/window= /hydra/ defined above uses functions from [[https://github.co
 [[https://www.emacswiki.org/emacs/TransposeFrame][transpose-frame]].  Go ahead and pull those in for the helper functions.  I
 
 #+begin_src emacs-lisp
-(use-package ace-window)
 (use-package transpose-frame)
 #+end_src
 
@@ -1496,7 +1503,7 @@ The =forge/window= /hydra/ defined above uses functions from [[https://github.co
 configurations into workspaces, similar to a window manager.  This configuration
 is here for reference and is deprecated.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package eyebrowse
   :disabled t
   :custom (eyebrowse-keymap-prefix (kbd "C-\\"))

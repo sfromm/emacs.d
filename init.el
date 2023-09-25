@@ -967,6 +967,11 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :custom (windmove-wrap-around t)
   :config (windmove-default-keybindings 'super))
 
+;;; ace-window
+(use-package ace-window
+  :bind
+  (([remap other-window] . ace-window)))
+
 (use-package dumb-jump
   :demand t
   :commands (xref-find-definitions)
@@ -1015,19 +1020,7 @@ prompt for what tab to switch to."
 
 (global-set-key (kbd "C-x t t") #'forge/switch-tab-dwim)
 
-(use-package ace-window)
 (use-package transpose-frame)
-
-(use-package eyebrowse
-  :disabled t
-  :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
-  :bind
-  (("M-1" . eyebrowse-switch-to-window-config-1)
-   ("M-2" . eyebrowse-switch-to-window-config-2)
-   ("M-3" . eyebrowse-switch-to-window-config-3)
-   ("M-4" . eyebrowse-switch-to-window-config-4))
-  :config
-  (eyebrowse-mode 1))
 
 (use-package golden-ratio
   :hook
