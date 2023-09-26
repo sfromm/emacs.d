@@ -16,7 +16,9 @@
 
 ;; native compilation
 (when (and (fboundp 'native-comp-available-p) (native-comp-available-p))
-  (add-to-list 'native-comp-eln-load-path (locate-user-emacs-file "var/eln"))
+  (if (fboundp 'startup-redirect-eln-cache)
+      (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
+    (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory))))
   (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))
 

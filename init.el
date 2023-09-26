@@ -2190,6 +2190,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   (defun init-my-org-agenda ()
     "Initialze org-agenda configuration."
+    (interactive)
     (setq org-agenda-skip-scheduled-if-deadline-is-shown t
           org-agenda-sticky t
           org-agenda-hide-tags-regexp "."
@@ -2276,6 +2277,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
   (defun init-my-org-capture-templates ()
     "Set up org-capture-templates."
+    (interactive)
     ;; For template expansion,
     ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
     (setq org-capture-templates
