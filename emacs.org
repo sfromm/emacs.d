@@ -2192,6 +2192,14 @@ documents.
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
 #+end_src
+*** Yang
+#+begin_src emacs-lisp
+(use-package yang-mode)
+#+end_src
+*** Nftables
+#+begin_src emacs-lisp
+(use-package nftables-mode)
+#+end_src
 ** Ledger
 [[https://www.ledger-cli.org/][Ledger]] is a CLI application for double-entry accounting system.  This configures
 the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.

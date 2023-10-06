@@ -1440,6 +1440,10 @@ prompt for what tab to switch to."
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
 
+(use-package yang-mode)
+
+(use-package nftables-mode)
+
 (use-package ledger-mode
   :commands ledger-mode)
 
