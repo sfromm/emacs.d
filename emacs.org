@@ -1433,6 +1433,9 @@ backend to perform a search.  This can be invoked with =M-.=.
 
 #+begin_src emacs-lisp
 (use-package avy
+  :bind ("C-." . avy-goto-char-timer)
+  :custom
+  (avy-case-fold-search t)
   :functions (avy-setup-default)
   :config (avy-setup-default))
 #+end_src

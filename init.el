@@ -982,6 +982,9 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
 
 (use-package avy
+  :bind ("C-." . avy-goto-char-timer)
+  :custom
+  (avy-case-fold-search t)
   :functions (avy-setup-default)
   :config (avy-setup-default))
 
