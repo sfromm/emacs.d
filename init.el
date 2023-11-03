@@ -1459,6 +1459,10 @@ prompt for what tab to switch to."
 
 (use-package nftables-mode)
 
+(use-package fle-mode
+  :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
+  :commands (fle-mode))
+
 (use-package ledger-mode
   :commands ledger-mode)
 

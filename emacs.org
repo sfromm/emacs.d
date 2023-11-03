@@ -2215,6 +2215,12 @@ documents.
 #+begin_src emacs-lisp
 (use-package nftables-mode)
 #+end_src
+** FLE - Fast Log Entry
+#+begin_src emacs-lisp
+(use-package fle-mode
+  :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
+  :commands (fle-mode))
+#+end_src
 ** Ledger
 [[https://www.ledger-cli.org/][Ledger]] is a CLI application for double-entry accounting system.  This configures
 the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
