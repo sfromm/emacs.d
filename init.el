@@ -1150,15 +1150,27 @@ prompt for what tab to switch to."
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 
-(setq backup-directory-alist (list (cons ".*" forge-backup-dir)) ;; make backups of files to the backup directory
-      auto-save-file-name-transforms `((".*" ,forge-backup-dir t))   ;;
-      backup-by-copying t
-      delete-old-versions t
-      version-control t
-      kept-new-versions 7      ;; Number of newest versions to keep when a new numbered backup is made.
-      kept-old-versions 3      ;; Number of oldest versions to keep when a new numbered backup is made.
+(setq version-control t        ;; number each backup file
+      backup-by-copying t      ;; instead of renaming current file
+      delete-old-versions t    ;; clean up after oneself
+      kept-new-versions 5      ;; Number of newer versions to keep.
+      kept-old-versions 5      ;; Number of older versions to keep.
+      trash-directory "~/.Trash"
+      backup-directory-alist (list (cons "." forge-backup-dir))
+      tramp-backup-directory-alist backup-directory-alist)
+
+;; Turn on auto-save, so we have a fallback in case of crashes or lost data.
+;; Use `recover-file' or `recover-session' to recover them.
+(setq auto-save-default t
       auto-save-timeout 120
-      auto-save-interval 1000)
+      auto-save-interval 64
+      auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
+      auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
+      ;; handle tramp paths differently than local ones, borrowed from doom
+      auto-save-file-name-transforms
+      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                  (concat auto-save-list-file-prefix "tramp-\\2") t)
+            (list ".*" auto-save-list-file-prefix t)))
 
 
 (require 'savehist)
