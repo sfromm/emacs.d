@@ -29,6 +29,8 @@
       package-enable-at-startup nil            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
+(add-to-list 'load-path (concat user-emacs-directory "lisp"))
+
 ;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
@@ -57,3 +59,5 @@
   (init-reset-garbage-collection))
 
 (add-hook 'emacs-startup-hook #'init-reset-startup-settings)
+
+(provide 'early-init)

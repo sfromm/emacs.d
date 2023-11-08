@@ -144,6 +144,8 @@ relocated to /.emacs.d/var/.
       package-enable-at-startup nil            ;; nope part deux
       package-quickstart-file (locate-user-emacs-file "var/package-quickstart.el"))
 
+(add-to-list 'load-path (concat user-emacs-directory "lisp"))
+
 ;; help startup and garbage collection
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
@@ -178,6 +180,8 @@ to achieve a minor speed up.
   (init-reset-garbage-collection))
 
 (add-hook 'emacs-startup-hook #'init-reset-startup-settings)
+
+(provide 'early-init)
 #+end_src
 
 * Startup
@@ -2530,9 +2534,19 @@ coreutils.
 
 ** Git
 I use git for lots of things, but essentially to version control all kinds of
-documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.
+documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.  Other comments:
+
+- Pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine]] as a way to browse history in a git repository.
+- I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for reference.
 
 #+begin_src emacs-lisp
+(require 'init-git)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-git.el :noweb yes
+;;; init-git.el --- Init git integration -*- lexical-binding: t -*-
+<<license>>
+
 
 (use-package magit
   :commands magit-status
@@ -2541,25 +2555,12 @@ documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.
   (magit-push-always-verify nil)
   :init
   (setq magit-last-seen-setup-instructions "1.4.0"))
-#+end_src
 
-I also pull in [[https://github.com/emacsmirror/git-timemachine][git-timemachine]] as a way to browse history in a git repository.
-
-#+begin_src emacs-lisp
 (use-package git-timemachine
   :bind ("C-x v t" . git-timemachine-toggle)
   :commands git-timemachine)
-#+end_src
 
-I no longer use [[https://git-annex.branchable.com][git-annex]].  Here for reference.
-
-#+begin_src emacs-lisp :tangle no
-(use-package magit-annex
-  :disabled t)
-
-(use-package git-annex
-  :disabled t
-  :after dired)
+(provide 'init-git)
 #+end_src
 
 ** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
@@ -2600,6 +2601,16 @@ There are basically three parts to my email configuration:
 1. Fetching email
 2. Composing & sending email
 3. Reading and organizing email
+
+#+begin_src emacs-lisp
+(require 'init-email)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-email.el :noweb yes
+;;; init-email.el --- Init email management -*- lexical-binding: t -*-
+<<license>>
+
+#+end_src
 
 *** Fetching email
 I use a couple tools to fetch my email, depending on who the service provider
@@ -2737,7 +2748,7 @@ Notes:
 - Add function =forge/mail-toggle-forward-mime= to toggle whether to forward
   inline or as MIME.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 
 (require 'message)
 (with-eval-after-load 'message
@@ -2778,7 +2789,7 @@ Notes:
 [[https://www.emacswiki.org/emacs/GnusAlias][gnus-alias]] provides a mechanism to switch identities when composing email with
 =message-mode=.  I use =customize= to set =gnus-alias-identity-alist=
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (use-package gnus-alias
   :custom
   (gnus-alias-default-identity "work")
@@ -2803,7 +2814,7 @@ headers/ field can be useful if you need to add headers on the outgoing email.
 
 [[http://gnus.org/manual/gnus_129.html][gnus-dired]] is an option for attaching files to email.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (add-hook 'dired-mode #'turn-on-gnus-dired-mode)
 (with-eval-after-load
     (setq gnus-dired-mail-mode 'notmuch-user-agent))
@@ -2811,7 +2822,7 @@ headers/ field can be useful if you need to add headers on the outgoing email.
 
 Sometimes it is convenient to open a new frame and compose an email there.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defun forge/mail-toggle-compose-new-frame ()
   "Toggle whether to compose email in new frame."
   (interactive)
@@ -2830,7 +2841,7 @@ Sometimes it is convenient to open a new frame and compose an email there.
 Sometimes it is handy to quote text when drafting an email and boxquote does
 this well.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (use-package boxquote)
 #+end_src
 
@@ -2839,7 +2850,7 @@ Among my responsibilities is forwarding abuse reports from other service
 providers to the appropriate contact to handle.  These just make that process a
 little simpler.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defun forge/mail-forward-complaint (template)
   "Forward an abuse complaint using TEMPLATE."
   (interactive)
@@ -2888,7 +2899,7 @@ little simpler.
 #+end_src
 
 **** Email hydra
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defhydra forge/hydra-email (:color blue)
   "
 
@@ -2925,7 +2936,7 @@ In my case, I wrote my own utility to perform the SMTP exchange.  This is
 because some mail providers will require /XOAUTH2/ authentication and the native
 tools were not in a place to support this.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (with-eval-after-load 'sendmail
   (setq mail-specify-envelope-from t
         mail-envelope-from 'header
@@ -2934,7 +2945,7 @@ tools were not in a place to support this.
 
 Here is an example of my deprecated =smtpmail= configuration.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (use-package smtpmail
   :disabled t
   :config
@@ -2958,7 +2969,7 @@ always encrypt to self and to list the OpenPGP keys that I will sign with.
 - =C-c C-m c o= Encrypt current message using PGP.
 - =C-c C-m c p= Encrypt current message using PGP/MIME.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (with-eval-after-load 'mml-sec
   (setq mml-secure-openpgp-encrypt-to-self t
         mml-secure-openpgp-sign-with-sender t
@@ -3023,7 +3034,7 @@ The following is then the configuration that integrates Emacs with Notmuch.
 - Update on  [2022-06-24 Fri 09:45] \\
   Remove ability to mark whole buffer as read.  Too easy to accidentally invoke.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (use-package notmuch
   :ensure nil
   :commands (notmuch)
@@ -3211,7 +3222,7 @@ Will open a notmuch search buffer of the search results."
 Luminance is something that helps with legibility when reading HTML emails on an either light or
 dark background.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defun forge/twiddle-luminance (value)
   "Twiddle the luminance value to VALUE."
   (interactive "nLuminance: ")
@@ -3222,7 +3233,7 @@ dark background.
 The following helpers, one for /notmuch/ and a legacy one for /mu4e/, will save
 all attachments to a directory.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defcustom forge-attachment-dir
   (expand-file-name "Downloads" "~/")
   "Directory to save attachments from email."
@@ -3275,7 +3286,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 #+end_src
 **** Deprecated functions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (defun forge/mail-add-calendar-invite (handle &optional prompt)
   "Open calendar ICS part in Calendar."
   (ignore prompt)
@@ -3306,7 +3317,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 #+end_src
 *** Email keymap
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-email.el
 (define-prefix-command 'my-mail-search-map)
 (define-key my-mail-search-map (kbd "s") 'notmuch-search)
 (define-key my-mail-search-map (kbd "r") 'notmuch-search-last-week)
@@ -3321,12 +3332,17 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (define-key my-mail-map (kbd "s") 'my-mail-search-map)
 (global-set-key (kbd "C-c m") 'my-mail-map)
 #+end_src
+*** Cleanup
+#+begin_src emacs-lisp :tangle lisp/init-email.el
+(provide 'init-email)
+#+end_src
+
 ** Music
 *** Mingus
 I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mingus]] as an Emacs interface to MPD.
 
-#+begin_src emacs-lisp
-(use-package mingus :tangle no
+#+begin_src emacs-lisp :tangle no
+(use-package mingus
   :disabled t
   :preface
   (defun forge/get-current-song-mpd ()
@@ -3342,8 +3358,8 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
 *** EMMS
 [[https://www.gnu.org/software/emms/][EMMS]] is another Emacs interface to playing multimedia.  I occasionally use this.  The docs are [[https://www.gnu.org/software/emms/manual/][here]].
 
-#+begin_src emacs-lisp
-(use-package emms :tangle no
+#+begin_src emacs-lisp :tangle no
+(use-package emms
   :disabled t
   :custom
   (emms-directory (expand-file-name "emms" forge-state-dir))
@@ -4022,6 +4038,13 @@ overview of the password store.  I also use [[https://github.com/ecraven/ivy-pas
 passwords to the clipboard.
 
 #+begin_src emacs-lisp
+(require 'init-pass)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-pass.el :noweb yes
+;;; init-pass.el --- Init password management -*- lexical-binding: t -*-
+<<license>>
+
 
 (when (forge/system-type-darwin-p)
   (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
@@ -4048,6 +4071,7 @@ passwords to the clipboard.
   :bind
   ("C-c p" . ivy-pass))
 
+(provide 'init-pass)
 #+end_src
 
 ** RSS reader [[https://github.com/skeeto/elfeed][Elfeed]]
@@ -4056,6 +4080,13 @@ to navigate a news feed.  It also sets a timer =elfeed-update-timer= to fetch
 articles every 2 hours.
 
 #+begin_src emacs-lisp
+(require 'init-elfeed)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-elfeed.el :noweb yes
+;;; init-elfeed.el --- Init Elfeed -*- lexical-binding: t -*-
+<<license>>
+
 
 (use-package elfeed
   :commands (elfeed)
@@ -4216,6 +4247,11 @@ articles every 2 hours.
     "Marks a starred Elfeed entry.")
   (push '(starred elfeed-search-starred-title-face) elfeed-search-face-alist)
 
+  ;; Lastly, the following will helps with downloading videos from Youtube when they
+  ;; are part of a RSS feed.
+  (with-eval-after-load 'youtube-dl
+    (setq youtube-dl-directory "~/annex/Video/youtube"))
+
   (elfeed-org)
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" (concat (getenv "HOME") "/annex/var"))))
@@ -4228,7 +4264,7 @@ Normally, one would configure the feeds to subscribe to with the variable
 =elfeed-feeds=.  This package enables one to use an /Org mode/ file to manage
 one's list of feeds.  I find this approach preferable.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-elfeed.el
 (use-package elfeed-org
   :after (:all org elfeed)
   :commands (elfeed-org)
@@ -4236,13 +4272,9 @@ one's list of feeds.  I find this approach preferable.
   (setq rmh-elfeed-org-files (list (expand-file-name "elfeed.org" org-directory)))
   (elfeed-org))
 #+end_src
-*** Youtube download manager
-Lastly, the following will helps with downloading videos from Youtube when they
-are part of a RSS feed.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'youtube-dl
-  (setq youtube-dl-directory "~/annex/Video/youtube"))
+*** Cleanup
+#+begin_src emacs-lisp :tangle lisp/init-elfeed.el
+(provide 'init-elfeed)
 #+end_src
 ** Search / Ripgrep
 [[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
@@ -4276,8 +4308,16 @@ Resources:
 - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Emacs: Mastering Eshell]] by Mickey Petersen
 - [[http://howardism.org/Technical/Emacs/eshell-fun.html][Eschewing Zshell for Emacs Shell]] by Howard Abrams
 
-#+NAME: eshell
 #+begin_src emacs-lisp
+(require 'init-term)
+#+end_src
+
+
+#+NAME: eshell
+#+begin_src emacs-lisp :tangle lisp/init-term.el :noweb yes
+;;; init-term.el --- Init Shell -*- lexical-binding: t -*-
+<<license>>
+
 
 (with-eval-after-load 'em-unix
   (unintern 'eshell/su nil)
@@ -4367,7 +4407,7 @@ Resources:
 The following is a relic from when I used =ansi-term=.  Switch to an =ansi-term=
 buffer if it exists; otherwise, create one and switch to it.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-term.el
 (defun my-terminal ()
   "Switch to terminal; launch if non-existent."
   (interactive)
@@ -4375,6 +4415,10 @@ buffer if it exists; otherwise, create one and switch to it.
     (switch-to-buffer "*ansi-term*")
     (ansi-term "/bin/bash"))
   (get-buffer-process "*ansi-term*"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-term.el
+(provide 'init-term)
 #+end_src
 
 #+NAME: multi-term
