@@ -264,6 +264,13 @@ pulling this package in.
 This defines what package archives are used and then initializes =package=.
 
 #+begin_src emacs-lisp
+(require 'init-elpa)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el :noweb yes
+;;; init-elpa.el --- Init ELPA and package management -*- lexical-binding: t -*-
+<<license>>
+
 
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
@@ -274,7 +281,7 @@ This defines what package archives are used and then initializes =package=.
 ** Helper functions for managing packages
 Sometimes installing a new package will bork packages.  This will recompile the /.el/ files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
 (defun my-package-install (package)
   "Install PACKAGE if not yet installed."
   (unless (fboundp 'package-installed-p)
@@ -319,7 +326,7 @@ Additional notes:
 - Pull in =org= and =org-contrib= as early as possible to make sure ~load-path~
   is set correctly.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
 
 (defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
   "A list of core packages that will be automatically installed.")
@@ -347,7 +354,7 @@ Additional notes:
 ** Quelpa
 Use Quelpa to install packages from source repositories.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
 
 (use-package quelpa
   :init
@@ -362,10 +369,13 @@ Use Quelpa to install packages from source repositories.
 ** Paradox
 [[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+
 (use-package paradox
   :init
   (setq paradox-execute-asynchronously t))
+
+(provide 'init-elpa)
 #+end_src
 ** Configure basic behavior
 Configure Emacs to use the above defined paths.  Also configure some basic
@@ -871,6 +881,16 @@ window.  This probably could be simplified by using something like [[https://git
   (forge-mkhome-target "src"))
 #+end_src
 * Appearance
+** Preamble
+#+begin_src emacs-lisp
+(require 'init-appearance)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el :noweb yes
+;;; init-appearance.el --- Init appearance pieces -*- lexical-binding: t -*-
+<<license>>
+
+#+end_src
 ** Fonts
 First, let's create a way to customize the font used and size.  This defines the
 monospace font, the size for this font, a variable pitch font, and how much to
@@ -881,7 +901,7 @@ Resources:
 - [[https://www.masteringemacs.org/article/unicode-ligatures-color-emoji][Mastering Emacs: Unicode, Ligatures, and Color Emoji]]
 
 *** Define font variables
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 
 (defcustom forge-font "IBM Plex Mono"
   "Preferred default font."
@@ -916,7 +936,7 @@ Resources:
   "List of extra Unicode fonts.")
 #+end_src
 *** Helper functions for configuring fonts
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (defun my-font-name-and-size ()
   "Compute and return font name and size string."
   (interactive)
@@ -961,7 +981,7 @@ Resources:
 *** All the icons
 [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] comes with various icons and characters to help prettify Emacs modes.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (use-package all-the-icons)
 
 (use-package all-the-icons-dired
@@ -970,7 +990,7 @@ Resources:
 *** Emojis
 Emojis and emoticons.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (defun forge/emoji-shrug () "Shrug emoji." (interactive) (insert "¯\\_(ツ)_/¯"))
 (defun forge/emoji-glare () "Glare emoji." (interactive) (insert "ಠ_ಠ"))
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
@@ -980,14 +1000,14 @@ Emojis and emoticons.
 
 #+end_src
 *** [[https://jblevins.org/log/rainbow-mode][Rainbow mode]] to visualize color codes.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (use-package rainbow-mode)
 #+end_src
 ** Themes
 This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
@@ -1052,7 +1072,7 @@ looks good.  It will also define a default theme to start with.
 ** Modeline
 At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
@@ -1065,10 +1085,12 @@ At this point, I've been fairly happy with using [[https://github.com/seagle0128
   (doom-modeline-mode . column-number-mode)
   (doom-modeline-mode . size-indication-mode)
   (after-init . doom-modeline-mode))
+
+(use-package nyan-mode)
 #+end_src
 *** Deprecated
 The following are modes I no longer use.  Configuration is here for reference.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; https://github.com/milkypostman/powerline
 (use-package powerline
   :disabled t
@@ -1094,11 +1116,9 @@ The following are modes I no longer use.  Configuration is here for reference.
   :hook
   (after-load-theme . smart-mode-line-enable)
   (after-init . sml/setup))
-
-(use-package nyan-mode)
 #+end_src
 ** Look and feel
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 
 (defun forge/setup-ui ()
   "Set up the look and feel."
@@ -1132,7 +1152,7 @@ The following are modes I no longer use.  Configuration is here for reference.
 [[https://gitlab.com/protesilaos/lin.git][LIN]] - a utility to enhance the built-in ~hl-line-mode~ so that it better matches
 the selection color in MacOS or other platforms.  See the [[https://protesilaos.com/emacs/lin][manual]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (use-package lin
   :config
   (setq lin-face 'lin-mac-override-fg)
@@ -1148,6 +1168,11 @@ the selection color in MacOS or other platforms.  See the [[https://protesilaos.
     (add-hook hook #'lin-mode)))
 
 #+end_src
+** Postamble
+#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+(provide 'init-appearance)
+#+end_src
+
 * User interface elements
 This section configures those pieces of Emacs where I can affect how I interact
 with it.  This covers a lot of ground.
@@ -1576,10 +1601,21 @@ the window contents.
 #+end_src
 *** ibuffer
 #+begin_src emacs-lisp
+(require 'init-ibuffer)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-ibuffer.el :noweb yes
+;;; init-ibuffer.el --- Init ibuffer -*- lexical-binding: t -*-
+<<license>>
+
+
 (use-package ibuffer
   :bind ("C-x C-b" . ibuffer)
-  :init
-  (add-hook 'ibuffer-mode-hook #'(lambda () (ibuffer-switch-to-saved-filter-groups "default")))
+  :preface
+  (defun init-ibuffer-filters ()
+    (ibuffer-switch-to-saved-filter-groups "default"))
+  :hook
+  (ibuffer-mode . init-ibuffer-filters)
   :custom
   (ibuffer-show-empty-filter-groups nil)
   (ibuffer-saved-filter-groups
@@ -1640,6 +1676,13 @@ the window contents.
         (name . "^\\*Messages\\*$")
         (name . "^\\*\\(Customize\\|Help\\)")
         (name . "\\*\\(Echo\\|Minibuf\\)")))))))
+
+(use-package ibuffer-vc
+  :after (ibuffer vc)
+  :bind (:map ibuffer-mode-map
+              ("/ V" . ibuffer-vc-set-filter-groups-by-vc-root)))
+
+(provide 'init-ibuffer)
 #+end_src
 ** Scrolling
 This is an attempt to make scrolling a bit smoother and friendlier.
@@ -2234,15 +2277,11 @@ the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
   :commands ledger-mode)
 #+end_src
 * Applications
-** Calendar
-The calendar functionality is built-in.  This is to configure the /diary/ path.
-
-#+begin_src emacs-lisp :tangle no
-
-(with-eval-after-load 'calendar
-  (setq diary-file (expand-file-name "diary" org-directory)))
-#+end_src
 ** Chat
+#+begin_src emacs-lisp
+(require 'init-chat)
+#+end_src
+
 Pull in =notifications= and =tls= for all the pieces below.
 
 #+begin_src emacs-lisp
@@ -2252,7 +2291,7 @@ Pull in =notifications= and =tls= for all the pieces below.
 *** Jabber
 My legacy Jabber configuration.  Not used much anymore.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 
 (defun forge/jabber-notification (from buf text title)
   "Take a notification from jabber and send to `alert'.
@@ -2297,7 +2336,10 @@ Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
 IRC configuration.  As a default, use =user-login-name= as the default for
 =erc-nick= and =erc-user-full-name=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-chat.el :noweb yes
+;;; init-chat.el --- Init chat functionality -*- lexical-binding: t -*-
+<<license>>
+
 
 (with-eval-after-load 'erc
   (defun sf/erc-connect ()
@@ -2346,7 +2388,7 @@ IRC configuration.  As a default, use =user-login-name= as the default for
 
 The following is a helper function to auto identify when using [[https://www.bitlbee.org/][BitlBee]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-chat.el
 (defun bitlbee-netrc-identify ()
   "Auto-identify for Bitlbee channels using authinfo or netrc.
 
@@ -2381,7 +2423,7 @@ Helpful resources:
 - https://github.com/yuya373/emacs-slack#how-to-get-token
 - http://endlessparentheses.com/keep-your-slack-distractions-under-control-with-emacs.html?source=rss
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-chat.el
 
 (defvar forge-slack-client-id nil
   "Slack Client ID.")
@@ -2402,6 +2444,10 @@ Helpful resources:
 
 
 #+end_src
+*** Postamble
+#+begin_src emacs-lisp :tangle lisp/init-chat.el
+(provide 'init-chat)
+#+end_src
 ** Directory browser and management
 *** Using Dired
 The following is to configure Dired.  There is some effort here to Dired to
@@ -2410,6 +2456,13 @@ reuse the same window & buffer.
 https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#orgheadline11
 
 #+begin_src emacs-lisp
+(require 'init-dired)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-dired.el :noweb yes
+;;; init-dired.el --- Init dired integration -*- lexical-binding: t -*-
+<<license>>
+
 
 (with-eval-after-load 'dired
   (diminish 'dired-omit-mode)
@@ -2452,13 +2505,13 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
 
 Pull in =async= for asyncrhonous operations in =dired=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (use-package async)
 (autoload 'dired-async-mode "dired-async.el" nil t)
 (dired-async-mode 1)
 #+end_src
 *** Extra features for dired with [[https://www.gnu.org/software/emacs/manual/html_node/dired-x/][dired-x]]
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (with-eval-after-load 'dired-x
   (setq dired-bind-jump nil
         dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
@@ -2468,7 +2521,7 @@ Pull in =async= for asyncrhonous operations in =dired=.
   (add-to-list 'dired-omit-extensions ".DS_Store"))
 #+end_src
 *** More features for dired with =dired-aux=
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
 #+end_src
@@ -2477,7 +2530,7 @@ The following helper uses rsync to make file transfers quicker.  This comes from
 
 https://github.com/tmtxt/tmtxt-dired-async/pull/6/files
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (defun forge/maybe-convert-directory-to-rsync-target (directory)
   "Adapt dired target DIRECTORY in case it is a remote target.
 
@@ -2521,15 +2574,18 @@ read-file-name and dired-dwim-target-directory."
 *** Resolve [[https://syncthing.net][Syncthing]] file conflicts with [[https://github.com/ibizaman/emacs-conflict][emacs-conflict]]
 See https://www.reddit.com/r/emacs/comments/bqqqra/quickly_find_syncthing_conflicts_and_resolve_them/
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 ;;(use-package emacs-conflict :commands (emacs-conflict-show-conflicts-dired))
 #+end_src
 *** Disk utilization
-[[https://gitlab.com/ambrevar/emacs-disk-usage][disk-usage]] is a handy utility to explore disk utilization.  On MacOS, this will require GNU
-coreutils.
+[[https://gitlab.com/ambrevar/emacs-disk-usage][disk-usage]] is a handy utility to explore disk utilization.  On MacOS, this will require GNU coreutils.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (use-package disk-usage)
+#+end_src
+*** Postamble
+#+begin_src emacs-lisp
+(provide 'init-dired)
 #+end_src
 
 ** Git
@@ -3422,6 +3478,13 @@ Miscellaneous notes:
   This has taken the place of /org-pomodoro/.  See [[https://orgmode.org/manual/Timers.html][Org timers]].
 
 #+begin_src emacs-lisp
+(require 'init-org)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-org.el :noweb yes
+;;; init-org.el --- Init orgmode -*- lexical-binding: t -*-
+<<license>>
+
 
 (use-package org
   :preface
@@ -3758,14 +3821,14 @@ Miscellaneous notes:
 
 #+end_src
 *** Org Contacts, Notmuch and mail
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package ol-notmuch      ;; use package from site-lisp
   :after (:any org notmuch))
 #+end_src
 
 =org-mime= allows one to use Org formatting for email.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package org-mime
   :config
   (add-hook 'message-mode-hook
@@ -3778,7 +3841,7 @@ Miscellaneous notes:
   (setq org-mime-export-options '(:section-numbers nil :with-author nil :with-toc nil)))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package org-contacts
   :after org
   :config
@@ -3789,7 +3852,7 @@ Miscellaneous notes:
                  "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 #+end_src
 *** Org Tree Slide for presentations from Org
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map
               ("<f8>" . org-tree-slide-mode)
@@ -3810,14 +3873,14 @@ associated with the entry.
 - Similarly, use =org-decrypt-entry= on a headline to decrypt.
 - Excluding the /crypt/ tag from inheritance prevents already encrypted text from being encrypted again.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (with-eval-after-load 'org-crypt
   (org-crypt-use-before-save-magic)
   (setq org-crypt-disable-auto-save t
         org-crypt-key user-full-name))
 #+end_src
 *** Org ID
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (with-eval-after-load 'org-id
   (setq org-id-method 'uuid
         org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
@@ -3833,7 +3896,7 @@ associated with the entry.
   - You will need the CSS and fonts from [[https://github.com/edwardtufte/tufte-css][tufte-css]].
 - [[https://github.com/yjwen/org-reveal][Org Export to Reveal JS]]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 ;;(use-package ol-git-link :straight (org-contrib :includes ol-git-link))
 
 (use-package ol-eww
@@ -3866,7 +3929,7 @@ associated with the entry.
 ;; (use-package ox-tufte :after org)
 #+end_src
 *** Helper functions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (defun forge/capture-current-song ()
   "Capture the current song details."
   (let ((itunes-song (forge/get-current-song-itunes))
@@ -4009,7 +4072,7 @@ It will not remove entries from the source org file."
 *** Deprecated Org Journal
 I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journaling, but now just use Org's /datetree/ model.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package org-journal
   :disabled t
   :preface
