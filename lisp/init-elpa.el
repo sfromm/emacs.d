@@ -50,7 +50,7 @@
   (byte-recompile-directory package-user-dir nil t))
 
 
-(defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
+(defvar init-core-packages '(use-package diminish org org-contrib)
   "A list of core packages that will be automatically installed.")
 
 (defun init-install-core-packages ()
@@ -72,16 +72,21 @@
       use-package-always-ensure t
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
-
-(use-package quelpa
-  :init
-  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
-        quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
-        quelpa-update-melpa-p nil))
+(cl-defun init-vc-install (&key (fetcher "github") repo name rev backend)
+  "Install a package from a remote.
+This is meant to be a thin wrapper around `package-vc-install'.  Takes
+the following arguments:
 
-(use-package quelpa-use-package
-  :demand t
-  :after quelpa)
+- FETCHER the remote where to get the package (e.g. \"gitlab\").
+  Defaults to \"github\".
+- REPO is the name of the repository (e.g. \"sfromm/ip-query\").
+- NAME, REV, and BACKEND are passed to `package-vc-install'."
+  (interactive)
+  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
+         (iname (when name (intern name)))
+         (pkg (or iname (intern (file-name-base repo)))))
+    (unless (package-installed-p pkg)
+      (package-vc-install url iname rev backend))))
 
 
 (use-package paradox

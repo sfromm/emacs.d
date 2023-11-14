@@ -44,7 +44,8 @@
   (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 
 (use-package ip-query
-  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
   :commands (ip-query))
 
 
@@ -60,9 +61,9 @@
   :config
   (mastodon-discover))
 
-(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
 (use-package wttrin
-  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))

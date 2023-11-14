@@ -161,7 +161,8 @@
   (setq-local c-basic-offset 4))
 
 (use-package eos-mode
-  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :ensure nil ;; install via package-vc-install
+  :init (init-vc-install :fetcher "github" :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -171,7 +172,8 @@
 (use-package nftables-mode)
 
 (use-package fle-mode
-  :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
   :commands (fle-mode))
 
 (use-package ledger-mode

@@ -328,7 +328,7 @@ Additional notes:
 
 #+begin_src emacs-lisp :tangle lisp/init-elpa.el
 
-(defvar init-core-packages '(use-package diminish quelpa quelpa-use-package org org-contrib)
+(defvar init-core-packages '(use-package diminish org org-contrib)
   "A list of core packages that will be automatically installed.")
 
 (defun init-install-core-packages ()
@@ -351,10 +351,33 @@ Additional notes:
       use-package-minimum-reported-time 0.1) ;; carp if it takes awhile to load a package
 
 #+end_src
+** VC Install
+Since Emacs 29.1, there is built-in support for [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Fetching-Package-Sources.html][installing packages]] from a /VC/
+backend.  Instead of pulling in /Quelpa/, I'd like to use the built-in
+functionality.  Make it look like ~(quelpa)~ as much as possible.
+
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+(cl-defun init-vc-install (&key (fetcher "github") repo name rev backend)
+  "Install a package from a remote.
+This is meant to be a thin wrapper around `package-vc-install'.  Takes
+the following arguments:
+
+- FETCHER the remote where to get the package (e.g. \"gitlab\").
+  Defaults to \"github\".
+- REPO is the name of the repository (e.g. \"sfromm/ip-query\").
+- NAME, REV, and BACKEND are passed to `package-vc-install'."
+  (interactive)
+  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
+         (iname (when name (intern name)))
+         (pkg (or iname (intern (file-name-base repo)))))
+    (unless (package-installed-p pkg)
+      (package-vc-install url iname rev backend))))
+#+end_src
+
 ** Quelpa
 Use Quelpa to install packages from source repositories.
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+#+begin_src emacs-lisp :tangle no
 
 (use-package quelpa
   :init
@@ -2251,7 +2274,8 @@ documents.
 *** EOS
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package eos-mode
-  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
+  :ensure nil ;; install via package-vc-install
+  :init (init-vc-install :fetcher "github" :repo "sfromm/eos-mode")
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
@@ -2267,7 +2291,8 @@ documents.
 ** FLE - Fast Log Entry
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package fle-mode
-  :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
   :commands (fle-mode))
 #+end_src
 ** Ledger
@@ -4629,7 +4654,8 @@ Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community
 
 #+begin_src emacs-lisp :tangle lisp/init-utils.el
 (use-package ip-query
-  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
   :commands (ip-query))
 #+end_src
 
@@ -4680,9 +4706,9 @@ Keybindings of note:
 | P          | Open profile of user under point              |
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
 #+begin_src emacs-lisp :tangle lisp/init-utils.el
-(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
 (use-package wttrin
-  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/emacs-wttrin")
   :commands (wttrin)
   :custom
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
