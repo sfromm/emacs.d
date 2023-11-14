@@ -577,3 +577,5 @@ It will not remove entries from the source org file."
         org-journal-file-type 'yearly
         org-journal-file-format "%Y"
         org-journal-date-format "%A, %d %B %Y"))
+
+(provide 'init-org)

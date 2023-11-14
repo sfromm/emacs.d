@@ -109,3 +109,5 @@ read-file-name and dired-dwim-target-directory."
 ;;(use-package emacs-conflict :commands (emacs-conflict-show-conflicts-dired))
 
 (use-package disk-usage)
+
+(provide 'init-dired)

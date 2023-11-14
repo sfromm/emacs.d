@@ -1,27 +1,3 @@
-(with-eval-after-load 'go-jira
-  (defvar jira-token nil)
-  (defun jira-create ()
-    "Create a ticket in Jira."
-    (interactive)
-    (unless jira-token
-      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
-    (setenv "JIRA_API_TOKEN" jira-token)
-    (require 'with-editor)
-    (start-process "go-jira" (get-buffer-create " *go-jira*")
-                   "jira" "create" "-b"
-                   "--editor"
-                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
-
-
-(use-package net-utils
-  :commands (ping traceroute)
-  :config
-  (setq ping-program-options (list "-c" "5"))
-  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
-
-
-(use-package rg)
-
 ;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
 ;; Copyright (C) 2021, 2022 by Stephen Fromm
 
@@ -45,6 +21,34 @@
   (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 
 (use-package lorem-ipsum)
+
+(with-eval-after-load 'go-jira
+  (defvar jira-token nil)
+  (defun jira-create ()
+    "Create a ticket in Jira."
+    (interactive)
+    (unless jira-token
+      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
+    (setenv "JIRA_API_TOKEN" jira-token)
+    (require 'with-editor)
+    (start-process "go-jira" (get-buffer-create " *go-jira*")
+                   "jira" "create" "-b"
+                   "--editor"
+                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
+
+
+(use-package net-utils
+  :commands (ping traceroute)
+  :config
+  (setq ping-program-options (list "-c" "5"))
+  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
+
+(use-package ip-query
+  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
+  :commands (ip-query))
+
+
+(use-package rg)
 
 (use-package gist
   :custom (gist-view-gist t))

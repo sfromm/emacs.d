@@ -380,91 +380,6 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (interactive)
   (insert (format-time-string "%B %d, %Y" (current-time))))
 
-(use-package ip-query
-  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
-  :commands (ip-query))
-
-(defcustom forge-peek-buffer-name "*forge-peek*"
-  "Buffer for peeking at data."
-  :group 'forge
-  :type 'string)
-
-(defun forge/peek-first ()
-  "Go to beginning of peek buffer."
-  (interactive)
-  (goto-char (point-min)))
-
-(defun forge/peek-last ()
-  "Go to end of peek buffer."
-  (interactive)
-  (goto-char (point-max)))
-
-(defvar forge-peek-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "q") 'delete-frame)
-    (define-key map (kbd "<") 'forge/peek-first)
-    (define-key map (kbd ">") 'forge/peek-last)
-    map)
-  "Keymap for forge-peek mode.")
-
-(define-derived-mode forge-peek-mode fundamental-mode "ForgePeek"
-                     "A major mode for peeking at query responses."
-                     :group 'forge
-                     (setq buffer-read-only t)
-                     (setq buffer-undo-list t))
-
-(defun forge/peek-make-buffer ()
-  "Return the peek query buffer."
-  (let ((buffer (get-buffer-create forge-peek-buffer-name)))
-    (with-current-buffer buffer (forge-peek-mode))
-    buffer))
-
-;; Make a peek-frame, a modified version of what is from here:
-;; https://tuhdo.github.io/emacs-frame-peek.html
-(defun forge/peek-make-frame (func &rest args)
-  "Make a new frame for peeking at information.  Provide FUNC that will return data and optional ARGS."
-  (let ((summary)
-        (peek-frame)
-        (x) (y)
-        (abs-pixel-pos (save-excursion
-                         ;; (beginning-of-thing 'word)
-                         (window-absolute-pixel-position))))
-    (setq x (car abs-pixel-pos))
-    (setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
-
-    (setq peek-frame (make-frame '((minibuffer . nil)
-                                   (name . "*Peek*")
-                                   (width . 80)
-                                   (visibility . nil)
-                                   (height . 25))))
-    (message "peek %s" peek-frame)
-
-    (set-frame-position peek-frame x y)
-
-    (with-selected-frame peek-frame
-      (forge/peek-make-buffer)
-      (funcall func)
-      (recenter-top-bottom 0)
-      (select-window (display-buffer forge-peek-buffer-name t t))
-      (delete-other-windows))
-
-    (make-frame-visible peek-frame)))
-
-(defun forge/peek-ip-qry ()
-  "Look up information on IP address."
-  (interactive)
-  (let ((qry (lambda ()
-               (let ((ipqry (concat (getenv "HOME") "/src/ncon/ncon.sh"))
-                     (ipaddr))
-                 (if (not (region-active-p))
-                     (setq ipaddr (read-string "IP address: "))
-                   (setq ipaddr (buffer-substring (region-beginning) (region-end))))
-                 (with-current-buffer forge-peek-buffer-name
-                   (let ((inhibit-read-only t))
-                     (goto-char (point-max))
-                     (call-process ipqry nil forge-peek-buffer-name t "ip qry " ipaddr)))))))
-    (forge/peek-make-frame qry)))
-
 (defmacro forge-mkhome-target (target)
   "Macro to run mkhome makefile TARGET."
   `(with-temp-buffer
@@ -861,6 +776,8 @@ prompt for what tab to switch to."
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (setq-default display-line-numbers-width 3))
 
+(require 'init-editing-lang)
+
 (use-package page-break-lines
   :diminish page-break-lines-mode
   :hook
@@ -908,11 +825,14 @@ prompt for what tab to switch to."
     (while (search-forward (string ?\C-m) nil t)
       (replace-match (string ?\C-j) nil t))))
 
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :custom (flycheck-global-modes '(not org-mode))
-  :init (global-flycheck-mode))
+(use-package ediff
+  :init
+  (setq ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package diff-hl
+  :commands (diff-hl-mode diff-hl-dired-mode)
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
 (use-package corfu
   :custom
@@ -933,174 +853,8 @@ prompt for what tab to switch to."
   (setq tab-always-indent 'complete)
   (setq completion-cycle-threshold 3))
 
-(use-package ediff
-  :init
-  (setq ediff-split-window-function 'split-window-horizontally
-        ediff-window-setup-function 'ediff-setup-windows-plain))
-
-(use-package diff-hl
-  :commands (diff-hl-mode diff-hl-dired-mode)
-  :hook (magit-post-refresh . diff-hl-magit-post-refresh))
-
-
-(use-package dockerfile-mode
-  :mode ("Dockerfile\\'" . dockerfile-mode))
-
-(use-package docker-compose-mode
-  :mode "docker-compose.*\.yml\\'")
-
-
-(use-package aggressive-indent
-  :hook (emacs-lisp-mode . aggressive-indent-mode))
-
-(with-eval-after-load 'lisp-mode
-  (add-hook 'before-save-hook #'forge/turn-on-delete-trailing-whitespace)
-    (setq lisp-indent-offset nil))
-
-(use-package eldoc
-  :diminish eldoc-mode
-  :hook
-  (emacs-lisp-mode . eldoc-mode)
-  (lisp-interaction-mode . eldoc-mode)
-  :config
-  (setq eldoc-idle-delay 0.3))
-
-
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :custom
-  (markdown-command "pandoc -f markdown_github+smart")
-  :preface
-  (defun orgtbl-to-gfm (table params)
-    "Convert the Orgtbl mode TABLE to GitHub Flavored Markdown."
-    (let* ((alignment (mapconcat (lambda (x) (if x "|--:" "|---"))
-                                 org-table-last-alignment ""))
-           (params2
-            (list
-             :splice t
-             :hline (concat alignment "|")
-             :lstart "| " :lend " |" :sep " | ")))
-      (orgtbl-to-generic table (org-combine-plists params2 params))))
-
-  (defun forge/insert-org-to-md-table (table-name)
-    "Helper function to create markdown and orgtbl boilerplate."
-    (interactive "*sEnter table name: ")
-    (insert "<!---
-#+ORGTBL: SEND " table-name " orgtbl-to-gfm
-
--->
-<!--- BEGIN RECEIVE ORGTBL " table-name " -->
-<!--- END RECEIVE ORGTBL " table-name " -->")
-    (previous-line)
-    (previous-line)
-    (previous-line)))
-
-
-(use-package python
-  :interpreter ("python" . python-mode)
-  :hook
-  (python-mode . forge/turn-on-delete-trailing-whitespace)
-  (python-mode . forge/whitespace-visualize)
-  :config
-  ;; set python-shell-interpreter to python3
-  (when (and (executable-find "python3")
-             (string= python-shell-interpreter "python"))
-    (setq python-shell-interpreter "python3"))
-  (setq-default python-indent-offset 4))
-
-(use-package anaconda-mode
-  :after python
-  :hook python-mode
-  :init
-  (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
-
-(use-package company-anaconda
-  :after anaconda-mode)
-
-
-(use-package go-mode
-  :mode "\\.go\\ '"
-  :config
-  (add-hook 'before-save-hook #'gofmt-before-save))
-
-(use-package ess)
-
-(with-eval-after-load 'shell-script-mode
-  (add-hook 'shell-script-hook #'forge/whitespace-visualize)
-  (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
-
-
-(use-package web-mode
-  :mode ("\\.html\\'" "\\.j2\\'")
-  :init
-  (setq web-mode-enable-auto-indentation nil ;; temporary for now.
-        web-mode-css-indent-offset 2
-        web-mode-markup-indent-offset 2
-        web-mode-code-indent-offset 2))
-
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
-
-(use-package graphql-mode
-  :mode ("\\.graphql\\'" . graphql-mode))
-
-(use-package php-mode
-  :mode "\\.php\\'")
-
-
-(use-package csv-mode
-  :hook
-  (csv-mode . forge/toggle-highlight-line)
-  (csv-mode . forge/turn-on-delete-trailing-whitespace)
-  (csv-mode . forge/whitespace-visualize))
-
-(use-package json-mode
-  :hook
-  (json-mode . forge/turn-on-delete-trailing-whitespace)
-  (json-mode . forge/whitespace-visualize))
-
-(use-package yaml-mode
-  :hook
-  (yaml-mode . forge/turn-on-delete-trailing-whitespace)
-  (yaml-mode . forge/whitespace-visualize)
-  :config
-  (setq yaml-indent-offset 2))
-
-(with-eval-after-load 'nxml
-  (defalias 'xml-mode 'nxml-mode)
-  (autoload 'sgml-skip-tag-forward "sgml-mode")
-  (add-to-list 'hs-special-modes-alist
-               '(nxml-mode
-                 "<!--\\|<[^/>]*[^/]>"
-                 "-->\\|</[^/>]*[^/]>"
-                 "<!--"
-                 sgml-skip-tag-forward
-                 nil)))
-
-
-(with-eval-after-load 'junos-mode
-  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
-  (setq-local c-basic-offset 4))
-
-(use-package eos-mode
-  :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
-  :commands (eos-mode)
-  :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
-  :hook (eos-mode . highlight-indent-guides-mode))
-
-(use-package yang-mode)
-
-(use-package nftables-mode)
-
-(use-package fle-mode
-  :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
-  :commands (fle-mode))
-
-(use-package ledger-mode
-  :commands ledger-mode)
 
 (require 'init-chat)
 
@@ -1108,8 +862,6 @@ prompt for what tab to switch to."
 (require 'tls)
 
 (require 'init-dired)
-
-(provide 'init-dired)
 
 (require 'init-git)
 

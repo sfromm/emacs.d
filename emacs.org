@@ -758,21 +758,12 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (insert (format-time-string "%B %d, %Y" (current-time))))
 #+end_src
 
-*** Network-related helpers
-These are functions to help with looking up network relaated information.
-Several functions depend upon the [[https://team-cymru.com/community-services/ip-asn-mapping/][IP to ASN Mapping Service]] provided by [[https://team-cymru.com/][Team Cymru]].
-
-#+begin_src emacs-lisp
-(use-package ip-query
-  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
-  :commands (ip-query))
-#+end_src
-
 *** Peek
 The following is meant to provide a way to /peek/ at information in a temporary
-window.  This probably could be simplified by using something like [[https://github.com/tumashu/posframe][posframe]].
+window.  This probably could be simplified by using something like [[https://github.com/tumashu/posframe][posframe]].  I
+haven't used this for a long time and, for now, is not tangled.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defcustom forge-peek-buffer-name "*forge-peek*"
   "Buffer for peeking at data."
   :group 'forge
@@ -1855,6 +1846,17 @@ Lastly, display line numbers any time in a programming-related buffer.
   (setq-default display-line-numbers-width 3))
 #+end_src
 
+Defined further down, pull in support for various languages.
+
+#+begin_src emacs-lisp
+(require 'init-editing-lang)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el :noweb yes
+;;; init-editing-lang.el --- Init support for various languages -*- lexical-binding: t -*-
+<<license>>
+
+#+end_src
 ** Page breaks
 Using page breaks have a couple benefits.  It can provide a nice visual
 separation between sections.  It also provides a way to navigate between
@@ -1948,16 +1950,26 @@ See also: https://www.emacswiki.org/emacs/DosToUnix
     (while (search-forward (string ?\C-m) nil t)
       (replace-match (string ?\C-j) nil t))))
 #+end_src
-** Syntax checking
-[[https://www.flycheck.org/en/latest/][flycheck]] is an on-the-fly syntax checking extension for Emacs.  For python, you
-will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https://pypi.org/project/pylint/][pylint]]
+** Managing diffs between files or previous versions of a file
+*** Ediff
+[[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] is a comprehensive interface to =diff= and =patch= utilities.
 
 #+begin_src emacs-lisp
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :custom (flycheck-global-modes '(not org-mode))
-  :init (global-flycheck-mode))
+(use-package ediff
+  :init
+  (setq ediff-split-window-function 'split-window-horizontally
+        ediff-window-setup-function 'ediff-setup-windows-plain))
+#+end_src
+
+*** Show indicator for uncommitted differences
+[[https://github.com/dgutov/diff-hl][diff-hl]] will highlight uncommitted changes on the left side of the window and
+allows you to jump between changes and revert them.
+
+#+begin_src emacs-lisp
+(use-package diff-hl
+  :commands (diff-hl-mode diff-hl-dired-mode)
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh))
+
 #+end_src
 
 ** Completion framework
@@ -1991,33 +2003,23 @@ Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]
   (setq completion-cycle-threshold 3))
 #+end_src
 
-** Managing diffs between files or previous versions of a file
-*** Ediff
-[[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] is a comprehensive interface to =diff= and =patch= utilities.
+** Syntax checking
+[[https://www.flycheck.org/en/latest/][flycheck]] is an on-the-fly syntax checking extension for Emacs.  For python, you
+will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https://pypi.org/project/pylint/][pylint]]
 
-#+begin_src emacs-lisp
-(use-package ediff
-  :init
-  (setq ediff-split-window-function 'split-window-horizontally
-        ediff-window-setup-function 'ediff-setup-windows-plain))
-#+end_src
-
-*** Show indicator for uncommitted differences
-[[https://github.com/dgutov/diff-hl][diff-hl]] will highlight uncommitted changes on the left side of the window and
-allows you to jump between changes and revert them.
-
-#+begin_src emacs-lisp
-(use-package diff-hl
-  :commands (diff-hl-mode diff-hl-dired-mode)
-  :hook (magit-post-refresh . diff-hl-magit-post-refresh))
-
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
+(use-package flycheck
+  :diminish flycheck-mode
+  :custom (flycheck-global-modes '(not org-mode))
+  :init (global-flycheck-mode))
 #+end_src
 
 ** Docker
 [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
 docker-compose files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" . dockerfile-mode))
@@ -2029,7 +2031,7 @@ docker-compose files.
 ** Lisp
 Go ahead and set up modes to help with editing Lisp files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
@@ -2050,7 +2052,7 @@ Go ahead and set up modes to help with editing Lisp files.
 ** Markdown
 [[https://github.com/jrblevin/markdown-mode][markdown-mode]]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -2092,7 +2094,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for navigatio
 Set =python-shell-interpreter= to =python3=, if found in PATH,
 and if =python-shell-interpreter= is the default value =python=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package python
   :interpreter ("python" . python-mode)
@@ -2120,7 +2122,7 @@ and if =python-shell-interpreter= is the default value =python=.
 ** Go-lang
 I pull in this package for the formatting and font-lock features.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package go-mode
   :mode "\\.go\\ '"
@@ -2130,11 +2132,11 @@ I pull in this package for the formatting and font-lock features.
 ** R & ESS
 [[https://ess.r-project.org][ESS]] is a package that supports various statistical analysis programs.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package ess)
 #+end_src
 ** Shell scripts
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (with-eval-after-load 'shell-script-mode
   (add-hook 'shell-script-hook #'forge/whitespace-visualize)
   (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
@@ -2143,7 +2145,7 @@ I pull in this package for the formatting and font-lock features.
 *** web-mode
 [[https://web-mode.org/][web-mode]] is a mode for editing web templates, including HTML, CSS, Jinja, and other files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package web-mode
   :mode ("\\.html\\'" "\\.j2\\'")
@@ -2178,7 +2180,7 @@ See also [[http://emacsrocks.com/e15.html][Emacs Rocks: restclient-mode]] episod
 *** GraphQL
 [[https://github.com/davazp/graphql-mode][graphql]] is a mode to edit GraphQL schema and queries.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 #+end_src
@@ -2186,13 +2188,13 @@ See also [[http://emacsrocks.com/e15.html][Emacs Rocks: restclient-mode]] episod
 *** PHP
 This is really predominantly for syntax highlighting.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package php-mode
   :mode "\\.php\\'")
 #+end_src
 ** Data serialization formats
 *** CSV
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package csv-mode
   :hook
@@ -2203,7 +2205,7 @@ This is really predominantly for syntax highlighting.
 *** JSON
 [[https://www.json.org/][JSON]] is one data-serialization format.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package json-mode
   :hook
   (json-mode . forge/turn-on-delete-trailing-whitespace)
@@ -2212,7 +2214,7 @@ This is really predominantly for syntax highlighting.
 *** YAML
 [[https://yaml.org/][YAML]] is another data-serialization format.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package yaml-mode
   :hook
   (yaml-mode . forge/turn-on-delete-trailing-whitespace)
@@ -2225,7 +2227,7 @@ Just enough to help recognize XML tags and then later fold xml with
 =hs-toggle-folding=.  This configures [[https://www.gnu.org/software/emacs/manual/html_node/nxml-mode/Introduction.html][nXML mode]] for viewing and editing XML
 documents.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (with-eval-after-load 'nxml
   (defalias 'xml-mode 'nxml-mode)
   (autoload 'sgml-skip-tag-forward "sgml-mode")
@@ -2240,14 +2242,14 @@ documents.
 
 ** Network device configurations
 *** Junos
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (with-eval-after-load 'junos-mode
   (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
   (setq-local c-basic-offset 4))
 #+end_src
 *** EOS
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package eos-mode
   :quelpa (eos-mode :fetcher github :repo "sfromm/eos-mode")
   :commands (eos-mode)
@@ -2255,15 +2257,15 @@ documents.
   :hook (eos-mode . highlight-indent-guides-mode))
 #+end_src
 *** Yang
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package yang-mode)
 #+end_src
 *** Nftables
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package nftables-mode)
 #+end_src
 ** FLE - Fast Log Entry
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package fle-mode
   :quelpa (fle-mode :fetcher github :repo "sfromm/fle-mode")
   :commands (fle-mode))
@@ -2272,9 +2274,11 @@ documents.
 [[https://www.ledger-cli.org/][Ledger]] is a CLI application for double-entry accounting system.  This configures
 the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package ledger-mode
   :commands ledger-mode)
+
+(provide 'init-editing-lang)
 #+end_src
 * Applications
 ** Chat
@@ -2584,7 +2588,7 @@ See https://www.reddit.com/r/emacs/comments/bqqqra/quickly_find_syncthing_confli
 (use-package disk-usage)
 #+end_src
 *** Postamble
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 (provide 'init-dired)
 #+end_src
 
@@ -4008,6 +4012,11 @@ I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journa
         org-journal-date-format "%A, %d %B %Y"))
 
 #+end_src
+*** Postamble
+#+begin_src emacs-lisp :tangle lisp/init-org.el
+(provide 'init-org)
+#+end_src
+
 ** Password management
 This configures a couple things: [[https://www.gnu.org/software/emacs/manual/html_mono/auth.html][auth-source]] and [[https://www.passwordstore.org/][password store]].  First, on
 MacOS, specify the pass to =gpg= and the type of pinentry.  I use a couple tools
@@ -4569,6 +4578,22 @@ The following are miscellaneous utilities that are small but useful.
 (require 'init-utils)
 #+end_src
 
+** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
+#+begin_src emacs-lisp :tangle lisp/init-utils.el :noweb yes
+;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
+<<license>>
+
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
+#+end_src
+
+** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+(use-package lorem-ipsum)
+#+end_src
 ** Jira
 [[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
 init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
@@ -4599,6 +4624,15 @@ A place to configure miscellaneous settings for network utilities.
   (setq ping-program-options (list "-c" "5"))
   (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 #+end_src
+
+Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community-services/ip-asn-mapping/][IP to ASN Mapping Service]] provided by [[https://team-cymru.com/][Team Cymru]].
+
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+(use-package ip-query
+  :quelpa (ip-query :fetcher github :repo "sfromm/ip-query")
+  :commands (ip-query))
+#+end_src
+
 ** Search / Ripgrep
 [[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
 
@@ -4607,22 +4641,6 @@ A place to configure miscellaneous settings for network utilities.
 (use-package rg)
 #+end_src
 
-** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el :noweb yes
-;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
-<<license>>
-
-
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
-#+end_src
-
-** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
-(use-package lorem-ipsum)
-#+end_src
 ** [[https://github.com/defunkt/gist.el][Gist]]
 #+begin_src emacs-lisp :tangle lisp/init-utils.el
 (use-package gist
