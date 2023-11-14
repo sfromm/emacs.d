@@ -1,0 +1,69 @@
+(with-eval-after-load 'go-jira
+  (defvar jira-token nil)
+  (defun jira-create ()
+    "Create a ticket in Jira."
+    (interactive)
+    (unless jira-token
+      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
+    (setenv "JIRA_API_TOKEN" jira-token)
+    (require 'with-editor)
+    (start-process "go-jira" (get-buffer-create " *go-jira*")
+                   "jira" "create" "-b"
+                   "--editor"
+                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
+
+
+(use-package net-utils
+  :commands (ping traceroute)
+  :config
+  (setq ping-program-options (list "-c" "5"))
+  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
+
+
+(use-package rg)
+
+;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
+;; Copyright (C) 2021, 2022 by Stephen Fromm
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
+
+(use-package lorem-ipsum)
+
+(use-package gist
+  :custom (gist-view-gist t))
+
+
+(use-package mastodon
+  :custom
+  (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))
+  :config
+  (mastodon-discover))
+
+(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
+(use-package wttrin
+  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
+  :commands (wttrin)
+  :custom
+  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
+  (wttrin-language "en-US"))
+
+(use-package with-editor)
+
+(provide 'init-utils)

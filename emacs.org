@@ -2619,34 +2619,6 @@ documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.  Other c
 (provide 'init-git)
 #+end_src
 
-** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
-#+begin_src emacs-lisp
-
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
-#+end_src
-
-** Jira
-[[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
-init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'go-jira
-  (defvar jira-token nil)
-  (defun jira-create ()
-    "Create a ticket in Jira."
-    (interactive)
-    (unless jira-token
-      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
-    (setenv "JIRA_API_TOKEN" jira-token)
-    (require 'with-editor)
-    (start-process "go-jira" (get-buffer-create " *go-jira*")
-                   "jira" "create" "-b"
-                   "--editor"
-                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
-#+end_src
 ** Mail
 There are several mail clients for Emacs, including the built-in ones [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Rmail.html#Rmail][Rmail]] and
 [[https://www.gnu.org/software/emacs/manual/html_node/gnus/][Gnus]].  I've used both [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] and [[https://notmuchmail.org/][notmuch]].  I think both have their pros and cons.
@@ -3393,63 +3365,6 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 (provide 'init-email)
 #+end_src
 
-** Music
-*** Mingus
-I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mingus]] as an Emacs interface to MPD.
-
-#+begin_src emacs-lisp :tangle no
-(use-package mingus
-  :disabled t
-  :preface
-  (defun forge/get-current-song-mpd ()
-    "Get the current song playing via MPD."
-    (interactive)
-    (let ((conn (mpd-conn-new "localhost" 6600))
-          (cursong nil))
-      (condition-case nil
-          (setq cursong (split-string (plist-get (mpd-get-current-song conn) 'Title) " - "))
-        (error nil))
-      cursong)))
-#+end_src
-*** EMMS
-[[https://www.gnu.org/software/emms/][EMMS]] is another Emacs interface to playing multimedia.  I occasionally use this.  The docs are [[https://www.gnu.org/software/emms/manual/][here]].
-
-#+begin_src emacs-lisp :tangle no
-(use-package emms
-  :disabled t
-  :custom
-  (emms-directory (expand-file-name "emms" forge-state-dir))
-  (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
-  :config
-  (emms-all)
-  (emms-history-load)
-  (setq emms-player-list (list emms-player-mpv)
-        emms-stream-info-backend 'mplayer
-        emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
-        emms-browser-covers 'emms-browser-cache-thumbnail)
-  (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
-  (add-to-list 'emms-info-functions 'emms-info-cueinfo)
-  (if (executable-find "emms-print-metadata")
-      (progn
-        (require 'emms-info-libtag)
-        (add-to-list 'emms-info-functions 'emms-info-libtag)
-        (delete 'emms-info-ogginfo emms-info-functions)
-        (delete 'emms-info-mp3info emms-info-functions))
-    (add-to-list 'emms-info-functions 'emms-info-ogginfo)
-    (add-to-list 'emms-info-functions 'emms-info-mp3info)))
-
-#+end_src
-** Network related, ping and traceroute
-A place to configure miscellaneous settings for network utilities.
-
-#+begin_src emacs-lisp
-
-(use-package net-utils
-  :commands (ping traceroute)
-  :config
-  (setq ping-program-options (list "-c" "5"))
-  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
-#+end_src
 ** Org Mode
 *** Org
 I pull in Org with all of the contributed packages via the /org-plus-contrib/
@@ -4339,14 +4254,6 @@ one's list of feeds.  I find this approach preferable.
 #+begin_src emacs-lisp :tangle lisp/init-elfeed.el
 (provide 'init-elfeed)
 #+end_src
-** Search / Ripgrep
-[[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
-
-#+begin_src emacs-lisp
-
-(use-package rg)
-#+end_src
-
 ** EShell Terminal
 I predominantly use =eshell= for terminal like needs.  There's always
 =ansi-term= if for some reason =eshell= isn't a good fit, but I find I rarely
@@ -4500,7 +4407,52 @@ buffer if it exists; otherwise, create one and switch to it.
   :config
   (setq multi-term-program "/bin/zsh"))
 #+end_src
+** Music
+*** Mingus
+I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mingus]] as an Emacs interface to MPD.
 
+#+begin_src emacs-lisp :tangle no
+(use-package mingus
+  :disabled t
+  :preface
+  (defun forge/get-current-song-mpd ()
+    "Get the current song playing via MPD."
+    (interactive)
+    (let ((conn (mpd-conn-new "localhost" 6600))
+          (cursong nil))
+      (condition-case nil
+          (setq cursong (split-string (plist-get (mpd-get-current-song conn) 'Title) " - "))
+        (error nil))
+      cursong)))
+#+end_src
+*** EMMS
+[[https://www.gnu.org/software/emms/][EMMS]] is another Emacs interface to playing multimedia.  I occasionally use this.  The docs are [[https://www.gnu.org/software/emms/manual/][here]].
+
+#+begin_src emacs-lisp :tangle no
+(use-package emms
+  :disabled t
+  :custom
+  (emms-directory (expand-file-name "emms" forge-state-dir))
+  (emms-source-file-default-directory (expand-file-name "~/annex/Audio"))
+  :config
+  (emms-all)
+  (emms-history-load)
+  (setq emms-player-list (list emms-player-mpv)
+        emms-stream-info-backend 'mplayer
+        emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+        emms-browser-covers 'emms-browser-cache-thumbnail)
+  (add-to-list 'emms-player-mpv-parameters "--no-audio-display")
+  (add-to-list 'emms-info-functions 'emms-info-cueinfo)
+  (if (executable-find "emms-print-metadata")
+      (progn
+        (require 'emms-info-libtag)
+        (add-to-list 'emms-info-functions 'emms-info-libtag)
+        (delete 'emms-info-ogginfo emms-info-functions)
+        (delete 'emms-info-mp3info emms-info-functions))
+    (add-to-list 'emms-info-functions 'emms-info-ogginfo)
+    (add-to-list 'emms-info-functions 'emms-info-mp3info)))
+
+#+end_src
 ** Twitter
 The following configuration is for [[https://github.com/hayamiz/twittering-mode][twittering]], an emacs mode for Twitter.  This
 package is not installed by default. You will have to go through the process of
@@ -4611,6 +4563,71 @@ Update on [2023-02-05 Sun]: Stop tangling the twitter config.
 
 
 #+end_src
+* Miscellaneous Utilities
+The following are miscellaneous utilities that are small but useful.
+#+begin_src emacs-lisp
+(require 'init-utils)
+#+end_src
+
+** Jira
+[[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
+init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
+
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+(with-eval-after-load 'go-jira
+  (defvar jira-token nil)
+  (defun jira-create ()
+    "Create a ticket in Jira."
+    (interactive)
+    (unless jira-token
+      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
+    (setenv "JIRA_API_TOKEN" jira-token)
+    (require 'with-editor)
+    (start-process "go-jira" (get-buffer-create " *go-jira*")
+                   "jira" "create" "-b"
+                   "--editor"
+                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
+#+end_src
+** Network related, ping and traceroute
+A place to configure miscellaneous settings for network utilities.
+
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+
+(use-package net-utils
+  :commands (ping traceroute)
+  :config
+  (setq ping-program-options (list "-c" "5"))
+  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
+#+end_src
+** Search / Ripgrep
+[[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
+
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+
+(use-package rg)
+#+end_src
+
+** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
+#+begin_src emacs-lisp :tangle lisp/init-utils.el :noweb yes
+;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
+<<license>>
+
+
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode)
+  :init
+  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
+#+end_src
+
+** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+(use-package lorem-ipsum)
+#+end_src
+** [[https://github.com/defunkt/gist.el][Gist]]
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
+(use-package gist
+  :custom (gist-view-gist t))
+#+end_src
 ** Mastodon
 https://codeberg.org/martianh/mastodon.el
 
@@ -4618,7 +4635,7 @@ The following variables are set with ~customize~:
 - =mastodon-instance-url=
 - =mastodon-active-user=
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
 
 (use-package mastodon
   :custom
@@ -4643,20 +4660,8 @@ Keybindings of note:
 | T          | Open thread for toot under point              |
 | A          | Open author profile under point               |
 | P          | Open profile of user under point              |
-* Miscellaneous Utilities
-The following are miscellaneous utilities that are small but useful.
-
-** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
-#+begin_src emacs-lisp
-(use-package lorem-ipsum)
-#+end_src
-** [[https://github.com/defunkt/gist.el][Gist]]
-#+begin_src emacs-lisp
-(use-package gist
-  :custom (gist-view-gist t))
-#+end_src
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
 (quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
 (use-package wttrin
   :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
@@ -4668,8 +4673,10 @@ The following are miscellaneous utilities that are small but useful.
 ** with-editor
 Try to make it easier to use =emacsclient= as the =$EDITOR= of child processes using [[https://github.com/magit/with-editor][with-editor]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-utils.el
 (use-package with-editor)
+
+(provide 'init-utils)
 #+end_src
 * Cleanup
 The goal here is to load any personal lisp files in =forge-personal-dir= path,

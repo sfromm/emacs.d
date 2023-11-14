@@ -1113,34 +1113,7 @@ prompt for what tab to switch to."
 
 (require 'init-git)
 
-
-(use-package nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
-
-(with-eval-after-load 'go-jira
-  (defvar jira-token nil)
-  (defun jira-create ()
-    "Create a ticket in Jira."
-    (interactive)
-    (unless jira-token
-      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
-    (setenv "JIRA_API_TOKEN" jira-token)
-    (require 'with-editor)
-    (start-process "go-jira" (get-buffer-create " *go-jira*")
-                   "jira" "create" "-b"
-                   "--editor"
-                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
-
 (require 'init-email)
-
-
-(use-package net-utils
-  :commands (ping traceroute)
-  :config
-  (setq ping-program-options (list "-c" "5"))
-  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
 
 (require 'init-org)
 
@@ -1148,31 +1121,8 @@ prompt for what tab to switch to."
 
 (require 'init-elfeed)
 
-
-(use-package rg)
-
 (require 'init-term)
 
-
-(use-package mastodon
-  :custom
-  (mastodon-client--token-file (expand-file-name "mastodon/mastodon.plstore" forge-state-dir))
-  :config
-  (mastodon-discover))
-
-(use-package lorem-ipsum)
-
-(use-package gist
-  :custom (gist-view-gist t))
-
-(quelpa '(wttrin :fetcher github :repo "sfromm/emacs-wttrin"))
-(use-package wttrin
-  :quelpa (wttrin :fetcher github :repo "sfromm/emacs-wttrin")
-  :commands (wttrin)
-  :custom
-  (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
-  (wttrin-language "en-US"))
-
-(use-package with-editor)
+(require 'init-utils)
 
 (forge/load-directory-modules forge-personal-dir)
