@@ -139,6 +139,10 @@
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
+            ("J" "Org Journal entry" plain
+             (function org-journal-find-location)
+             "** %(format-time-string org-journal-time-format) %?\n"
+             :jump-to-captured t :immediate-finish t)
             ("b" "Bookmark" entry
              (file+headline "~/forge/notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
@@ -560,8 +564,16 @@ It will not remove entries from the source org file."
   (goto-char (point-max)))
 
 (use-package org-journal
-  :disabled t
   :preface
+  (defun org-journal-file-header-func (time)
+  "Custom function to create journal header."
+  (concat
+    (pcase org-journal-file-type
+      (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
+      (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
+      (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
+      (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
+
   (defun org-journal-find-location ()
     "Open today's journal file."
     ;; For integration with org-capture ...
@@ -573,9 +585,13 @@ It will not remove entries from the source org file."
       (org-narrow-to-subtree))
     (goto-char (point-max)))
   :init
-  (setq org-journal-dir (concat org-directory "/journal/")
+  (setq org-journal-prefix-key "C-c j ")
+  :config
+  (setq org-journal-dir (expand-file-name "journal" org-directory)
+        org-journal-file-header 'org-journal-file-header-func
         org-journal-file-type 'yearly
-        org-journal-file-format "%Y"
-        org-journal-date-format "%A, %d %B %Y"))
+        org-journal-created-property-timestamp-format "%Y-%m-%d"
+        org-journal-file-format "%Y.org"
+        org-journal-date-format "%Y-%m-%d %A"))
 
 (provide 'init-org)
