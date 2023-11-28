@@ -69,6 +69,31 @@
   (wttrin-default-cities '("Eugene" "Portland" "Sonoma" "Kapolei" "New Orleans"))
   (wttrin-language "en-US"))
 
+(setq zoneinfo-style-world-list ; M-x shell RET timedatectl list-timezones or M-x dired RET /usr/share/zoneinfo
+      '(("America/Los_Angeles" "Los Angeles")
+        ("America/Denver" "Denver")
+        ("America/Chicago" "Chicago")
+        ("America/New_York" "New York")
+        ("Canada/Atlantic" "Canada/Atlantic")
+        ("UTC" "UTC")
+        ("Europe/London" "London")
+        ("Europe/Lisbon" "Lisbon")
+        ("Europe/Brussels" "Barcelona • Paris • Brussels • Berlin")
+        ("Europe/Athens" "Athens • Cairo • Kyiv")
+        ("Asia/Tel_Aviv" "Tel Aviv")
+        ("Asia/Kolkata" "Kolkata")
+        ("Asia/Shanghai" "Beijing • Shanghai")
+        ("Asia/Seoul" "Seoul")
+        ("Asia/Tokyo" "Tokyo")
+        ("Asia/Vladivostok" "Vladivostok")
+        ("Australia/Brisbane" "Brisbane")
+        ("Australia/Sydney" "Sydney")
+        ("Pacific/Auckland" "Auckland")
+        ("Pacific/Honolulu" "Honolulu")))
+(setq world-clock-list t
+      setq world-clock-buffer-name "*world-clock*"
+      world-clock-time-format "%R %Z (%z)  %A %d %B")
+
 (use-package with-editor)
 
 (provide 'init-utils)
