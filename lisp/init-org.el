@@ -119,30 +119,26 @@
     ;; For template expansion,
     ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
     (setq org-capture-templates
-          '(("l" "Log" entry
-             (file+olp+datetree "~/forge/journal.org")
-             "* %U - %?\n")
-            ("i" "Inbox" entry
+          `(("i" "Inbox" entry
              (file "inbox.org")
              "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
             ("c" "Calendar invite" entry
              (file+headline "agenda.org" "Future")
              (function notmuch-calendar-capture-event)
              :prepend t)
+            ("l" "Log" entry
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             "* %U - %?\n")
             ("n" "Meeting notes" entry
-             (file+olp+datetree "~/forge/journal.org")
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
              :clock-resume t)
             ("j" "Journal" entry
-             (file+olp+datetree "~/forge/journal.org")
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
-            ("J" "Org Journal entry" plain
-             (function org-journal-find-location)
-             "** %(format-time-string org-journal-time-format) %?\n"
-             :jump-to-captured t :immediate-finish t)
             ("b" "Bookmark" entry
              (file+headline "~/forge/notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
@@ -562,36 +558,5 @@ It will not remove entries from the source org file."
            (goto-char (point-min))))
   (search-forward heading nil t)
   (goto-char (point-max)))
-
-(use-package org-journal
-  :preface
-  (defun org-journal-file-header-func (time)
-  "Custom function to create journal header."
-  (concat
-    (pcase org-journal-file-type
-      (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
-      (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
-      (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
-      (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
-
-  (defun org-journal-find-location ()
-    "Open today's journal file."
-    ;; For integration with org-capture ...
-    ;; Open today's journal, but specify a non-nil prefix argument in order to
-    ;; inhibit inserting the heading; org-capture will insert the heading.
-    ;; This should also get org-mode to the right place to add a heading at the correct depth
-    (org-journal-new-entry t)
-    (unless (eq org-journal-file-type 'daily)
-      (org-narrow-to-subtree))
-    (goto-char (point-max)))
-  :init
-  (setq org-journal-prefix-key "C-c j ")
-  :config
-  (setq org-journal-dir (expand-file-name "journal" org-directory)
-        org-journal-file-header 'org-journal-file-header-func
-        org-journal-file-type 'yearly
-        org-journal-created-property-timestamp-format "%Y-%m-%d"
-        org-journal-file-format "%Y.org"
-        org-journal-date-format "%Y-%m-%d %A"))
 
 (provide 'init-org)

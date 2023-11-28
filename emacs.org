@@ -3534,30 +3534,26 @@ Miscellaneous notes:
     ;; For template expansion,
     ;; see https://orgmode.org/manual/Template-expansion.html#Template-expansion
     (setq org-capture-templates
-          '(("l" "Log" entry
-             (file+olp+datetree "~/forge/journal.org")
-             "* %U - %?\n")
-            ("i" "Inbox" entry
+          `(("i" "Inbox" entry
              (file "inbox.org")
              "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
             ("c" "Calendar invite" entry
              (file+headline "agenda.org" "Future")
              (function notmuch-calendar-capture-event)
              :prepend t)
+            ("l" "Log" entry
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             "* %U - %?\n")
             ("n" "Meeting notes" entry
-             (file+olp+datetree "~/forge/journal.org")
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
              :clock-resume t)
             ("j" "Journal" entry
-             (file+olp+datetree "~/forge/journal.org")
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
-            ("J" "Org Journal entry" plain
-             (function org-journal-find-location)
-             "** %(format-time-string org-journal-time-format) %?\n"
-             :jump-to-captured t :immediate-finish t)
             ("b" "Bookmark" entry
              (file+headline "~/forge/notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
@@ -4020,7 +4016,7 @@ It will not remove entries from the source org file."
 *** Org Journal
 I used to use [[https://github.com/bastibe/org-journal][org-journal]] for journaling, but now just use Org's /datetree/ model.
 
-#+begin_src emacs-lisp :tangle lisp/init-org.el
+#+begin_src emacs-lisp :tangle no
 (use-package org-journal
   :preface
   (defun org-journal-file-header-func (time)
