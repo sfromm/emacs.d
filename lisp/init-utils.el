@@ -91,7 +91,7 @@
         ("Pacific/Auckland" "Auckland")
         ("Pacific/Honolulu" "Honolulu")))
 (setq world-clock-list t
-      setq world-clock-buffer-name "*world-clock*"
+      world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
 
 (use-package with-editor)
