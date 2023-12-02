@@ -146,7 +146,7 @@
 
             ("r" "Reference")
             ("rm" "Music" entry
-             (file+olp+datetree "~/forge/journal.org")
+             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
              "* %(forge/capture-current-song) :music:\n%U\n")
             ("rr" "Reference" entry
              (file+olp+datetree "~/forge/articles.org")
