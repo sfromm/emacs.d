@@ -104,8 +104,10 @@
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 
+
 (use-package ess)
 
+
 (with-eval-after-load 'shell-script-mode
   (add-hook 'shell-script-hook #'forge/whitespace-visualize)
   (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
@@ -171,12 +173,15 @@
 
 (use-package nftables-mode)
 
+
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
   :commands (fle-mode))
 
+
 (use-package ledger-mode
   :commands ledger-mode)
 
+
 (provide 'init-editing-lang)

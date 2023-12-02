@@ -1323,9 +1323,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 #+end_src
 
 ** Narrowing & Completion
-The nice thing about completion frameworks is that they support interactively
-narrowing a set of results.  I typically look for something that, from my
-perspective, integrates well with Emacs.
+The nice thing about completion frameworks is that they support interactively narrowing a set of results.  I typically look for something that, from my perspective, integrates well with Emacs.
 
 *** Orderless, Consult, and friends
 
@@ -1774,8 +1772,7 @@ regularly.
 #+end_src
 
 ** Minibuffer history
-This keeps a record of all commands and history entered in the minibuffer.  This
-then allows the completion frameworks to become even more useful.
+This keeps a record of all commands and history entered in the minibuffer.  This then allows the completion frameworks to become even more useful.
 
 Resources:
 - https://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html
@@ -1794,36 +1791,21 @@ Resources:
   (add-hook 'after-init-hook #'savehist-mode))
 
 #+end_src
-** Undo
-For now, I have disabled [[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] and am working with the default [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Undo.html][Undo]] system
-built-in to Emacs.  Undo is a chain and you can go forwards and backwards, that
-is, you can undo and redo.
-
-Articles:
-- [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
-
-#+begin_src emacs-lisp
-
-(use-package undo-tree
-  :disabled t
-  :diminish undo-tree-mode
-  :bind
-  (("C-/" . undo-tree-undo)
-   ("C-?" . undo-tree-redo)
-   ("C-x u" . undo-tree-visualize))
-  :init
-  (global-undo-tree-mode)
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-diff t))
-#+end_src
-
 * Editing
 ** General
-First off, I set up some basics for all editing.  This will configure Emacs to
-show matching parentheses.  Secondly, it disables using tabs and requires a
-final newline in the file.
+#+begin_src emacs-lisp :tangle lisp/init-editing.el :noweb yes
+;;; init-editing.el --- Init general editing support -*- lexical-binding: t -*-
+<<license>>
+
+#+end_src
 
 #+begin_src emacs-lisp
+(require 'init-editing)
+#+end_src
+
+First off, I set up some basics for all editing.  This will configure Emacs to show matching parentheses.  Secondly, it disables using tabs and requires a final newline in the file.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (show-paren-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
@@ -1834,7 +1816,7 @@ final newline in the file.
 
 This will join the next line with the current line and is inspired from the =J= command in Vim.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 (defun forge/join-next-line ()
   "Join the next line with the current line."
   (interactive)
@@ -1843,11 +1825,9 @@ This will join the next line with the current line and is inspired from the =J= 
 (global-set-key (kbd "M-j") 'forge/join-next-line)
 #+end_src
 
-On [[http://endlessparentheses.com][endlessparentheses.com]], the author Artur has an [[http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html][article]] that discusses how to
-fill or unfill a paragraph with one command.  This is super useful to either
-re-fill a paragraph or to unfill as needed.
+On [[http://endlessparentheses.com][endlessparentheses.com]], the author Artur has an [[http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html][article]] that discusses how to fill or unfill a paragraph with one command.  This is super useful to either re-fill a paragraph or to unfill as needed.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 (defun endless/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
   (interactive)
@@ -1863,7 +1843,7 @@ re-fill a paragraph or to unfill as needed.
 
 Lastly, display line numbers any time in a programming-related buffer.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 (when (fboundp 'display-line-numbers-mode)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (setq-default display-line-numbers-width 3))
@@ -1890,7 +1870,8 @@ Resources:
 - http://endlessparentheses.com/improving-page-navigation.html
 - https://ericjmritz.wordpress.com/2015/08/29/using-page-breaks-in-gnu-emacs/
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
 (use-package page-break-lines
   :diminish page-break-lines-mode
   :hook
@@ -1903,7 +1884,7 @@ Resources:
 The default for =yas-snippet-dirs= is =~/.emacs.d/snippets/=.   I add to that another path that
 is =~/.emacs.d/user/snippets=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package yasnippet
   :diminish yasnippet-minor-mode
@@ -1916,7 +1897,7 @@ is =~/.emacs.d/user/snippets=.
 ** Expand region semantically with =expand-region=
 [[https://github.com/magnars/expand-region.el][expand-region]] to quickly expand the selected region.  Use =C-== to do so.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
@@ -1926,7 +1907,7 @@ is =~/.emacs.d/user/snippets=.
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html][Hideshow]] minor mode allows you to selectively display portions of a document.
 This includes things like folding XML sections.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package hideshow
   :diminish hs-minor-mode
@@ -1936,14 +1917,15 @@ This includes things like folding XML sections.
 ** Highlight indentation
 [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] provides a handy visual cue for indentation.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
 (use-package highlight-indent-guides
   :custom (highlight-indent-guides-method 'character))
 #+end_src
 ** Finding recent files
 [[https://www.emacswiki.org/emacs/RecentFiles][recentf]] will show recently opened files.  The state file is saved in =forge-state-dir=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package recentf
   :bind ("<f7>" . consult-recent-file)
@@ -1962,7 +1944,7 @@ using =set-buffer-file-coding-system= (=C-x RET f=) to /undecided-dos/ or
 
 See also: https://www.emacswiki.org/emacs/DosToUnix
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (defun dos2unix (buffer)
   "Do replacement of ^M characters with newlines in BUFFER."
@@ -1977,7 +1959,8 @@ See also: https://www.emacswiki.org/emacs/DosToUnix
 *** Ediff
 [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] is a comprehensive interface to =diff= and =patch= utilities.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
 (use-package ediff
   :init
   (setq ediff-split-window-function 'split-window-horizontally
@@ -1988,18 +1971,43 @@ See also: https://www.emacswiki.org/emacs/DosToUnix
 [[https://github.com/dgutov/diff-hl][diff-hl]] will highlight uncommitted changes on the left side of the window and
 allows you to jump between changes and revert them.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
 (use-package diff-hl
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
 #+end_src
 
+** Undo
+For now, I have disabled [[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] and am working with the default [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Undo.html][Undo]] system
+built-in to Emacs.  Undo is a chain and you can go forwards and backwards, that
+is, you can undo and redo.
+
+Articles:
+- [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
+
+#+begin_src emacs-lisp
+
+(use-package undo-tree
+  :disabled t
+  :diminish undo-tree-mode
+  :bind
+  (("C-/" . undo-tree-undo)
+   ("C-?" . undo-tree-redo)
+   ("C-x u" . undo-tree-visualize))
+  :init
+  (global-undo-tree-mode)
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t))
+#+end_src
+
 ** Completion framework
 [[https://github.com/minad/corfu][Corfu]] (COmpletion in Region FUnction) is an in-buffer completion with a small
 completion popup.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
 (use-package corfu
   :custom
   (corfu-separator ?\s)
@@ -2020,6 +2028,7 @@ Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]
 #+end_src
 
 #+begin_src emacs-lisp
+
 (use-package emacs
   :init
   (setq tab-always-indent 'complete)
@@ -2156,10 +2165,12 @@ I pull in this package for the formatting and font-lock features.
 [[https://ess.r-project.org][ESS]] is a package that supports various statistical analysis programs.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
 (use-package ess)
 #+end_src
 ** Shell scripts
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
 (with-eval-after-load 'shell-script-mode
   (add-hook 'shell-script-hook #'forge/whitespace-visualize)
   (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
@@ -2290,6 +2301,7 @@ documents.
 #+end_src
 ** FLE - Fast Log Entry
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
@@ -2300,10 +2312,20 @@ documents.
 the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
 (use-package ledger-mode
   :commands ledger-mode)
+#+end_src
+** Postamble
 
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+
 (provide 'init-editing-lang)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
+(provide 'init-editing)
 #+end_src
 * Applications
 ** Chat
