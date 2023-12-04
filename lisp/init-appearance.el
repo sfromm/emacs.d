@@ -150,6 +150,9 @@
   (solarized-use-variable-pitch t)
   (solarized-scale-org-headlines t))
 
+;; https://github.com/purcell/color-theme-sanityinc-tomorrow
+(use-package color-theme-sanityinc-tomorrow)
+
 ;; https://github.com/ianpan870102/tron-legacy-emacs-theme
 (use-package tron-legacy-theme
   :custom
