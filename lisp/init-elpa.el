@@ -90,6 +90,7 @@ the following arguments:
 
 
 (use-package paradox
+  :disabled t
   :init
   (setq paradox-execute-asynchronously t))
 

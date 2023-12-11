@@ -395,6 +395,7 @@ Use Quelpa to install packages from source repositories.
 #+begin_src emacs-lisp :tangle lisp/init-elpa.el
 
 (use-package paradox
+  :disabled t
   :init
   (setq paradox-execute-asynchronously t))
 
