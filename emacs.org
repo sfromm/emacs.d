@@ -3595,7 +3595,7 @@ Miscellaneous notes:
              :prepend t)
             ("rw" "Web Page" entry
              (file+olp+datetree "~/forge/articles.org")
-             (function forge/org-clip-web-page)
+             (function my-org-clip-web-page)
              :prepend t)
             ("rf" "Elfeed/News Article" entry
              (file+olp+datetree "~/forge/articles.org")
@@ -3605,6 +3605,31 @@ Miscellaneous notes:
              (file+olp+datetree "~/forge/articles.org")
              "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t))))
+
+  (defun my-org-goto-journal-entry (date)
+    "Go to specified journal entry for DATE and narrow to subtree."
+    (interactive (list (org-read-date)))
+    (let* ((date-list (org-date-to-gregorian date))
+           (year (number-to-string (nth 2 date-list))))
+      (find-file (expand-file-name (concat "journal/" year ".org") org-directory))
+      (widen)
+      (org-datetree-find-date-create date-list)))
+
+  (defun my-org-goto-relative-journal-entry (offset)
+    "Go to a relative date's journal entry in the datetree and narrow to subtree."
+    (interactive "Enter date offset (e.g., +3, fri, +2tue): ")
+    (let ((date (org-read-date nil nil offset)))
+      (my-org-goto-journal-entry date)))
+
+  (defun my-org-goto-yesterday-journal-entry ()
+    "Go to yesterday's journal entry in the datetree and narrow to subtree."
+    (interactive)
+    (my-org-goto-relative-journal-entry "-1"))
+
+  (defun my-org-goto-tomorrow-journal-entry ()
+    "Go to tomorrow's journal entry in the datetree and narrow to subtree."
+    (interactive)
+    (my-org-goto-relative-journal-entry "+1"))
 
   (defun my-org-init-hook ()
     "Set up defaults after org.el has been loaded."
@@ -3667,7 +3692,6 @@ Miscellaneous notes:
       (concat
        "* %a %? :ARTICLE:
   :PROPERTIES:
-  :ID:       %(shell-command-to-string \"uuidgen\")
   :CREATED:  %U
   :URL:      " (eww-current-url) "
   :END:\n\n" (car kill-ring))))
