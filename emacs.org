@@ -352,33 +352,13 @@ because of the ~package-vc-install~ functionality.
 #+end_src
 
 * Core
-** Platform helpers
-#+begin_src emacs-lisp
-
-;;; Platform specific details.
-(defun forge/system-type-darwin-p ()
-  "Return non-nil if system is Darwin/MacOS."
-  (string-equal system-type "darwin"))
-
-(defun forge/system-type-windows-p ()
-  "Return non-nil if system is Windows."
-  (string-equal system-type "windows-nt"))
-
-(defun forge/system-type-linux-p ()
-  "Return non-nil if system is GNU/Linux."
-  (string-equal system-type "gnu/linux"))
-
-(defun forge/native-comp-p ()
-  "Return non-nil native compilation is available."
-  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
-
-#+end_src
 ** Define paths
 The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
 and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
 pulling this package in.
 
 #+begin_src emacs-lisp
+
 (defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
 
@@ -398,15 +378,6 @@ pulling this package in.
   "Path to Emacs packages' log files.")
 
 #+end_src
-** Customization group
-Create a customization group for variables specific to this configuration.
-
-#+begin_src emacs-lisp
-(defgroup forge nil
-  "Forge custom settings."
-  :group 'environment)
-#+end_src
-
 ** Load user =custom= file
 #+begin_src emacs-lisp
 
@@ -415,11 +386,48 @@ Create a customization group for variables specific to this configuration.
 (when (file-exists-p custom-file)
   (load custom-file))
 #+end_src
+** Platform helpers
+#+begin_src emacs-lisp
+(require 'init-core)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el :noweb yes
+;;; init-elpa.el --- Init Core -*- lexical-binding: t -*-
+<<license>>
+
+
+;;; Platform specific details.
+(defun forge/system-type-darwin-p ()
+  "Return non-nil if system is Darwin/MacOS."
+  (string-equal system-type "darwin"))
+
+(defun forge/system-type-windows-p ()
+  "Return non-nil if system is Windows."
+  (string-equal system-type "windows-nt"))
+
+(defun forge/system-type-linux-p ()
+  "Return non-nil if system is GNU/Linux."
+  (string-equal system-type "gnu/linux"))
+
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
+#+end_src
+** Customization group
+Create a customization group for variables specific to this configuration.
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+(defgroup forge nil
+  "Forge custom settings."
+  :group 'environment)
+#+end_src
+
 ** Configure basic behavior
 Configure Emacs to use the above defined paths.  Also configure some basic
 behavior, and load =custom.el= file, used by /customize/.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 
 (defun init-mkdirs-user-emacs-directory ()
   "Create emacs.d directories environment."
@@ -471,7 +479,7 @@ behavior, and load =custom.el= file, used by /customize/.
 *** Helpers to load modules from a path or directory
 The following is meant to load any configuration in =forge-site-dir= or =forge-personal-dir=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
@@ -499,7 +507,7 @@ The following is meant to load any configuration in =forge-site-dir= or =forge-p
 *** Site configuration
 Before going to much further, go ahead and load any site configuration.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 (forge/load-directory-modules forge-site-dir)
 #+end_src
 ** Platform-dependent configuration
@@ -508,7 +516,7 @@ The following are a couple elements that are only loaded if on MacOS or on Linux
 *** Linux
 This only has the helper function to check for network connectivity.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 
 ;; dbus is a linux thing -- only load on that platform
 (when (forge/system-type-linux-p)
@@ -529,7 +537,7 @@ This only has the helper function to check for network connectivity.
 This section is various helper functions for when on MacOS.
 
 **** Set up PATH
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
@@ -549,7 +557,8 @@ This section is various helper functions for when on MacOS.
 **** Check for network connectivity
 Helper to test if there is network connectivity.  This is MacOS specific.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
 (when (forge/system-type-darwin-p)
   (defun forge/network-online-p ()
     "Check if online."
@@ -568,7 +577,8 @@ Helper to test if there is network connectivity.  This is MacOS specific.
 **** VPN helpers
 Helpers to connect and disconnect from a VPN session.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
 (defvar forge/vpn-config ""
   "Name of the OpenVPN VPN configuration to use.")
 
@@ -627,7 +637,8 @@ Useful resources:
 - https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
 - https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
 (when (forge/system-type-darwin-p)
   (defun forge/get-current-song-itunes ()
     "Get current song playing via itunes."
@@ -653,7 +664,7 @@ end tell")
 #+end_src
 ** Helper functions
 *** Feature related helpers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 
 (defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
@@ -718,8 +729,8 @@ end tell")
 #+end_src
 
 *** Opening files helpers
-Heavily borrowed from
-#+begin_src emacs-lisp
+Heavily borrowed from ... somewhere.
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 (defun forge/sudo-file-path (file)
   "Return path for FILE with sudo access."
   (let ((host (or (file-remote-p file 'host) "localhost")))
@@ -757,7 +768,7 @@ helpers.
 - The next are helpers around converting wavelength to frequency and vice-versa,
   mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
   "Wrapper for `dig'.
@@ -879,7 +890,7 @@ haven't used this for a long time and, for now, is not tangled.
 #+end_src
 
 *** Home Makefile helpers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-core.el
 (defmacro forge-mkhome-target (target)
   "Macro to run mkhome makefile TARGET."
   `(with-temp-buffer
@@ -903,6 +914,10 @@ haven't used this for a long time and, for now, is not tangled.
   (forge-mkhome-target "src"))
 #+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+(provide 'init-core)
+#+end_src
 * Appearance
 ** Preamble
 #+begin_src emacs-lisp
