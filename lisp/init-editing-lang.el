@@ -121,6 +121,9 @@
         web-mode-markup-indent-offset 2
         web-mode-code-indent-offset 2))
 
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
+
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 

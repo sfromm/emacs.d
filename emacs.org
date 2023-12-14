@@ -1215,15 +1215,25 @@ the selection color in MacOS or other platforms.  See the [[https://protesilaos.
 #+end_src
 
 * User interface elements
-This section configures those pieces of Emacs where I can affect how I interact
-with it.  This covers a lot of ground.
+This section configures those pieces of Emacs where I can affect how I interact with it.  This covers a lot of ground.
+
+#+begin_src emacs-lisp
+(require 'init-ui)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-ui.el :noweb yes
+;;; init-ui.el --- Init UI elements -*- lexical-binding: t -*-
+;; UI here is rather broadly defined ... not just the classical one.
+<<license>>
+
+#+end_src
 
 ** Keybindings and keymaps
 *** Show key bindings
 [[https://github.com/justbur/emacs-which-key][which-key]] will display key bindings following your currently entered incomplete command in a popup.
 For example, you can type =C-h= and it will show available completions.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
@@ -1236,7 +1246,8 @@ For example, you can type =C-h= and it will show available completions.
 *** Personal keymap
 This is my personal keymap that then hooks into different commands, hydras, or other pieces.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
+
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
 (define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
@@ -1260,7 +1271,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 
 #+end_src
 *** Hydra
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 (use-package hydra
   :demand t
@@ -1352,10 +1363,9 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 ** Narrowing & Completion
 The nice thing about completion frameworks is that they support interactively narrowing a set of results.  I typically look for something that, from my perspective, integrates well with Emacs.
 
-*** Orderless, Consult, and friends
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
+;;; Completion
 ;; https://github.com/minad/vertico
 (use-package vertico
   :demand t
@@ -1403,68 +1413,19 @@ The nice thing about completion frameworks is that they support interactively na
   :config
   (marginalia-mode))
 #+end_src
-*** Deprecated - Ivy
-Below is my configuration for [[https://github.com/abo-abo/swiper][Ivy, Counsel, Swiper]], and [[https://github.com/nonsequitur/smex/][smex]].  They have been
-disabled while I try out Selectrum and friends.  This also disables [[https://github.com/abo-abo/avy][avy]].
-
-#+begin_src emacs-lisp :tangle no
-;;; ivy, swiper, and counsel
-;;; https://github.com/abo-abo/swiper
-(use-package ivy
-  :disabled t
-  :diminish (ivy-mode . "")
-  :bind
-  (("C-c C-r" . ivy-resume))
-  :init
-  (ivy-mode 1)
-  :config
-  (define-key ivy-minibuffer-map (kbd "<tab>") 'ivy-alt-done)
-  (setq ivy-use-virtual-buffers t
-        enable-recursive-minibuffers t))
-
-(use-package swiper
-  :disabled t
-  :diminish
-  :bind (("C-s" . swiper-isearch)))
-
-(use-package counsel
-  :disabled t
-  :requires ivy
-  :bind
-  (("C-c f" . counsel-git)
-   ("M-x" . counsel-M-x)
-   ("C-x C-f" . counsel-find-file))
-  :config
-  (setq ivy-use-virtual-buffers t))
-
-;;; avy
-;;;
-(use-package avy
-  :disabled t
-  :bind
-  (("M-g g" . avy-goto-line)
-   ("M-s" . avy-goto-word-1)))
-
-(use-package smex
-  :disabled t
-  :init
-  (setq smex-completion-method 'ivy
-        smex-save-file (expand-file-name "smex-items" forge-state-dir)))
-#+end_src
-
 ** Navigation
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 ;;; Navigation
 #+end_src
-*** Navigation between windows: ~windomove~ and ~ace-window~
+*** Navigation between windows: ~windmove~ and ~ace-window~
 ~windmove~ makes it really easy to navigate between windows.  The keys below are
 based on vim and intended to keep my hand on the home row.
 
 [[https://github.com/abo-abo/ace-window][ace-window]] makes it easy to select between multiple windows and is intended to
 be as simple as ~other-window~.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 ;;; windmove
 (use-package windmove
   :bind
@@ -1485,7 +1446,7 @@ be as simple as ~other-window~.
 [[https://github.com/jacktasia/dumb-jump][dumb-jump]] is a utility to jump to a definition.  =dumb-jump= hooks into the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
 backend to perform a search.  This can be invoked with =M-.=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (use-package dumb-jump
   :demand t
   :commands (xref-find-definitions)
@@ -1499,7 +1460,7 @@ backend to perform a search.  This can be invoked with =M-.=.
 *** Avy
 [[https://github.com/abo-abo/avy][avy]] is an Emacs package for jumping to visible text using a char-based decision tree.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (use-package avy
   :bind ("C-." . avy-goto-char-timer)
   :custom
@@ -1526,7 +1487,7 @@ as part of a DWIM function to switch tabs.
 | C-x t 1 | ~close-tab-other~            | Close all other tabs           |
 | C-x t 2 | ~tab-new~                    | Open current buffer in new tab |
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
@@ -1567,26 +1528,8 @@ prompt for what tab to switch to."
 The =forge/window= /hydra/ defined above uses functions from [[https://github.com/abo-abo/ace-window][ace-window]] and
 [[https://www.emacswiki.org/emacs/TransposeFrame][transpose-frame]].  Go ahead and pull those in for the helper functions.  I
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (use-package transpose-frame)
-#+end_src
-
-*** Workspace management with =eyebrowse=
-[[https://depp.brause.cc/eyebrowse/][eyebrowse]] is a global minor mode that allows you to organize window
-configurations into workspaces, similar to a window manager.  This configuration
-is here for reference and is deprecated.
-
-#+begin_src emacs-lisp :tangle no
-(use-package eyebrowse
-  :disabled t
-  :custom (eyebrowse-keymap-prefix (kbd "C-\\"))
-  :bind
-  (("M-1" . eyebrowse-switch-to-window-config-1)
-   ("M-2" . eyebrowse-switch-to-window-config-2)
-   ("M-3" . eyebrowse-switch-to-window-config-3)
-   ("M-4" . eyebrowse-switch-to-window-config-4))
-  :config
-  (eyebrowse-mode 1))
 #+end_src
 
 *** Golden ratio for window sizes
@@ -1597,7 +1540,7 @@ window.
 
 This tries to specify what modes to exclude from =golden-ratio= for window sizing.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (use-package golden-ratio
   :hook
   (ediff-before-setup-windows . (lambda () (golden-ratio-mode -1)))
@@ -1615,7 +1558,7 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
 *** Keep buffer names unique
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][Uniquify]] helps make it easier to navigate between buffers that have identically named files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (with-eval-after-load 'uniquify
   (setq uniquify-buffer-name-style 'forward
         uniquify-separator "/"
@@ -1626,7 +1569,7 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
 The next is [[https://github.com/rnkn/olivetti][olivetti]], which cleans up the window so that one can focus more on
 the window contents.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 (use-package olivetti
   :custom
   (olivetti-hide-mode-line t)
@@ -1726,7 +1669,7 @@ the window contents.
 ** Scrolling
 This is an attempt to make scrolling a bit smoother and friendlier.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 (when (fboundp 'pixel-scroll-precision-mode)
   (pixel-scroll-precision-mode))
@@ -1745,59 +1688,6 @@ This is an attempt to make scrolling a bit smoother and friendlier.
 ;;       mouse-wheel-scroll-amount-horizontal 2)
 #+end_src
 
-** Saving files and hooks
-This will save all buffers that are associated with a file.  Further, if focus switches away from
-Emacs, save all files.
-
-#+begin_src emacs-lisp
-(defun forge/save-all ()
-  "Save any file-related buffers."
-  (interactive)
-  (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
-  (save-some-buffers t))
-
-;; If focus switches away, save all files.
-(when (version<= "24.4" emacs-version)
-  (add-hook 'focus-out-hook 'forge/save-all))
-
-#+end_src
-
-Make all files scripts executable when saving them.
-
-#+begin_src emacs-lisp
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-#+end_src
-
-** Backups and Auto-Save
-The goal here is to keep any backup files and save history related items located
-under =~/.emacs.d/-= and not scattered across the filesystem.  Make backups
-regularly.
-
-#+begin_src emacs-lisp
-
-(setq version-control t        ;; number each backup file
-      backup-by-copying t      ;; instead of renaming current file
-      delete-old-versions t    ;; clean up after oneself
-      kept-new-versions 5      ;; Number of newer versions to keep.
-      kept-old-versions 5      ;; Number of older versions to keep.
-      trash-directory "~/.Trash"
-      backup-directory-alist (list (cons "." forge-backup-dir))
-      tramp-backup-directory-alist backup-directory-alist)
-
-;; Turn on auto-save, so we have a fallback in case of crashes or lost data.
-;; Use `recover-file' or `recover-session' to recover them.
-(setq auto-save-default t
-      auto-save-timeout 120
-      auto-save-interval 64
-      auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
-      auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
-      ;; handle tramp paths differently than local ones, borrowed from doom
-      auto-save-file-name-transforms
-      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                  (concat auto-save-list-file-prefix "tramp-\\2") t)
-            (list ".*" auto-save-list-file-prefix t)))
-#+end_src
-
 ** Minibuffer history
 This keeps a record of all commands and history entered in the minibuffer.  This then allows the completion frameworks to become even more useful.
 
@@ -1806,7 +1696,7 @@ Resources:
 - https://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
 - https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 
 (require 'savehist)
 (with-eval-after-load 'savehist
@@ -1816,7 +1706,10 @@ Resources:
         history-length 1000
         history-delete-duplicates t
   (add-hook 'after-init-hook #'savehist-mode))
+#+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
+(provide 'init-ui)
 #+end_src
 * Editing
 ** General
@@ -1887,6 +1780,59 @@ Defined further down, pull in support for various languages.
 <<license>>
 
 #+end_src
+** Saving files and hooks
+This will save all buffers that are associated with a file.  Further, if focus switches away from
+Emacs, save all files.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+(defun forge/save-all ()
+  "Save any file-related buffers."
+  (interactive)
+  (message "Saving buffers at %s" (format-time-string "%Y-%m-%dT%T"))
+  (save-some-buffers t))
+
+;; If focus switches away, save all files.
+(when (version<= "24.4" emacs-version)
+  (add-hook 'focus-out-hook 'forge/save-all))
+
+#+end_src
+
+Make all files scripts executable when saving them.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+#+end_src
+
+** Backups and Auto-Save
+The goal here is to keep any backup files and save history related items located
+under =~/.emacs.d/-= and not scattered across the filesystem.  Make backups
+regularly.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
+(setq version-control t        ;; number each backup file
+      backup-by-copying t      ;; instead of renaming current file
+      delete-old-versions t    ;; clean up after oneself
+      kept-new-versions 5      ;; Number of newer versions to keep.
+      kept-old-versions 5      ;; Number of older versions to keep.
+      trash-directory "~/.Trash"
+      backup-directory-alist (list (cons "." forge-backup-dir))
+      tramp-backup-directory-alist backup-directory-alist)
+
+;; Turn on auto-save, so we have a fallback in case of crashes or lost data.
+;; Use `recover-file' or `recover-session' to recover them.
+(setq auto-save-default t
+      auto-save-timeout 120
+      auto-save-interval 64
+      auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
+      auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
+      ;; handle tramp paths differently than local ones, borrowed from doom
+      auto-save-file-name-transforms
+      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                  (concat auto-save-list-file-prefix "tramp-\\2") t)
+            (list ".*" auto-save-list-file-prefix t)))
+#+end_src
+
 ** Page breaks
 Using page breaks have a couple benefits.  It can provide a nice visual
 separation between sections.  It also provides a way to navigate between
@@ -2014,7 +1960,7 @@ is, you can undo and redo.
 Articles:
 - [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package undo-tree
   :disabled t
@@ -2044,7 +1990,7 @@ completion popup.
 
 Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]].
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 (use-package kind-icon
   :after corfu
   :if (display-graphic-p)
@@ -2054,7 +2000,7 @@ Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package emacs
   :init
@@ -2233,7 +2179,7 @@ See also [[http://emacsrocks.com/e15.html][Emacs Rocks: restclient-mode]] episod
 | =C-c C-.= | mark the query under the cursor                                                   |
 | =C-c C-u= | copy query under the cursor as a curl command                                     |
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
