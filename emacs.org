@@ -204,62 +204,7 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 (add-hook 'after-init-hook #'init-report-startup-time)
 #+end_src
 
-* Core
-** Platform helpers
-#+begin_src emacs-lisp
-
-;;; Platform specific details.
-(defun forge/system-type-darwin-p ()
-  "Return non-nil if system is Darwin/MacOS."
-  (string-equal system-type "darwin"))
-
-(defun forge/system-type-windows-p ()
-  "Return non-nil if system is Windows."
-  (string-equal system-type "windows-nt"))
-
-(defun forge/system-type-linux-p ()
-  "Return non-nil if system is GNU/Linux."
-  (string-equal system-type "gnu/linux"))
-
-(defun forge/native-comp-p ()
-  "Return non-nil native compilation is available."
-  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
-
-#+end_src
-** Define paths
-The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
-and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
-pulling this package in.
-
-#+begin_src emacs-lisp
-(defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
-  "Path to user's site configuration.")
-
-(defvar forge-personal-dir (expand-file-name "user/" user-emacs-directory)
-  "Path to user's personal configuration.")
-
-(defvar forge-themes-dir (expand-file-name "themes/" user-emacs-directory)
-  "Path to user themes.")
-
-(defvar forge-state-dir (expand-file-name "var/" user-emacs-directory)
-  "Path to Emacs' persistent data files.")
-
-(defvar forge-backup-dir (expand-file-name "backup/" forge-state-dir)
-  "Path to Emacs' backup and autosave files.")
-
-(defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
-  "Path to Emacs packages' log files.")
-
-#+end_src
-
-** Load user =custom= file
-#+begin_src emacs-lisp
-
-;; Load custom and then do basic initialization.
-(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
-(when (file-exists-p custom-file)
-  (load custom-file))
-#+end_src
+* Package Management
 ** Set up =package= archives
 This defines what package archives are used and then initializes =package=.
 
@@ -375,7 +320,8 @@ the following arguments:
 #+end_src
 
 ** Quelpa
-Use Quelpa to install packages from source repositories.
+Use Quelpa to install packages from source repositories.  This is no longer used
+because of the ~package-vc-install~ functionality.
 
 #+begin_src emacs-lisp :tangle no
 
@@ -398,8 +344,76 @@ Use Quelpa to install packages from source repositories.
   :disabled t
   :init
   (setq paradox-execute-asynchronously t))
-
+#+end_src
+** Postamble
+#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+
 (provide 'init-elpa)
+#+end_src
+
+* Core
+** Platform helpers
+#+begin_src emacs-lisp
+
+;;; Platform specific details.
+(defun forge/system-type-darwin-p ()
+  "Return non-nil if system is Darwin/MacOS."
+  (string-equal system-type "darwin"))
+
+(defun forge/system-type-windows-p ()
+  "Return non-nil if system is Windows."
+  (string-equal system-type "windows-nt"))
+
+(defun forge/system-type-linux-p ()
+  "Return non-nil if system is GNU/Linux."
+  (string-equal system-type "gnu/linux"))
+
+(defun forge/native-comp-p ()
+  "Return non-nil native compilation is available."
+  (if (fboundp 'native-comp-available-p) (native-comp-available-p)))
+
+#+end_src
+** Define paths
+The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
+and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
+pulling this package in.
+
+#+begin_src emacs-lisp
+(defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
+  "Path to user's site configuration.")
+
+(defvar forge-personal-dir (expand-file-name "user/" user-emacs-directory)
+  "Path to user's personal configuration.")
+
+(defvar forge-themes-dir (expand-file-name "themes/" user-emacs-directory)
+  "Path to user themes.")
+
+(defvar forge-state-dir (expand-file-name "var/" user-emacs-directory)
+  "Path to Emacs' persistent data files.")
+
+(defvar forge-backup-dir (expand-file-name "backup/" forge-state-dir)
+  "Path to Emacs' backup and autosave files.")
+
+(defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
+  "Path to Emacs packages' log files.")
+
+#+end_src
+** Customization group
+Create a customization group for variables specific to this configuration.
+
+#+begin_src emacs-lisp
+(defgroup forge nil
+  "Forge custom settings."
+  :group 'environment)
+#+end_src
+
+** Load user =custom= file
+#+begin_src emacs-lisp
+
+;; Load custom and then do basic initialization.
+(setq custom-file (expand-file-name "custom.el" forge-personal-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
 #+end_src
 ** Configure basic behavior
 Configure Emacs to use the above defined paths.  Also configure some basic
@@ -453,13 +467,6 @@ behavior, and load =custom.el= file, used by /customize/.
 (my-initialize)
 #+end_src
 
-Create a customization group for variables specific to this configuration.
-
-#+begin_src emacs-lisp
-(defgroup forge nil
-  "Forge custom settings."
-  :group 'environment)
-#+end_src
 ** Module loading and site configuration
 *** Helpers to load modules from a path or directory
 The following is meant to load any configuration in =forge-site-dir= or =forge-personal-dir=.
@@ -895,6 +902,7 @@ haven't used this for a long time and, for now, is not tangled.
   (interactive)
   (forge-mkhome-target "src"))
 #+end_src
+
 * Appearance
 ** Preamble
 #+begin_src emacs-lisp

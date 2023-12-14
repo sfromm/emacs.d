@@ -26,6 +26,8 @@
 
 (add-hook 'after-init-hook #'init-report-startup-time)
 
+(require 'init-elpa)
+
 
 ;;; Platform specific details.
 (defun forge/system-type-darwin-p ()
@@ -62,13 +64,15 @@
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
 
+(defgroup forge nil
+  "Forge custom settings."
+  :group 'environment)
+
 
 ;; Load custom and then do basic initialization.
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
-
-(require 'init-elpa)
 
 
 (defun init-mkdirs-user-emacs-directory ()
@@ -115,10 +119,6 @@
         large-file-warning-threshold 50000000))
 
 (my-initialize)
-
-(defgroup forge nil
-  "Forge custom settings."
-  :group 'environment)
 
 
 (defun forge/message-module-load (mod time)
