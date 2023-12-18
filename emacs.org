@@ -941,7 +941,7 @@ Resources:
 *** Define font variables
 #+begin_src emacs-lisp :tangle lisp/init-appearance.el
 
-(defcustom forge-font "IBM Plex Mono"
+(defcustom forge-font "JetBrains Mono"
   "Preferred default font."
   :type 'string
   :group 'forge)
@@ -1041,6 +1041,46 @@ Emojis and emoticons.
 #+begin_src emacs-lisp :tangle lisp/init-appearance.el
 (use-package rainbow-mode)
 #+end_src
+*** Choosing a Font
+The following has been borrowed from [[https://protesilaos.com/emacs/dotemacs][Protesilaos Stavrou]] and from [[https://github.com/howardabrams/hamacs][Howard Abrams]]
+and should help pick a font that is /readable/.
+
+#+begin_example
+  | Similarities | Regular                    |
+  |--------------+----------------------------|
+  | ()[]{}<>«»‹› | ABCDEFGHIJKLMNOPQRSTUVWXYZ |
+  | 6bB8&        | abcdefghijklmnopqrstuvwxyz |
+  | 0ODdoaoOQGC  | 0123456789                 |
+  | I1tilIJL     | ~!@#$%^&*+                 |
+  | !¡ij         | `'"‘’“”.,;:…               |
+  | 5$§SsS5      | ()[]{}—-_=<>/\             |
+  | 17ZzZ2       | ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ   |
+  | 9gqpG6       | αβγδεζηθικλμνξοπρστυφχψω   |
+  | hnmMN        |                            |
+  | uvvwWuuwvy   |                            |
+  | x×X          |                            |
+  | .,·°%        |                            |
+  | ¡!¿?         |                            |
+  | :;           |                            |
+  | `''"‘’“”     |                            |
+  | —-~≈=≠+*_    |                            |
+  | …⋯           |                            |
+  | ...          |                            |
+#+end_example
+
+The following is from [[https://source-foundry.github.io/Hack/font-specimen.html][Hack's website]]:
+#+begin_src c
+//  The four boxing wizards jump
+#include <stdio.h> // <= quickly.
+int main(int argc, char **argv) {
+  long il1[]={1-2/3.4,5+6==7/8};
+  int OxFaced=0xBAD||"[{(CQUINE";
+  unsigned O0,l1,Z2,S5,G6,B8__XY;
+  printf("@$Hamburgefo%c`",'\n');
+  return ~7&8^9?0:l1|!"j->k+=*w";
+}
+#+end_src
+
 ** Themes
 This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.

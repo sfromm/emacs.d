@@ -15,7 +15,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(defcustom forge-font "IBM Plex Mono"
+(defcustom forge-font "JetBrains Mono"
   "Preferred default font."
   :type 'string
   :group 'forge)
