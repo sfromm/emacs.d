@@ -73,6 +73,10 @@
                        (org-agenda-block-separator nil)
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                        (org-agenda-overriding-header "\n📅 Next five days\n")))
+              (tags-todo "inbox"
+                         ((org-agenda-prefix-format "  %?-12t% s")
+                          (org-agenda-block-separator nil)
+                          (org-agenda-overriding-header "\n📥 Inbox\n")))
               (agenda ""
                       ((org-agenda-time-grid nil)
                        (org-agenda-start-on-weekday nil)
@@ -86,10 +90,6 @@
                        (org-agenda-entry-types '(:deadline))
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                        (org-agenda-overriding-header "\n🞜 Upcoming deadlines (+14d)\n")))
-              (tags-todo "inbox"
-                         ((org-agenda-prefix-format "  %?-12t% s")
-                          (org-agenda-block-separator nil)
-                          (org-agenda-overriding-header "\n📥 Inbox\n")))
               (todo "NEXT"
                     ((org-agenda-skip-function '(org-agenda-skip-entry-if 'deadline))
                      (org-agenda-prefix-format "  %i %-12:c [%e] ")
