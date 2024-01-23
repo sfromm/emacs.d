@@ -255,6 +255,13 @@ Sometimes installing a new package will bork packages.  This will recompile the 
   "Recompile packages in elpa directory.  Useful if you switch Emacs versions."
   (interactive)
   (byte-recompile-directory package-user-dir nil t))
+
+;; Via https://emacsredux.com/blog/2020/09/12/reinstalling-emacs-packages/
+(defun my-reinstall-package (pkg)
+  (interactive (list (intern (completing-read "Reinstall package: " (mapcar #'car package-alist)))))
+  (unload-feature pkg)
+  (package-reinstall pkg)
+  (require pkg))
 #+end_src
 ** Set up =use-package= and other critical packages
 I find the [[https://github.com/jwiegley/use-package][use-package]] macro makes a configuration easier to read and more declarative.  This

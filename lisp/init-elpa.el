@@ -49,6 +49,13 @@
   (interactive)
   (byte-recompile-directory package-user-dir nil t))
 
+;; Via https://emacsredux.com/blog/2020/09/12/reinstalling-emacs-packages/
+(defun my-reinstall-package (pkg)
+  (interactive (list (intern (completing-read "Reinstall package: " (mapcar #'car package-alist)))))
+  (unload-feature pkg)
+  (package-reinstall pkg)
+  (require pkg))
+
 
 (defvar init-core-packages '(use-package diminish org org-contrib)
   "A list of core packages that will be automatically installed.")
