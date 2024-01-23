@@ -57,6 +57,10 @@
 
 (require 'init-appearance)
 
+(require 'init-ui-completion)
+
+(require 'init-navigation)
+
 (require 'init-ui)
 
 (require 'init-ibuffer)

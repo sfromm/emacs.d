@@ -338,7 +338,9 @@ because of the ~package-vc-install~ functionality.
 ** Paradox
 [[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+This package appears to be archived on github and no longer maintained.
+
+#+begin_src emacs-lisp :tangle no
 
 (use-package paradox
   :disabled t
@@ -357,8 +359,8 @@ The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
 and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
 pulling this package in.
 
-#+begin_src emacs-lisp
-
+#+NAME: forge-vars
+#+begin_src emacs-lisp :tangle no
 (defvar forge-site-dir (expand-file-name "site-lisp/" user-emacs-directory)
   "Path to user's site configuration.")
 
@@ -376,15 +378,24 @@ pulling this package in.
 
 (defvar forge-log-dir (expand-file-name "log/" forge-state-dir)
   "Path to Emacs packages' log files.")
+#+end_src
 
+#+begin_src emacs-lisp :noweb yes
+
+<<forge-vars>>
 #+end_src
 ** Load user =custom= file
-#+begin_src emacs-lisp
-
+#+NAME: custom
+#+begin_src emacs-lisp :tangle no
 ;; Load custom and then do basic initialization.
 (setq custom-file (expand-file-name "custom.el" forge-personal-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
+#+end_src
+
+#+begin_src emacs-lisp :noweb yes
+
+<<custom>>
 #+end_src
 ** Platform helpers
 #+begin_src emacs-lisp
@@ -473,6 +484,48 @@ behavior, and load =custom.el= file, used by /customize/.
         large-file-warning-threshold 50000000))
 
 (my-initialize)
+#+end_src
+
+** Minibuffer history
+This keeps a record of all commands and history entered in the minibuffer.  This then allows the completion frameworks to become even more useful.
+
+Resources:
+- https://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html
+- https://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
+- https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+(require 'savehist)
+(with-eval-after-load 'savehist
+  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
+        savehist-save-minibuffer-history 1
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+        history-length 1000
+        history-delete-duplicates t
+  (add-hook 'after-init-hook #'savehist-mode))
+#+end_src
+
+** Scrolling
+This is an attempt to make scrolling a bit smoother and friendlier.
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode))
+
+(setq scroll-conservatively 101
+      scroll-preserve-screen-position t
+      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
+;; (setq hscroll-margin 2
+;;       hscroll-step 1
+;;       scroll-conservatively 101
+;;       scroll-preserve-screen-position t
+;;       auto-window-vscroll nil
+;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
+;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
+;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+;;       mouse-wheel-scroll-amount-horizontal 2)
 #+end_src
 
 ** Module loading and site configuration
@@ -1258,6 +1311,10 @@ the selection color in MacOS or other platforms.  See the [[https://protesilaos.
 This section configures those pieces of Emacs where I can affect how I interact with it.  This covers a lot of ground.
 
 #+begin_src emacs-lisp
+(require 'init-ui-completion)
+
+(require 'init-navigation)
+
 (require 'init-ui)
 #+end_src
 
@@ -1268,21 +1325,9 @@ This section configures those pieces of Emacs where I can affect how I interact 
 
 #+end_src
 
+
+
 ** Keybindings and keymaps
-*** Show key bindings
-[[https://github.com/justbur/emacs-which-key][which-key]] will display key bindings following your currently entered incomplete command in a popup.
-For example, you can type =C-h= and it will show available completions.
-
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-
-(use-package which-key
-  :custom (which-key-idle-delay 1.5)
-  :demand t
-  :diminish
-  :commands which-key-mode
-  :config (which-key-mode))
-
-#+end_src
 *** Personal keymap
 This is my personal keymap that then hooks into different commands, hydras, or other pieces.
 
@@ -1401,9 +1446,31 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 #+end_src
 
 ** Narrowing & Completion
+#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el :noweb yes
+;;; init-ui-completion.el --- Init UI Completion elements -*- lexical-binding: t -*-
+;; UI Completion elements
+<<license>>
+
+#+end_src
+
+*** Show key bindings
+[[https://github.com/justbur/emacs-which-key][which-key]] will display key bindings following your currently entered incomplete command in a popup.
+For example, you can type =C-h= and it will show available completions.
+
+#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
+
+(use-package which-key
+  :custom (which-key-idle-delay 1.5)
+  :demand t
+  :diminish
+  :commands which-key-mode
+  :config (which-key-mode))
+
+#+end_src
+*** Vertico, Orderless, & Consult
 The nice thing about completion frameworks is that they support interactively narrowing a set of results.  I typically look for something that, from my perspective, integrates well with Emacs.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
 
 ;;; Completion
 ;; https://github.com/minad/vertico
@@ -1453,11 +1520,19 @@ The nice thing about completion frameworks is that they support interactively na
   :config
   (marginalia-mode))
 #+end_src
-** Navigation
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-
-;;; Navigation
+*** Completion postamble
+#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
+(provide 'init-ui-completion)
 #+end_src
+
+** Navigation
+#+begin_src emacs-lisp :tangle lisp/init-navigation.el :noweb yes
+;;; init-navigation.el --- Init navigation elements -*- lexical-binding: t -*-
+;; Navigation elements
+<<license>>
+
+#+end_src
+
 *** Navigation between windows: ~windmove~ and ~ace-window~
 ~windmove~ makes it really easy to navigate between windows.  The keys below are
 based on vim and intended to keep my hand on the home row.
@@ -1465,7 +1540,7 @@ based on vim and intended to keep my hand on the home row.
 [[https://github.com/abo-abo/ace-window][ace-window]] makes it easy to select between multiple windows and is intended to
 be as simple as ~other-window~.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp :tangle lisp/init-navigation.el
 ;;; windmove
 (use-package windmove
   :bind
@@ -1486,7 +1561,7 @@ be as simple as ~other-window~.
 [[https://github.com/jacktasia/dumb-jump][dumb-jump]] is a utility to jump to a definition.  =dumb-jump= hooks into the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
 backend to perform a search.  This can be invoked with =M-.=.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp :tangle lisp/init-navigation.el
 (use-package dumb-jump
   :demand t
   :commands (xref-find-definitions)
@@ -1500,7 +1575,7 @@ backend to perform a search.  This can be invoked with =M-.=.
 *** Avy
 [[https://github.com/abo-abo/avy][avy]] is an Emacs package for jumping to visible text using a char-based decision tree.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp :tangle lisp/init-navigation.el
 (use-package avy
   :bind ("C-." . avy-goto-char-timer)
   :custom
@@ -1508,6 +1583,12 @@ backend to perform a search.  This can be invoked with =M-.=.
   :functions (avy-setup-default)
   :config (avy-setup-default))
 #+end_src
+
+*** Navigation postamble
+#+begin_src emacs-lisp :tangle lisp/init-navigation.el
+(provide 'init-navigation)
+#+end_src
+
 ** Buffer & window management
 *** Tab bar
 The Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Tab-Bars.html][tab bar]] provides a way to have virtual workspaces inside a single
@@ -1706,51 +1787,12 @@ the window contents.
 
 (provide 'init-ibuffer)
 #+end_src
-** Scrolling
-This is an attempt to make scrolling a bit smoother and friendlier.
-
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-
-(when (fboundp 'pixel-scroll-precision-mode)
-  (pixel-scroll-precision-mode))
-
-(setq scroll-conservatively 101
-      scroll-preserve-screen-position t
-      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
-;; (setq hscroll-margin 2
-;;       hscroll-step 1
-;;       scroll-conservatively 101
-;;       scroll-preserve-screen-position t
-;;       auto-window-vscroll nil
-;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
-;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
-;;       mouse-wheel-scroll-amount-horizontal 2)
-#+end_src
-
-** Minibuffer history
-This keeps a record of all commands and history entered in the minibuffer.  This then allows the completion frameworks to become even more useful.
-
-Resources:
-- https://www.wisdomandwonder.com/wp-content/uploads/2014/03/C3F.html
-- https://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
-- https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
-
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-
-(require 'savehist)
-(with-eval-after-load 'savehist
-  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
-        savehist-save-minibuffer-history 1
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-        history-length 1000
-        history-delete-duplicates t
-  (add-hook 'after-init-hook #'savehist-mode))
-#+end_src
+** UI & Completion Postamble
 
 #+begin_src emacs-lisp :tangle lisp/init-ui.el
 (provide 'init-ui)
 #+end_src
+
 * Editing
 ** General
 #+begin_src emacs-lisp :tangle lisp/init-editing.el :noweb yes
@@ -4830,7 +4872,6 @@ and then finally to report how long it took to load the configuration.
 #+begin_src emacs-lisp
 (forge/load-directory-modules forge-personal-dir)
 #+end_src
-
 * Resources
 ** Emacs Calc
 - [[https://github.com/ahyatt/emacs-calc-tutorials][Emacs Calc Tutorials]]

@@ -89,10 +89,4 @@ the following arguments:
       (package-vc-install url iname rev backend))))
 
 
-(use-package paradox
-  :disabled t
-  :init
-  (setq paradox-execute-asynchronously t))
-
-
 (provide 'init-elpa)

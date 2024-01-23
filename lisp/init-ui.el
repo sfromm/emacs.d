@@ -16,14 +16,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(use-package which-key
-  :custom (which-key-idle-delay 1.5)
-  :demand t
-  :diminish
-  :commands which-key-mode
-  :config (which-key-mode))
-
-
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
 (define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
@@ -133,89 +125,6 @@
   )
 
 
-;;; Completion
-;; https://github.com/minad/vertico
-(use-package vertico
-  :demand t
-  :init
-  (vertico-mode))
-
-;; https://github.com/oantolin/orderless
-(use-package orderless
-  :demand t
-  :custom
-  (completion-styles '(orderless basic)))
-
-;; https://github.com/minad/consult
-(use-package consult
-  :demand t
-  :bind
-  ;; M-g go-to map
-  (("M-g g" . consult-goto-line)
-   ("M-g h" . consult-org-heading)
-   ("M-g i" . consult-imenu)
-   ;; M-s search map
-   ("M-s l" . consult-line)
-   ("M-s g" . consult-grep)
-   ("M-s G" . consult-git-grep)
-   ("M-s r" . consult-ripgrep)
-   ("M-y" . consult-yank-pop)
-   ([remap switch-to-buffer] . consult-buffer)
-   ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
-   ([remap switch-to-buffer-other-frame] . consult-buffer-other-frame)
-   ("C-c f" . consult-find))
-  :config
-  (setq consult-narrow-key "<"
-        consult-project-root-function
-        (lambda ()
-          (when-let (project (project-current))
-            (car (project-roots project))))))
-
-;; https://github.com/minad/marginalia
-(use-package marginalia
-  :demand t
-  :bind (:map minibuffer-local-map
-              ("C-M-a" . marginalia-cycle))
-  :custom
-  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :config
-  (marginalia-mode))
-
-
-;;; Navigation
-
-;;; windmove
-(use-package windmove
-  :bind
-  (("s-l" . windmove-right)
-   ("s-h" . windmove-left)
-   ("s-k" . windmove-up)
-   ("s-j" . windmove-down))
-  :custom (windmove-wrap-around t)
-  :config (windmove-default-keybindings 'super))
-
-;;; ace-window
-(use-package ace-window
-  :bind
-  (([remap other-window] . ace-window)))
-
-(use-package dumb-jump
-  :demand t
-  :commands (xref-find-definitions)
-  :config
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  ;; this requires at least xref-1.1.0, which comes with emacs-28.1 or newer
-  (when (version<= "28.1" emacs-version)
-    (setq xref-show-definitions-function #'xref-show-definitions-completing-read)))
-
-(use-package avy
-  :bind ("C-." . avy-goto-char-timer)
-  :custom
-  (avy-case-fold-search t)
-  :functions (avy-setup-default)
-  :config (avy-setup-default))
-
-
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
   (setq tab-bar-close-tab-select 'recent
@@ -281,32 +190,5 @@ prompt for what tab to switch to."
     "Enable features to focus."
     (interactive)
     (olivetti-mode)))
-
-
-(when (fboundp 'pixel-scroll-precision-mode)
-  (pixel-scroll-precision-mode))
-
-(setq scroll-conservatively 101
-      scroll-preserve-screen-position t
-      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
-;; (setq hscroll-margin 2
-;;       hscroll-step 1
-;;       scroll-conservatively 101
-;;       scroll-preserve-screen-position t
-;;       auto-window-vscroll nil
-;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
-;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
-;;       mouse-wheel-scroll-amount-horizontal 2)
-
-
-(require 'savehist)
-(with-eval-after-load 'savehist
-  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
-        savehist-save-minibuffer-history 1
-        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-        history-length 1000
-        history-delete-duplicates t
-  (add-hook 'after-init-hook #'savehist-mode))
 
 (provide 'init-ui)

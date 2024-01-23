@@ -83,6 +83,33 @@
 (my-initialize)
 
 
+(require 'savehist)
+(with-eval-after-load 'savehist
+  (setq savehist-file (expand-file-name "savehist" forge-state-dir)
+        savehist-save-minibuffer-history 1
+        savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+        history-length 1000
+        history-delete-duplicates t
+  (add-hook 'after-init-hook #'savehist-mode))
+
+
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode))
+
+(setq scroll-conservatively 101
+      scroll-preserve-screen-position t
+      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
+;; (setq hscroll-margin 2
+;;       hscroll-step 1
+;;       scroll-conservatively 101
+;;       scroll-preserve-screen-position t
+;;       auto-window-vscroll nil
+;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
+;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
+;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
+;;       mouse-wheel-scroll-amount-horizontal 2)
+
+
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
   (message "Loaded %s (%0.2fs)" mod (float-time (time-subtract (current-time) time))))
