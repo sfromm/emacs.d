@@ -94,6 +94,31 @@
       world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
 
+(defun my-org-web-bookmarks (path)
+  "Return all HTTP links from an org-file at PATH."
+  (with-temp-buffer
+    (let (links)
+      (insert-file-contents path)
+      (org-mode)
+      (org-element-map (org-element-parse-buffer) 'link
+        (lambda (link)
+          (let* ((raw-link (org-element-property :raw-link link))
+                 (content (org-element-contents link))
+                 (title (substring-no-properties (or (seq-first content) raw-link))))
+            (when (string-prefix-p "http" raw-link)
+              (push (concat title " " (propertize raw-link 'face 'whitespace-space) "\n")
+                    links))))
+        nil nil 'link)
+      (seq-sort 'string-greaterp links))))
+
+(defun my-open-browser-bookmark ()
+  "Send a bookmark to the browser from the bookmark file."
+  (interactive)
+  (browse-url
+   (seq-elt
+    (split-string
+     (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) " ") 1)))
+
 (use-package with-editor)
 
 (provide 'init-utils)

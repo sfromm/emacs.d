@@ -2017,6 +2017,20 @@ See also: https://www.emacswiki.org/emacs/DosToUnix
     (while (search-forward (string ?\C-m) nil t)
       (replace-match (string ?\C-j) nil t))))
 #+end_src
+** Very large files
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+(use-package vlf-setup
+  :ensure vlf
+  :init (require 'vlf-setup))
+
+(defun ffap-vlf ()
+  "Find file at point with VLF."
+  (interactive)
+  (let ((file (ffap-file-at-point)))
+    (unless (file-exists-p file)
+      (error "File does not exist: %s" file))
+    (vlf file)))
+#+end_src
 ** Managing diffs between files or previous versions of a file
 *** Ediff
 [[https://www.gnu.org/software/emacs/manual/html_mono/ediff.html][Ediff]] is a comprehensive interface to =diff= and =patch= utilities.
@@ -4718,13 +4732,16 @@ Update on [2023-02-05 Sun]: Stop tangling the twitter config.
 
 #+end_src
 * Miscellaneous Utilities
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-utils.el
+:END:
 The following are miscellaneous utilities that are small but useful.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle "init.el"
 (require 'init-utils)
 #+end_src
 
 ** Epub reader with [[https://github.com/wasamasa/nov.el][Nov]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el :noweb yes
+#+begin_src emacs-lisp :noweb yes
 ;;; init-utils.el --- Init various utilities -*- lexical-binding: t -*-
 <<license>>
 
@@ -4736,14 +4753,14 @@ The following are miscellaneous utilities that are small but useful.
 #+end_src
 
 ** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (use-package lorem-ipsum)
 #+end_src
 ** Jira
 [[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
 init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
 
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (with-eval-after-load 'go-jira
   (defvar jira-token nil)
   (defun jira-create ()
@@ -4761,7 +4778,7 @@ init.el.  Not an actual emacs package.  Not used very much anymore, but left in 
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.
 
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 
 (use-package net-utils
   :commands (ping traceroute)
@@ -4772,7 +4789,7 @@ A place to configure miscellaneous settings for network utilities.
 
 Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community-services/ip-asn-mapping/][IP to ASN Mapping Service]] provided by [[https://team-cymru.com/][Team Cymru]].
 
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (use-package ip-query
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
@@ -4782,13 +4799,13 @@ Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community
 ** Search / Ripgrep
 [[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
 
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 
 (use-package rg)
 #+end_src
 
 ** [[https://github.com/defunkt/gist.el][Gist]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (use-package gist
   :custom (gist-view-gist t))
 #+end_src
@@ -4825,7 +4842,7 @@ Keybindings of note:
 | A          | Open author profile under point               |
 | P          | Open profile of user under point              |
 ** Weather with [[https://github.com/bcbcarl/emacs-wttrin][Wttrin]]
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (use-package wttrin
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/emacs-wttrin")
@@ -4837,7 +4854,7 @@ Keybindings of note:
 ** World Clock
 Because sometimes I work with people in more than one timezone.  ~M-x world-clock~ to the rescue.
 
-#+begin_src emacs-lisp :tangle lisp/init-utils.el
+#+begin_src emacs-lisp
 (setq zoneinfo-style-world-list ; M-x shell RET timedatectl list-timezones or M-x dired RET /usr/share/zoneinfo
       '(("America/Los_Angeles" "Los Angeles")
         ("America/Denver" "Denver")
@@ -4862,6 +4879,35 @@ Because sometimes I work with people in more than one timezone.  ~M-x world-cloc
 (setq world-clock-list t
       world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
+#+end_src
+** Bookmark opener
+Inspired and borrowed from [[https://xenodium.com/building-your-own-bookmark-launcher/][Alvaro Ramirez]]:
+
+#+begin_src emacs-lisp
+(defun my-org-web-bookmarks (path)
+  "Return all HTTP links from an org-file at PATH."
+  (with-temp-buffer
+    (let (links)
+      (insert-file-contents path)
+      (org-mode)
+      (org-element-map (org-element-parse-buffer) 'link
+        (lambda (link)
+          (let* ((raw-link (org-element-property :raw-link link))
+                 (content (org-element-contents link))
+                 (title (substring-no-properties (or (seq-first content) raw-link))))
+            (when (string-prefix-p "http" raw-link)
+              (push (concat title " " (propertize raw-link 'face 'whitespace-space) "\n")
+                    links))))
+        nil nil 'link)
+      (seq-sort 'string-greaterp links))))
+
+(defun my-open-browser-bookmark ()
+  "Send a bookmark to the browser from the bookmark file."
+  (interactive)
+  (browse-url
+   (seq-elt
+    (split-string
+     (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) " ") 1)))
 #+end_src
 ** with-editor
 Try to make it easier to use =emacsclient= as the =$EDITOR= of child processes using [[https://github.com/magit/with-editor][with-editor]].

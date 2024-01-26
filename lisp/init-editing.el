@@ -128,6 +128,18 @@
     (while (search-forward (string ?\C-m) nil t)
       (replace-match (string ?\C-j) nil t))))
 
+(use-package vlf-setup
+  :ensure vlf
+  :init (require 'vlf-setup))
+
+(defun ffap-vlf ()
+  "Find file at point with VLF."
+  (interactive)
+  (let ((file (ffap-file-at-point)))
+    (unless (file-exists-p file)
+      (error "File does not exist: %s" file))
+    (vlf file)))
+
 
 (use-package ediff
   :init
