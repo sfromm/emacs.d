@@ -106,7 +106,7 @@
                  (content (org-element-contents link))
                  (title (substring-no-properties (or (seq-first content) raw-link))))
             (when (string-prefix-p "http" raw-link)
-              (push (concat title " " (propertize raw-link 'face 'whitespace-space) "\n")
+              (push (concat title "\n" (propertize raw-link 'face 'whitespace-space) "\n")
                     links))))
         nil nil 'link)
       (seq-sort 'string-greaterp links))))
@@ -117,7 +117,7 @@
   (browse-url
    (seq-elt
     (split-string
-     (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) " ") 1)))
+     (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) "\n") 1)))
 
 (use-package with-editor)
 
