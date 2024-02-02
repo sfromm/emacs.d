@@ -25,8 +25,7 @@
 
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
-    (setq-local truncate-lines t)
-    (forge/toggle-highlight-line))
+    (setq-local truncate-lines t))
 
   (defun forge/dired-up ()
     "Move up a directory without opening a new buffer."

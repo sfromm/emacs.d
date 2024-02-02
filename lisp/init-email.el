@@ -37,7 +37,7 @@
   (add-hook 'message-mode-hook #'turn-on-flyspell)
   (add-hook 'message-mode-hook #'yas-minor-mode)
   (add-hook 'message-mode-hook #'turn-on-auto-fill
-            (lambda()
+            (lambda ()
               (auto-fill-mode t)
               (setq fill-column 72)
               (setq mail-header-separator ""))))

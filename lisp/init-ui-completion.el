@@ -47,8 +47,10 @@
    ("M-g i" . consult-imenu)
    ;; M-s search map
    ("M-s l" . consult-line)
+   ("M-s L" . consult-line-multi)
    ("M-s g" . consult-grep)
    ("M-s G" . consult-git-grep)
+   ("M-s O" . consult-outline)
    ("M-s r" . consult-ripgrep)
    ("M-y" . consult-yank-pop)
    ([remap switch-to-buffer] . consult-buffer)
@@ -71,5 +73,36 @@
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
   :config
   (marginalia-mode))
+
+
+(use-package corfu
+  :custom
+  (corfu-separator ?\s)
+  :init
+  (global-corfu-mode))
+
+(use-package corfu-popupinfo
+  :ensure nil
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom
+  (corfu-popupinfo-delay '(0.25 . 0.1))
+  (corfu-popupinfo-hide nil)
+  :config
+  (corfu-popupinfo-mode))
+
+(use-package kind-icon
+  :after corfu
+  :if (display-graphic-p)
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+
+(use-package emacs
+  :init
+  (setq tab-always-indent 'complete)
+  (setq completion-cycle-threshold 3))
 
 (provide 'init-ui-completion)

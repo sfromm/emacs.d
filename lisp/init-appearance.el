@@ -87,6 +87,8 @@
         (dolist (font (append (list forge-unicode-font) forge-unicode-extra-fonts))
           (set-fontset-font t 'unicode (font-spec :family font) nil 'prepend))))))
 
+(my-font-update)
+
 (use-package all-the-icons)
 
 (use-package all-the-icons-dired
@@ -165,6 +167,13 @@
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t))
 
+(defun my-load-theme ()
+  "Load configured forge theme."
+  (when (boundp 'forge-theme)
+    (load-theme forge-theme t)))
+
+(add-hook 'after-init-hook #'my-load-theme)
+
 
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
@@ -181,33 +190,16 @@
 (use-package nyan-mode)
 
 
-(defun forge/setup-ui ()
-  "Set up the look and feel."
-  (interactive)
-  (when forge-theme
-    (load-theme forge-theme t))
-  (setq visible-bell t                 ;; set a visible bell ...
-        ring-bell-function #'ignore)    ;; and squash the audio bell
-  (when (display-graphic-p)
-    (when (forge/system-type-darwin-p)
-      (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
-    (my-font-update)
-    (line-number-mode t)                ;; show line number in modeline
-    (column-number-mode t)              ;; show column number in modeline
-    (size-indication-mode t)            ;; show buffer size in modeline
-    (tool-bar-mode -1)                  ;; disable toolbar
-    (scroll-bar-mode -1)                ;; disable scroll bar
-    (display-battery-mode)))
-
 (defun forge/setup-ui-in-daemon (frame)
   "Reload the UI in a daemon frame FRAME."
   (when (or (daemonp) (not (display-graphic-p)))
     (with-selected-frame frame
-      (run-with-timer 0.1 nil #'forge/setup-ui))))
+      (run-with-timer 0.1 nil #'my-font-update))))
 
 (when (daemonp)
   (add-hook 'after-make-frame-functions #'forge/setup-ui-in-daemon))
-(add-hook 'after-init-hook #'forge/setup-ui)
+
+(add-hook 'after-init-hook #'my-font-update)
 
 (use-package lin
   :config

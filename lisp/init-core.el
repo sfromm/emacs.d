@@ -1,4 +1,4 @@
-;;; init-elpa.el --- Init Core -*- lexical-binding: t -*-
+;;; init-core.el --- Init Core -*- lexical-binding: t -*-
 ;; Copyright (C) 2021, 2022 by Stephen Fromm
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -49,38 +49,54 @@
   (with-no-warnings
     (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir))
-    (customize-set-variable 'bookmark-default-file (expand-file-name "bookmarks" forge-state-dir))
-    (customize-set-variable 'calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir))
-    (customize-set-variable 'transient-history-file (expand-file-name "transient/history.el" forge-state-dir))
-    (customize-set-variable 'transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir))
-    (customize-set-variable 'transient-values-file (expand-file-name "transient/values.el" forge-personal-dir))
-    (customize-set-variable 'message-auto-save-directory (expand-file-name "messages" forge-state-dir))
-    (customize-set-variable 'package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
-    (customize-set-variable 'project-list-file (expand-file-name "project-list.el" forge-state-dir))
-    (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
-    (customize-set-variable 'tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
-    (customize-set-variable 'url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
-    (customize-set-variable 'url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
+    (setopt bookmark-default-file (expand-file-name "bookmarks" forge-state-dir))
+    (setopt calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir))
+    (setopt transient-history-file (expand-file-name "transient/history.el" forge-state-dir))
+    (setopt transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir))
+    (setopt transient-values-file (expand-file-name "transient/values.el" forge-personal-dir))
+    (setopt message-auto-save-directory (expand-file-name "messages" forge-state-dir))
+    (setopt package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
+    (setopt project-list-file (expand-file-name "project-list.el" forge-state-dir))
+    (setopt tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
+    (setopt tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
+    (setopt url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
+    (setopt url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
-(defun my-initialize ()
-  "Initialize paths and session for this Emacs instance."
-  (init-mkdirs-user-emacs-directory)
-  (init-clean-user-emacs-directory)
-  ;; when native compilation is available ...
-  (when (forge/native-comp-p)
-    (setq native-comp-deferred-compilation nil
-          native-comp-async-report-warnings-errors 'silent
-          package-native-compile nil))
-  ;;
-  (add-to-list 'load-path forge-site-dir)
-  (add-to-list 'custom-theme-load-path forge-themes-dir)
-  (setq inhibit-splash-screen t
-        ;; always load the newer version of a file
-        load-prefer-newer t
-        ;; warn when opening files bigger than 50MB
-        large-file-warning-threshold 50000000))
+(init-mkdirs-user-emacs-directory)
+(init-clean-user-emacs-directory)
 
-(my-initialize)
+(when (forge/native-comp-p)
+  (setq native-comp-deferred-compilation nil
+        native-comp-async-report-warnings-errors 'silent
+        package-native-compile nil))
+
+(add-to-list 'load-path forge-site-dir)
+(add-to-list 'custom-theme-load-path forge-themes-dir)
+
+(setopt inhibit-splash-screen t)
+(setopt initial-major-mode 'org-mode)
+(setopt initial-scratch-message
+        (concat
+         "#+TITLE: Scratch Buffer\n\n"
+         "* Welcome to Emacs\n"
+         "[[file:~/.emacs.d/emacs.org][emacs.org]]\n"
+         "#+begin_src emacs-lisp\n"
+         "#+end_src"))
+
+(setopt visible-bell t)                 ;; set a visible bell ...
+(setopt ring-bell-function #'ignore)    ;; and squash the audio bell
+(setopt load-prefer-newer t)            ;; always load the newer version of a file
+(setopt large-file-warning-threshold 50000000) ;; warn when opening files bigger than 50MB
+
+(when (display-graphic-p)
+  (when (forge/system-type-darwin-p)
+    (setopt frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
+  (line-number-mode t)                ;; show line number in modeline
+  (column-number-mode t)              ;; show column number in modeline
+  (size-indication-mode t)            ;; show buffer size in modeline
+  (tool-bar-mode -1)                  ;; disable toolbar
+  (scroll-bar-mode -1)                ;; disable scroll bar
+  (display-battery-mode))
 
 
 (require 'savehist)
@@ -96,18 +112,7 @@
 (when (fboundp 'pixel-scroll-precision-mode)
   (pixel-scroll-precision-mode))
 
-(setq scroll-conservatively 101
-      scroll-preserve-screen-position t
-      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
-;; (setq hscroll-margin 2
-;;       hscroll-step 1
-;;       scroll-conservatively 101
-;;       scroll-preserve-screen-position t
-;;       auto-window-vscroll nil
-;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
-;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
-;;       mouse-wheel-scroll-amount-horizontal 2)
+(setopt mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
 
 
 (defun forge/message-module-load (mod time)
@@ -135,27 +140,13 @@
 (forge/load-directory-modules forge-site-dir)
 
 
-;; dbus is a linux thing -- only load on that platform
-(when (forge/system-type-linux-p)
-  (require 'dbus)
-
-  (defun forge/network-online-p ()
-    "Check if we have a working network connection"
-    (interactive)
-    (let ((nm-service "org.freedesktop.NetworkManager")
-          (nm-path "/org/freedesktop/NetworkManager")
-          (nm-interface "org.freedesktop.NetworkManager")
-          (nm-state-connected-global 70))
-      (eq nm-state-connected-global
-          (dbus-get-property :system nm-service nm-path nm-interface "State"))))
-  )
-
-
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
 ;;; Some platforms, such as MacOSX, do not get this done correctly.
-(with-eval-after-load 'exec-path-from-shell
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (when (forge/system-type-darwin-p)
   (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
@@ -165,107 +156,48 @@
       (add-to-list 'exec-path path))))
 
 
-(when (forge/system-type-darwin-p)
-  (defun forge/network-online-p ()
-    "Check if online."
-    (interactive)
-    (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
-           (netsetup (split-string output "\n")))
-      (catch 'found
-        (dolist (elt netsetup)
-          (when (> (length elt) 0)
-            (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
-                   (netif (match-string 1 elt)))
-              (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
-                (throw 'found netif)))))))))
+;; dbus is a linux thing -- only load on that platform
+(when (forge/system-type-linux-p)
+  (require 'dbus))
 
 
-(defvar forge/vpn-config ""
-  "Name of the OpenVPN VPN configuration to use.")
+(defun macos-networksetup-status ()
+  "Run networksetup to get network status."
+  (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
+         (netsetup (split-string output "\n")))
+    (catch 'found
+      (dolist (elt netsetup)
+        (when (> (length elt) 0)
+          (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
+                 (netif (match-string 1 elt)))
+            (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
+              (throw 'found netif))))))))
 
-(when (forge/system-type-darwin-p)
-  (defun vpn-connect ()
-    "Connect to VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (shell-command (concat "scutil --nc start " cfg)))))
+(defun linux-networkmanager-status ()
+  "Query NetworkManager for network status."
+  (let ((nm-service "org.freedesktop.NetworkManager")
+        (nm-path "/org/freedesktop/NetworkManager")
+        (nm-interface "org.freedesktop.NetworkManager")
+        (nm-state-connected-global 70))
+    (eq nm-state-connected-global
+        (dbus-get-property :system nm-service nm-path nm-interface "State"))))
 
-  (defun vpn-disconnect ()
-    "Disconnect VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (when (forge/system-type-darwin-p)
-      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
-
-  (defun openvpn-connect ()
-    "Connect to OpenVPN configuration CFG.
-Assumes you are on MacOS and using Tunnelblick to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (let ((osatmpl ""))
-          (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                                "    connect \"" cfg "\"\n"
-                                "end tell"))
-          (do-applescript osatmpl)))))
-
-  (defun openvpn-disconnect ()
-    "Disconnect from VPN.
-Assumes you are on MacOS and using Tunnelblick to manage your VPN."
-    (interactive)
-    (let ((osatmpl ""))
-      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                            "    disconnect \"" forge/vpn-config "\"\n"
-                            "end tell"))
-      (do-applescript osatmpl))))
+(defun forge/network-online-p ()
+  "Check if we have a working network connection"
+  (interactive)
+  (when (forge/system-type-linux-p)
+    (linux-networkmanager-status))
+  (when (forge/system-type-darwin-p)
+    (macos-networksetup-status)))
 
 
-(when (forge/system-type-darwin-p)
-  (defun forge/get-current-song-itunes ()
-    "Get current song playing via itunes."
-    (let ((osa-tmpl "")
-          (cursong nil))
-      (setq osa-tmpl "tell application \"Music\"
-	if player state is not stopped then
-		set ct to (properties of current track)
-		set this_song to \"\"
-		if (class of ct is URL track) and (get current stream title) is not missing value then
-			set this_song to (get current stream title)
-		else
-			set this_song to artist in ct & \" - \" & name in ct
-		end if
-		this_song
-	end if
-end tell")
-      (condition-case nil
-          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
-        (error nil))
-      cursong)))
+;; What follows are various helper functions that are used
+;; either interactively or in other parts of the configuration.
 
-
 (defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
   (load-file (expand-file-name "init.el" user-emacs-directory)))
-
-(defun forge/toggle-highlight-line ()
-  "Toggle `hl-line-mode'."
-  (interactive)
-  (if (bound-and-true-p hl-line-mode) (hl-line-mode -1) (hl-line-mode t)))
-
-(defun forge/turn-on-delete-trailing-whitespace ()
-  "Turn on `delete-trailing-whitespace' when saving files."
-  (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
 
 (defun forge/turn-off-delete-trailing-whitespace ()
   "Turn off `delete-trailing-whitespace' when saving files."
@@ -304,17 +236,12 @@ end tell")
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 
-(defun forge/whitespace-visualize ()
-  "Enable whitespace visualizations."
-  (setq highlight-tabs t)
-  (setq show-trailing-whitespace t))
-
 (defun forge/untabify-buffer ()
   "Remove tab characters from buffer."
   (interactive)
   (untabify (point-min) (point-max)))
 
-(defun forge/sudo-file-path (file)
+(defun sudo-file-path (file)
   "Return path for FILE with sudo access."
   (let ((host (or (file-remote-p file 'host) "localhost")))
     (concat "/" (when (file-remote-p file)
@@ -326,34 +253,44 @@ end tell")
             ":" (or (file-remote-p file 'localname)
                     file))))
 
-(defun forge/sudo-find-file (file)
+(defun sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
-  (find-file (forge/sudo-file-path file)))
+  (find-file (sudo-file-path file)))
 
-(defun forge/sudo-this-file ()
+(defun sudo-this-file ()
   "Open current file as root."
   (interactive)
   (find-file
-   (forge/sudo-file-path
+   (sudo-file-path
     (or buffer-file-name
         (or buffer-file-name
             (when (or (derived-mode-p 'dired-mode)
                       (derived-mode-p 'wdired-mode))
               default-directory))))))
 
-(defun dig-extended (fn &optional
-                        domain query-type query-class query-option dig-option server)
-  "Wrapper for `dig'.
-Query for DNS records for DOMAIN of QUERY-TYPE."
-  (message "domain: '%s'" domain)
-  (unless domain
-    (setq domain (read-string "Host: ")))
-  (unless query-type
-    (setq query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR"))))
-  (funcall fn domain query-type query-class query-option dig-option server))
-
-(advice-add 'dig :around #'dig-extended)
+
+(when (forge/system-type-darwin-p)
+  (defun my-get-current-song-itunes ()
+    "Get current song playing via itunes."
+    (let ((osa-tmpl "")
+          (cursong nil))
+      (setq osa-tmpl "tell application \"Music\"
+	if player state is not stopped then
+		set ct to (properties of current track)
+		set this_song to \"\"
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
+	end if
+end tell")
+      (condition-case nil
+          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
+        (error nil))
+      cursong)))
 
 (defconst speed_of_light 299792458 "Speed of light, m/s.")
 

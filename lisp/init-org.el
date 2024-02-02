@@ -371,7 +371,7 @@
                                                            (shell . t)
                                                            (calc . t))))
 
-(use-package ol-notmuch      ;; use package from site-lisp
+(use-package ol-notmuch
   :after (:any org notmuch))
 
 (use-package org-mime
@@ -447,7 +447,7 @@
 
 (defun forge/capture-current-song ()
   "Capture the current song details."
-  (let ((itunes-song (forge/get-current-song-itunes))
+  (let ((itunes-song (my-get-current-song-itunes))
         (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
         (song-info nil))
     (setq song-info (if itunes-song itunes-song mpd-song))
