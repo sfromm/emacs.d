@@ -30,3 +30,4 @@ site-lisp/preload.el
 .sx
 emms/
 network-security.data
+tree-sitter/
