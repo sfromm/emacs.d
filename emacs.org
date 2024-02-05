@@ -2699,7 +2699,7 @@ Notes:
   (add-hook 'message-mode-hook #'yas-minor-mode)
   (add-hook 'message-mode-hook #'turn-on-auto-fill
             (lambda ()
-              (auto-fill-mode t)
+              (turn-on-auto-fill)
               (setq fill-column 72)
               (setq mail-header-separator ""))))
 
@@ -2709,7 +2709,6 @@ Notes:
         mm-inline-large-images nil
         mm-inline-text-html-with-images nil
         mm-discouraged-alternatives '("text/html" "text/richtext")))
-
 #+end_src
 
 [[https://www.emacswiki.org/emacs/GnusAlias][gnus-alias]] provides a mechanism to switch identities when composing email with
@@ -3303,9 +3302,8 @@ Miscellaneous notes:
   (defun my-org-mode-hook ()
     "Turn on settings for org-mode."
     (interactive)
-    (auto-fill-mode -1)
-    (when (fboundp 'turn-on-auto-fill)
-      (turn-on-auto-fill))
+    (when (fboundp 'turn-off-auto-fill)
+      (turn-off-auto-fill))
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
@@ -3653,8 +3651,6 @@ Miscellaneous notes:
                                                            (ruby . t)
                                                            (shell . t)
                                                            (calc . t))))
-
-
 #+end_src
 *** Org Contacts, Notmuch and mail
 #+begin_src emacs-lisp :tangle lisp/init-org.el

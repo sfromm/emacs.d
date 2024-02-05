@@ -38,7 +38,7 @@
   (add-hook 'message-mode-hook #'yas-minor-mode)
   (add-hook 'message-mode-hook #'turn-on-auto-fill
             (lambda ()
-              (auto-fill-mode t)
+              (turn-on-auto-fill)
               (setq fill-column 72)
               (setq mail-header-separator ""))))
 
