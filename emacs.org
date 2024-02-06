@@ -1111,7 +1111,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 (define-key forge-map (kbd "s") 'eshell-here)
 (define-key forge-map (kbd "S") 'forge/slack/body)
 (define-key forge-map (kbd "t") 'org-pomodoro)
-(define-key forge-map (kbd "p") 'paradox-list-packages)
+(define-key forge-map (kbd "p") 'package-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
 (define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
