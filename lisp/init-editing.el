@@ -97,12 +97,13 @@
 
 ;; display-line-numbers-mode
 (when (fboundp 'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (let ((linum-hooks '(csv-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+    (mapc (lambda (hook) (add-hook hook 'display-line-numbers-mode)) linum-hooks))
   (setopt display-line-numbers-width 3))
 
 
 ;; hl-line-mode
-(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook prog-mode-hook)))
+(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
 
