@@ -41,7 +41,7 @@
   (setq major-mode-remap-alist
         '((bash-mode . bash-ts-mode)
           (json-mode . json-ts-mode)
-          (markdown-mode . markdown-ts-mode)
+          ;; (markdown-mode . markdown-ts-mode)
           (python-mode . python-ts-mode)
           (yaml-mode . yaml-ts-mode)))
   :hook
