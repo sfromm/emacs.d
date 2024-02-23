@@ -1927,7 +1927,7 @@ allows you to jump between changes and revert them.
 #+end_src
 ** Eglot
 [[https://github.com/joaotavora/eglot][Eglot]] ([[https://joaotavora.github.io/eglot/][manual]]) is an Emacs package that is a LSP client.  It is now integrated
-with Emacs-29.
+with Emacs-29.  Alternative [[https://www.gnu.org/software/emacs/manual/html_node/eglot/index.html][manual]] link.
 
 I find that =eglot-server-programs= is already defined by /eglot/ and the mode
 one is interested is most likely defined.
