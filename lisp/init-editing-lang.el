@@ -47,27 +47,27 @@
   :hook
   ((prog-mode . electric-pair-mode)))
 
-  (use-package eglot
-    :ensure nil
-    :commands (eglot eglot-ensure)
-    :custom
-    (eglot-send-changes-idle-time 0.1)
-    (eglot-auto-shudown t)
-    (eglot-extend-to-xref t)
-    :config
-    ;; (setq-default eglot-workspace-configuration
-    ;;               '((:pylsp . (:configurationSources ["flake8"]
-    ;;                                                  :plugins (
-    ;;                                                            :pycodestyle (:enabled nil)
-    ;;                                                            :mccabe (:enabled nil)
-    ;;                                                            :flake8 (:enabled t))))))
-    ;; (add-to-list 'eglot-server-programs
-    ;;              '(python-mode . ("pylsp"))
-    ;;              '(yaml-mode . ("yaml-language-server")))
-    (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
-    :hook
-    (python-mode . eglot-ensure)
-    (yaml-mode . eglot-ensure))
+(use-package eglot
+  :ensure nil
+  :commands (eglot eglot-ensure)
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-auto-shudown t)
+  (eglot-extend-to-xref t)
+  :config
+  ;; (setq-default eglot-workspace-configuration
+  ;;               '((:pylsp . (:configurationSources ["flake8"]
+  ;;                                                  :plugins (
+  ;;                                                            :pycodestyle (:enabled nil)
+  ;;                                                            :mccabe (:enabled nil)
+  ;;                                                            :flake8 (:enabled t))))))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ("pylsp"))
+  ;;              '(yaml-mode . ("yaml-language-server")))
+  (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
+  :hook
+  (python-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure))
 
 
 (use-package dockerfile-mode

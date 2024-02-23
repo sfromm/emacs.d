@@ -1933,27 +1933,27 @@ I find that =eglot-server-programs= is already defined by /eglot/ and the mode
 one is interested is most likely defined.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-  (use-package eglot
-    :ensure nil
-    :commands (eglot eglot-ensure)
-    :custom
-    (eglot-send-changes-idle-time 0.1)
-    (eglot-auto-shudown t)
-    (eglot-extend-to-xref t)
-    :config
-    ;; (setq-default eglot-workspace-configuration
-    ;;               '((:pylsp . (:configurationSources ["flake8"]
-    ;;                                                  :plugins (
-    ;;                                                            :pycodestyle (:enabled nil)
-    ;;                                                            :mccabe (:enabled nil)
-    ;;                                                            :flake8 (:enabled t))))))
-    ;; (add-to-list 'eglot-server-programs
-    ;;              '(python-mode . ("pylsp"))
-    ;;              '(yaml-mode . ("yaml-language-server")))
-    (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
-    :hook
-    (python-mode . eglot-ensure)
-    (yaml-mode . eglot-ensure))
+(use-package eglot
+  :ensure nil
+  :commands (eglot eglot-ensure)
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-auto-shudown t)
+  (eglot-extend-to-xref t)
+  :config
+  ;; (setq-default eglot-workspace-configuration
+  ;;               '((:pylsp . (:configurationSources ["flake8"]
+  ;;                                                  :plugins (
+  ;;                                                            :pycodestyle (:enabled nil)
+  ;;                                                            :mccabe (:enabled nil)
+  ;;                                                            :flake8 (:enabled t))))))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ("pylsp"))
+  ;;              '(yaml-mode . ("yaml-language-server")))
+  (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
+  :hook
+  (python-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure))
 #+end_src
 
 The next steps are to install the language servers for those of interest.  There
