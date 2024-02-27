@@ -16,8 +16,8 @@
 
 
 (when (forge/system-type-darwin-p)
-  (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-  (setq epa-pinentry-mode 'loopback))
+  (setopt epg-gpg-program (executable-find "gpg"))
+  (setopt epa-pinentry-mode 'loopback))
 
 (use-package auth-source)
 

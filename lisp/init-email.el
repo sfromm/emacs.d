@@ -172,6 +172,7 @@
   (notmuch-search-oldest-first nil)
   (notmuch-hello-thousands-separator ",")
   (notmuch-crypto-process-mime t)
+  (notmuch-crypto-gpg-program (executable-find "gpg"))
   (notmuch-show-part-button-default-action 'notmuch-show-view-part)
 
   :preface
