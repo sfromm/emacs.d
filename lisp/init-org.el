@@ -126,41 +126,41 @@
              (function notmuch-calendar-capture-event)
              :prepend t)
             ("l" "Log" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %U - %?\n")
             ("n" "Meeting notes" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
              :clock-resume t)
             ("j" "Journal" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
             ("b" "Bookmark" entry
-             (file+headline "~/forge/notebook.org" "Unfiled")
+             (file+headline "notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
              :prepend t)
 
             ("r" "Reference")
             ("rm" "Music" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %(forge/capture-current-song) :music:\n%U\n")
             ("rr" "Reference" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rw" "Web Page" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              (function my-org-clip-web-page)
              :prepend t)
             ("rf" "Elfeed/News Article" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rt" "Twitter Post" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t))))
 
