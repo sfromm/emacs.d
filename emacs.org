@@ -2201,13 +2201,19 @@ documents.
   :commands (fle-mode))
 #+end_src
 ** Ledger
-[[https://www.ledger-cli.org/][Ledger]] is a CLI application for double-entry accounting system.  This configures
-the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
+[[https://www.ledger-cli.org/][Ledger]] and [[https://beancount.github.io/docs/index.html][beancount]] are CLI applications for double-entry accounting system.  This configures
+the modes ([[https://github.com/ledger/ledger-mode][ledger]] and [[https://github.com/beancount/beancount-mode/][beancount]]) that go with them.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package ledger-mode
   :commands ledger-mode)
+
+(use-package beancount
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "beancount/beancount-mode")
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :hook (beancount-mode . outline-minor-mode))
 #+end_src
 ** Postamble
 

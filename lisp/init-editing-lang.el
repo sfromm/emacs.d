@@ -199,5 +199,11 @@
 (use-package ledger-mode
   :commands ledger-mode)
 
+(use-package beancount
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "beancount/beancount-mode")
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :hook (beancount-mode . outline-minor-mode))
+
 
 (provide 'init-editing-lang)
