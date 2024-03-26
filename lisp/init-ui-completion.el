@@ -79,7 +79,12 @@
   :custom
   (corfu-separator ?\s)
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  :bind
+  (:map corfu-map
+        ("SPC" . corfu-insert-separator)
+        ("C-n" . corfu-next)
+        ("C-p" . corfu-previous)))
 
 (use-package corfu-popupinfo
   :ensure nil

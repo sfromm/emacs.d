@@ -311,6 +311,7 @@ Will open a notmuch search buffer of the search results."
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
   (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk" "-spam")
+        notmuch-address-save-filename "~/annex/var/notmuch/contacts"
         notmuch-saved-searches '(( :name "📥 Inbox"
                                    :key "i"
                                    :query "tag:inbox")
