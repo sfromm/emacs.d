@@ -193,7 +193,9 @@
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode))
+  :commands (fle-mode)
+  :config
+  (setq-local tab-width 8))
 
 
 (use-package ledger-mode

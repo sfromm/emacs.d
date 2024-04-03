@@ -1783,7 +1783,7 @@ Display line numbers any time in a programming-related buffer.
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 ;; hl-line-mode
-(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook fle-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 #+end_src
 ** Highlight indentation
@@ -2203,7 +2203,9 @@ documents.
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode))
+  :commands (fle-mode)
+  :config
+  (setq-local tab-width 8))
 #+end_src
 ** Ledger
 [[https://www.ledger-cli.org/][Ledger]] and [[https://beancount.github.io/docs/index.html][beancount]] are CLI applications for double-entry accounting system.  This configures

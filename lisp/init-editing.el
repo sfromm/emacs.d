@@ -103,7 +103,7 @@
 
 
 ;; hl-line-mode
-(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook fle-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
 
