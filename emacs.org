@@ -4429,7 +4429,7 @@ Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community
 (use-package ip-query
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
-  :commands (ip-query))
+  :commands (ip-query ip-query-asn))
 #+end_src
 
 =dig-extended= is meant to be a wrapper around =dig=, using the Emacs [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][advice]] facility.
