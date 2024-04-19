@@ -13,8 +13,8 @@ ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
     PKGMGR = brew install
     PKG = emacs-plus@29
-    PKGFLAGS = --with-native-comp
-    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono font-jetbrains-mono
+    PKGFLAGS = --with-native-comp --with-imagemagick --with-no-frame-refocus --with-savchenkovaleriy-big-sur-icon
+    FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono font-jetbrains-mono font-sf-pro font-sf-mono
     ifeq ($(ARCH),arm64)
 	BREW_PATH = /opt/homebrew/bin
     else
@@ -42,7 +42,7 @@ upgrade: update
 
 fonts:
 	test -x $(BREW_PATH)/brew && brew tap homebrew/cask-fonts || true
-	test -x $(BREW_PATH)/brew && brew cask install $(FONTS) || $(PKGMGR) $(FONTS)
+	test -x $(BREW_PATH)/brew && brew install --cask $(FONTS) || $(PKGMGR) $(FONTS)
 
 all: fonts install bootstrap
 
