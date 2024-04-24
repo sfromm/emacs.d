@@ -282,6 +282,7 @@
   (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
   (org-html-checkbox-type 'html)
+  (org-list-allow-alphabetical t)
   (org-log-done t)
   (org-log-reschedule "note")
   (org-log-into-drawer t)
