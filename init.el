@@ -69,6 +69,11 @@
 
 (require 'init-editing-lang)
 
+
+;; delete-trailing-whitespace
+(let ((hooks '(csv-mode-hook json-mode-hook prog-mode-hook yaml-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'delete-trailing-whitespace)) hooks))
+
 (require 'init-chat)
 
 (require 'notifications)

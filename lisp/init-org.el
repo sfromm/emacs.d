@@ -20,9 +20,8 @@
   (defun my-org-mode-hook ()
     "Turn on settings for org-mode."
     (interactive)
-    (auto-fill-mode -1)
-    (when (fboundp 'turn-on-auto-fill)
-      (turn-on-auto-fill))
+    (when (fboundp 'turn-off-auto-fill)
+      (turn-off-auto-fill))
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
@@ -127,41 +126,41 @@
              (function notmuch-calendar-capture-event)
              :prepend t)
             ("l" "Log" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %U - %?\n")
             ("n" "Meeting notes" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
              :clock-resume t)
             ("j" "Journal" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
             ("b" "Bookmark" entry
-             (file+headline "~/forge/notebook.org" "Unfiled")
+             (file+headline "notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
              :prepend t)
 
             ("r" "Reference")
             ("rm" "Music" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %(forge/capture-current-song) :music:\n%U\n")
             ("rr" "Reference" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rw" "Web Page" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              (function my-org-clip-web-page)
              :prepend t)
             ("rf" "Elfeed/News Article" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rt" "Twitter Post" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t))))
 
@@ -283,6 +282,7 @@
   (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
   (org-html-checkbox-type 'html)
+  (org-list-allow-alphabetical t)
   (org-log-done t)
   (org-log-reschedule "note")
   (org-log-into-drawer t)
@@ -371,7 +371,7 @@
                                                            (shell . t)
                                                            (calc . t))))
 
-(use-package ol-notmuch      ;; use package from site-lisp
+(use-package ol-notmuch
   :after (:any org notmuch))
 
 (use-package org-mime
@@ -447,7 +447,7 @@
 
 (defun forge/capture-current-song ()
   "Capture the current song details."
-  (let ((itunes-song (forge/get-current-song-itunes))
+  (let ((itunes-song (my-get-current-song-itunes))
         (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
         (song-info nil))
     (setq song-info (if itunes-song itunes-song mpd-song))

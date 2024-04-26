@@ -14,11 +14,60 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :custom (flycheck-global-modes '(not org-mode))
-  :init (global-flycheck-mode))
+(defun my-treesitter-setup ()
+  "Set up treesitter for use in environment."
+  (interactive)
+  (when (treesit-available-p)
+    (setq treesit-language-source-alist
+          '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+            ;; (cmake "https://github.com/uyha/tree-sitter-cmake")
+            ;; (css "https://github.com/tree-sitter/tree-sitter-css")
+            (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+            ;; (go "https://github.com/tree-sitter/tree-sitter-go")
+            ;; (html "https://github.com/tree-sitter/tree-sitter-html")
+            ;; (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+            (json "https://github.com/tree-sitter/tree-sitter-json")
+            (make "https://github.com/alemuller/tree-sitter-make")
+            (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+            (python "https://github.com/tree-sitter/tree-sitter-python")
+            ;; (toml "https://github.com/tree-sitter/tree-sitter-toml")
+            ;; (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+            ;; (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+            (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+    (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))))
+
+(use-package emacs
+  :config
+  (setq major-mode-remap-alist
+        '((bash-mode . bash-ts-mode)
+          (json-mode . json-ts-mode)
+          ;; (markdown-mode . markdown-ts-mode)
+          (python-mode . python-ts-mode)
+          (yaml-mode . yaml-ts-mode)))
+  :hook
+  ((prog-mode . electric-pair-mode)))
+
+(use-package eglot
+  :ensure nil
+  :commands (eglot eglot-ensure)
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-auto-shudown t)
+  (eglot-extend-to-xref t)
+  :config
+  ;; (setq-default eglot-workspace-configuration
+  ;;               '((:pylsp . (:configurationSources ["flake8"]
+  ;;                                                  :plugins (
+  ;;                                                            :pycodestyle (:enabled nil)
+  ;;                                                            :mccabe (:enabled nil)
+  ;;                                                            :flake8 (:enabled t))))))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ("pylsp"))
+  ;;              '(yaml-mode . ("yaml-language-server")))
+  (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
+  :hook
+  (python-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure))
 
 
 (use-package dockerfile-mode
@@ -32,8 +81,7 @@
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (with-eval-after-load 'lisp-mode
-  (add-hook 'before-save-hook #'forge/turn-on-delete-trailing-whitespace)
-    (setq lisp-indent-offset nil))
+  (setq lisp-indent-offset nil))
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -77,40 +125,13 @@
     (previous-line)))
 
 
-(use-package python
-  :interpreter ("python" . python-mode)
-  :hook
-  (python-mode . forge/turn-on-delete-trailing-whitespace)
-  (python-mode . forge/whitespace-visualize)
-  :config
-  ;; set python-shell-interpreter to python3
-  (when (and (executable-find "python3")
-             (string= python-shell-interpreter "python"))
-    (setq python-shell-interpreter "python3"))
-  (setq-default python-indent-offset 4))
-
-(use-package anaconda-mode
-  :after python
-  :hook python-mode
-  :init
-  (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
-
-(use-package company-anaconda
-  :after anaconda-mode)
-
-
 (use-package go-mode
-  :mode "\\.go\\ '"
+  :mode "\\.go\\'"
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 
 (use-package ess)
-
-
-(with-eval-after-load 'shell-script-mode
-  (add-hook 'shell-script-hook #'forge/whitespace-visualize)
-  (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
 
 
 (use-package web-mode
@@ -131,21 +152,11 @@
   :mode "\\.php\\'")
 
 
-(use-package csv-mode
-  :hook
-  (csv-mode . forge/toggle-highlight-line)
-  (csv-mode . forge/turn-on-delete-trailing-whitespace)
-  (csv-mode . forge/whitespace-visualize))
+(use-package csv-mode)
 
-(use-package json-mode
-  :hook
-  (json-mode . forge/turn-on-delete-trailing-whitespace)
-  (json-mode . forge/whitespace-visualize))
+(use-package json-mode)
 
 (use-package yaml-mode
-  :hook
-  (yaml-mode . forge/turn-on-delete-trailing-whitespace)
-  (yaml-mode . forge/whitespace-visualize)
   :config
   (setq yaml-indent-offset 2))
 
@@ -163,6 +174,8 @@
 
 (with-eval-after-load 'junos-mode
   (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: juniper" . junos-mode))
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: junos" . junos-mode))
   (setq-local c-basic-offset 4))
 
 (use-package eos-mode
@@ -180,11 +193,20 @@
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode))
+  :commands (fle-mode)
+  :magic ("mycall " . fle-mode)
+  :config
+  (setq-local tab-width 8))
 
 
 (use-package ledger-mode
   :commands ledger-mode)
+
+(use-package beancount
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "beancount/beancount-mode")
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :hook (beancount-mode . outline-minor-mode))
 
 
 (provide 'init-editing-lang)

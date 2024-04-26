@@ -40,10 +40,6 @@
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
-(when (fboundp 'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (setq-default display-line-numbers-width 3))
-
 (defun forge/save-all ()
   "Save any file-related buffers."
   (interactive)
@@ -57,21 +53,21 @@
 (add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
 
-(setq version-control t        ;; number each backup file
-      backup-by-copying t      ;; instead of renaming current file
-      delete-old-versions t    ;; clean up after oneself
-      kept-new-versions 5      ;; Number of newer versions to keep.
-      kept-old-versions 5      ;; Number of older versions to keep.
-      trash-directory "~/.Trash"
-      backup-directory-alist (list (cons "." forge-backup-dir))
+(setopt version-control t)        ;; number each backup file
+(setopt backup-by-copying t)      ;; instead of renaming current file
+(setopt delete-old-versions t)    ;; clean up after oneself
+(setopt kept-new-versions 5)      ;; Number of newer versions to keep.
+(setopt kept-old-versions 5)      ;; Number of older versions to keep.
+(setopt trash-directory "~/.Trash")
+(setq backup-directory-alist (list (cons "." forge-backup-dir))
       tramp-backup-directory-alist backup-directory-alist)
 
 ;; Turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
-(setq auto-save-default t
-      auto-save-timeout 120
-      auto-save-interval 64
-      auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
+(setopt auto-save-default t)
+(setopt auto-save-timeout 120)
+(setopt auto-save-interval 64)
+(setq auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
       auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
       ;; handle tramp paths differently than local ones, borrowed from doom
       auto-save-file-name-transforms
@@ -99,14 +95,34 @@
   :bind ("C-=" . er/expand-region))
 
 
-(use-package hideshow
-  :diminish hs-minor-mode
-  :hook ((prog-mode) . hs-minor-mode)
-  :bind (("C-c h" . hs-toggle-hiding)))
+;; display-line-numbers-mode
+(when (fboundp 'display-line-numbers-mode)
+  (let ((linum-hooks '(csv-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+    (mapc (lambda (hook) (add-hook hook 'display-line-numbers-mode)) linum-hooks))
+  (setopt display-line-numbers-width 3))
+
+
+;; hl-line-mode
+(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook fle-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
 
 (use-package highlight-indent-guides
   :custom (highlight-indent-guides-method 'character))
+
+(defun my-whitespace-visualize ()
+  "Enable whitespace visualizations."
+  (setq highlight-tabs t)
+  (setq show-trailing-whitespace t))
+
+(let ((ws-visualize-hooks '(csv-mode-hook json-mode-hook prog-mode-hook yaml-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'my-whitespace-visualize)) ws-visualize-hooks))
+
+
+(use-package hideshow
+  :diminish hs-minor-mode
+  :hook ((prog-mode) . hs-minor-mode)
+  :bind (("C-c h" . hs-toggle-hiding)))
 
 
 (use-package recentf
@@ -150,40 +166,6 @@
 (use-package diff-hl
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
-
-
-(use-package undo-tree
-  :disabled t
-  :diminish undo-tree-mode
-  :bind
-  (("C-/" . undo-tree-undo)
-   ("C-?" . undo-tree-redo)
-   ("C-x u" . undo-tree-visualize))
-  :init
-  (global-undo-tree-mode)
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-diff t))
-
-
-(use-package corfu
-  :custom
-  (corfu-separator ?\s)
-  :init
-  (global-corfu-mode))
-
-(use-package kind-icon
-  :after corfu
-  :if (display-graphic-p)
-  :custom
-  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-
-(use-package emacs
-  :init
-  (setq tab-always-indent 'complete)
-  (setq completion-cycle-threshold 3))
 
 
 (provide 'init-editing)

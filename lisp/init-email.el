@@ -37,8 +37,8 @@
   (add-hook 'message-mode-hook #'turn-on-flyspell)
   (add-hook 'message-mode-hook #'yas-minor-mode)
   (add-hook 'message-mode-hook #'turn-on-auto-fill
-            (lambda()
-              (auto-fill-mode t)
+            (lambda ()
+              (turn-on-auto-fill)
               (setq fill-column 72)
               (setq mail-header-separator ""))))
 
@@ -172,6 +172,7 @@
   (notmuch-search-oldest-first nil)
   (notmuch-hello-thousands-separator ",")
   (notmuch-crypto-process-mime t)
+  (notmuch-crypto-gpg-program (executable-find "gpg"))
   (notmuch-show-part-button-default-action 'notmuch-show-view-part)
 
   :preface
@@ -310,6 +311,7 @@ Will open a notmuch search buffer of the search results."
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
   (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk" "-spam")
+        notmuch-address-save-filename "~/annex/var/notmuch/contacts"
         notmuch-saved-searches '(( :name "📥 Inbox"
                                    :key "i"
                                    :query "tag:inbox")

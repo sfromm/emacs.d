@@ -120,12 +120,15 @@ those configurations that caught my eye.
 - [[http://www.djcbsoftware.nl/dot-emacs.html][DJCB]]
 - [[https://luca.cambiaghi.me/vanilla-emacs/readme.html][Luca Cambiaghi]]
 * Early initialization
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle early-init.el
+:END:
 This uses =package-quickstart= to help with loading packages.  See [[https://git.savannah.gnu.org/cgit/emacs.git/commit/etc/NEWS?id=6dfdf0c9e8e4aca77b148db8d009c862389c64d3][the commit]]
 for more information.  To go with this, it is important to precompute the
 autoload file using =(package-quickstart-refresh)=.  The quickstart file is
 relocated to /.emacs.d/var/.
 
-#+begin_src emacs-lisp :tangle early-init.el :noweb yes
+#+begin_src emacs-lisp :noweb yes
 ;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
 <<license>>
 
@@ -147,6 +150,8 @@ relocated to /.emacs.d/var/.
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
 ;; help startup and garbage collection
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+(setq byte-compile-warnings '(not obsolete))
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
 
@@ -158,7 +163,7 @@ relocated to /.emacs.d/var/.
 Borrowing from [[https://github.com/hlissner/doom-emacs][doom-emacs]], I set this to =nil= temporarily during startup so as
 to achieve a minor speed up.
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp
 (unless (daemonp)
   (defvar init-file-name-handler-alist file-name-handler-alist)
   ;; Crank garbage collection to 11 for initialization.
@@ -205,14 +210,17 @@ Do some housekeeping to measure start up time.  See [[https://nullprogram.com/bl
 #+end_src
 
 * Package Management
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-elpa.el
+:END:
 ** Set up =package= archives
 This defines what package archives are used and then initializes =package=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle init.el
 (require 'init-elpa)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el :noweb yes
+#+begin_src emacs-lisp :noweb yes
 ;;; init-elpa.el --- Init ELPA and package management -*- lexical-binding: t -*-
 <<license>>
 
@@ -226,7 +234,7 @@ This defines what package archives are used and then initializes =package=.
 ** Helper functions for managing packages
 Sometimes installing a new package will bork packages.  This will recompile the /.el/ files.
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+#+begin_src emacs-lisp
 (defun my-package-install (package)
   "Install PACKAGE if not yet installed."
   (unless (fboundp 'package-installed-p)
@@ -278,7 +286,7 @@ Additional notes:
 - Pull in =org= and =org-contrib= as early as possible to make sure ~load-path~
   is set correctly.
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+#+begin_src emacs-lisp
 
 (defvar init-core-packages '(use-package diminish org org-contrib)
   "A list of core packages that will be automatically installed.")
@@ -308,7 +316,7 @@ Since Emacs 29.1, there is built-in support for [[https://www.gnu.org/software/e
 backend.  Instead of pulling in /Quelpa/, I'd like to use the built-in
 functionality.  Make it look like ~(quelpa)~ as much as possible.
 
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+#+begin_src emacs-lisp
 (cl-defun init-vc-install (&key (fetcher "github") repo name rev backend)
   "Install a package from a remote.
 This is meant to be a thin wrapper around `package-vc-install'.  Takes
@@ -326,36 +334,8 @@ the following arguments:
       (package-vc-install url iname rev backend))))
 #+end_src
 
-** Quelpa
-Use Quelpa to install packages from source repositories.  This is no longer used
-because of the ~package-vc-install~ functionality.
-
-#+begin_src emacs-lisp :tangle no
-
-(use-package quelpa
-  :init
-  (setq quelpa-dir (expand-file-name "quelpa" forge-state-dir)
-        quelpa-checkout-melpa-p nil  ;; I'm not using quelpa for packages already in melpa
-        quelpa-update-melpa-p nil))
-
-(use-package quelpa-use-package
-  :demand t
-  :after quelpa)
-#+end_src
-** Paradox
-[[https://github.com/Malabarba/paradox][Paradox]] improves upon the default Emacs Package menu.
-
-This package appears to be archived on github and no longer maintained.
-
-#+begin_src emacs-lisp :tangle no
-
-(use-package paradox
-  :disabled t
-  :init
-  (setq paradox-execute-asynchronously t))
-#+end_src
 ** Postamble
-#+begin_src emacs-lisp :tangle lisp/init-elpa.el
+#+begin_src emacs-lisp
 
 (provide 'init-elpa)
 #+end_src
@@ -410,7 +390,7 @@ pulling this package in.
 #+end_src
 
 #+begin_src emacs-lisp :tangle lisp/init-core.el :noweb yes
-;;; init-elpa.el --- Init Core -*- lexical-binding: t -*-
+;;; init-core.el --- Init Core -*- lexical-binding: t -*-
 <<license>>
 
 
@@ -459,38 +439,54 @@ behavior, and load =custom.el= file, used by /customize/.
   (with-no-warnings
     (setq gamegrid-user-score-file-directory (expand-file-name "games" forge-state-dir)
           async-byte-compile-log-file (expand-file-name "async-bytecomp.log" forge-state-dir))
-    (customize-set-variable 'bookmark-default-file (expand-file-name "bookmarks" forge-state-dir))
-    (customize-set-variable 'calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir))
-    (customize-set-variable 'transient-history-file (expand-file-name "transient/history.el" forge-state-dir))
-    (customize-set-variable 'transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir))
-    (customize-set-variable 'transient-values-file (expand-file-name "transient/values.el" forge-personal-dir))
-    (customize-set-variable 'message-auto-save-directory (expand-file-name "messages" forge-state-dir))
-    (customize-set-variable 'package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
-    (customize-set-variable 'project-list-file (expand-file-name "project-list.el" forge-state-dir))
-    (customize-set-variable 'tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
-    (customize-set-variable 'tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
-    (customize-set-variable 'url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
-    (customize-set-variable 'url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
+    (setopt bookmark-default-file (expand-file-name "bookmarks" forge-state-dir))
+    (setopt calc-settings-file (expand-file-name "calc-settings.el" forge-state-dir))
+    (setopt transient-history-file (expand-file-name "transient/history.el" forge-state-dir))
+    (setopt transient-levels-file (expand-file-name "transient/levels.el" forge-personal-dir))
+    (setopt transient-values-file (expand-file-name "transient/values.el" forge-personal-dir))
+    (setopt message-auto-save-directory (expand-file-name "messages" forge-state-dir))
+    (setopt package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
+    (setopt project-list-file (expand-file-name "project-list.el" forge-state-dir))
+    (setopt tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
+    (setopt tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
+    (setopt url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
+    (setopt url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
 
-(defun my-initialize ()
-  "Initialize paths and session for this Emacs instance."
-  (init-mkdirs-user-emacs-directory)
-  (init-clean-user-emacs-directory)
-  ;; when native compilation is available ...
-  (when (forge/native-comp-p)
-    (setq native-comp-deferred-compilation nil
-          native-comp-async-report-warnings-errors 'silent
-          package-native-compile nil))
-  ;;
-  (add-to-list 'load-path forge-site-dir)
-  (add-to-list 'custom-theme-load-path forge-themes-dir)
-  (setq inhibit-splash-screen t
-        ;; always load the newer version of a file
-        load-prefer-newer t
-        ;; warn when opening files bigger than 50MB
-        large-file-warning-threshold 50000000))
+(init-mkdirs-user-emacs-directory)
+(init-clean-user-emacs-directory)
 
-(my-initialize)
+(when (forge/native-comp-p)
+  (setq native-comp-deferred-compilation nil
+        native-comp-async-report-warnings-errors 'silent
+        package-native-compile nil))
+
+(add-to-list 'load-path forge-site-dir)
+(add-to-list 'custom-theme-load-path forge-themes-dir)
+
+(setopt inhibit-splash-screen t)
+(setopt initial-major-mode 'org-mode)
+(setopt initial-scratch-message
+        (concat
+         "#+TITLE: Scratch Buffer\n\n"
+         "* Welcome to Emacs\n"
+         "[[file:~/.emacs.d/emacs.org][emacs.org]]\n"
+         "#+begin_src emacs-lisp\n"
+         "#+end_src"))
+
+(setopt visible-bell t)                 ;; set a visible bell ...
+(setopt ring-bell-function #'ignore)    ;; and squash the audio bell
+(setopt load-prefer-newer t)            ;; always load the newer version of a file
+(setopt large-file-warning-threshold 50000000) ;; warn when opening files bigger than 50MB
+
+(when (display-graphic-p)
+  (when (forge/system-type-darwin-p)
+    (setopt frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
+  (line-number-mode t)                ;; show line number in modeline
+  (column-number-mode t)              ;; show column number in modeline
+  (size-indication-mode t)            ;; show buffer size in modeline
+  (tool-bar-mode -1)                  ;; disable toolbar
+  (scroll-bar-mode -1)                ;; disable scroll bar
+  (display-battery-mode))
 #+end_src
 
 ** Minibuffer history
@@ -521,18 +517,7 @@ This is an attempt to make scrolling a bit smoother and friendlier.
 (when (fboundp 'pixel-scroll-precision-mode)
   (pixel-scroll-precision-mode))
 
-(setq scroll-conservatively 101
-      scroll-preserve-screen-position t
-      mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
-;; (setq hscroll-margin 2
-;;       hscroll-step 1
-;;       scroll-conservatively 101
-;;       scroll-preserve-screen-position t
-;;       auto-window-vscroll nil
-;;       mouse-wheel-follow-mouse 't         ;; scroll window under mouse
-;;       mouse-wheel-progressive-speed nil   ;; don't accelerate scrolling
-;;       mouse-wheel-scroll-amount '(1 ((shift) . 5) ((control)))
-;;       mouse-wheel-scroll-amount-horizontal 2)
+(setopt mouse-wheel-follow-mouse 't)         ;; scroll window under mouse
 #+end_src
 
 ** Module loading and site configuration
@@ -573,37 +558,16 @@ Before going to much further, go ahead and load any site configuration.
 ** Platform-dependent configuration
 The following are a couple elements that are only loaded if on MacOS or on Linux.
 
-*** Linux
-This only has the helper function to check for network connectivity.
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-
-;; dbus is a linux thing -- only load on that platform
-(when (forge/system-type-linux-p)
-  (require 'dbus)
-
-  (defun forge/network-online-p ()
-    "Check if we have a working network connection"
-    (interactive)
-    (let ((nm-service "org.freedesktop.NetworkManager")
-          (nm-path "/org/freedesktop/NetworkManager")
-          (nm-interface "org.freedesktop.NetworkManager")
-          (nm-state-connected-global 70))
-      (eq nm-state-connected-global
-          (dbus-get-property :system nm-service nm-path nm-interface "State"))))
-  )
-#+end_src
-*** MacOS
-This section is various helper functions for when on MacOS.
-
-**** Set up PATH
+*** Set up PATH
 #+begin_src emacs-lisp :tangle lisp/init-core.el
 
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
 ;;; Some platforms, such as MacOSX, do not get this done correctly.
-(with-eval-after-load 'exec-path-from-shell
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (when (forge/system-type-darwin-p)
   (dolist (path (list "/usr/local/bin" (expand-file-name "~/bin")))
@@ -614,131 +578,61 @@ This section is various helper functions for when on MacOS.
 
 #+end_src
 
-**** Check for network connectivity
+*** Linux DBUS
+This only has the helper function to check for network connectivity.
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+;; dbus is a linux thing -- only load on that platform
+(when (forge/system-type-linux-p)
+  (require 'dbus))
+#+end_src
+*** Check for network connectivity
 Helper to test if there is network connectivity.  This is MacOS specific.
 
 #+begin_src emacs-lisp :tangle lisp/init-core.el
 
-(when (forge/system-type-darwin-p)
-  (defun forge/network-online-p ()
-    "Check if online."
-    (interactive)
-    (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
-           (netsetup (split-string output "\n")))
-      (catch 'found
-        (dolist (elt netsetup)
-          (when (> (length elt) 0)
-            (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
-                   (netif (match-string 1 elt)))
-              (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
-                (throw 'found netif)))))))))
+(defun macos-networksetup-status ()
+  "Run networksetup to get network status."
+  (let* ((output (shell-command-to-string "networksetup -listnetworkserviceorder | grep 'Hardware Port'"))
+         (netsetup (split-string output "\n")))
+    (catch 'found
+      (dolist (elt netsetup)
+        (when (> (length elt) 0)
+          (let* ((netifseq (string-match "Device: \\([a-z0-9]+\\))" elt))
+                 (netif (match-string 1 elt)))
+            (when (string-match "status: active" (shell-command-to-string (concat "ifconfig " netif " | grep status")))
+              (throw 'found netif))))))))
+
+(defun linux-networkmanager-status ()
+  "Query NetworkManager for network status."
+  (let ((nm-service "org.freedesktop.NetworkManager")
+        (nm-path "/org/freedesktop/NetworkManager")
+        (nm-interface "org.freedesktop.NetworkManager")
+        (nm-state-connected-global 70))
+    (eq nm-state-connected-global
+        (dbus-get-property :system nm-service nm-path nm-interface "State"))))
+
+(defun forge/network-online-p ()
+  "Check if we have a working network connection"
+  (interactive)
+  (when (forge/system-type-linux-p)
+    (linux-networkmanager-status))
+  (when (forge/system-type-darwin-p)
+    (macos-networksetup-status)))
 #+end_src
 
-**** VPN helpers
-Helpers to connect and disconnect from a VPN session.
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-
-(defvar forge/vpn-config ""
-  "Name of the OpenVPN VPN configuration to use.")
-
-(when (forge/system-type-darwin-p)
-  (defun vpn-connect ()
-    "Connect to VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (shell-command (concat "scutil --nc start " cfg)))))
-
-  (defun vpn-disconnect ()
-    "Disconnect VPN configuration CFG.
-Assumes you are are on MacOS and using Wireguard to connect."
-    (interactive)
-    (when (forge/system-type-darwin-p)
-      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
-
-  (defun openvpn-connect ()
-    "Connect to OpenVPN configuration CFG.
-Assumes you are on MacOS and using Tunnelblick to connect."
-    (interactive)
-    (require 'em-glob)
-    (let ((cfg (completing-read "Config: "
-                                (mapcar #'file-name-sans-extension
-                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
-      (setq forge/vpn-config cfg)
-      (when (forge/system-type-darwin-p)
-        (let ((osatmpl ""))
-          (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                                "    connect \"" cfg "\"\n"
-                                "end tell"))
-          (do-applescript osatmpl)))))
-
-  (defun openvpn-disconnect ()
-    "Disconnect from VPN.
-Assumes you are on MacOS and using Tunnelblick to manage your VPN."
-    (interactive)
-    (let ((osatmpl ""))
-      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
-                            "    disconnect \"" forge/vpn-config "\"\n"
-                            "end tell"))
-      (do-applescript osatmpl))))
-
-#+end_src
-
-**** Get currently playing song
-Lastly, this returns the currently playing song in iTunes.
-
-Useful resources:
-- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
-- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-
-(when (forge/system-type-darwin-p)
-  (defun forge/get-current-song-itunes ()
-    "Get current song playing via itunes."
-    (let ((osa-tmpl "")
-          (cursong nil))
-      (setq osa-tmpl "tell application \"Music\"
-	if player state is not stopped then
-		set ct to (properties of current track)
-		set this_song to \"\"
-		if (class of ct is URL track) and (get current stream title) is not missing value then
-			set this_song to (get current stream title)
-		else
-			set this_song to artist in ct & \" - \" & name in ct
-		end if
-		this_song
-	end if
-end tell")
-      (condition-case nil
-          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
-        (error nil))
-      cursong)))
-
-#+end_src
 ** Helper functions
 *** Feature related helpers
 #+begin_src emacs-lisp :tangle lisp/init-core.el
 
+;; What follows are various helper functions that are used
+;; either interactively or in other parts of the configuration.
+
 (defun my-reload-emacs-configuration ()
   "Reload emacs configuration."
   (interactive)
   (load-file (expand-file-name "init.el" user-emacs-directory)))
-
-(defun forge/toggle-highlight-line ()
-  "Toggle `hl-line-mode'."
-  (interactive)
-  (if (bound-and-true-p hl-line-mode) (hl-line-mode -1) (hl-line-mode t)))
-
-(defun forge/turn-on-delete-trailing-whitespace ()
-  "Turn on `delete-trailing-whitespace' when saving files."
-  (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
 
 (defun forge/turn-off-delete-trailing-whitespace ()
   "Turn off `delete-trailing-whitespace' when saving files."
@@ -777,11 +671,6 @@ end tell")
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 
-(defun forge/whitespace-visualize ()
-  "Enable whitespace visualizations."
-  (setq highlight-tabs t)
-  (setq show-trailing-whitespace t))
-
 (defun forge/untabify-buffer ()
   "Remove tab characters from buffer."
   (interactive)
@@ -791,7 +680,7 @@ end tell")
 *** Opening files helpers
 Heavily borrowed from ... somewhere.
 #+begin_src emacs-lisp :tangle lisp/init-core.el
-(defun forge/sudo-file-path (file)
+(defun sudo-file-path (file)
   "Return path for FILE with sudo access."
   (let ((host (or (file-remote-p file 'host) "localhost")))
     (concat "/" (when (file-remote-p file)
@@ -803,16 +692,16 @@ Heavily borrowed from ... somewhere.
             ":" (or (file-remote-p file 'localname)
                     file))))
 
-(defun forge/sudo-find-file (file)
+(defun sudo-find-file (file)
   "Open FILE as root."
   (interactive "FOpen file as root: ")
-  (find-file (forge/sudo-file-path file)))
+  (find-file (sudo-file-path file)))
 
-(defun forge/sudo-this-file ()
+(defun sudo-this-file ()
   "Open current file as root."
   (interactive)
   (find-file
-   (forge/sudo-file-path
+   (sudo-file-path
     (or buffer-file-name
         (or buffer-file-name
             (when (or (derived-mode-p 'dired-mode)
@@ -820,28 +709,46 @@ Heavily borrowed from ... somewhere.
               default-directory))))))
 #+end_src
 
+*** Get currently playing song
+Lastly, this returns the currently playing song in iTunes.
+
+Useful resources:
+- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
+- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+(when (forge/system-type-darwin-p)
+  (defun my-get-current-song-itunes ()
+    "Get current song playing via itunes."
+    (let ((osa-tmpl "")
+          (cursong nil))
+      (setq osa-tmpl "tell application \"Music\"
+	if player state is not stopped then
+		set ct to (properties of current track)
+		set this_song to \"\"
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
+	end if
+end tell")
+      (condition-case nil
+          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
+        (error nil))
+      cursong)))
+
+#+end_src
 *** Miscellaneous functions
 The following functions are not so much tied to features.  They are just various
 helpers.
 
-- =dig-extended= is meant to be a wrapper around =dig=, using the Emacs [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][advice]] facility.
 - The next are helpers around converting wavelength to frequency and vice-versa,
   mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
 #+begin_src emacs-lisp :tangle lisp/init-core.el
-(defun dig-extended (fn &optional
-                        domain query-type query-class query-option dig-option server)
-  "Wrapper for `dig'.
-Query for DNS records for DOMAIN of QUERY-TYPE."
-  (message "domain: '%s'" domain)
-  (unless domain
-    (setq domain (read-string "Host: ")))
-  (unless query-type
-    (setq query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR"))))
-  (funcall fn domain query-type query-class query-option dig-option server))
-
-(advice-add 'dig :around #'dig-extended)
-
 (defconst speed_of_light 299792458 "Speed of light, m/s.")
 
 (defun wavelength-to-frequency (wavelength)
@@ -860,131 +767,16 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   (insert (format-time-string "%B %d, %Y" (current-time))))
 #+end_src
 
-*** Peek
-The following is meant to provide a way to /peek/ at information in a temporary
-window.  This probably could be simplified by using something like [[https://github.com/tumashu/posframe][posframe]].  I
-haven't used this for a long time and, for now, is not tangled.
-
-#+begin_src emacs-lisp :tangle no
-(defcustom forge-peek-buffer-name "*forge-peek*"
-  "Buffer for peeking at data."
-  :group 'forge
-  :type 'string)
-
-(defun forge/peek-first ()
-  "Go to beginning of peek buffer."
-  (interactive)
-  (goto-char (point-min)))
-
-(defun forge/peek-last ()
-  "Go to end of peek buffer."
-  (interactive)
-  (goto-char (point-max)))
-
-(defvar forge-peek-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "q") 'delete-frame)
-    (define-key map (kbd "<") 'forge/peek-first)
-    (define-key map (kbd ">") 'forge/peek-last)
-    map)
-  "Keymap for forge-peek mode.")
-
-(define-derived-mode forge-peek-mode fundamental-mode "ForgePeek"
-                     "A major mode for peeking at query responses."
-                     :group 'forge
-                     (setq buffer-read-only t)
-                     (setq buffer-undo-list t))
-
-(defun forge/peek-make-buffer ()
-  "Return the peek query buffer."
-  (let ((buffer (get-buffer-create forge-peek-buffer-name)))
-    (with-current-buffer buffer (forge-peek-mode))
-    buffer))
-
-;; Make a peek-frame, a modified version of what is from here:
-;; https://tuhdo.github.io/emacs-frame-peek.html
-(defun forge/peek-make-frame (func &rest args)
-  "Make a new frame for peeking at information.  Provide FUNC that will return data and optional ARGS."
-  (let ((summary)
-        (peek-frame)
-        (x) (y)
-        (abs-pixel-pos (save-excursion
-                         ;; (beginning-of-thing 'word)
-                         (window-absolute-pixel-position))))
-    (setq x (car abs-pixel-pos))
-    (setq y (+ (cdr abs-pixel-pos) (frame-char-height)))
-
-    (setq peek-frame (make-frame '((minibuffer . nil)
-                                   (name . "*Peek*")
-                                   (width . 80)
-                                   (visibility . nil)
-                                   (height . 25))))
-    (message "peek %s" peek-frame)
-
-    (set-frame-position peek-frame x y)
-
-    (with-selected-frame peek-frame
-      (forge/peek-make-buffer)
-      (funcall func)
-      (recenter-top-bottom 0)
-      (select-window (display-buffer forge-peek-buffer-name t t))
-      (delete-other-windows))
-
-    (make-frame-visible peek-frame)))
-
-(defun forge/peek-ip-qry ()
-  "Look up information on IP address."
-  (interactive)
-  (let ((qry (lambda ()
-               (let ((ipqry (concat (getenv "HOME") "/src/ncon/ncon.sh"))
-                     (ipaddr))
-                 (if (not (region-active-p))
-                     (setq ipaddr (read-string "IP address: "))
-                   (setq ipaddr (buffer-substring (region-beginning) (region-end))))
-                 (with-current-buffer forge-peek-buffer-name
-                   (let ((inhibit-read-only t))
-                     (goto-char (point-max))
-                     (call-process ipqry nil forge-peek-buffer-name t "ip qry " ipaddr)))))))
-    (forge/peek-make-frame qry)))
-
-#+end_src
-
-*** Home Makefile helpers
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-(defmacro forge-mkhome-target (target)
-  "Macro to run mkhome makefile TARGET."
-  `(with-temp-buffer
-     (progn
-       (cd (getenv "HOME"))
-       (compile (mapconcat 'shell-quote-argument (list "make" "-f" "Makefile.mkhome" ,target) " ")))))
-
-(defun forge-mkhome-update ()
-  "Run mkhome git."
-  (interactive)
-  (forge-mkhome-target "update"))
-
-(defun forge-mkhome-www ()
-  "Run mkhome www."
-  (interactive)
-  (forge-mkhome-target "www"))
-
-(defun forge-mkhome-src ()
-  "Run mkhome src."
-  (interactive)
-  (forge-mkhome-target "src"))
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-
-(provide 'init-core)
-#+end_src
 * Appearance
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-appearance.el
+:END:
 ** Preamble
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle init.el
 (require 'init-appearance)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el :noweb yes
+#+begin_src emacs-lisp  :noweb yes
 ;;; init-appearance.el --- Init appearance pieces -*- lexical-binding: t -*-
 <<license>>
 
@@ -999,7 +791,7 @@ Resources:
 - [[https://www.masteringemacs.org/article/unicode-ligatures-color-emoji][Mastering Emacs: Unicode, Ligatures, and Color Emoji]]
 
 *** Define font variables
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 
 (defcustom forge-font "JetBrains Mono"
   "Preferred default font."
@@ -1034,7 +826,7 @@ Resources:
   "List of extra Unicode fonts.")
 #+end_src
 *** Helper functions for configuring fonts
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (defun my-font-name-and-size ()
   "Compute and return font name and size string."
   (interactive)
@@ -1075,11 +867,12 @@ Resources:
         (dolist (font (append (list forge-unicode-font) forge-unicode-extra-fonts))
           (set-fontset-font t 'unicode (font-spec :family font) nil 'prepend))))))
 
+(my-font-update)
 #+end_src
 *** All the icons
 [[https://github.com/domtronn/all-the-icons.el][all-the-icons]] comes with various icons and characters to help prettify Emacs modes.
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (use-package all-the-icons)
 
 (use-package all-the-icons-dired
@@ -1088,7 +881,7 @@ Resources:
 *** Emojis
 Emojis and emoticons.
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (defun forge/emoji-shrug () "Shrug emoji." (interactive) (insert "¯\\_(ツ)_/¯"))
 (defun forge/emoji-glare () "Glare emoji." (interactive) (insert "ಠ_ಠ"))
 (defun forge/emoji-table-flip () "Table fip emoji." (interactive) (insert "(╯°□°）╯︵ ┻━┻"))
@@ -1098,7 +891,7 @@ Emojis and emoticons.
 
 #+end_src
 *** [[https://jblevins.org/log/rainbow-mode][Rainbow mode]] to visualize color codes.
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (use-package rainbow-mode)
 #+end_src
 *** Choosing a Font
@@ -1129,7 +922,7 @@ and should help pick a font that is /readable/.
 #+end_example
 
 The following is from [[https://source-foundry.github.io/Hack/font-specimen.html][Hack's website]]:
-#+begin_src c
+#+begin_src c :tangle no
 //  The four boxing wizards jump
 #include <stdio.h> // <= quickly.
 int main(int argc, char **argv) {
@@ -1145,7 +938,7 @@ int main(int argc, char **argv) {
 This will install a decent variety of themes to start off with something that
 looks good.  It will also define a default theme to start with.
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 
 (defcustom forge-theme 'modus-operandi
   "Preferred graphics theme."
@@ -1209,11 +1002,18 @@ looks good.  It will also define a default theme to start with.
   :custom
   (zenburn-use-variable-pitch t)
   (zenburn-scale-org-headlines t))
+
+(defun my-load-theme ()
+  "Load configured forge theme."
+  (when (boundp 'forge-theme)
+    (load-theme forge-theme t)))
+
+(add-hook 'after-init-hook #'my-load-theme)
 #+end_src
 ** Modeline
 At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
@@ -1229,71 +1029,26 @@ At this point, I've been fairly happy with using [[https://github.com/seagle0128
 
 (use-package nyan-mode)
 #+end_src
-*** Deprecated
-The following are modes I no longer use.  Configuration is here for reference.
-#+begin_src emacs-lisp :tangle no
-;; https://github.com/milkypostman/powerline
-(use-package powerline
-  :disabled t
-  :custom
-  (powerline-default-separator 'slant)
-  (powerline-default-separator-dir (quote (left . right)))
-  (powerline-display-buffer-size nil)
-  (powerline-display-hud nil)
-  (powerline-display-mule-info nil)
-  (powerline-gui-use-vcs-glyph t)
-  :hook
-  (after-init . powerline-default-theme))
-
-;; https://github.com/Malabarba/smart-mode-line
-(use-package smart-mode-line
-  :disabled t
-  :custom
-  (sml/no-confirm-load-theme t)
-  (sml/theme 'respectful)
-  (sml/mode-width 'full)
-  (sml/name-width 30)
-  (sml/shorten-modes t)
-  :hook
-  (after-load-theme . smart-mode-line-enable)
-  (after-init . sml/setup))
-#+end_src
 ** Look and feel
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 
-(defun forge/setup-ui ()
-  "Set up the look and feel."
-  (interactive)
-  (when forge-theme
-    (load-theme forge-theme t))
-  (setq visible-bell t                 ;; set a visible bell ...
-        ring-bell-function #'ignore)    ;; and squash the audio bell
-  (when (display-graphic-p)
-    (when (forge/system-type-darwin-p)
-      (setq frame-resize-pixelwise t))  ;; allow frame resizing by pixels, instead of character dimensions
-    (my-font-update)
-    (line-number-mode t)                ;; show line number in modeline
-    (column-number-mode t)              ;; show column number in modeline
-    (size-indication-mode t)            ;; show buffer size in modeline
-    (tool-bar-mode -1)                  ;; disable toolbar
-    (scroll-bar-mode -1)                ;; disable scroll bar
-    (display-battery-mode)))
-
 (defun forge/setup-ui-in-daemon (frame)
   "Reload the UI in a daemon frame FRAME."
   (when (or (daemonp) (not (display-graphic-p)))
     (with-selected-frame frame
-      (run-with-timer 0.1 nil #'forge/setup-ui))))
+      (run-with-timer 0.1 nil #'my-font-update))))
 
 (when (daemonp)
   (add-hook 'after-make-frame-functions #'forge/setup-ui-in-daemon))
-(add-hook 'after-init-hook #'forge/setup-ui)
+
+(add-hook 'after-init-hook #'my-font-update)
+
 #+end_src
 ** LIN
 [[https://gitlab.com/protesilaos/lin.git][LIN]] - a utility to enhance the built-in ~hl-line-mode~ so that it better matches
 the selection color in MacOS or other platforms.  See the [[https://protesilaos.com/emacs/lin][manual]].
 
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (use-package lin
   :config
   (setq lin-face 'lin-mac-override-fg)
@@ -1310,7 +1065,7 @@ the selection color in MacOS or other platforms.  See the [[https://protesilaos.
 
 #+end_src
 ** Postamble
-#+begin_src emacs-lisp :tangle lisp/init-appearance.el
+#+begin_src emacs-lisp
 (provide 'init-appearance)
 #+end_src
 
@@ -1356,7 +1111,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 (define-key forge-map (kbd "s") 'eshell-here)
 (define-key forge-map (kbd "S") 'forge/slack/body)
 (define-key forge-map (kbd "t") 'org-pomodoro)
-(define-key forge-map (kbd "p") 'paradox-list-packages)
+(define-key forge-map (kbd "p") 'package-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
 (define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
@@ -1453,7 +1208,10 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 #+end_src
 
 ** Narrowing & Completion
-#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el :noweb yes
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-ui-completion.el
+:END:
+#+begin_src emacs-lisp :noweb yes
 ;;; init-ui-completion.el --- Init UI Completion elements -*- lexical-binding: t -*-
 ;; UI Completion elements
 <<license>>
@@ -1464,7 +1222,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 [[https://github.com/justbur/emacs-which-key][which-key]] will display key bindings following your currently entered incomplete command in a popup.
 For example, you can type =C-h= and it will show available completions.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
+#+begin_src emacs-lisp
 
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
@@ -1477,7 +1235,7 @@ For example, you can type =C-h= and it will show available completions.
 *** Vertico, Orderless, & Consult
 The nice thing about completion frameworks is that they support interactively narrowing a set of results.  I typically look for something that, from my perspective, integrates well with Emacs.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
+#+begin_src emacs-lisp
 
 ;;; Completion
 ;; https://github.com/minad/vertico
@@ -1502,8 +1260,10 @@ The nice thing about completion frameworks is that they support interactively na
    ("M-g i" . consult-imenu)
    ;; M-s search map
    ("M-s l" . consult-line)
+   ("M-s L" . consult-line-multi)
    ("M-s g" . consult-grep)
    ("M-s G" . consult-git-grep)
+   ("M-s O" . consult-outline)
    ("M-s r" . consult-ripgrep)
    ("M-y" . consult-yank-pop)
    ([remap switch-to-buffer] . consult-buffer)
@@ -1527,13 +1287,64 @@ The nice thing about completion frameworks is that they support interactively na
   :config
   (marginalia-mode))
 #+end_src
+*** Completion at point
+[[https://github.com/minad/corfu][Corfu]] (COmpletion in Region FUnction) is an in-buffer completion with a small
+completion popup.
+
+#+begin_src emacs-lisp
+
+(use-package corfu
+  :custom
+  (corfu-separator ?\s)
+  :init
+  (global-corfu-mode)
+  :bind
+  (:map corfu-map
+        ("SPC" . corfu-insert-separator)
+        ("C-n" . corfu-next)
+        ("C-p" . corfu-previous)))
+
+(use-package corfu-popupinfo
+  :ensure nil
+  :after corfu
+  :hook (corfu-mode . corfu-popupinfo-mode)
+  :custom
+  (corfu-popupinfo-delay '(0.25 . 0.1))
+  (corfu-popupinfo-hide nil)
+  :config
+  (corfu-popupinfo-mode))
+#+end_src
+
+Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]].
+
+#+begin_src emacs-lisp
+(use-package kind-icon
+  :after corfu
+  :if (display-graphic-p)
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
+
+#+begin_src emacs-lisp
+
+(use-package emacs
+  :init
+  (setq tab-always-indent 'complete)
+  (setq completion-cycle-threshold 3))
+#+end_src
+
 *** Completion postamble
-#+begin_src emacs-lisp :tangle lisp/init-ui-completion.el
+#+begin_src emacs-lisp
 (provide 'init-ui-completion)
 #+end_src
 
 ** Navigation
-#+begin_src emacs-lisp :tangle lisp/init-navigation.el :noweb yes
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-navigation.el
+:END:
+#+begin_src emacs-lisp :noweb yes
 ;;; init-navigation.el --- Init navigation elements -*- lexical-binding: t -*-
 ;; Navigation elements
 <<license>>
@@ -1547,7 +1358,7 @@ based on vim and intended to keep my hand on the home row.
 [[https://github.com/abo-abo/ace-window][ace-window]] makes it easy to select between multiple windows and is intended to
 be as simple as ~other-window~.
 
-#+begin_src emacs-lisp :tangle lisp/init-navigation.el
+#+begin_src emacs-lisp
 ;;; windmove
 (use-package windmove
   :bind
@@ -1568,7 +1379,7 @@ be as simple as ~other-window~.
 [[https://github.com/jacktasia/dumb-jump][dumb-jump]] is a utility to jump to a definition.  =dumb-jump= hooks into the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref]]
 backend to perform a search.  This can be invoked with =M-.=.
 
-#+begin_src emacs-lisp :tangle lisp/init-navigation.el
+#+begin_src emacs-lisp
 (use-package dumb-jump
   :demand t
   :commands (xref-find-definitions)
@@ -1582,9 +1393,9 @@ backend to perform a search.  This can be invoked with =M-.=.
 *** Avy
 [[https://github.com/abo-abo/avy][avy]] is an Emacs package for jumping to visible text using a char-based decision tree.
 
-#+begin_src emacs-lisp :tangle lisp/init-navigation.el
+#+begin_src emacs-lisp
 (use-package avy
-  :bind ("C-." . avy-goto-char-timer)
+  :bind ("C-;" . avy-goto-char-timer)
   :custom
   (avy-case-fold-search t)
   :functions (avy-setup-default)
@@ -1592,7 +1403,7 @@ backend to perform a search.  This can be invoked with =M-.=.
 #+end_src
 
 *** Navigation postamble
-#+begin_src emacs-lisp :tangle lisp/init-navigation.el
+#+begin_src emacs-lisp
 (provide 'init-navigation)
 #+end_src
 
@@ -1794,8 +1605,7 @@ the window contents.
 
 (provide 'init-ibuffer)
 #+end_src
-** UI & Completion Postamble
-
+** Postamble
 #+begin_src emacs-lisp :tangle lisp/init-ui.el
 (provide 'init-ui)
 #+end_src
@@ -1850,14 +1660,6 @@ On [[http://endlessparentheses.com][endlessparentheses.com]], the author Artur h
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 #+end_src
 
-Lastly, display line numbers any time in a programming-related buffer.
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-(when (fboundp 'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (setq-default display-line-numbers-width 3))
-#+end_src
-
 Defined further down, pull in support for various languages.
 
 #+begin_src emacs-lisp
@@ -1899,21 +1701,21 @@ regularly.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
 
-(setq version-control t        ;; number each backup file
-      backup-by-copying t      ;; instead of renaming current file
-      delete-old-versions t    ;; clean up after oneself
-      kept-new-versions 5      ;; Number of newer versions to keep.
-      kept-old-versions 5      ;; Number of older versions to keep.
-      trash-directory "~/.Trash"
-      backup-directory-alist (list (cons "." forge-backup-dir))
+(setopt version-control t)        ;; number each backup file
+(setopt backup-by-copying t)      ;; instead of renaming current file
+(setopt delete-old-versions t)    ;; clean up after oneself
+(setopt kept-new-versions 5)      ;; Number of newer versions to keep.
+(setopt kept-old-versions 5)      ;; Number of older versions to keep.
+(setopt trash-directory "~/.Trash")
+(setq backup-directory-alist (list (cons "." forge-backup-dir))
       tramp-backup-directory-alist backup-directory-alist)
 
 ;; Turn on auto-save, so we have a fallback in case of crashes or lost data.
 ;; Use `recover-file' or `recover-session' to recover them.
-(setq auto-save-default t
-      auto-save-timeout 120
-      auto-save-interval 64
-      auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
+(setopt auto-save-default t)
+(setopt auto-save-timeout 120)
+(setopt auto-save-interval 64)
+(setq auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
       auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
       ;; handle tramp paths differently than local ones, borrowed from doom
       auto-save-file-name-transforms
@@ -1965,6 +1767,52 @@ is =~/.emacs.d/user/snippets=.
   :bind ("C-=" . er/expand-region))
 
 #+end_src
+** Display line numbers
+Display line numbers any time in a programming-related buffer.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
+;; display-line-numbers-mode
+(when (fboundp 'display-line-numbers-mode)
+  (let ((linum-hooks '(csv-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+    (mapc (lambda (hook) (add-hook hook 'display-line-numbers-mode)) linum-hooks))
+  (setopt display-line-numbers-width 3))
+#+end_src
+
+** Highlight current line
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
+;; hl-line-mode
+(let ((hl-line-hooks '(csv-mode-hook dired-mode-hook fle-mode-hook prog-mode-hook yaml-mode-hook yaml-ts-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
+#+end_src
+** Highlight indentation
+[[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] provides a handy visual cue for indentation.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+
+(use-package highlight-indent-guides
+  :custom (highlight-indent-guides-method 'character))
+#+end_src
+** Highlight whitespace
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+(defun my-whitespace-visualize ()
+  "Enable whitespace visualizations."
+  (setq highlight-tabs t)
+  (setq show-trailing-whitespace t))
+
+(let ((ws-visualize-hooks '(csv-mode-hook json-mode-hook prog-mode-hook yaml-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'my-whitespace-visualize)) ws-visualize-hooks))
+
+#+end_src
+** Delete trailing whitespace
+Delete trailing whitespace when saving files.
+#+begin_src emacs-lisp
+
+;; delete-trailing-whitespace
+(let ((hooks '(csv-mode-hook json-mode-hook prog-mode-hook yaml-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'delete-trailing-whitespace)) hooks))
+#+end_src
 ** Hide Show / Folding
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html][Hideshow]] minor mode allows you to selectively display portions of a document.
 This includes things like folding XML sections.
@@ -1975,14 +1823,6 @@ This includes things like folding XML sections.
   :diminish hs-minor-mode
   :hook ((prog-mode) . hs-minor-mode)
   :bind (("C-c h" . hs-toggle-hiding)))
-#+end_src
-** Highlight indentation
-[[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides]] provides a handy visual cue for indentation.
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-
-(use-package highlight-indent-guides
-  :custom (highlight-indent-guides-method 'character))
 #+end_src
 ** Finding recent files
 [[https://www.emacswiki.org/emacs/RecentFiles][recentf]] will show recently opened files.  The state file is saved in =forge-state-dir=.
@@ -2055,74 +1895,86 @@ allows you to jump between changes and revert them.
 
 #+end_src
 
-** Undo
-For now, I have disabled [[https://www.emacswiki.org/emacs/UndoTree][undo-tree]] and am working with the default [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Undo.html][Undo]] system
-built-in to Emacs.  Undo is a chain and you can go forwards and backwards, that
-is, you can undo and redo.
+** Treesitter
+#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+(defun my-treesitter-setup ()
+  "Set up treesitter for use in environment."
+  (interactive)
+  (when (treesit-available-p)
+    (setq treesit-language-source-alist
+          '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+            ;; (cmake "https://github.com/uyha/tree-sitter-cmake")
+            ;; (css "https://github.com/tree-sitter/tree-sitter-css")
+            (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+            ;; (go "https://github.com/tree-sitter/tree-sitter-go")
+            ;; (html "https://github.com/tree-sitter/tree-sitter-html")
+            ;; (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+            (json "https://github.com/tree-sitter/tree-sitter-json")
+            (make "https://github.com/alemuller/tree-sitter-make")
+            (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+            (python "https://github.com/tree-sitter/tree-sitter-python")
+            ;; (toml "https://github.com/tree-sitter/tree-sitter-toml")
+            ;; (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+            ;; (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+            (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+    (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))))
 
-Articles:
-- [[http://pragmaticemacs.com/emacs/advanced-undoredo-with-undo-tree/][Pragmatic Emacs: Advanced undo/redo with undo-tree]]
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-
-(use-package undo-tree
-  :disabled t
-  :diminish undo-tree-mode
-  :bind
-  (("C-/" . undo-tree-undo)
-   ("C-?" . undo-tree-redo)
-   ("C-x u" . undo-tree-visualize))
-  :init
-  (global-undo-tree-mode)
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-diff t))
-#+end_src
-
-** Completion framework
-[[https://github.com/minad/corfu][Corfu]] (COmpletion in Region FUnction) is an in-buffer completion with a small
-completion popup.
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-
-(use-package corfu
-  :custom
-  (corfu-separator ?\s)
-  :init
-  (global-corfu-mode))
-#+end_src
-
-Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]].
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-(use-package kind-icon
-  :after corfu
-  :if (display-graphic-p)
-  :custom
-  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-editing.el
-
 (use-package emacs
-  :init
-  (setq tab-always-indent 'complete)
-  (setq completion-cycle-threshold 3))
+  :config
+  (setq major-mode-remap-alist
+        '((bash-mode . bash-ts-mode)
+          (json-mode . json-ts-mode)
+          ;; (markdown-mode . markdown-ts-mode)
+          (python-mode . python-ts-mode)
+          (yaml-mode . yaml-ts-mode)))
+  :hook
+  ((prog-mode . electric-pair-mode)))
 #+end_src
+** Eglot
+[[https://github.com/joaotavora/eglot][Eglot]] ([[https://joaotavora.github.io/eglot/][manual]]) is an Emacs package that is a LSP client.  It is now integrated
+with Emacs-29.  Alternative [[https://www.gnu.org/software/emacs/manual/html_node/eglot/index.html][manual]] link.
 
-** Syntax checking
-[[https://www.flycheck.org/en/latest/][flycheck]] is an on-the-fly syntax checking extension for Emacs.  For python, you
-will need [[https://pypi.org/project/pyflakes/][pyflakes]] and probably [[https://pypi.org/project/pylint/][pylint]]
+I find that =eglot-server-programs= is already defined by /eglot/ and the mode
+one is interested is most likely defined.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-
-(use-package flycheck
-  :diminish flycheck-mode
-  :custom (flycheck-global-modes '(not org-mode))
-  :init (global-flycheck-mode))
+(use-package eglot
+  :ensure nil
+  :commands (eglot eglot-ensure)
+  :custom
+  (eglot-send-changes-idle-time 0.1)
+  (eglot-auto-shudown t)
+  (eglot-extend-to-xref t)
+  :config
+  ;; (setq-default eglot-workspace-configuration
+  ;;               '((:pylsp . (:configurationSources ["flake8"]
+  ;;                                                  :plugins (
+  ;;                                                            :pycodestyle (:enabled nil)
+  ;;                                                            :mccabe (:enabled nil)
+  ;;                                                            :flake8 (:enabled t))))))
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '(python-mode . ("pylsp"))
+  ;;              '(yaml-mode . ("yaml-language-server")))
+  (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
+  :hook
+  (python-mode . eglot-ensure)
+  (yaml-mode . eglot-ensure))
 #+end_src
 
+The next steps are to install the language servers for those of interest.  There
+is a [[https://microsoft.github.io/language-server-protocol/implementors/servers/][list]] of officially supported languages.  To install the packages, the
+following is tailored for MacOS and [[https://brew.sh][Homebrew]].
+
+#+begin_src sh
+pipx install "python-lsp-server[all]"
+brew install ansible-language-server
+brew install bash-language-server
+brew install dockerfile-language-server
+brew install yaml-language-server
+#+end_src
+
+Other resources:
+- https://www.adventuresinwhy.com/post/eglot/
 ** Docker
 [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
 docker-compose files.
@@ -2135,7 +1987,6 @@ docker-compose files.
 (use-package docker-compose-mode
   :mode "docker-compose.*\.yml\\'")
 #+end_src
-
 ** Lisp
 Go ahead and set up modes to help with editing Lisp files.
 
@@ -2145,8 +1996,7 @@ Go ahead and set up modes to help with editing Lisp files.
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (with-eval-after-load 'lisp-mode
-  (add-hook 'before-save-hook #'forge/turn-on-delete-trailing-whitespace)
-    (setq lisp-indent-offset nil))
+  (setq lisp-indent-offset nil))
 
 (use-package eldoc
   :diminish eldoc-mode
@@ -2202,29 +2052,16 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for navigatio
 Set =python-shell-interpreter= to =python3=, if found in PATH,
 and if =python-shell-interpreter= is the default value =python=.
 
-#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
+#+begin_src emacs-lisp :tangle no
 
 (use-package python
   :interpreter ("python" . python-mode)
-  :hook
-  (python-mode . forge/turn-on-delete-trailing-whitespace)
-  (python-mode . forge/whitespace-visualize)
   :config
   ;; set python-shell-interpreter to python3
   (when (and (executable-find "python3")
              (string= python-shell-interpreter "python"))
     (setq python-shell-interpreter "python3"))
   (setq-default python-indent-offset 4))
-
-(use-package anaconda-mode
-  :after python
-  :hook python-mode
-  :init
-  (setq anaconda-mode-installation-directory (expand-file-name "anaconda" forge-state-dir)))
-
-(use-package company-anaconda
-  :after anaconda-mode)
-
 #+end_src
 
 ** Go-lang
@@ -2233,7 +2070,7 @@ I pull in this package for the formatting and font-lock features.
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package go-mode
-  :mode "\\.go\\ '"
+  :mode "\\.go\\'"
   :config
   (add-hook 'before-save-hook #'gofmt-before-save))
 #+end_src
@@ -2243,13 +2080,6 @@ I pull in this package for the formatting and font-lock features.
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package ess)
-#+end_src
-** Shell scripts
-#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-
-(with-eval-after-load 'shell-script-mode
-  (add-hook 'shell-script-hook #'forge/whitespace-visualize)
-  (add-hook 'shell-script-hook #'forge/turn-on-delete-trailing-whitespace))
 #+end_src
 ** Web-related
 *** web-mode
@@ -2306,29 +2136,19 @@ This is really predominantly for syntax highlighting.
 *** CSV
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
-(use-package csv-mode
-  :hook
-  (csv-mode . forge/toggle-highlight-line)
-  (csv-mode . forge/turn-on-delete-trailing-whitespace)
-  (csv-mode . forge/whitespace-visualize))
+(use-package csv-mode)
 #+end_src
 *** JSON
 [[https://www.json.org/][JSON]] is one data-serialization format.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-(use-package json-mode
-  :hook
-  (json-mode . forge/turn-on-delete-trailing-whitespace)
-  (json-mode . forge/whitespace-visualize))
+(use-package json-mode)
 #+end_src
 *** YAML
 [[https://yaml.org/][YAML]] is another data-serialization format.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package yaml-mode
-  :hook
-  (yaml-mode . forge/turn-on-delete-trailing-whitespace)
-  (yaml-mode . forge/whitespace-visualize)
   :config
   (setq yaml-indent-offset 2))
 #+end_src
@@ -2356,6 +2176,8 @@ documents.
 
 (with-eval-after-load 'junos-mode
   (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: fujitsu_1finity" . junos-mode))
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: juniper" . junos-mode))
+  (add-to-list 'magic-mode-alist '("!RANCID-CONTENT-TYPE: junos" . junos-mode))
   (setq-local c-basic-offset 4))
 #+end_src
 *** EOS
@@ -2381,16 +2203,25 @@ documents.
 (use-package fle-mode
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode))
+  :commands (fle-mode)
+  :magic ("mycall " . fle-mode)
+  :config
+  (setq-local tab-width 8))
 #+end_src
 ** Ledger
-[[https://www.ledger-cli.org/][Ledger]] is a CLI application for double-entry accounting system.  This configures
-the [[https://github.com/ledger/ledger-mode][mode]] that goes with it.
+[[https://www.ledger-cli.org/][Ledger]] and [[https://beancount.github.io/docs/index.html][beancount]] are CLI applications for double-entry accounting system.  This configures
+the modes ([[https://github.com/ledger/ledger-mode][ledger]] and [[https://github.com/beancount/beancount-mode/][beancount]]) that go with them.
 
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
 (use-package ledger-mode
   :commands ledger-mode)
+
+(use-package beancount
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "beancount/beancount-mode")
+  :mode ("\\.beancount\\'" . beancount-mode)
+  :hook (beancount-mode . outline-minor-mode))
 #+end_src
 ** Postamble
 
@@ -2414,50 +2245,6 @@ Pull in =notifications= and =tls= for all the pieces below.
 #+begin_src emacs-lisp
 (require 'notifications)
 (require 'tls)
-#+end_src
-*** Jabber
-My legacy Jabber configuration.  Not used much anymore.
-
-#+begin_src emacs-lisp :tangle no
-
-(defun forge/jabber-notification (from buf text title)
-  "Take a notification from jabber and send to `alert'.
-Arguments are from the `jabber-alert-message-hooks' FROM, BUF, TEXT, and TITLE."
-  (alert text :title title :id 'new-jabber-alert))
-
-(use-package jabber
-  :disabled t
-  :preface
-  (defun forge/jabber-start-or-switch ()
-    "Connect to Jabber services"
-    (interactive)
-    (unless (get-buffer "*-jabber-roster-*")
-      (jabber-connect-all))
-    (if (or nil jabber-activity-jids)
-        (jabber-activity-switch-to)
-      (jabber-switch-to-roster-buffer)))
-  :hook
-  (jabber-post-connect . jabber-autoaway-start)
-  :config
-  ;; jabber-account-list is set via customize.
-  (setq jabber-auto-reconnect t  ; reconnect automatically
-        jabber-avatar-cache-directory (expand-file-name "jabber/avatar-cache" forge-state-dir)
-        jabber-history-dir (expand-file-name "jabber" forge-log-dir)
-        jabber-history-enabled t ; enable logging
-        jabber-history-muc-enabled t
-        jabber-use-global-history nil
-        jabber-backlog-number 40
-        jabber-backlog-days 30
-        jabber-chat-buffer-show-avatar t ; show avatar in chat buffer
-        jabber-vcard-avatars-retrieve t ; automatically download vcard avatars
-        jabber-alert-info-message-hooks (quote (jabber-info-echo jabber-info-display))
-        jabber-alert-message-hooks (quote (forge/jabber-notification jabber-message-echo jabber-message-scroll))
-        jabber-alert-presence-hooks (quote ()) ; don't show anything on presence changes
-        jabber-alert-muc-hooks (quote (jabber-muc-notifications-personal jabber-muc-echo jabber-muc-scroll)))
-                                        ; jabber uses the fsm package
-  (setq fsm-debug nil)       ; defaults to "*fsm-debug*"
-  (dolist (hook '(jabber-chat-mode-hook jabber-roster-mode-hook))
-    (add-hook hook (lambda () "Disable yasnippet in jabber" (setq yas-dont-activate t)))))
 #+end_src
 *** IRC
 IRC configuration.  As a default, use =user-login-name= as the default for
@@ -2601,8 +2388,7 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
 
   (defun forge/dired-mode-hook ()
     "Set misc settings in dired mode."
-    (setq-local truncate-lines t)
-    (forge/toggle-highlight-line))
+    (setq-local truncate-lines t))
 
   (defun forge/dired-up ()
     "Move up a directory without opening a new buffer."
@@ -2927,8 +2713,8 @@ Notes:
   (add-hook 'message-mode-hook #'turn-on-flyspell)
   (add-hook 'message-mode-hook #'yas-minor-mode)
   (add-hook 'message-mode-hook #'turn-on-auto-fill
-            (lambda()
-              (auto-fill-mode t)
+            (lambda ()
+              (turn-on-auto-fill)
               (setq fill-column 72)
               (setq mail-header-separator ""))))
 
@@ -2938,7 +2724,6 @@ Notes:
         mm-inline-large-images nil
         mm-inline-text-html-with-images nil
         mm-discouraged-alternatives '("text/html" "text/richtext")))
-
 #+end_src
 
 [[https://www.emacswiki.org/emacs/GnusAlias][gnus-alias]] provides a mechanism to switch identities when composing email with
@@ -3197,6 +2982,7 @@ The following is then the configuration that integrates Emacs with Notmuch.
   (notmuch-search-oldest-first nil)
   (notmuch-hello-thousands-separator ",")
   (notmuch-crypto-process-mime t)
+  (notmuch-crypto-gpg-program (executable-find "gpg"))
   (notmuch-show-part-button-default-action 'notmuch-show-view-part)
 
   :preface
@@ -3335,6 +3121,7 @@ Will open a notmuch search buffer of the search results."
   :config
   (add-hook 'notmuch-show-hook '(lambda () (setq show-trailing-whitespace nil)))
   (setq notmuch-archive-tags '("-unread" "-inbox" "-trash" "-bulk" "-spam")
+        notmuch-address-save-filename "~/annex/var/notmuch/contacts"
         notmuch-saved-searches '(( :name "📥 Inbox"
                                    :key "i"
                                    :query "tag:inbox")
@@ -3371,7 +3158,6 @@ Will open a notmuch search buffer of the search results."
                                  ( :name "Meeting Invites"
                                    :key "c"
                                    :query "mimetype:text/calendar"))))
-
 #+end_src
 
 Luminance is something that helps with legibility when reading HTML emails on an either light or
@@ -3533,9 +3319,8 @@ Miscellaneous notes:
   (defun my-org-mode-hook ()
     "Turn on settings for org-mode."
     (interactive)
-    (auto-fill-mode -1)
-    (when (fboundp 'turn-on-auto-fill)
-      (turn-on-auto-fill))
+    (when (fboundp 'turn-off-auto-fill)
+      (turn-off-auto-fill))
     (when (fboundp 'turn-on-flyspell)
       (turn-on-flyspell)))
 
@@ -3640,41 +3425,41 @@ Miscellaneous notes:
              (function notmuch-calendar-capture-event)
              :prepend t)
             ("l" "Log" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %U - %?\n")
             ("n" "Meeting notes" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
              :clock-resume t)
             ("j" "Journal" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %?\n%U\n"
              :clock-in t
              :clock-resume t)
             ("b" "Bookmark" entry
-             (file+headline "~/forge/notebook.org" "Unfiled")
+             (file+headline "notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
              :prepend t)
 
             ("r" "Reference")
             ("rm" "Music" entry
-             (file+olp+datetree ,(expand-file-name (format-time-string "journal/%Y.org") org-directory))
+             (file+olp+datetree "journal.org")
              "* %(forge/capture-current-song) :music:\n%U\n")
             ("rr" "Reference" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rw" "Web Page" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              (function my-org-clip-web-page)
              :prepend t)
             ("rf" "Elfeed/News Article" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rt" "Twitter Post" entry
-             (file+olp+datetree "~/forge/articles.org")
+             (file+olp+datetree "articles.org")
              "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t))))
 
@@ -3796,6 +3581,7 @@ Miscellaneous notes:
   (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
   (org-html-checkbox-type 'html)
+  (org-list-allow-alphabetical t)
   (org-log-done t)
   (org-log-reschedule "note")
   (org-log-into-drawer t)
@@ -3883,12 +3669,10 @@ Miscellaneous notes:
                                                            (ruby . t)
                                                            (shell . t)
                                                            (calc . t))))
-
-
 #+end_src
 *** Org Contacts, Notmuch and mail
 #+begin_src emacs-lisp :tangle lisp/init-org.el
-(use-package ol-notmuch      ;; use package from site-lisp
+(use-package ol-notmuch
   :after (:any org notmuch))
 #+end_src
 
@@ -3998,7 +3782,7 @@ associated with the entry.
 #+begin_src emacs-lisp :tangle lisp/init-org.el
 (defun forge/capture-current-song ()
   "Capture the current song details."
-  (let ((itunes-song (forge/get-current-song-itunes))
+  (let ((itunes-song (my-get-current-song-itunes))
         (mpd-song (when (fboundp 'forge/get-current-song-mpd) (forge/get-current-song-mpd)))
         (song-info nil))
     (setq song-info (if itunes-song itunes-song mpd-song))
@@ -4193,8 +3977,8 @@ passwords to the clipboard.
 
 
 (when (forge/system-type-darwin-p)
-  (custom-set-variables '(epg-gpg-program "/usr/local/bin/gpg"))
-  (setq epa-pinentry-mode 'loopback))
+  (setopt epg-gpg-program (executable-find "gpg"))
+  (setopt epa-pinentry-mode 'loopback))
 
 (use-package auth-source)
 
@@ -4558,23 +4342,6 @@ buffer if it exists; otherwise, create one and switch to it.
 #+begin_src emacs-lisp :tangle lisp/init-term.el
 (provide 'init-term)
 #+end_src
-
-#+NAME: multi-term
-#+begin_src emacs-lisp :tangle no
-(defun forge/multi-term-here ()
-  "Open up a multi-term window."
-  (interactive)
-  (let* ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) (getenv "HOME")))
-         (height (/ (window-total-height) 3))
-         (name (car (last (split-string parent "/" t)))))
-    (split-window-vertically (- height))
-    (other-window 1)
-    (multi-term)))
-
-(use-package multi-term
-  :config
-  (setq multi-term-program "/bin/zsh"))
-#+end_src
 ** Music
 *** Mingus
 I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mingus]] as an Emacs interface to MPD.
@@ -4621,116 +4388,6 @@ I don't use MPD much anymore.  I used to use [[https://github.com/pft/mingus][Mi
     (add-to-list 'emms-info-functions 'emms-info-mp3info)))
 
 #+end_src
-** Twitter
-The following configuration is for [[https://github.com/hayamiz/twittering-mode][twittering]], an emacs mode for Twitter.  This
-package is not installed by default. You will have to go through the process of
-enabling third-party applications with Twitter.
-
-A couple things of note:
-
-- [[https://github.com/hayamiz/twittering-mode/pull/81][Pull request 81: Integration with Org Mode]]
-- [[https://gist.github.com/danieroux/7838667][Org store link gist]]
-- [[https://github.com/hayamiz/twittering-mode/issues/154][Issue 154: epa--decode-coding-string not defined]]
-  - You might run into an issue of /Symbol's function definition is void/.  The
-    fix is to alias =decode-coding-string=.
-
-Update on [2023-02-05 Sun]: Stop tangling the twitter config.
-
-#+begin_src emacs-lisp :tangle no
-
-(defalias 'epa--decode-coding-string 'decode-coding-string)
-
-(use-package twittering-mode
-  :disabled t
-  :commands twit
-  :bind
-  (:map twittering-mode-map
-        ("I" . forge/twittering-toggle-icons)
-        ("<" . twittering-goto-first-status)  ;; go to the most recent
-        (">" . twittering-goto-last-status))  ;; go to the oldest
-  :preface
-  (defun forge/twittering-toggle-icons ()
-    "Toggle use of icons in twittering mode."
-    (interactive)
-    (if (eq twittering-icon-mode t)
-        (twittering-icon-mode nil)
-      (twittering-icon-mode t)))
-
-  (defun +lh/twittering-add-image-format (format-table-func status-sym prefix-sym)
-    "Adds the I format code to display images in the twittering-mode format table."
-    (let ((format-table (funcall format-table-func status-sym prefix-sym)))
-      (push `("I" .
-              (let* ((entities (cdr (assq 'entity ,status-sym)))
-                     text)
-                (mapc (lambda (url-info)
-                        (setq text (or (cdr (assq 'media-url url-info)) "")))
-                      (cdr (assq 'media entities)))
-                (if (string-equal "" text)
-                    text
-                  (let ((twittering-convert-fix-size 720))
-                    (twittering-make-icon-string nil nil text))))) format-table)))
-
-  (advice-add #'twittering-generate-format-table :around #'+lh/twittering-add-image-format)
-
-  (defun org-twittering-open (id-str)
-    (twittering-visit-timeline (concat ":single/" id-str)))
-
-  (defun org-twittering-store-link ()
-    "Store a link to a tweet."
-    (when (and (twittering-buffer-p) (twittering-get-id-at))
-      (let ((status (twittering-find-status (twittering-get-id-at))))
-        (apply 'org-store-link-props
-               :type "twittering"
-               :link (concat "twittering:"
-                             (or (cdr (assq 'retweeting-id status))
-                                 (cdr (assq 'id status))))
-               :description (format "@%s: %s"
-                                    (cdr (assq 'user-screen-name status))
-                                    (cdr (assq 'text status)))
-               :url (twittering-get-status-url-from-alist status)
-               :date
-               (format-time-string (org-time-stamp-format)
-                                   (cdr (assq 'created-at status)))
-               :date-timestamp
-               (format-time-string (org-time-stamp-format t)
-                                   (cdr (assq 'created-at status)))
-               (apply 'append
-                      (mapcar
-                       (lambda (sym)
-                         (let ((name (symbol-name sym)))
-                           `(,(intern (concat ":" name))
-                             ,(or (cdr (assq sym status))
-                                  (concat "[no " name "]")))))
-                       '(text
-                         id
-                         user-id user-name user-screen-name user-description
-                         user-url user-location
-                         source source-url
-                         retweeting-user-id retweeting-user-name
-                         retweeting-user-screen-name
-                         retweeting-user-description
-                         retweeting-user-url
-                         retweeting-user-location
-                         retweeting-source retweeting-source-url)))))))
-  :config
-  (org-link-set-parameters "twittering"
-                           :follow #'org-twittering-open
-                           :store #'org-twittering-store-link)
-  (setq twittering-use-master-password t
-        twittering-icon-mode t
-        twittering-use-icon-storage t
-        twittering-timer-interval 300
-        twittering-icon-storage-limit 10000
-        twittering-convert-fix-size 40
-        twittering-number-of-tweets-on-retrieval 80
-        twittering-initial-timeline-spec-string '("#emacs" ":home")
-        twittering-icon-storage-file (expand-file-name "twittering/icons.gz" forge-state-dir)
-        twittering-user-id-db-file (expand-file-name "twittering/user-id-info.gz" forge-state-dir)
-        twittering-private-info-file (expand-file-name "twittering/private.gpg" forge-state-dir)
-        twittering-status-format "%RT{%FACE[bold]{RT}}%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R%QT{\n+----\n%FOLD[|]{%i %s,  %@:\n%FOLD[  ]{%T // from %f%L%r%R}}\n+----}}\n%I\n "))
-
-
-#+end_src
 * Miscellaneous Utilities
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/init-utils.el
@@ -4756,25 +4413,6 @@ The following are miscellaneous utilities that are small but useful.
 #+begin_src emacs-lisp
 (use-package lorem-ipsum)
 #+end_src
-** Jira
-[[https://github.com/go-jira/jira)][Go-Jira]] is a CLI utility to interact with Jira.  This is based on jwiegely's
-init.el.  Not an actual emacs package.  Not used very much anymore, but left in place.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'go-jira
-  (defvar jira-token nil)
-  (defun jira-create ()
-    "Create a ticket in Jira."
-    (interactive)
-    (unless jira-token
-      (setq jira-token (lookup-password "go-jira.atlassian.net" user-login-name 6697)))
-    (setenv "JIRA_API_TOKEN" jira-token)
-    (require 'with-editor)
-    (start-process "go-jira" (get-buffer-create " *go-jira*")
-                   "jira" "create" "-b"
-                   "--editor"
-                   (concat with-editor-emacsclient-executable " -s " server-socket-dir "/server"))))
-#+end_src
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.
 
@@ -4793,7 +4431,24 @@ Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community
 (use-package ip-query
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
-  :commands (ip-query))
+  :commands (ip-query ip-query-asn))
+#+end_src
+
+=dig-extended= is meant to be a wrapper around =dig=, using the Emacs [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][advice]] facility.
+
+#+begin_src emacs-lisp
+(defun dig-extended (fn &optional
+                        domain query-type query-class query-option dig-option server)
+  "Wrapper for `dig'.
+Query for DNS records for DOMAIN of QUERY-TYPE."
+  (message "domain: '%s'" domain)
+  (unless domain
+    (setq domain (read-string "Host: ")))
+  (unless query-type
+    (setq query-type (completing-read "Type: " '("A" "SOA" "NS" "TXT" "CNAME" "PTR"))))
+  (funcall fn domain query-type query-class query-option dig-option server))
+
+(advice-add 'dig :around #'dig-extended)
 #+end_src
 
 ** Search / Ripgrep
@@ -4879,6 +4534,91 @@ Because sometimes I work with people in more than one timezone.  ~M-x world-cloc
 (setq world-clock-list t
       world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
+#+end_src
+** VPN helpers
+Helpers to connect and disconnect from a VPN session.
+
+#+begin_src emacs-lisp
+
+(defvar forge/vpn-config ""
+  "Name of the OpenVPN VPN configuration to use.")
+
+(when (forge/system-type-darwin-p)
+  (defun vpn-connect ()
+    "Connect to VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (require 'em-glob)
+    (let ((cfg (completing-read "Config: "
+                                (mapcar #'file-name-sans-extension
+                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "wg*conf"))))))
+      (setq forge/vpn-config cfg)
+      (when (forge/system-type-darwin-p)
+        (shell-command (concat "scutil --nc start " cfg)))))
+
+  (defun vpn-disconnect ()
+    "Disconnect VPN configuration CFG.
+Assumes you are are on MacOS and using Wireguard to connect."
+    (interactive)
+    (when (forge/system-type-darwin-p)
+      (shell-command (concat "scutil --nc stop " forge/vpn-config))))
+
+  (defun openvpn-connect ()
+    "Connect to OpenVPN configuration CFG.
+Assumes you are on MacOS and using Tunnelblick to connect."
+    (interactive)
+    (require 'em-glob)
+    (let ((cfg (completing-read "Config: "
+                                (mapcar #'file-name-sans-extension
+                                        (directory-files "~/annex/etc" nil (eshell-glob-regexp "*ovpn"))))))
+      (setq forge/vpn-config cfg)
+      (when (forge/system-type-darwin-p)
+        (let ((osatmpl ""))
+          (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                                "    connect \"" cfg "\"\n"
+                                "end tell"))
+          (do-applescript osatmpl)))))
+
+  (defun openvpn-disconnect ()
+    "Disconnect from VPN.
+Assumes you are on MacOS and using Tunnelblick to manage your VPN."
+    (interactive)
+    (let ((osatmpl ""))
+      (setq osatmpl (concat "tell application \"/Applications/Tunnelblick.app\"\n"
+                            "    disconnect \"" forge/vpn-config "\"\n"
+                            "end tell"))
+      (do-applescript osatmpl))))
+
+#+end_src
+
+** Home Makefile helpers
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+(defmacro forge-mkhome-target (target)
+  "Macro to run mkhome makefile TARGET."
+  `(with-temp-buffer
+     (progn
+       (cd (getenv "HOME"))
+       (compile (mapconcat 'shell-quote-argument (list "make" "-f" "Makefile.mkhome" ,target) " ")))))
+
+(defun forge-mkhome-update ()
+  "Run mkhome git."
+  (interactive)
+  (forge-mkhome-target "update"))
+
+(defun forge-mkhome-www ()
+  "Run mkhome www."
+  (interactive)
+  (forge-mkhome-target "www"))
+
+(defun forge-mkhome-src ()
+  "Run mkhome src."
+  (interactive)
+  (forge-mkhome-target "src"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-core.el
+
+(provide 'init-core)
 #+end_src
 ** Bookmark opener
 Inspired and borrowed from [[https://xenodium.com/building-your-own-bookmark-launcher/][Alvaro Ramirez]]:

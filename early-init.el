@@ -32,6 +32,8 @@
 (add-to-list 'load-path (concat user-emacs-directory "lisp"))
 
 ;; help startup and garbage collection
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+(setq byte-compile-warnings '(not obsolete))
 (setq gc-cons-threshold most-positive-fixnum)  ;; Set garbage collection to highest threshold
 (setq message-log-max 16384)                   ;; Turn up logging settings
 
