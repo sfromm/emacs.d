@@ -169,7 +169,7 @@
     (interactive (list (org-read-date)))
     (let* ((date-list (org-date-to-gregorian date))
            (year (number-to-string (nth 2 date-list))))
-      (find-file (expand-file-name (concat "journal/" year ".org") org-directory))
+      (find-file (expand-file-name "journal.org" org-directory))
       (widen)
       (org-datetree-find-date-create date-list)))
 
