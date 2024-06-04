@@ -745,8 +745,8 @@ end tell")
 The following functions are not so much tied to features.  They are just various
 helpers.
 
-- The next are helpers around converting wavelength to frequency and vice-versa,
-  mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
+- Remember =c=f𝛌=
+- The next are helpers around converting wavelength to frequency and vice-versa, mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
 
 #+begin_src emacs-lisp :tangle lisp/init-core.el
 (defconst speed_of_light 299792458 "Speed of light, m/s.")
