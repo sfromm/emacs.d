@@ -57,7 +57,16 @@
     ;;     tags-tree   Sparse tree with all tags matches in *current* file.
     ;;     occur-tree  Occur sparse tree for *current* file.
     (setq org-agenda-custom-commands
-          '(("o" "Overview"
+          '(("2" "Next two weeks"
+             (agenda ""
+                     ((org-agenda-start-on-weekday nil)
+                      ;; (org-agenda-start-day "+1d")
+                      (org-agenda-span 14)
+                      (org-deadline-warning-days 0)
+                      (org-agenda-block-separator nil)
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                      (org-agenda-overriding-header "\n📅 Next 14 days\n"))))
+            ("g" "Overview"
              ((agenda ""
                       ((org-agenda-overriding-header "🕐 Today\n")
                        (org-agenda-span 1)
@@ -67,11 +76,11 @@
               (agenda ""
                       ((org-agenda-start-on-weekday nil)
                        (org-agenda-start-day "+1d")
-                       (org-agenda-span 5)
+                       (org-agenda-span 'week)
                        (org-deadline-warning-days 0)
                        (org-agenda-block-separator nil)
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                       (org-agenda-overriding-header "\n📅 Next five days\n")))
+                       (org-agenda-overriding-header "\n📅 Next 7 days\n")))
               (tags-todo "inbox"
                          ((org-agenda-prefix-format "  %?-12t% s")
                           (org-agenda-block-separator nil)
