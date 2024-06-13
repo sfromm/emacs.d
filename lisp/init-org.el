@@ -58,14 +58,14 @@
     ;;     occur-tree  Occur sparse tree for *current* file.
     (setq org-agenda-custom-commands
           '(("2" "Next two weeks"
-             (agenda ""
-                     ((org-agenda-start-on-weekday nil)
-                      ;; (org-agenda-start-day "+1d")
-                      (org-agenda-span 14)
-                      (org-deadline-warning-days 0)
-                      (org-agenda-block-separator nil)
-                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                      (org-agenda-overriding-header "\n📅 Next 14 days\n"))))
+             ((agenda ""
+                      ((org-agenda-start-on-weekday nil)
+                       ;; (org-agenda-start-day "+1d")
+                       (org-agenda-span 14)
+                       (org-deadline-warning-days 0)
+                       (org-agenda-block-separator nil)
+                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                       (org-agenda-overriding-header "\n📅 Next 14 days\n")))))
             ("g" "Overview"
              ((agenda ""
                       ((org-agenda-overriding-header "🕐 Today\n")
