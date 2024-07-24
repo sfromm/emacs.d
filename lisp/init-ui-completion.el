@@ -18,7 +18,6 @@
 
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
-  :demand t
   :diminish
   :commands which-key-mode
   :config (which-key-mode))
@@ -27,19 +26,15 @@
 ;;; Completion
 ;; https://github.com/minad/vertico
 (use-package vertico
-  :demand t
-  :init
-  (vertico-mode))
+  :hook (after-init . vertico-mode))
 
 ;; https://github.com/oantolin/orderless
 (use-package orderless
-  :demand t
   :custom
   (completion-styles '(orderless basic)))
 
 ;; https://github.com/minad/consult
 (use-package consult
-  :demand t
   :bind
   ;; M-g go-to map
   (("M-g g" . consult-goto-line)
@@ -66,13 +61,11 @@
 
 ;; https://github.com/minad/marginalia
 (use-package marginalia
-  :demand t
   :bind (:map minibuffer-local-map
               ("C-M-a" . marginalia-cycle))
   :custom
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
-  :config
-  (marginalia-mode))
+  :hook (after-init . vertico-mode))
 
 
 (use-package corfu

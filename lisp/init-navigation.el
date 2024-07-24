@@ -31,7 +31,6 @@
   (([remap other-window] . ace-window)))
 
 (use-package dumb-jump
-  :demand t
   :commands (xref-find-definitions)
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
@@ -41,8 +40,7 @@
 
 (use-package avy
   :bind ("C-;" . avy-goto-char-timer)
-  :custom
-  (avy-case-fold-search t)
+  :custom (avy-case-fold-search t)
   :functions (avy-setup-default)
   :config (avy-setup-default))
 
