@@ -951,13 +951,14 @@ This section configures those pieces of Emacs where I can affect how I interact 
 
 #+end_src
 
-
-
 ** Keybindings and keymaps
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-ui.el
+:END:
 *** Personal keymap
 This is my personal keymap that then hooks into different commands, hydras, or other pieces.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 
 (define-prefix-command 'forge-mkhome-map)
 (define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
@@ -982,7 +983,7 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 
 #+end_src
 *** Hydra
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 
 (use-package hydra
   :demand t
@@ -1272,6 +1273,9 @@ backend to perform a search.  This can be invoked with =M-.=.
 #+end_src
 
 ** Buffer & window management
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-ui.el
+:END:
 *** Tab bar
 The Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Tab-Bars.html][tab bar]] provides a way to have virtual workspaces inside a single
 Emacs frame.  Each tab can have its own window arrangement.  In that way, it is
@@ -1290,7 +1294,7 @@ as part of a DWIM function to switch tabs.
 | C-x t 1 | ~close-tab-other~            | Close all other tabs           |
 | C-x t 2 | ~tab-new~                    | Open current buffer in new tab |
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 
 (when (require 'tab-bar nil 'noerror)
   (tab-bar-mode)
@@ -1331,7 +1335,7 @@ prompt for what tab to switch to."
 The =forge/window= /hydra/ defined above uses functions from [[https://github.com/abo-abo/ace-window][ace-window]] and
 [[https://www.emacswiki.org/emacs/TransposeFrame][transpose-frame]].  Go ahead and pull those in for the helper functions.  I
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 (use-package transpose-frame)
 #+end_src
 
@@ -1343,7 +1347,7 @@ window.
 
 This tries to specify what modes to exclude from =golden-ratio= for window sizing.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 (use-package golden-ratio
   :hook
   (ediff-before-setup-windows . (lambda () (golden-ratio-mode -1)))
@@ -1361,7 +1365,7 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
 *** Keep buffer names unique
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][Uniquify]] helps make it easier to navigate between buffers that have identically named files.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
   (setq uniquify-buffer-name-style 'forward
         uniquify-separator "/"
@@ -1372,7 +1376,7 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
 The next is [[https://github.com/rnkn/olivetti][olivetti]], which cleans up the window so that one can focus more on
 the window contents.
 
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
+#+begin_src emacs-lisp
 (use-package olivetti
   :custom
   (olivetti-hide-mode-line t)
@@ -1385,7 +1389,7 @@ the window contents.
     (olivetti-mode)))
 #+end_src
 *** ibuffer
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle init.el
 (require 'init-ibuffer)
 #+end_src
 
