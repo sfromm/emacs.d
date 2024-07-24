@@ -341,6 +341,9 @@ the following arguments:
 #+end_src
 
 * Core
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle lisp/init-core.el
+:END:
 ** Define paths
 The following is meant to help keep =~.emacs.d/= tidy.  The idea is not original
 and basically comes from [[https://github.com/emacscollective/no-littering][no-littering]].  Perhaps in the future I will look to
@@ -367,7 +370,7 @@ pulling this package in.
   "Path to Emacs packages' log files.")
 #+end_src
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :noweb yes :tangle init.el
 
 <<forge-vars>>
 #+end_src
@@ -380,16 +383,16 @@ pulling this package in.
   (load custom-file))
 #+end_src
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :noweb yes :tangle init.el
 
 <<custom>>
 #+end_src
 ** Platform helpers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle init.el
 (require 'init-core)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el :noweb yes
+#+begin_src emacs-lisp :noweb yes
 ;;; init-core.el --- Init Core -*- lexical-binding: t -*-
 <<license>>
 
@@ -415,7 +418,7 @@ pulling this package in.
 ** Customization group
 Create a customization group for variables specific to this configuration.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 (defgroup forge nil
   "Forge custom settings."
   :group 'environment)
@@ -425,7 +428,7 @@ Create a customization group for variables specific to this configuration.
 Configure Emacs to use the above defined paths.  Also configure some basic
 behavior, and load =custom.el= file, used by /customize/.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 (defun init-mkdirs-user-emacs-directory ()
   "Create emacs.d directories environment."
@@ -497,7 +500,7 @@ Resources:
 - https://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
 - https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 (require 'savehist)
 (with-eval-after-load 'savehist
@@ -512,7 +515,7 @@ Resources:
 ** Scrolling
 This is an attempt to make scrolling a bit smoother and friendlier.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 (when (fboundp 'pixel-scroll-precision-mode)
   (pixel-scroll-precision-mode))
@@ -524,7 +527,7 @@ This is an attempt to make scrolling a bit smoother and friendlier.
 *** Helpers to load modules from a path or directory
 The following is meant to load any configuration in =forge-site-dir= or =forge-personal-dir=.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 (defun forge/message-module-load (mod time)
   "Log message on how long it took to load module MOD from TIME."
@@ -552,14 +555,14 @@ The following is meant to load any configuration in =forge-site-dir= or =forge-p
 *** Site configuration
 Before going to much further, go ahead and load any site configuration.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 (forge/load-directory-modules forge-site-dir)
 #+end_src
 ** Platform-dependent configuration
 The following are a couple elements that are only loaded if on MacOS or on Linux.
 
 *** Set up PATH
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 ;;; exec-path-from-shell
 ;;; Set exec-path based on shell PATH.
@@ -581,16 +584,16 @@ The following are a couple elements that are only loaded if on MacOS or on Linux
 *** Linux DBUS
 This only has the helper function to check for network connectivity.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 ;; dbus is a linux thing -- only load on that platform
-(when (forge/system-type-linux-p)
-  (require 'dbus))
+(when (eq system-type 'gnu/linux)
+  (use-package dbus))
 #+end_src
 *** Check for network connectivity
 Helper to test if there is network connectivity.  This is MacOS specific.
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 
 (defun macos-networksetup-status ()
   "Run networksetup to get network status."
@@ -622,149 +625,10 @@ Helper to test if there is network connectivity.  This is MacOS specific.
     (macos-networksetup-status)))
 #+end_src
 
-** Helper functions
-*** Feature related helpers
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+** Postamble
+#+begin_src emacs-lisp
 
-;; What follows are various helper functions that are used
-;; either interactively or in other parts of the configuration.
-
-(defun my-reload-emacs-configuration ()
-  "Reload emacs configuration."
-  (interactive)
-  (load-file (expand-file-name "init.el" user-emacs-directory)))
-
-(defun forge/turn-off-delete-trailing-whitespace ()
-  "Turn off `delete-trailing-whitespace' when saving files."
-  (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
-
-;; Via jwiegley
-;; https://github.com/jwiegley/dot-emacs/blob/master/init.el
-(defun lookup-password (host user port)
-  "Look up password for HOST, USER, and PORT."
-  (require 'auth-source)
-  (require 'auth-source-pass)
-  (let ((auth (auth-source-search :host host :user user :port port)))
-    (if auth
-        (let ((secretf (plist-get (car auth) :secret)))
-          (if secretf
-              (funcall secretf)
-            (error "Auth entry for %s@%s:%s has no secret!"
-                   user host port)))
-      (error "No auth entry found for %s@%s:%s" user host port))))
-
-;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
-(defun forge/enable-copyright-update ()
-  "Update copyright year when saving a file."
-  (when (fboundp 'copyright-update)
-    (setq copyright-names-regexp "Free Software")
-    (add-hook 'before-save-hook #'copyright-update)))
-
-;; Delete window if not the only one.
-(defun forge/delete-window ()
-  "Delete window if it is not the only one."
-  (when (not (one-window-p))
-    (delete-window)))
-
-(defun forge/transparency (value)
-  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-
-(defun forge/untabify-buffer ()
-  "Remove tab characters from buffer."
-  (interactive)
-  (untabify (point-min) (point-max)))
-#+end_src
-
-*** Opening files helpers
-Heavily borrowed from ... somewhere.
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-(defun sudo-file-path (file)
-  "Return path for FILE with sudo access."
-  (let ((host (or (file-remote-p file 'host) "localhost")))
-    (concat "/" (when (file-remote-p file)
-                  (concat (file-remote-p file 'method) ":"
-                          (if-let (user (file-remote-p file 'user))
-                              (concat user "@" host) host)
-                          "|"))
-            "sudo:root@" host
-            ":" (or (file-remote-p file 'localname)
-                    file))))
-
-(defun sudo-find-file (file)
-  "Open FILE as root."
-  (interactive "FOpen file as root: ")
-  (find-file (sudo-file-path file)))
-
-(defun sudo-this-file ()
-  "Open current file as root."
-  (interactive)
-  (find-file
-   (sudo-file-path
-    (or buffer-file-name
-        (or buffer-file-name
-            (when (or (derived-mode-p 'dired-mode)
-                      (derived-mode-p 'wdired-mode))
-              default-directory))))))
-#+end_src
-
-*** Get currently playing song
-Lastly, this returns the currently playing song in iTunes.
-
-Useful resources:
-- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
-- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-
-(when (forge/system-type-darwin-p)
-  (defun my-get-current-song-itunes ()
-    "Get current song playing via itunes."
-    (let ((osa-tmpl "")
-          (cursong nil))
-      (setq osa-tmpl "tell application \"Music\"
-	if player state is not stopped then
-		set ct to (properties of current track)
-		set this_song to \"\"
-		if (class of ct is URL track) and (get current stream title) is not missing value then
-			set this_song to (get current stream title)
-		else
-			set this_song to artist in ct & \" - \" & name in ct
-		end if
-		this_song
-	end if
-end tell")
-      (condition-case nil
-          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
-        (error nil))
-      cursong)))
-
-#+end_src
-*** Miscellaneous functions
-The following functions are not so much tied to features.  They are just various
-helpers.
-
-- Remember =c=f𝛌=
-- The next are helpers around converting wavelength to frequency and vice-versa, mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
-
-#+begin_src emacs-lisp :tangle lisp/init-core.el
-(defconst speed_of_light 299792458 "Speed of light, m/s.")
-
-(defun wavelength-to-frequency (wavelength)
-  "Convert a wavelength to frequency."
-  (interactive "nWavelength: ")
-  (message "Frequency: %0.2f" (/ (/ speed_of_light wavelength) 1000)))
-
-(defun frequency-to-wavelength (frequency)
-  "Convert a frequency to wavelength (nm)."
-  (interactive "nFrequency: ")
-  (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
-
-(defun forge/date-today ()
-  "Insert friendly date string for today."
-  (interactive)
-  (insert (format-time-string "%B %d, %Y" (current-time))))
+(provide 'init-core)
 #+end_src
 
 * Appearance
@@ -4601,7 +4465,7 @@ Assumes you are on MacOS and using Tunnelblick to manage your VPN."
 #+end_src
 
 ** Home Makefile helpers
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+#+begin_src emacs-lisp
 (defmacro forge-mkhome-target (target)
   "Macro to run mkhome makefile TARGET."
   `(with-temp-buffer
@@ -4625,9 +4489,37 @@ Assumes you are on MacOS and using Tunnelblick to manage your VPN."
   (forge-mkhome-target "src"))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-core.el
+** Get currently playing song
+Lastly, this returns the currently playing song in iTunes.
+
+Useful resources:
+- https://apple.stackexchange.com/questions/297240/getting-the-file-path-of-a-currently-playing-itunes-track-with-applescript
+- https://alvinalexander.com/blog/post/mac-os-x/applescript-concatenate-strings
+
+#+begin_src emacs-lisp
 
-(provide 'init-core)
+(when (forge/system-type-darwin-p)
+  (defun my-get-current-song-itunes ()
+    "Get current song playing via itunes."
+    (let ((osa-tmpl "")
+          (cursong nil))
+      (setq osa-tmpl "tell application \"Music\"
+	if player state is not stopped then
+		set ct to (properties of current track)
+		set this_song to \"\"
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
+	end if
+end tell")
+      (condition-case nil
+          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
+        (error nil))
+      cursong)))
+
 #+end_src
 ** Bookmark opener
 Inspired and borrowed from [[https://xenodium.com/building-your-own-bookmark-launcher/][Alvaro Ramirez]]:
@@ -4658,6 +4550,119 @@ Inspired and borrowed from [[https://xenodium.com/building-your-own-bookmark-lau
     (split-string
      (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) "\n") 1)))
 #+end_src
+** Helper functions
+*** Feature related helpers
+#+begin_src emacs-lisp
+
+;; What follows are various helper functions that are used
+;; either interactively or in other parts of the configuration.
+
+(defun my-reload-emacs-configuration ()
+  "Reload emacs configuration."
+  (interactive)
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
+
+(defun forge/turn-off-delete-trailing-whitespace ()
+  "Turn off `delete-trailing-whitespace' when saving files."
+  (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
+
+;; Via jwiegley
+;; https://github.com/jwiegley/dot-emacs/blob/master/init.el
+(defun lookup-password (host user port)
+  "Look up password for HOST, USER, and PORT."
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
+;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
+(defun forge/enable-copyright-update ()
+  "Update copyright year when saving a file."
+  (when (fboundp 'copyright-update)
+    (setq copyright-names-regexp "Free Software")
+    (add-hook 'before-save-hook #'copyright-update)))
+
+;; Delete window if not the only one.
+(defun forge/delete-window ()
+  "Delete window if it is not the only one."
+  (when (not (one-window-p))
+    (delete-window)))
+
+(defun forge/transparency (value)
+  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+(defun forge/untabify-buffer ()
+  "Remove tab characters from buffer."
+  (interactive)
+  (untabify (point-min) (point-max)))
+#+end_src
+
+*** Opening files helpers
+Heavily borrowed from ... somewhere.
+#+begin_src emacs-lisp
+(defun sudo-file-path (file)
+  "Return path for FILE with sudo access."
+  (let ((host (or (file-remote-p file 'host) "localhost")))
+    (concat "/" (when (file-remote-p file)
+                  (concat (file-remote-p file 'method) ":"
+                          (if-let (user (file-remote-p file 'user))
+                              (concat user "@" host) host)
+                          "|"))
+            "sudo:root@" host
+            ":" (or (file-remote-p file 'localname)
+                    file))))
+
+(defun sudo-find-file (file)
+  "Open FILE as root."
+  (interactive "FOpen file as root: ")
+  (find-file (sudo-file-path file)))
+
+(defun sudo-this-file ()
+  "Open current file as root."
+  (interactive)
+  (find-file
+   (sudo-file-path
+    (or buffer-file-name
+        (or buffer-file-name
+            (when (or (derived-mode-p 'dired-mode)
+                      (derived-mode-p 'wdired-mode))
+              default-directory))))))
+#+end_src
+
+*** Miscellaneous functions
+The following functions are not so much tied to features.  They are just various
+helpers.
+
+- Remember =c=f𝛌=
+- The next are helpers around converting wavelength to frequency and vice-versa, mostly in the context of [[https://en.wikipedia.org/wiki/Wavelength-division_multiplexing][DWDM]].
+
+#+begin_src emacs-lisp
+(defconst speed_of_light 299792458 "Speed of light, m/s.")
+
+(defun wavelength-to-frequency (wavelength)
+  "Convert a wavelength to frequency."
+  (interactive "nWavelength: ")
+  (message "Frequency: %0.2f" (/ (/ speed_of_light wavelength) 1000)))
+
+(defun frequency-to-wavelength (frequency)
+  "Convert a frequency to wavelength (nm)."
+  (interactive "nFrequency: ")
+  (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
+
+(defun forge/date-today ()
+  "Insert friendly date string for today."
+  (interactive)
+  (insert (format-time-string "%B %d, %Y" (current-time))))
+#+end_src
+
 ** with-editor
 Try to make it easier to use =emacsclient= as the =$EDITOR= of child processes using [[https://github.com/magit/with-editor][with-editor]].
 

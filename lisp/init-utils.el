@@ -143,6 +143,51 @@ Assumes you are on MacOS and using Tunnelblick to manage your VPN."
                             "end tell"))
       (do-applescript osatmpl))))
 
+(defmacro forge-mkhome-target (target)
+  "Macro to run mkhome makefile TARGET."
+  `(with-temp-buffer
+     (progn
+       (cd (getenv "HOME"))
+       (compile (mapconcat 'shell-quote-argument (list "make" "-f" "Makefile.mkhome" ,target) " ")))))
+
+(defun forge-mkhome-update ()
+  "Run mkhome git."
+  (interactive)
+  (forge-mkhome-target "update"))
+
+(defun forge-mkhome-www ()
+  "Run mkhome www."
+  (interactive)
+  (forge-mkhome-target "www"))
+
+(defun forge-mkhome-src ()
+  "Run mkhome src."
+  (interactive)
+  (forge-mkhome-target "src"))
+
+
+(when (forge/system-type-darwin-p)
+  (defun my-get-current-song-itunes ()
+    "Get current song playing via itunes."
+    (let ((osa-tmpl "")
+          (cursong nil))
+      (setq osa-tmpl "tell application \"Music\"
+	if player state is not stopped then
+		set ct to (properties of current track)
+		set this_song to \"\"
+		if (class of ct is URL track) and (get current stream title) is not missing value then
+			set this_song to (get current stream title)
+		else
+			set this_song to artist in ct & \" - \" & name in ct
+		end if
+		this_song
+	end if
+end tell")
+      (condition-case nil
+          (setq cursong (split-string (do-applescript osa-tmpl) " - "))
+        (error nil))
+      cursong)))
+
 (defun my-org-web-bookmarks (path)
   "Return all HTTP links from an org-file at PATH."
   (with-temp-buffer
@@ -167,6 +212,102 @@ Assumes you are on MacOS and using Tunnelblick to manage your VPN."
    (seq-elt
     (split-string
      (completing-read "Open: " (my-org-web-bookmarks (expand-file-name "notebook.org" org-directory))) "\n") 1)))
+
+
+;; What follows are various helper functions that are used
+;; either interactively or in other parts of the configuration.
+
+(defun my-reload-emacs-configuration ()
+  "Reload emacs configuration."
+  (interactive)
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
+
+(defun forge/turn-off-delete-trailing-whitespace ()
+  "Turn off `delete-trailing-whitespace' when saving files."
+  (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
+
+;; Via jwiegley
+;; https://github.com/jwiegley/dot-emacs/blob/master/init.el
+(defun lookup-password (host user port)
+  "Look up password for HOST, USER, and PORT."
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
+;; Via https://emacs.stackexchange.com/questions/8104/is-there-a-mode-to-automatically-update-copyright-years-in-files
+(defun forge/enable-copyright-update ()
+  "Update copyright year when saving a file."
+  (when (fboundp 'copyright-update)
+    (setq copyright-names-regexp "Free Software")
+    (add-hook 'before-save-hook #'copyright-update)))
+
+;; Delete window if not the only one.
+(defun forge/delete-window ()
+  "Delete window if it is not the only one."
+  (when (not (one-window-p))
+    (delete-window)))
+
+(defun forge/transparency (value)
+  "Set the transparency of the frame window with VALUE 0=transparent/100=opaque."
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+
+(defun forge/untabify-buffer ()
+  "Remove tab characters from buffer."
+  (interactive)
+  (untabify (point-min) (point-max)))
+
+(defun sudo-file-path (file)
+  "Return path for FILE with sudo access."
+  (let ((host (or (file-remote-p file 'host) "localhost")))
+    (concat "/" (when (file-remote-p file)
+                  (concat (file-remote-p file 'method) ":"
+                          (if-let (user (file-remote-p file 'user))
+                              (concat user "@" host) host)
+                          "|"))
+            "sudo:root@" host
+            ":" (or (file-remote-p file 'localname)
+                    file))))
+
+(defun sudo-find-file (file)
+  "Open FILE as root."
+  (interactive "FOpen file as root: ")
+  (find-file (sudo-file-path file)))
+
+(defun sudo-this-file ()
+  "Open current file as root."
+  (interactive)
+  (find-file
+   (sudo-file-path
+    (or buffer-file-name
+        (or buffer-file-name
+            (when (or (derived-mode-p 'dired-mode)
+                      (derived-mode-p 'wdired-mode))
+              default-directory))))))
+
+(defconst speed_of_light 299792458 "Speed of light, m/s.")
+
+(defun wavelength-to-frequency (wavelength)
+  "Convert a wavelength to frequency."
+  (interactive "nWavelength: ")
+  (message "Frequency: %0.2f" (/ (/ speed_of_light wavelength) 1000)))
+
+(defun frequency-to-wavelength (frequency)
+  "Convert a frequency to wavelength (nm)."
+  (interactive "nFrequency: ")
+  (message "Wavelength: %0.4f" (/ (/ speed_of_light frequency) 1000)))
+
+(defun forge/date-today ()
+  "Insert friendly date string for today."
+  (interactive)
+  (insert (format-time-string "%B %d, %Y" (current-time))))
 
 (use-package with-editor)
 
