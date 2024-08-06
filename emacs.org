@@ -3570,7 +3570,7 @@ Miscellaneous notes:
                  (file "~/forge/contacts.org")
                  "* %(org-contacts-template-name)\n:PROPERTIES:\n:EMAIL: %(org-contacts-template-email)\n:PHONE:\n:ADDRESS:\n:BIRTHDAY:\n:END:")))
 #+end_src
-*** Org Tree Slide for presentations from Org
+*** Presentations with =org-tree-slide=
 #+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package org-tree-slide
   :bind (:map org-tree-slide-mode-map
@@ -3582,6 +3582,12 @@ Miscellaneous notes:
   :init
   (setq org-tree-slide-skip-outline-level 4))
 
+#+end_src
+*** Presentations with =org-reveal=
+See: https://github.com/yjwen/org-reveal/
+
+#+begin_src emacs-lisp :tangle lisp/init-org.el
+(use-package ox-reveal)
 #+end_src
 *** Org Crypt
 [[https://orgmode.org/manual/Org-Crypt.html][Org Crypt]] encrypts the text of an entry, but not the headline or properties

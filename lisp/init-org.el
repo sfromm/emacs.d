@@ -413,6 +413,8 @@
   :init
   (setq org-tree-slide-skip-outline-level 4))
 
+(use-package ox-reveal)
+
 (with-eval-after-load 'org-crypt
   (org-crypt-use-before-save-magic)
   (setq org-crypt-disable-auto-save t
