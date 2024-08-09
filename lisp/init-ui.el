@@ -23,7 +23,6 @@
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
-(define-key forge-map (kbd "n") 'forge/navigate/body)
 (define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
 (define-key forge-map (kbd "h") 'forge-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
@@ -34,6 +33,7 @@
 (define-key forge-map (kbd "t") 'org-pomodoro)
 (define-key forge-map (kbd "p") 'package-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
+(define-key forge-map (kbd "V") 'view-mode)
 (define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
 

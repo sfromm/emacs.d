@@ -15,6 +15,24 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+(use-package view
+  :bind
+  (:map view-mode-map
+        ("h" . backward-char)
+        ("l" . forward-char)
+        ("j" . next-line)
+        ("k" . previous-line))
+  :config
+  (cond ((derived-mode-p 'org-mode)
+         (keymap-set view-mode-map "p" #'org-previous-visible-heading)
+	 (keymap-set view-mode-map "n" #'org-next-visible-heading))
+        ((derived-mode-p 'emacs-lisp-mode)
+         (keymap-set view-mode-map "p" #'backward-sexp)
+	 (keymap-set view-mode-map "n" #'forward-sexp))
+        ((derived-mode-p 'makefile-mode)
+         (keymap-set view-mode-map "p" #'makefile-previous-dependency)
+	 (keymap-set view-mode-map "n" #'makefile-next-dependency))))
+
 ;;; windmove
 (use-package windmove
   :bind

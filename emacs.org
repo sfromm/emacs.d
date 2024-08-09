@@ -967,7 +967,6 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
-(define-key forge-map (kbd "n") 'forge/navigate/body)
 (define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
 (define-key forge-map (kbd "h") 'forge-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
@@ -978,9 +977,9 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 (define-key forge-map (kbd "t") 'org-pomodoro)
 (define-key forge-map (kbd "p") 'package-list-packages)
 (define-key forge-map (kbd "u") 'browse-url-at-point)
+(define-key forge-map (kbd "V") 'view-mode)
 (define-key forge-map (kbd "F") 'forge-focus)
 (global-set-key (kbd "C-z") 'forge-map)
-
 #+end_src
 *** Hydra
 #+begin_src emacs-lisp
@@ -1071,7 +1070,6 @@ This is my personal keymap that then hooks into different commands, hydras, or o
 
   )
 #+end_src
-
 ** Narrowing & Completion
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/init-ui-completion.el
@@ -1210,6 +1208,33 @@ Pretty icons for corfu using [[https://github.com/jdtsmith/kind-icon][kind-icon]
 
 #+end_src
 
+*** View Mode Navigation
+Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/View-Mode.html][view-mode]].
+
+| Key | Command     | Description                                          |
+|-----+-------------+------------------------------------------------------|
+| q   | ~view-quit~ | Disable view mode and switch back to previous buffer |
+| e   | ~view-exit~ | Disable view mode and keep current buffer            |
+
+#+begin_src emacs-lisp
+(use-package view
+  :bind
+  (:map view-mode-map
+        ("h" . backward-char)
+        ("l" . forward-char)
+        ("j" . next-line)
+        ("k" . previous-line))
+  :config
+  (cond ((derived-mode-p 'org-mode)
+         (keymap-set view-mode-map "p" #'org-previous-visible-heading)
+	 (keymap-set view-mode-map "n" #'org-next-visible-heading))
+        ((derived-mode-p 'emacs-lisp-mode)
+         (keymap-set view-mode-map "p" #'backward-sexp)
+	 (keymap-set view-mode-map "n" #'forward-sexp))
+        ((derived-mode-p 'makefile-mode)
+         (keymap-set view-mode-map "p" #'makefile-previous-dependency)
+	 (keymap-set view-mode-map "n" #'makefile-next-dependency))))
+#+end_src
 *** Navigation between windows: ~windmove~ and ~ace-window~
 ~windmove~ makes it really easy to navigate between windows.  The keys below are
 based on vim and intended to keep my hand on the home row.
