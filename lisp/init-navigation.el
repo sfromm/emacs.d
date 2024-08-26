@@ -22,16 +22,24 @@
         ("l" . forward-char)
         ("j" . next-line)
         ("k" . previous-line))
+  :hook
+  (view-mode . hl-line-mode)
   :config
   (cond ((derived-mode-p 'org-mode)
          (keymap-set view-mode-map "p" #'org-previous-visible-heading)
-	 (keymap-set view-mode-map "n" #'org-next-visible-heading))
-        ((derived-mode-p 'emacs-lisp-mode)
-         (keymap-set view-mode-map "p" #'backward-sexp)
-	 (keymap-set view-mode-map "n" #'forward-sexp))
+         (keymap-set view-mode-map "n" #'org-next-visible-heading))
+        ((derived-mode-p 'elfeed-show-mode)
+         (keymap-set view-mode-map "p" #'backward-paragraph)
+         (keymap-set view-mode-map "n" #'forward-paragraph))
         ((derived-mode-p 'makefile-mode)
          (keymap-set view-mode-map "p" #'makefile-previous-dependency)
-	 (keymap-set view-mode-map "n" #'makefile-next-dependency))))
+         (keymap-set view-mode-map "n" #'makefile-next-dependency))
+        ((derived-mode-p 'emacs-lisp-mode)
+         (keymap-set view-mode-map "p" #'backward-sexp)
+         (keymap-set view-mode-map "n" #'forward-sexp))
+        (t
+         (define-key view-mode-map (kbd "p") 'scroll-down-command)
+         (define-key view-mode-map (kbd "n") 'scroll-up-command))))
 
 ;;; windmove
 (use-package windmove
