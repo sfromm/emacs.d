@@ -211,10 +211,10 @@
     (set-face-attribute 'org-block nil :inherit 'fixed-pitch))
 
   (defun my-tangle-org-mode-on-save ()
-    "Tangle org-mode file when saving."
+    "Tangle org-mode file when saving -- but not org archive files."
     (when (string= (message "%s" major-mode) "org-mode")
-      (org-babel-tangle)))
-
+      (unless (string-suffix-p ".org_archive" buffer-file-name)
+        (org-babel-tangle))))
 
   (defun my-org-set-property (property value)
     "Set arbitrary PROPERTY to VALUE for current heading."
@@ -266,7 +266,7 @@
 
   :hook
   ((org-mode . my-org-mode-hook)
-   (org-load . my-org-init-hook)
+   (after-init . my-org-init-hook)
    (after-save . my-tangle-org-mode-on-save)
    (org-timer-set . my-org-timer-clock-in)
    (org-timer-done . my-org-timer-clock-out)
