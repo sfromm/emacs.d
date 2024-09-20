@@ -435,7 +435,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 (define-prefix-command 'my-mail-search-map)
 (define-key my-mail-search-map (kbd "s") 'notmuch-search)
-(define-key my-mail-search-map (kbd "r") 'notmuch-search-last-week)
+(define-key my-mail-search-map (kbd "w") 'notmuch-search-last-week)
 (define-key my-mail-search-map (kbd "m") 'notmuch-search-last-month)
 (define-key my-mail-search-map (kbd "A") 'notmuch-search-attachment)
 
