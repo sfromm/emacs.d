@@ -3154,7 +3154,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 #+begin_src emacs-lisp :tangle lisp/init-email.el
 (define-prefix-command 'my-mail-search-map)
 (define-key my-mail-search-map (kbd "s") 'notmuch-search)
-(define-key my-mail-search-map (kbd "r") 'notmuch-search-last-week)
+(define-key my-mail-search-map (kbd "w") 'notmuch-search-last-week)
 (define-key my-mail-search-map (kbd "m") 'notmuch-search-last-month)
 (define-key my-mail-search-map (kbd "A") 'notmuch-search-attachment)
 
@@ -3621,6 +3621,30 @@ See: https://github.com/yjwen/org-reveal/
 
 #+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package ox-reveal)
+#+end_src
+*** Org Agenda and Holidays
+Configure the holidays package and what holidays to show or not show.
+
+#+begin_src emacs-lisp :tangle lisp/init-org.el
+(use-package holidays
+  :defer t
+  :ensure nil
+  :custom
+  (holiday-bahai-holidays nil)
+  (holiday-other-holidays
+   '((holiday-fixed 6 19 "Juneteenth"))
+   ))
+#+end_src
+
+You can then integrate display of holidays in /Org Agenda/ with the following:
+
+#+begin_src org
+,* Holidays
+:PROPERTIES:
+:CATEGORY: Holiday
+:END:
+%%(org-calendar-holiday)
+
 #+end_src
 *** Org Crypt
 [[https://orgmode.org/manual/Org-Crypt.html][Org Crypt]] encrypts the text of an entry, but not the headline or properties

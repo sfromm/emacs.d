@@ -415,6 +415,15 @@
 
 (use-package ox-reveal)
 
+(use-package holidays
+  :defer t
+  :ensure nil
+  :custom
+  (holiday-bahai-holidays nil)
+  (holiday-other-holidays
+   '((holiday-fixed 6 19 "Juneteenth"))
+   ))
+
 (with-eval-after-load 'org-crypt
   (org-crypt-use-before-save-magic)
   (setq org-crypt-disable-auto-save t
