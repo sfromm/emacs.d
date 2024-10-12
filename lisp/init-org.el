@@ -131,7 +131,7 @@
              (file "inbox.org")
              "* TODO %? \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\nReference: %a\n")
             ("c" "Calendar invite" entry
-             (file+headline "agenda.org" "Future")
+             (file "inbox.org")
              (function notmuch-calendar-capture-event)
              :prepend t)
             ("l" "Log" entry
