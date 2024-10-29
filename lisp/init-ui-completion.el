@@ -18,8 +18,8 @@
 
 (use-package which-key
   :custom (which-key-idle-delay 1.5)
+  :demand t
   :diminish
-  :commands which-key-mode
   :config (which-key-mode))
 
 

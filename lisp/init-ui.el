@@ -16,17 +16,37 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(define-prefix-command 'forge-mkhome-map)
-(define-key forge-mkhome-map (kbd "g") 'forge-mkhome-update)
-(define-key forge-mkhome-map (kbd "w") 'forge-mkhome-www)
-(define-key forge-mkhome-map (kbd "s") 'forge-mkhome-src)
+(defvar-keymap my-mkhome-map
+  :doc "Prefix map for mkhome targets"
+  "g" #'forge-mkhome-update
+  "w" #'forge-mkhome-www
+  "s" #'forge-mkhome-src)
+
+(defvar-keymap my-jump-map
+  :doc "Prefix map for jumping"
+  "j" #'avy-goto-char-timer
+  "i" #'imenu
+  "d" #'dired-jump
+  "m" #'consult-bookmark
+  "b" #'my-org-web-bookmarks)
+
+(defvar-keymap my-window-map
+  :doc "Prefix map for managing windows and buffers"
+  :name "Windows"
+  "a" #'ace-window
+  "t" #'transpose-frame
+  "o" #'ace-delete-other-windows
+  "s" #'ace-swap-window
+  "d" #'ace-delete-window
+  "b" #'consult-buffer
+  "g" #'golden-ratio)
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
 (define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
-(define-key forge-map (kbd "h") 'forge-mkhome-map)
+(define-key forge-map (kbd "h") my-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
-(define-key forge-map (kbd "j") 'forge/jabber-start-or-switch)
+(define-key forge-map (kbd "j") my-jump-map)
 (define-key forge-map (kbd "g") 'magit-status)
 (define-key forge-map (kbd "s") 'eshell-here)
 (define-key forge-map (kbd "S") 'forge/slack/body)
