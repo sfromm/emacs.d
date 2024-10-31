@@ -28,7 +28,7 @@
   "i" #'imenu
   "d" #'dired-jump
   "m" #'consult-bookmark
-  "b" #'my-org-web-bookmarks)
+  "b" #'my-open-browser-bookmark)
 
 (defvar-keymap my-window-map
   :doc "Prefix map for managing windows and buffers"
@@ -41,9 +41,26 @@
   "b" #'consult-buffer
   "g" #'golden-ratio)
 
+(defvar-keymap my-mail-search-map
+  :doc "Prefix map for searching email"
+  :name "Search Email"
+  "a" #'notmuch-search-attachment
+  "d" #'notmuch-search-last-day
+  "w" #'notmuch-search-last-week
+  "m" #'notmuch-search-last-month)
+
+(defvar-keymap my-mail-map
+  :doc "Prefix map for working with email"
+  :name "Mail"
+  "m" #'notmuch-cycle-notmuch-buffers
+  "s" my-mail-search-map
+  "O" #'forge/mail-org-notes
+  "W" #'forge/notmuch-save-all-attachments
+  "N" #'forge/mail-toggle-compose-new-frame)
+
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") 'forge/window/body)
-(define-key forge-map (kbd "m") 'notmuch-cycle-notmuch-buffers)
+(define-key forge-map (kbd "m") my-mail-map)
 (define-key forge-map (kbd "h") my-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
 (define-key forge-map (kbd "j") my-jump-map)
@@ -84,25 +101,6 @@
     ("." end-of-buffer)
     ("C-'" nil)
     ("q" nil :exit t))
-
-  (defhydra forge/window ()
-    ("a" ace-window "Ace Window" :exit t)
-    ("t" transpose-frame "Transpose" :exit t)
-    ("o" ace-delete-other-windows "Delete other windows " :exit t)
-    ("s" ace-swap-window "Swap window" :exit t)
-    ("d" ace-delete-window "Delete window" :exit t)
-    ("b" consult-buffer "Switch" :exit t)
-    ("g" golden-ratio "Golden ratio" :exit t)
-    ("v" (lambda ()
-           (interactive)
-           (split-window-right)
-           (windmove-right)) "Split Vert")
-    ("x" (lambda ()
-           (interactive)
-           (split-window-below)
-           (windmove-down)) "Split Horz")
-    ("m" consult-bookmark "Bookmark" :exit t)
-    ("q" nil))
 
   (defhydra forge/music-mpd-hydra ()
     "MPD Actions"
