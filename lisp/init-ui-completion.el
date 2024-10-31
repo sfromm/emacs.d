@@ -17,7 +17,7 @@
 
 
 (use-package which-key
-  :custom (which-key-idle-delay 1.5)
+  :custom (which-key-idle-delay 0.75)
   :demand t
   :diminish
   :config (which-key-mode))
