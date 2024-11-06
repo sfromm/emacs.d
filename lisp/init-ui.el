@@ -59,7 +59,7 @@
   "N" #'forge/mail-toggle-compose-new-frame)
 
 (define-prefix-command 'forge-map)
-(define-key forge-map (kbd "w") 'forge/window/body)
+(define-key forge-map (kbd "w") my-window-map)
 (define-key forge-map (kbd "m") my-mail-map)
 (define-key forge-map (kbd "h") my-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
