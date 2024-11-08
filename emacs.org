@@ -988,6 +988,7 @@ This is my personal keymap, aka a Leader key, that then hooks into different com
 (defvar-keymap my-mail-search-map
   :doc "Prefix map for searching email"
   :name "Search Email"
+  "s" #'notmuch-search
   "a" #'notmuch-search-attachment
   "d" #'notmuch-search-last-day
   "w" #'notmuch-search-last-week

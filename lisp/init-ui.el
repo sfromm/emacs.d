@@ -44,6 +44,7 @@
 (defvar-keymap my-mail-search-map
   :doc "Prefix map for searching email"
   :name "Search Email"
+  "s" #'notmuch-search
   "a" #'notmuch-search-attachment
   "d" #'notmuch-search-last-day
   "w" #'notmuch-search-last-week
