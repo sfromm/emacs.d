@@ -47,6 +47,12 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 
 (advice-add 'dig :around #'dig-extended)
 
+(defun my-eshell-sntp-set-time (&optional server)
+  "Set time from sntp server SERVER."
+  (interactive "P")
+  (let ((server (or server "time.apple.com")))
+    (eshell-command (concat "sudo sntp -sS " server))))
+
 
 (use-package rg)
 

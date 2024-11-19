@@ -4401,6 +4401,16 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
 (advice-add 'dig :around #'dig-extended)
 #+end_src
 
+A wrapper around calling ~sntp~.
+
+#+begin_src emacs-lisp
+(defun my-eshell-sntp-set-time (&optional server)
+  "Set time from sntp server SERVER."
+  (interactive "P")
+  (let ((server (or server "time.apple.com")))
+    (eshell-command (concat "sudo sntp -sS " server))))
+#+end_src
+
 ** Search / Ripgrep
 [[https://github.com/dajva/rg.el][rg.el]] is a frontend to [[https://github.com/BurntSushi/ripgrep][ripgrep]].
 
