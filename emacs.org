@@ -1659,6 +1659,8 @@ Resources:
 The default for =yas-snippet-dirs= is =~/.emacs.d/snippets/=.   I add to that another path that
 is =~/.emacs.d/user/snippets=.
 
+Be sure to look at the [[https://joaotavora.github.io/yasnippet/][documentation]] and the docs for [[https://joaotavora.github.io/yasnippet/snippet-development.html][writing snippets]].  Use =C-c & C-n= or =M-x yas-new-snippet= to create a new snippet.
+
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
 
 (use-package yasnippet
