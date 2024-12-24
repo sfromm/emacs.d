@@ -4132,14 +4132,15 @@ articles every 2 hours.
   ;; Lastly, the following will helps with downloading videos from Youtube when they
   ;; are part of a RSS feed.
   (with-eval-after-load 'youtube-dl
-    (setq youtube-dl-directory "~/media/youtube"))
+    (setq youtube-dl-directory "~/media/youtube"
+          ;; youtube-dl-arguments '("--no-mtime" "--restrict-filenames" "--ignore-config")
+          youtube-dl-program "yt-dlp"))
 
   (elfeed-org)
   (setq url-queue-timeout 30
         elfeed-db-directory (expand-file-name "elfeed" (concat (getenv "HOME") "/annex/var"))))
         ;; create timer to update elfeed
         ;; elfeed-update-timer (run-at-time 180 (* 120 60) 'forge/elfeed-update)))
-
 #+end_src
 *** Elfeed feed organizer with [[https://github.com/remyhonig/elfeed-org][elfeed-org]]
 Normally, one would configure the feeds to subscribe to with the variable

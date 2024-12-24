@@ -177,7 +177,9 @@
   ;; Lastly, the following will helps with downloading videos from Youtube when they
   ;; are part of a RSS feed.
   (with-eval-after-load 'youtube-dl
-    (setq youtube-dl-directory "~/media/youtube"))
+    (setq youtube-dl-directory "~/media/youtube"
+          ;; youtube-dl-arguments '("--no-mtime" "--restrict-filenames" "--ignore-config")
+          youtube-dl-program "yt-dlp"))
 
   (elfeed-org)
   (setq url-queue-timeout 30
