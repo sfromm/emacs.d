@@ -111,13 +111,14 @@
 
 ;; https://github.com/hlissner/emacs-solaire-mode
 ;; Encouraged by doom-themes
-(use-package solaire-mode
-  :disabled t)
+;; (use-package solaire-mode
+;;   :disabled t)
 
 ;; https://github.com/hlissner/emacs-doom-themes
-(use-package doom-themes
-  :config
-  (doom-themes-org-config))
+;; Something is misbehaving in doom-themes-org-config.  Comment out for now.
+;; (use-package doom-themes
+;;   :config
+;;   (doom-themes-org-config))
 
 ;; https://github.com/dracula/emacs
 (use-package dracula-theme)
