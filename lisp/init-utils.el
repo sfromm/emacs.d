@@ -108,6 +108,25 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
       world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
 
+(defun my-date-utc-to-local (beg end &optional date)
+  "Convert UTC date string to local time."
+  (interactive "r")
+  (let ((format "%F %T %Z %z")
+        (zone nil))
+    (message
+     "Date: %s"
+     (format-time-string
+      format
+      ;; There appears to be a quirk in parse-time-string, called by date-to-time,
+      ;; where it does not recognize UTC as a TZ.  It needs to be UT or GMT.
+      ;; See parse-time.el line 93.
+      (date-to-time
+       (string-replace
+        "UTC" "GMT"
+        (if (use-region-p)
+            (buffer-substring-no-properties beg end)
+          (read-string "UTC date: ")))) zone))))
+
 
 (defvar forge/vpn-config ""
   "Name of the OpenVPN VPN configuration to use.")
