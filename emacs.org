@@ -2111,17 +2111,6 @@ documents.
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 (use-package nftables-mode)
 #+end_src
-** FLE - Fast Log Entry
-#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-
-(use-package fle-mode
-  :ensure nil
-  :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode)
-  :magic ("mycall " . fle-mode)
-  :config
-  (setq-local tab-width 8))
-#+end_src
 ** Ledger
 [[https://www.ledger-cli.org/][Ledger]] and [[https://beancount.github.io/docs/index.html][beancount]] are CLI applications for double-entry accounting system.  This configures
 the modes ([[https://github.com/ledger/ledger-mode][ledger]] and [[https://github.com/beancount/beancount-mode/][beancount]]) that go with them.
@@ -4366,6 +4355,17 @@ The following are miscellaneous utilities that are small but useful.
 ** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
 #+begin_src emacs-lisp
 (use-package lorem-ipsum)
+#+end_src
+** Amateur Radio: Fast Log Entry (FLE) and POTA
+#+begin_src emacs-lisp
+
+(use-package ham
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
+  :commands (fle-mode pota)
+  :magic ("mycall " . fle-mode)
+  :config
+  (setq-local tab-width 8))
 #+end_src
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.

@@ -23,6 +23,15 @@
 (use-package lorem-ipsum)
 
 
+(use-package ham
+  :ensure nil
+  :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
+  :commands (fle-mode pota)
+  :magic ("mycall " . fle-mode)
+  :config
+  (setq-local tab-width 8))
+
+
 (use-package net-utils
   :commands (ping traceroute)
   :config

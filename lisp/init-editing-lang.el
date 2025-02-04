@@ -190,15 +190,6 @@
 (use-package nftables-mode)
 
 
-(use-package fle-mode
-  :ensure nil
-  :init (init-vc-install :fetcher "github" :repo "sfromm/fle-mode")
-  :commands (fle-mode)
-  :magic ("mycall " . fle-mode)
-  :config
-  (setq-local tab-width 8))
-
-
 (use-package ledger-mode
   :commands ledger-mode)
 
