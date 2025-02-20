@@ -296,6 +296,7 @@
   (org-log-reschedule "note")
   (org-log-into-drawer t)
   (org-outline-path-complete-in-steps nil)
+  (org-persist-directory (expand-file-name "org-persist" forge-state-dir))
   (org-refile-use-outline-path 'file)
   (org-refile-targets '(("inbox.org" :maxlevel . 2)
                         ("agenda.org" :maxlevel . 3)
