@@ -166,7 +166,7 @@
              :prepend t)
             ("rf" "Elfeed/News Article" entry
              (file+olp+datetree "articles.org")
-             "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
+             "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:URL:  %(forge/elfeed-capture-entry-url)\n:CAPTURED:  %U\n:END:\n"
              :prepend t)
             ("rt" "Twitter Post" entry
              (file+olp+datetree "articles.org")

@@ -95,6 +95,22 @@
     (interactive)
     (elfeed--youtube-dl elfeed-show-entry))
 
+  (defun forge/elfeed-entry-url ()
+    "Copy the current entry link URL to the clipboard."
+    (interactive)
+    (let ((entry))
+      (if (eq major-mode 'elfeed-show-mode)
+          (setq entry elfeed-show-entry)
+        (setq entry (car (elfeed-search-selected))))
+      (elfeed-entry-link entry)))
+
+  (defun forge/elfeed-capture-entry-url ()
+    "Set up for org capture to grab elfeed entry url."
+    (interactive)
+    (if (get-buffer "*elfeed-entry*")
+        (with-current-buffer "*elfeed-entry*" (forge/elfeed-entry-url))
+      (with-current-buffer "*elfeed-search*" (forge/elfeed-entry-url))))
+
   (defun forge/elfeed-entry-tags ()
     "Return entry tags as a string."
     (interactive)
@@ -105,10 +121,11 @@
       (upcase (mapconcat #'symbol-name (elfeed-entry-tags entry) ":"))))
 
   (defun forge/elfeed-get-entry-tags ()
-    "hello"
+    "Set up for org capture to grab elfeed entry tags."
     (interactive)
-    (with-current-buffer "*elfeed-entry*"
-      (forge/elfeed-entry-tags)))
+    (if (get-buffer "*elfeed-entry*")
+        (with-current-buffer "*elfeed-entry*" (forge/elfeed-entry-tags))
+      (with-current-buffer "*elfeed-search*" (forge/elfeed-entry-tags))))
 
   (defun elfeed-show-open-eww ()
     "Open the current entry with eww."
