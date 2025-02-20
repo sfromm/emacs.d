@@ -15,10 +15,11 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;; native compilation
-(when (and (fboundp 'native-comp-available-p) (native-comp-available-p))
-  (if (fboundp 'startup-redirect-eln-cache)
-      (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
-    (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory))))
+(when (and (fboundp 'startup-redirect-eln-cache)
+           (fboundp 'native-comp-available-p)
+           (native-comp-available-p))
+  (startup-redirect-eln-cache
+   (convert-standard-filename (expand-file-name "var/eln-cache/" user-emacs-directory)))
   (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-report-warnings-errors 'silent))
 
