@@ -2331,9 +2331,22 @@ Pull in =async= for asyncrhonous operations in =dired=.
 #+begin_src emacs-lisp :tangle lisp/init-dired.el
 (with-eval-after-load 'dired-x
   (setq dired-bind-jump nil
-        dired-guess-shell-alist-user (list '("\\.\\(mkv\\|mpe?g\\|avi\\|mp3\\|mp4\\|ogm\\|webm\\)$" "mpv")
-                                           '("\\.\\(docx?\\|xlsx?\\|kmz\\)$" "open")
-                                           '("\\.pdf$" "open")))
+        dired-guess-shell-alist-user (list
+                                      (list "\\.avi$" "mpv")
+                                      (list "\\.doc$" "open")
+                                      (list "\\.docx$" "open")
+                                      (list "\\.kmz$" "open")
+                                      (list "\\.mkv$" "mpv")
+                                      (list "\\.mp3$" "mpv")
+                                      (list "\\.mp4$" "mpv")
+                                      (list "\\.mpe?g$" "mpv")
+                                      (list "\\.ogg$" "mpv")
+                                      (list "\\.ogm$" "mpv")
+                                      (list "\\.ogv$" "mpv")
+                                      (list "\\.pdf$" "open")
+                                      (list "\\.webm$" "mpv")
+                                      (list "\\.xls$" "open")
+                                      (list "\\.xlsx$" "open")))
   (global-unset-key (kbd "C-x C-j"))
   (add-to-list 'dired-omit-extensions ".DS_Store"))
 #+end_src
