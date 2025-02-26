@@ -196,6 +196,10 @@
 (use-package beancount
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "beancount/beancount-mode")
+  :bind
+  (("C-c C-n" . outline-next-visible-heading)
+   ("C-c C-p" . outline-previous-visible-heading)
+   ("C-c C-u" . outline-up-heading))
   :mode ("\\.beancount\\'" . beancount-mode)
   :hook (beancount-mode . outline-minor-mode))
 
