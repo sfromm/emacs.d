@@ -1890,6 +1890,15 @@ brew install yaml-language-server
 
 Other resources:
 - https://www.adventuresinwhy.com/post/eglot/
+** Virtual environments with =direnv= and ~envrc~
+Use [[https://direnv.net][direnv]] and [[https://github.com/purcell/envrc][envrc]] for support of virtual environments.
+
+#+begin_src emacs-lisp :tangle lisp/init-editing.el
+(use-package envrc
+  :bind (:map envrc-mode-map
+              ("C-c e" . envrc-command-map))
+  :hook (after-init . envrc-global-mode))
+#+end_src
 ** Docker
 [[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
 docker-compose files.

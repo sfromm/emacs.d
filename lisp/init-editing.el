@@ -167,5 +167,10 @@
   :commands (diff-hl-mode diff-hl-dired-mode)
   :hook (magit-post-refresh . diff-hl-magit-post-refresh))
 
+(use-package envrc
+  :bind (:map envrc-mode-map
+              ("C-c e" . envrc-command-map))
+  :hook (after-init . envrc-global-mode))
+
 
 (provide 'init-editing)
