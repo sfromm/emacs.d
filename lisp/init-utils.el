@@ -75,6 +75,46 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
   :config
   (mastodon-discover))
 
+;; heavily borrowed from sachac
+;; The description needs more work.
+;; It should also capture the date in an org format
+
+(defun my-mastodon-store-link ()
+  "Store links from Mastodon buffers."
+  (when (derived-mode-p 'mastodon-mode)
+    (let ((json (get-text-property (point) 'item-json)))
+      (org-link-store-props
+       :link (mastodon-toot--toot-url)
+       :description (concat (let-alist (mastodon-tl--property 'item-json) .account.display_name)
+                            " "
+                            (let-alist (mastodon-tl--property 'item-json) .account.acct))
+       :content (mastodon-tl--content json)
+       :text (concat
+              (string-trim (mastodon-tl--render-text (mastodon-tl--content json)))
+              (when (assoc-default 'media_attachments json)
+                (concat "\n\n"
+                        (mapconcat (lambda (attachment)
+                                     (org-link-make-string
+                                      (assoc-default 'url attachment)
+                                      (assoc-default 'description attachment)))
+                                   (assoc-default 'media_attachments json)
+                                   "\n")))
+              )
+       ))
+    ))
+
+(use-package org
+  :config
+  (org-link-set-parameters
+   "mastodon"
+   :store 'my-mastodon-store-link)
+  (with-eval-after-load 'org-capture
+    (add-to-list 'org-capture-templates
+                 `("rt" "Mastodon" entry
+                   (file+olp+datetree "articles.org")
+                   "* %a on Mastodon %?  :TOOT:\n:PROPERTIES:\n:URL: %:link\n:CAPTURED:  %U\n:END:\n#+BEGIN_QUOTE\n%:text\n#+END_QUOTE\n"
+                   :prepend t))))
+
 (use-package wttrin
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/emacs-wttrin")
