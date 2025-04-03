@@ -3400,10 +3400,6 @@ Miscellaneous notes:
             ("rf" "Elfeed/News Article" entry
              (file+olp+datetree "articles.org")
              "* %a %? :%(forge/elfeed-get-entry-tags):ARTICLE:\n:PROPERTIES:\n:URL:  %(forge/elfeed-capture-entry-url)\n:CAPTURED:  %U\n:END:\n"
-             :prepend t)
-            ("rt" "Twitter Post" entry
-             (file+olp+datetree "articles.org")
-             "* %a %? :TWITTER:\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
              :prepend t))))
 
   (defun my-org-goto-journal-entry (date)
@@ -4527,7 +4523,7 @@ The following variables are set with ~customize~:
    :store 'my-mastodon-store-link)
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("rt" "Mastodon" entry
+                 `("rt" "Mastodon Toot" entry
                    (file+olp+datetree "articles.org")
                    "* %a on Mastodon %?  :TOOT:\n:PROPERTIES:\n:URL: %:link\n:CAPTURED:  %U\n:END:\n#+BEGIN_QUOTE\n%:text\n#+END_QUOTE\n"
                    :prepend t))))
