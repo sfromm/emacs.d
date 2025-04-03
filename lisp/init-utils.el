@@ -110,7 +110,7 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
    :store 'my-mastodon-store-link)
   (with-eval-after-load 'org-capture
     (add-to-list 'org-capture-templates
-                 `("rt" "Mastodon" entry
+                 `("rt" "Mastodon Toot" entry
                    (file+olp+datetree "articles.org")
                    "* %a on Mastodon %?  :TOOT:\n:PROPERTIES:\n:URL: %:link\n:CAPTURED:  %U\n:END:\n#+BEGIN_QUOTE\n%:text\n#+END_QUOTE\n"
                    :prepend t))))
