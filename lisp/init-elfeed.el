@@ -149,6 +149,10 @@
     (elfeed-db-save)
     (message "elfeed db saved."))
 
+  (advice-add 'elfeed-search-update--force
+              :before
+              'forge/elfeed-search-save-db)
+
   ;; from manuel uberti
   ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
   (defun forge/elfeed-search-mark-all-read ()
@@ -170,12 +174,6 @@
     (if (elfeed-tagged-p tag elfeed-show-entry)
         (elfeed-show-untag tag)
       (elfeed-show-tag tag)))
-
-  (defun forge/elfeed-update ()
-    "Update elfeed database."
-    (message "Updating elfeed articles...")
-    (elfeed-update)
-    (elfeed-db-save))
 
   (defun forge/elfeed-search-first-article ()
     "Go to first message in search."

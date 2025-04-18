@@ -1162,7 +1162,6 @@ The nice thing about completion frameworks is that they support interactively na
   :custom
   (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
   :hook (after-init . vertico-mode))
-
 #+end_src
 
 #+RESULTS:
@@ -4122,6 +4121,10 @@ articles every 2 hours.
     (elfeed-db-save)
     (message "elfeed db saved."))
 
+  (advice-add 'elfeed-search-update--force
+              :before
+              'forge/elfeed-search-save-db)
+
   ;; from manuel uberti
   ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
   (defun forge/elfeed-search-mark-all-read ()
@@ -4143,12 +4146,6 @@ articles every 2 hours.
     (if (elfeed-tagged-p tag elfeed-show-entry)
         (elfeed-show-untag tag)
       (elfeed-show-tag tag)))
-
-  (defun forge/elfeed-update ()
-    "Update elfeed database."
-    (message "Updating elfeed articles...")
-    (elfeed-update)
-    (elfeed-db-save))
 
   (defun forge/elfeed-search-first-article ()
     "Go to first message in search."
@@ -4393,8 +4390,7 @@ The following are miscellaneous utilities that are small but useful.
 
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
+  :custom (nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 #+end_src
 
 ** [[https://github.com/jschaf/emacs-lorem-ipsum][Lorem Ipsum]]
@@ -4419,9 +4415,8 @@ A place to configure miscellaneous settings for network utilities.
 
 (use-package net-utils
   :commands (ping traceroute)
-  :config
-  (setq ping-program-options (list "-c" "5"))
-  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
+  :custom ((ping-program-options (list "-c" "5"))
+           (traceroute-program-options (list "-I" "-m" "30" "-w" "1"))))
 #+end_src
 
 Pull in ~ip-query~ for functions to query the [[https://team-cymru.com/community-services/ip-asn-mapping/][IP to ASN Mapping Service]] provided by [[https://team-cymru.com/][Team Cymru]].

@@ -17,8 +17,7 @@
 
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
-  :init
-  (setq nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
+  :custom (nov-save-place-file (expand-file-name "nov-places" forge-state-dir)))
 
 (use-package lorem-ipsum)
 
@@ -34,9 +33,8 @@
 
 (use-package net-utils
   :commands (ping traceroute)
-  :config
-  (setq ping-program-options (list "-c" "5"))
-  (setq traceroute-program-options (list "-I" "-m" "30" "-w" "1")))
+  :custom ((ping-program-options (list "-c" "5"))
+           (traceroute-program-options (list "-I" "-m" "30" "-w" "1"))))
 
 (use-package ip-query
   :ensure nil
