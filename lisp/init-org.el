@@ -134,9 +134,6 @@
              (file "inbox.org")
              (function notmuch-calendar-capture-event)
              :prepend t)
-            ("l" "Log" entry
-             (file+olp+datetree "journal.org")
-             "* %U - %?\n")
             ("n" "Meeting notes" entry
              (file+olp+datetree "journal.org")
              "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
@@ -151,6 +148,15 @@
              (file+headline "notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
              :prepend t)
+
+            ("l" "Log")
+            ("ll" "Log" entry
+             (file+olp+datetree "journal.org")
+             "* %U - %?\n")
+            ("lr" "Radio log" entry
+             (file+olp+datetree "journal.org")
+             "* %U - %^{LOCATION|QTH}p %? :RADIO:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
+             )
 
             ("r" "Reference")
             ("rm" "Music" entry
