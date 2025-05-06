@@ -154,7 +154,7 @@
              (file+olp+datetree "journal.org")
              "* %U - %?\n")
             ("lr" "Radio log" entry
-             (file+olp+datetree "journal.org")
+             (file+olp+datetree "radio-log.org")
              "* %U - %^{LOCATION|QTH}p %? :RADIO:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
              )
 

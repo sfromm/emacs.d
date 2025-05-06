@@ -3386,7 +3386,7 @@ Miscellaneous notes:
              (file+olp+datetree "journal.org")
              "* %U - %?\n")
             ("lr" "Radio log" entry
-             (file+olp+datetree "journal.org")
+             (file+olp+datetree "radio-log.org")
              "* %U - %^{LOCATION|QTH}p %? :RADIO:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
              )
 
@@ -4409,10 +4409,13 @@ The following are miscellaneous utilities that are small but useful.
 (use-package ham
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
-  :commands (fle-mode pota)
   :magic ("mycall " . fle-mode)
   :config
   (setq-local tab-width 8))
+
+(use-package fle-mode :ensure nil)
+
+(use-package pota :ensure nil)
 #+end_src
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.

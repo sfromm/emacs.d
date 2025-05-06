@@ -25,10 +25,13 @@
 (use-package ham
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
-  :commands (fle-mode pota)
   :magic ("mycall " . fle-mode)
   :config
   (setq-local tab-width 8))
+
+(use-package fle-mode :ensure nil)
+
+(use-package pota :ensure nil)
 
 
 (use-package net-utils
