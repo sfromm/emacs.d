@@ -12,7 +12,7 @@ endif
 ifeq ($(OS),Darwin)
     EMACS = emacs $(ARGS)
     PKGMGR = brew install
-    PKG = emacs-plus@29
+    PKG = emacs-plus@30
     PKGFLAGS = --with-native-comp --with-imagemagick --with-no-frame-refocus --with-savchenkovaleriy-big-sur-icon
     FONTS = font-hack font-fira-code font-fira-mono font-fira-sans font-victor-mono font-jetbrains-mono font-sf-pro font-sf-mono
     ifeq ($(ARCH),arm64)
