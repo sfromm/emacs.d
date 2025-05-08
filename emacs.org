@@ -1249,6 +1249,7 @@ Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/View-Mode.html
         ("k" . previous-line))
   :hook
   (view-mode . hl-line-mode)
+  (view-mode . auto-revert-mode)
   :config
   (cond ((derived-mode-p 'org-mode)
          (keymap-set view-mode-map "p" #'org-previous-visible-heading)
@@ -2063,7 +2064,8 @@ This is really predominantly for syntax highlighting.
 *** CSV
 #+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
 
-(use-package csv-mode)
+(use-package csv-mode
+  :mode "wsjtx\\.log\\'")
 #+end_src
 *** JSON
 [[https://www.json.org/][JSON]] is one data-serialization format.

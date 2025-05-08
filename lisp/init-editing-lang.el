@@ -152,7 +152,8 @@
   :mode "\\.php\\'")
 
 
-(use-package csv-mode)
+(use-package csv-mode
+  :mode "wsjtx\\.log\\'")
 
 (use-package json-mode)
 

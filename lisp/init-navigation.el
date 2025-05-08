@@ -24,6 +24,7 @@
         ("k" . previous-line))
   :hook
   (view-mode . hl-line-mode)
+  (view-mode . auto-revert-mode)
   :config
   (cond ((derived-mode-p 'org-mode)
          (keymap-set view-mode-map "p" #'org-previous-visible-heading)
