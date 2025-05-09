@@ -51,8 +51,9 @@
   :ensure nil
   :commands (eglot eglot-ensure)
   :custom
-  (eglot-send-changes-idle-time 0.1)
   (eglot-auto-shudown t)
+  (eglot-prefer-plaintext t)
+  (eglot-send-changes-idle-time 0.1)
   (eglot-extend-to-xref t)
   :config
   ;; (setq-default eglot-workspace-configuration
@@ -66,7 +67,7 @@
   ;;              '(yaml-mode . ("yaml-language-server")))
   (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
   :hook
-  (python-mode . eglot-ensure)
+  (python-ts-mode . eglot-ensure)
   (yaml-mode . eglot-ensure))
 
 
