@@ -51,9 +51,9 @@
 
 (use-package gnus-alias
   :custom
-  (gnus-alias-default-identity "work")
-  :hook
-  (message-setup . gnus-alias-determine-identity))
+  (gnus-alias-default-identity "linkoregon"))
+  ;; :hook
+  ;; (message-setup . gnus-alias-determine-identity))
 
 (add-hook 'dired-mode #'turn-on-gnus-dired-mode)
 (with-eval-after-load

@@ -2668,24 +2668,33 @@ Notes:
 #+begin_src emacs-lisp :tangle lisp/init-email.el
 (use-package gnus-alias
   :custom
-  (gnus-alias-default-identity "work")
-  :hook
-  (message-setup . gnus-alias-determine-identity))
-
+  (gnus-alias-default-identity "linkoregon"))
+  ;; :hook
+  ;; (message-setup . gnus-alias-determine-identity))
 #+end_src
 
 Here is an example of how =gnu-alias-identity-alist= should look.  The /extra
 headers/ field can be useful if you need to add headers on the outgoing email.
 
 #+begin_src emacs-lisp :tangle no
-(setq gnus-alias-identity-alist
-      '(("personal" ;; name
-         nil        ;; nil
-         "My Name <example@example.com>"  ;; email address
-         nil        ;; organization header
-         nil        ;; extra headers
-         nil        ;; body text
-         "~/.signature"))) ;; signature or signature file
+(setopt gnus-alias-identity-alist
+        '(("personal" ;; Refers-to name
+           nil        ;; Refers-to name
+           "My Name <example@example.com>"  ;; From email address
+           nil        ;; organization header
+           nil        ;; extra headers
+           nil        ;; body text just above signature
+           "~/.signature"))) ;; signature or signature file
+#+end_src
+
+And here is an example of =gnus-alias-identity-rules=.  These rules are used to
+choose an Identity whenever a new message is created.
+
+#+begin_src emacs-lisp :tangle no
+(setopt gnus-alias-identity-rules
+        '(("Personal"                   ;; Domain match
+           ("To" "example.com" current) ;; Header match: Header symbol, Regexp, Header set
+           "personal")))                ;; Identity
 #+end_src
 
 [[http://gnus.org/manual/gnus_129.html][gnus-dired]] is an option for attaching files to email.
