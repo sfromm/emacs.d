@@ -67,13 +67,14 @@
 (setopt auto-save-default t)
 (setopt auto-save-timeout 120)
 (setopt auto-save-interval 64)
-(setq auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
-      auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
-      ;; handle tramp paths differently than local ones, borrowed from doom
-      auto-save-file-name-transforms
-      (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-                  (concat auto-save-list-file-prefix "tramp-\\2") t)
-            (list ".*" auto-save-list-file-prefix t)))
+(setopt auto-save-include-big-deletions t ;; don't auto-disable auto-save after deleting large chunks
+        auto-save-list-file-prefix (expand-file-name "autosave/" forge-state-dir)
+        tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir)
+        auto-save-file-name-transforms
+        (list (list "\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+                    ;; handle tramp paths differently than local ones, borrowed from doom
+                    (concat auto-save-list-file-prefix "tramp-\\2") t)
+              (list ".*" auto-save-list-file-prefix t)))
 
 
 (use-package page-break-lines

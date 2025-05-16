@@ -57,7 +57,6 @@
     (setopt message-auto-save-directory (expand-file-name "messages" forge-state-dir))
     (setopt package-quickstart-file (expand-file-name "package-quickstart.el" forge-state-dir))
     (setopt project-list-file (expand-file-name "project-list.el" forge-state-dir))
-    (setopt tramp-auto-save-directory (expand-file-name "tramp/auto-save" forge-state-dir))
     (setopt tramp-persistency-file-name (expand-file-name "tramp/persistency.el" forge-state-dir))
     (setopt url-cache-directory (expand-file-name "url/cache/" forge-state-dir))
     (setopt url-configuration-directory (expand-file-name "url/configuration/" forge-state-dir))))
