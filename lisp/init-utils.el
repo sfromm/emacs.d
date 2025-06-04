@@ -24,14 +24,15 @@
 
 (use-package ham
   :ensure nil
-  :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
+  :init (init-vc-install :fetcher "codeberg" :repo "sfrm/ham-el")
   :magic ("mycall " . fle-mode)
+  :commands (fle-mode pota)
   :config
   (setq-local tab-width 8))
 
-(use-package fle-mode :ensure nil)
+;; (use-package fle-mode :ensure nil)
 
-(use-package pota :ensure nil)
+;; (use-package pota :ensure nil)
 
 
 (use-package net-utils

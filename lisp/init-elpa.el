@@ -89,7 +89,12 @@ the following arguments:
 - REPO is the name of the repository (e.g. \"sfromm/ip-query\").
 - NAME, REV, and BACKEND are passed to `package-vc-install'."
   (interactive)
-  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
+  (let* ((url (format "https://%s/%s"
+                      (cond ((string= "github" fetcher) "github.com")
+                            ((string= "gitlab" fetcher) "gitlab.com")
+                            ((string= "codeberg" fetcher) "codeberg.org")
+                            (t fetcher))
+                      repo))
          (iname (when name (intern name)))
          (pkg (or iname (intern (file-name-base repo)))))
     (unless (package-installed-p pkg)

@@ -328,7 +328,12 @@ the following arguments:
 - REPO is the name of the repository (e.g. \"sfromm/ip-query\").
 - NAME, REV, and BACKEND are passed to `package-vc-install'."
   (interactive)
-  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
+  (let* ((url (format "https://%s/%s"
+                      (cond ((string= "github" fetcher) "github.com")
+                            ((string= "gitlab" fetcher) "gitlab.com")
+                            ((string= "codeberg" fetcher) "codeberg.org")
+                            (t fetcher))
+                      repo))
          (iname (when name (intern name)))
          (pkg (or iname (intern (file-name-base repo)))))
     (unless (package-installed-p pkg)
@@ -4428,14 +4433,15 @@ The following are miscellaneous utilities that are small but useful.
 
 (use-package ham
   :ensure nil
-  :init (init-vc-install :fetcher "github" :repo "sfromm/ham-el")
+  :init (init-vc-install :fetcher "codeberg" :repo "sfrm/ham-el")
   :magic ("mycall " . fle-mode)
+  :commands (fle-mode pota)
   :config
   (setq-local tab-width 8))
 
-(use-package fle-mode :ensure nil)
+;; (use-package fle-mode :ensure nil)
 
-(use-package pota :ensure nil)
+;; (use-package pota :ensure nil)
 #+end_src
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.
