@@ -93,6 +93,7 @@ the following arguments:
                       (cond ((string= "github" fetcher) "github.com")
                             ((string= "gitlab" fetcher) "gitlab.com")
                             ((string= "codeberg" fetcher) "codeberg.org")
+                            ((string= "sourcehut" fetcher) "git.sr.ht")
                             (t fetcher))
                       repo))
          (iname (when name (intern name)))

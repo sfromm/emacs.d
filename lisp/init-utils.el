@@ -30,10 +30,6 @@
   :config
   (setq-local tab-width 8))
 
-;; (use-package fle-mode :ensure nil)
-
-;; (use-package pota :ensure nil)
-
 
 (use-package net-utils
   :commands (ping traceroute)

@@ -332,6 +332,7 @@ the following arguments:
                       (cond ((string= "github" fetcher) "github.com")
                             ((string= "gitlab" fetcher) "gitlab.com")
                             ((string= "codeberg" fetcher) "codeberg.org")
+                            ((string= "sourcehut" fetcher) "git.sr.ht")
                             (t fetcher))
                       repo))
          (iname (when name (intern name)))
@@ -4438,10 +4439,6 @@ The following are miscellaneous utilities that are small but useful.
   :commands (fle-mode pota)
   :config
   (setq-local tab-width 8))
-
-;; (use-package fle-mode :ensure nil)
-
-;; (use-package pota :ensure nil)
 #+end_src
 ** Network related, ping and traceroute
 A place to configure miscellaneous settings for network utilities.
