@@ -71,16 +71,16 @@
 ;;;###autoload
 (defun notmuch-calendar-org-heading (ical-event notmuch-id notmuch-from notmuch-subject)
   "With provided ICAL-EVENT, NOTMUCH-ID, NOTMUCH-FROM, and NOTMUCH-SUBJECT, return an `org-mode' heading."
-  (concat "* " notmuch-subject " %?\n"
+  (concat "* " (alist-get 'summary ical-event) " %?\n"
           ":PROPERTIES:\n"
           ":CAPTURED:    %U\n"
           ":ID:        " (org-id-uuid) "\n"
-          ":ORGANIZER: [[" (cadr (assoc 'organizer ical-event)) "]]\n"
-          ":LOCATION:  " (cadr (assoc 'location ical-event)) "\n"
+          ":ORGANIZER: [[" (alist-get 'organizer ical-event) "]]\n"
+          ":LOCATION:  " (alist-get 'location ical-event) "\n"
           ":END:\n"
-          (notmuch-calendar-org-date (cadr (assoc 'dtstart ical-event))
-                                     (cadr (assoc 'dtend ical-event))
-                                     (cadr (assoc 'rrule ical-event)))
+          (notmuch-calendar-org-date (alist-get 'dtstart ical-event)
+                                     (alist-get 'dtend ical-event)
+                                     (alist-get 'rrule ical-event))
           "\n"
           "%a\n"
           ))
@@ -97,6 +97,7 @@
              (ical-event))
         (dolist (event events)
           (setq ical-event (notmuch-calendar-parse-event event zone-map)))
+        (message "%s" ical-event)
         ical-event))))
 
 ;;;###autoload
@@ -111,14 +112,14 @@
          (location (icalendar--get-event-property event 'LOCATION))
          (organizer (icalendar--get-event-property event 'ORGANIZER))
          (attendees (icalendar--get-event-properties event 'ATTENDEE)))
-    (list (list 'summary summary)
-          (list 'dtstart dtstart)
-          (list 'dtend dtend)
-          (list 'rrule rrule)
-          (list 'rdate rdate)
-          (list 'location location)
-          (list 'organizer organizer)
-          (list 'attendees attendees))))
+    (list (cons 'summary summary)
+          (cons 'dtstart dtstart)
+          (cons 'dtend dtend)
+          (cons 'rrule rrule)
+          (cons 'rdate rdate)
+          (cons 'location location)
+          (cons 'organizer organizer)
+          (cons 'attendees attendees))))
 
 ;;;###autoload
 (defun notmuch-calendar-org-date (dtstart dtend rrule)
