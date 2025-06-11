@@ -65,7 +65,9 @@
                        (org-deadline-warning-days 0)
                        (org-agenda-block-separator nil)
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                       (org-agenda-overriding-header "\n📅 Next 14 days\n")))))
+                       (org-agenda-overriding-header "\n📅 Next 14 days\n"))))
+             nil
+             "html/14days.html")
             ("4" "Next four weeks"
              ((agenda ""
                       ((org-agenda-start-on-weekday nil)
@@ -73,7 +75,9 @@
                        (org-deadline-warning-days 0)
                        (org-agenda-block-separator nil)
                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                       (org-agenda-overriding-header "\n📅 Next 30 days\n")))))
+                       (org-agenda-overriding-header "\n📅 Next 30 days\n"))))
+             nil
+             "html/30days.html")
             ("g" "Overview"
              ((agenda ""
                       ((org-agenda-overriding-header "🕐 Today\n")
