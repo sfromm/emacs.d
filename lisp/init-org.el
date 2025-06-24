@@ -304,6 +304,8 @@
   (org-export-allow-bind-keywords t)
   (org-export-backends '(ascii html icalendar latex md))
   (org-export-coding-system 'utf-8)
+  (org-global-properties
+   '(("Effort_ALL" . "0:05 0:10 0:15 0:30 1:00 2:00 3:00 4:00 6:00 8:00")))
   (org-html-checkbox-type 'html)
   (org-list-allow-alphabetical t)
   (org-log-done t)
