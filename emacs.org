@@ -1910,18 +1910,6 @@ Use [[https://direnv.net][direnv]] and [[https://github.com/purcell/envrc][envrc
               ("C-c e" . envrc-command-map))
   :hook (after-init . envrc-global-mode))
 #+end_src
-** Docker
-[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
-docker-compose files.
-
-#+begin_src emacs-lisp :tangle lisp/init-editing-lang.el
-
-(use-package dockerfile-mode
-  :mode ("Dockerfile\\'" . dockerfile-mode))
-
-(use-package docker-compose-mode
-  :mode "docker-compose.*\.yml\\'")
-#+end_src
 ** Lisp
 Go ahead and set up modes to help with editing Lisp files.
 
@@ -2310,7 +2298,7 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
 (with-eval-after-load 'dired
   (diminish 'dired-omit-mode)
 
-  (define-key global-map (kbd "C-c d") 'dired-jump)
+  ;; (define-key global-map (kbd "C-c d") 'dired-jump)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   (define-key dired-mode-map (kbd "Y") 'forge/dired-rsync)
   (define-key dired-mode-map (kbd "^") 'forge/dired-up)
@@ -2342,7 +2330,6 @@ https://writequit.org/denver-emacs/presentations/2016-05-24-elpy-and-dired.html#
           dired-use-ls-dired t)))
 
 (setq auto-revert-verbose nil)
-
 #+end_src
 
 Pull in =async= for asyncrhonous operations in =dired=.
@@ -2442,7 +2429,48 @@ See https://www.reddit.com/r/emacs/comments/bqqqra/quickly_find_syncthing_confli
 #+begin_src emacs-lisp :tangle lisp/init-dired.el
 (provide 'init-dired)
 #+end_src
+** Docker
+[[https://github.com/spotify/dockerfile-mode][dockerfile-mode]] and [[https://github.com/meqif/docker-compose-mode][docker-compose-mode]] for editing Dockerfiles and
+docker-compose files.  This also pulls in [[https://github.com/Silex/docker.el][docker.el]] for interacting with Docker/Podman.  See also:
+- https://www.rahuljuliato.com/posts/emacs-docker-podman
 
+#+begin_src emacs-lisp
+(require 'init-docker)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-docker.el :noweb yes
+;;; init-docker.el --- Init docker/podman integration -*- lexical-binding: t -*-
+<<license>>
+
+(defun my-toggle-docker-podman-command ()
+  "Toggle between docker and podman environment."
+  (interactive)
+  (if (string= docker-command "docker")
+      (setopt docker-command "podman"
+              docker-compose-command "podman-compose"
+              docker-container-tramp-method "podman")
+    (setopt docker-command "docker"
+            docker-compose-command "docker-compose"
+            docker-container-tramp-method "docker"))
+  (message "container env %s" docker-command))
+
+(use-package docker
+  :bind ("C-c d" . docker)
+  :custom
+  ;; Set defaults for the following variables
+  ;; The above function allows toggling between docker & podman.
+  (docker-command "docker")
+  (docker-compose-command "docker-compose")
+  (docker-container-tramp-method "docker"))
+
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" . dockerfile-mode))
+
+(use-package docker-compose-mode
+  :mode "docker-compose.*\.yml\\'")
+
+(provide 'init-docker)
+#+end_src
 ** Git
 I use git for lots of things, but essentially to version control all kinds of
 documents.  [[https://magit.vc][magit]] is a wonderful frontend to git.  Other comments:

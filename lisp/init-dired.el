@@ -18,7 +18,7 @@
 (with-eval-after-load 'dired
   (diminish 'dired-omit-mode)
 
-  (define-key global-map (kbd "C-c d") 'dired-jump)
+  ;; (define-key global-map (kbd "C-c d") 'dired-jump)
   (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
   (define-key dired-mode-map (kbd "Y") 'forge/dired-rsync)
   (define-key dired-mode-map (kbd "^") 'forge/dired-up)

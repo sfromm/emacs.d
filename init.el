@@ -81,6 +81,8 @@
 
 (require 'init-dired)
 
+(require 'init-docker)
+
 (require 'init-git)
 
 (require 'init-email)
