@@ -145,15 +145,59 @@
 
 
 (when (require 'tab-bar nil 'noerror)
-  (tab-bar-mode)
-  (setq tab-bar-close-tab-select 'recent
-        tab-bar-close-button-show nil
-        tab-bar-new-tab-choice 'ibuffer
-        tab-bar-new-tab-to 'right
-        tab-bar-position nil
-        tab-bar-select-tab-modifiers '(super meta)
-        tab-bar-tab-hints t
-        tab-bar-show 1))
+  (setopt tab-bar-close-tab-select 'recent
+          tab-bar-close-button-show nil
+          tab-bar-new-button-show nil
+          tab-bar-new-tab-choice 'ibuffer
+          tab-bar-auto-width nil
+          tab-bar-separator " "
+          tab-bar-select-tab-modifiers '(super meta)
+          tab-bar-show 1
+          tab-bar-tab-hints t
+          tab-bar-format '(tab-bar-format-tabs-groups tab-bar-separator))
+  (tab-bar-mode 1)
+  (tab-bar-history-mode 1))
+
+
+;; This overrides the function from 'tab-bar.el'.
+(defun my-tab-bar-tab-name-format-hints (name _tab i)
+  (if tab-bar-tab-hints (concat (format "»%d«" i) "") name))
+
+(defun my-tab-bar-tab-name-format-default (tab _i &optional current-p)
+  (propertize
+   (concat (funcall tab-bar-tab-group-function tab))
+   'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
+
+(defalias 'tab-bar-tab-group-format-default 'my-tab-bar-tab-group-format-default)
+
+(defalias 'tab-bar-tab-name-format-hints 'my-tab-bar-tab-name-format-hints)
+
+;; utility functions
+(defun my-tab-bar-tab-group-from-project ()
+  "Call `tab-group` with the current project name as the group."
+  (interactive)
+  (when-let* ((proj (project-current))
+	      (name (file-name-nondirectory
+		     (directory-file-name (project-root proj)))))
+    (tab-group (format "[%s]" name))))
+
+(defun my-tab-bar-switch-to-group ()
+  "Prompt for a tab group and switch to its first tab.
+Uses position instead of index field."
+  (interactive)
+  (let* ((tabs (funcall tab-bar-tabs-function)))
+    (let* ((groups (delete-dups (mapcar (lambda (tab)
+					  (funcall tab-bar-tab-group-function tab))
+					tabs)))
+	   (group (completing-read "Switch to group: " groups nil t)))
+      (let ((i 1) (found nil))
+	(dolist (tab tabs)
+	  (let ((tab-group (funcall tab-bar-tab-group-function tab)))
+	    (when (and (not found)
+		       (string= tab-group group))
+	      (setq found t)
+	      (tab-bar-select-tab i)))
+	  (setq i (1+ i)))))))
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-tab.el
 (defun prot-tab--tab-bar-tabs ()
@@ -162,7 +206,7 @@
             (alist-get 'name tab))
           (tab-bar--tabs-recent)))
 
-(defun forge/switch-tab-dwim ()
+(defun my-switch-tab-dwim ()
   "Do-What-I-Mean (DWIM) switch to other tab.
 This will create a new tab if no tabs exist, switch
 to the other tab if there are only 2 tabs, and finally
@@ -176,7 +220,9 @@ prompt for what tab to switch to."
           (t
            (call-interactively #'tab-bar-select-tab-by-name)))))
 
-(global-set-key (kbd "C-x t t") #'forge/switch-tab-dwim)
+(global-set-key (kbd "C-x t t") #'my-switch-tab-dwim)
+(global-set-key (kbd "C-x t P") #'my-tab-bar-tab-group-from-project)
+(global-set-key (kbd "C-x t g") #'my-tab-bar-switch-to-group)
 
 (use-package transpose-frame)
 
