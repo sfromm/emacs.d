@@ -168,7 +168,7 @@
    (concat (funcall tab-bar-tab-group-function tab))
    'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
 
-(defalias 'tab-bar-tab-group-format-default 'my-tab-bar-tab-group-format-default)
+(defalias 'tab-bar-tab-group-format-default 'my-tab-bar-tab-name-format-default)
 
 (defalias 'tab-bar-tab-name-format-hints 'my-tab-bar-tab-name-format-hints)
 
