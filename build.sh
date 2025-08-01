@@ -11,8 +11,8 @@ set -x  # display command to stdout
 
 mkdir -p $BUILD_PATH
 cd $BUILD_PATH
-wget -c ${EMACS_URL}
-tar xzf emacs-${VERSION}.tar.gz
+[[ -e emacs-${VERSION}.tar.gz ]] || wget -c ${EMACS_URL}
+[[ -d emacs-${VERSION} ]]        || tar xzf emacs-${VERSION}.tar.gz
 cd emacs-${VERSION}
 
 sudo apt update
