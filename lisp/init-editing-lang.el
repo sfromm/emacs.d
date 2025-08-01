@@ -139,6 +139,8 @@
 (use-package restclient
   :mode ("\\.http\\'" . restclient-mode))
 
+(use-package verb)
+
 (use-package graphql-mode
   :mode ("\\.graphql\\'" . graphql-mode))
 
