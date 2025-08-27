@@ -273,7 +273,7 @@
       (concat
        "* %a %? :ARTICLE:
   :PROPERTIES:
-  :CREATED:  %U
+  :CAPTURED:  %U
   :URL:      " (eww-current-url) "
   :END:\n\n" (car kill-ring))))
 
