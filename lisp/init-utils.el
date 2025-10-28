@@ -39,7 +39,8 @@
 (use-package ip-query
   :ensure nil
   :init (init-vc-install :fetcher "github" :repo "sfromm/ip-query")
-  :commands (ip-query ip-query-asn))
+  :commands (ip-query ip-query-asn)
+  :hook (ip-query-mode . page-break-lines-mode))
 
 (defun dig-extended (fn &optional
                         domain query-type query-class query-option dig-option server)
