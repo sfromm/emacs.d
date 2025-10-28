@@ -233,7 +233,7 @@
   (defun my-org-set-property (property value)
     "Set arbitrary PROPERTY to VALUE for current heading."
     (org-back-to-heading)
-    (when (not (org-element-property :CREATED (org-element-at-point)))
+    (when (not (org-element-property property (org-element-at-point)))
       (org-set-property property value)))
 
   (defun my-org-set-uuid ()
@@ -241,10 +241,10 @@
     (interactive)
     (my-org-set-property "ID" (org-id-uuid)))
 
-  (defun my-org-set-created ()
-    "Set CREATED property for current headline."
+  (defun my-org-set-captured ()
+    "Set CAPTURED property for current headline."
     (interactive)
-    (my-org-set-property "CREATED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
+    (my-org-set-property "CAPTURED" (with-temp-buffer (org-insert-time-stamp (current-time) t t))))
 
   (defun my-org-timer-clock-in ()
     "Clock in when starting a org-timer."
@@ -262,7 +262,7 @@
     "Set stock org properties for current headline."
     (interactive)
     (my-org-set-uuid)
-    (my-org-set-created))
+    (my-org-set-captured))
 
   (defun my-org-clip-web-page ()
     "Clip web page for org capture."
