@@ -1,16 +1,16 @@
-ARGS = --quick --batch --load init.el
+EMACS_ARGS = --quick --batch --load init.el
 OS := $(shell uname)
 ARCH := $(shell uname -m)
 
 ifeq ($(OS),Linux)
-    EMACS = emacs $(ARGS)
+    EMACS = emacs
     PKGMGR = apt-get install
     PKG = emacs
     PKGFLAGS =
     FONTS = fonts-hack-ttf fonts-firacode fonts-ibm-plex
 endif
 ifeq ($(OS),Darwin)
-    EMACS = emacs $(ARGS)
+    EMACS = emacs
     PKGMGR = brew install
     PKG = emacs-plus@30
     PKGFLAGS = --with-native-comp --with-imagemagick --with-no-frame-refocus --with-savchenkovaleriy-big-sur-icon
@@ -22,6 +22,13 @@ ifeq ($(OS),Darwin)
     endif
 endif
 
+ORG_ARGS  = --batch -Q
+ORG_EVAL += --eval "(setq indent-tabs-mode nil)"
+ORG_EVAL += --eval "(setq org-src-preserve-indentation nil)"
+ORG_EVAL += --eval "(setq org-html-checkbox-type 'html)"
+ORG_EVAL += --eval "(require 'ox-html)"
+ORG_EVAL += --funcall org-html-export-to-html
+
 install: tap
 	$(PKGMGR) $(PKG) $(PKGFLAGS)
 
@@ -30,15 +37,19 @@ tap:
 
 bootstrap:
 	@echo "bootstrapping packages we depend on"
-	$(EMACS) -f "init-install-core-packages"
-	$(EMACS) -f "my-package-install"
+	$(EMACS) $(EMACS_ARGS) -f "init-install-core-packages"
+	$(EMACS) $(EMACS_ARGS) -f "my-package-install"
 
 update:
 	git diff-files --quiet && git pull --rebase
 
 upgrade: update
 	@echo "upgrading existing emacs pacakges"
-	$(EMACS) -f "my-package-upgrade-packages"
+	$(EMACS) $(EMACS_ARGS) -f "my-package-upgrade-packages"
+
+html:
+	@echo "exporting to html"
+	$(EMACS) $(ORG_ARGS) emacs.org $(ORG_EVAL)
 
 fonts:
 	test -x $(BREW_PATH)/brew && brew install --cask $(FONTS) || $(PKGMGR) $(FONTS)
