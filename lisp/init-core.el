@@ -72,6 +72,7 @@
 (add-to-list 'load-path forge-site-dir)
 (add-to-list 'custom-theme-load-path forge-themes-dir)
 
+(setopt use-short-answers t)
 (setopt inhibit-splash-screen t)
 (setopt initial-major-mode 'org-mode)
 (setopt initial-scratch-message
