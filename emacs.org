@@ -1011,12 +1011,18 @@ This is my personal keymap, aka a Leader key, that then hooks into different com
   "W" #'forge/notmuch-save-all-attachments
   "N" #'forge/mail-toggle-compose-new-frame)
 
+(defvar-keymap my-org-map
+  :doc "Prefix map for working with Org"
+  :name "Org"
+  "a" (lambda () "open agenda" (interactive) (find-file (completing-read "Agenda File: " org-agenda-files))))
+
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") my-window-map)
 (define-key forge-map (kbd "m") my-mail-map)
 (define-key forge-map (kbd "h") my-mkhome-map)
 (define-key forge-map (kbd "f") 'elfeed)
 (define-key forge-map (kbd "j") my-jump-map)
+(define-key forge-map (kbd "o") my-org-map)
 (define-key forge-map (kbd "g") 'magit-status)
 (define-key forge-map (kbd "s") 'eshell-here)
 (define-key forge-map (kbd "S") 'forge/slack/body)
