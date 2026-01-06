@@ -530,24 +530,33 @@
     ;; the note title
     (shell-command (format "sed -i \"\" -e 's/^$/<br \\/>/' -e 's/<h1 class=\"title\">.*<\\/h1>$//' %s" outfile)) outfile))
 
-(defun forge/tangle-file (file)
+(defun my-tangle-file (file)
   "Given an 'org-mode' FILE, tangle the source code."
   (interactive "fOrg File: ")
   (find-file file)
   (org-babel-tangle)
   (kill-buffer))
 
-(defun forge/tangle-files (path &optional full)
+(defun my-tangle-files (path &optional full)
   "Tangle files in PATH (directory), FULL for absolute paths.
-Example: (forge/tangle-files \"~/.emacs.d/*.org\")."
+Example: (my-tangle-files \"~/.emacs.d/*.org\")."
   (interactive)
-  (mapc 'forge/tangle-file (forge/get-files path full)))
+  (mapc 'my-tangle-file (my-get-files path full)))
 
-(defun forge/get-files (path &optional full)
+(defun my-get-files (path &optional full)
   "Return list of files in directory PATH that match glob pattern, FULL for absolute paths."
   (directory-files (file-name-directory path)
                    full
                    (eshell-glob-regexp (file-name-nondirectory path))))
+
+(defun my-org-agenda-jump-to-now ()
+  "Open Org agenda and jump to the current scheduled item."
+  (interactive)
+  (org-agenda nil "a")
+  (org-agenda-redo-all)        ;; refresh org buffer
+  (org-agenda-goto-today)
+  (re-search-forward "← now")  ;; search forward to "now"
+  (previous-line))             ;; Go to heading
 
 (defun my/migrate-datetree-entry ()
   "Take an org entry from a datetree outline and migrate to an org-journal file.

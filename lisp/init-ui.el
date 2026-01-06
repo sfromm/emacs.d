@@ -62,7 +62,8 @@
 (defvar-keymap my-org-map
   :doc "Prefix map for working with Org"
   :name "Org"
-  "a" (lambda () "open agenda" (interactive) (find-file (completing-read "Agenda File: " org-agenda-files))))
+  "a" (lambda () "open agenda" (interactive) (find-file (completing-read "Agenda File: " org-agenda-files)))
+  "N" #'my-org-agenda-jump-to-now)
 
 (define-prefix-command 'forge-map)
 (define-key forge-map (kbd "w") my-window-map)
@@ -79,6 +80,13 @@
 (define-key forge-map (kbd "u") 'browse-url-at-point)
 (define-key forge-map (kbd "V") 'view-mode)
 (define-key forge-map (kbd "F") 'forge-focus)
+
+(which-key-add-keymap-based-replacements forge-map
+  "w" `("Windows" . ,my-window-map)
+  "m" `("Mail" . ,my-mail-map)
+  "j" `("Jump" . ,my-jump-map)
+  "o" `("Jump" . ,my-org-map))
+
 (global-set-key (kbd "C-z") 'forge-map)
 
 
