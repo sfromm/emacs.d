@@ -122,6 +122,8 @@
 (use-package go-mode
   :mode "\\.go\\'"
   :config
+  (setq-local tab-width 4)
+  (setopt go-ts-mode-indent-offset 4)
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 
@@ -181,6 +183,12 @@
   :commands (eos-mode)
   :magic ("!RANCID-CONTENT-TYPE: arista" . eos-mode)
   :hook (eos-mode . highlight-indent-guides-mode))
+
+(use-package routeros-mode
+  :ensure nil ;; install via package-vc-install
+  :init (init-vc-install :fetcher "codeberg" :repo "sfrm/routeros-mode")
+  :commands (routeros-mode)
+  :magic ("#RANCID-CONTENT-TYPE: mikrotik_routeros" . routeros-mode))
 
 (use-package yang-mode)
 
