@@ -1748,6 +1748,7 @@ See:
 - https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html
 - https://www.rahuljuliato.com/posts/abbrev-mode
 - https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/
+- ~(info "(elisp) Abbrev Table Properties")~
 
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
 (use-package abbrev
