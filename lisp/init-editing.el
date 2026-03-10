@@ -82,14 +82,11 @@
   :hook
   (emacs-lisp-mode . page-break-lines-mode))
 
-
-(use-package yasnippet
-  :diminish yasnippet-minor-mode
-  :init
-  (yas-global-mode 1)
-  :config
-  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" forge-personal-dir))
-  (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
+(use-package abbrev
+  :ensure nil
+  :custom
+  (save-abbrevs nil)
+  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir)))
 
 
 (use-package expand-region

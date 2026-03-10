@@ -1741,24 +1741,20 @@ Resources:
   :hook
   (emacs-lisp-mode . page-break-lines-mode))
 #+end_src
-** Snippets
-[[https://github.com/joaotavora/yasnippet][Yasnippet]] is a template system for Emacs.  You type in an abbreviation and
-=yasnippet= will automatically expand it into function templates.
+** Abbreviations & Snippets
+Use the built-in =Abbrevs= mode for abbreviations and snippets.
 
-The default for =yas-snippet-dirs= is =~/.emacs.d/snippets/=.   I add to that another path that
-is =~/.emacs.d/user/snippets=.
-
-Be sure to look at the [[https://joaotavora.github.io/yasnippet/][documentation]] and the docs for [[https://joaotavora.github.io/yasnippet/snippet-development.html][writing snippets]].  Use =C-c & C-n= or =M-x yas-new-snippet= to create a new snippet.
+See:
+- https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html
+- https://www.rahuljuliato.com/posts/abbrev-mode
+- https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/
 
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
-
-(use-package yasnippet
-  :diminish yasnippet-minor-mode
-  :init
-  (yas-global-mode 1)
-  :config
-  (add-to-list 'yas-snippet-dirs (expand-file-name "snippets" forge-personal-dir))
-  (add-hook 'term-mode-hook (lambda () "Disable yasnippet in terminal" (setq yas-dont-activate t))))
+(use-package abbrev
+  :ensure nil
+  :custom
+  (save-abbrevs nil)
+  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir)))
 #+end_src
 ** Expand region semantically with =expand-region=
 [[https://github.com/magnars/expand-region.el][expand-region]] to quickly expand the selected region.  Use =C-== to do so.
