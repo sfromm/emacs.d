@@ -1753,9 +1753,14 @@ See:
 #+begin_src emacs-lisp :tangle lisp/init-editing.el
 (use-package abbrev
   :ensure nil
+  :hook
+  ((text-mode prog-mode) . abbrev-mode)
   :custom
   (save-abbrevs nil)
-  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir)))
+  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir))
+  :config
+  (if (file-exists-p abbrev-file-name)
+      (quietly-read-abbrev-file)))
 #+end_src
 ** Expand region semantically with =expand-region=
 [[https://github.com/magnars/expand-region.el][expand-region]] to quickly expand the selected region.  Use =C-== to do so.

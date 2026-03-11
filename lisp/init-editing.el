@@ -84,9 +84,14 @@
 
 (use-package abbrev
   :ensure nil
+  :hook
+  ((text-mode prog-mode) . abbrev-mode)
   :custom
   (save-abbrevs nil)
-  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir)))
+  (abbrev-file-name (expand-file-name "abbrev_defs" forge-personal-dir))
+  :config
+  (if (file-exists-p abbrev-file-name)
+      (quietly-read-abbrev-file)))
 
 
 (use-package expand-region
