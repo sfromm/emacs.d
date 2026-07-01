@@ -1470,6 +1470,23 @@ The =forge/window= /hydra/ defined above uses functions from [[https://github.co
 (use-package transpose-frame)
 #+end_src
 
+*** Toggle deleting other windows
+Via Purcell, this is a small wrapper using =winner-mode=.  It toggles whether all other windows are deleted or restores the previously deleted windows.
+
+#+begin_src emacs-lisp
+(winner-mode +1)
+
+(defun toggle-delete-other-windows ()
+  "Delete other windows in frame if any, or restore previous window config."
+  (interactive)
+  (if (and winner-mode
+           (equal (selected-window) (next-window)))
+      (winner-undo)
+    (delete-other-windows)))
+
+(global-set-key (kbd "C-x 1") #'toggle-delete-other-windows)
+#+end_src
+
 *** Golden ratio for window sizes
 [[https://github.com/roman/golden-ratio.el][golden-ratio]] mode will use the [[https://en.wikipedia.org/wiki/Golden_ratio][golden ratio]] for how to size windows.  This can
 either be done as a one-off command with =golden-ratio= or a mode with
