@@ -361,7 +361,7 @@ Will open a notmuch search buffer of the search results."
   :group 'forge
   :type 'string)
 
-(defun forge/mu4e-save-all-attachments (&optional msg)
+(defun my-mu4e-save-all-attachments (&optional msg)
   "Save all attachments in MSG to attachment directory.
 The sub-directory in `forge-attachment-dir' is derived from the subject of the email message."
   (interactive)
@@ -385,7 +385,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 ;; This is derived in part from notmuch-show-save-attachments
 ;; but calls mm-save-part-to-file instead so as to save files without prompting.
-(defun forge/notmuch-save-all-attachments ()
+(defun my-notmuch-save-all-attachments ()
   "Save all attachments in MSG to attachment directory."
   (interactive)
   (let* ((subject (message-wash-subject (notmuch-show-get-subject)))

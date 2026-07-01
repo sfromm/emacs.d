@@ -487,6 +487,7 @@ behavior, and load =custom.el= file, used by /customize/.
 (setopt ring-bell-function #'ignore)    ;; and squash the audio bell
 (setopt load-prefer-newer t)            ;; always load the newer version of a file
 (setopt large-file-warning-threshold 50000000) ;; warn when opening files bigger than 50MB
+(setopt kill-do-not-save-duplicates t)  ;; do not save duplicates to kill ring
 
 (when (display-graphic-p)
   (when (forge/system-type-darwin-p)
@@ -927,8 +928,8 @@ For a long time, I've used [[https://github.com/seagle0128/doom-modeline][doom-m
   (doom-modeline-mode . size-indication-mode)
   (after-init . doom-modeline-mode))
 
-(use-package nyan-mode)
 #+end_src
+
 ** Look and feel
 #+begin_src emacs-lisp
 
@@ -1538,6 +1539,7 @@ This tries to specify what modes to exclude from =golden-ratio= for window sizin
   (add-to-list 'golden-ratio-extra-commands 'ace-window))
 
 #+end_src
+
 *** Keep buffer names unique
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Uniquify.html][Uniquify]] helps make it easier to navigate between buffers that have identically named files.
 
@@ -3337,7 +3339,7 @@ all attachments to a directory.
   :group 'forge
   :type 'string)
 
-(defun forge/mu4e-save-all-attachments (&optional msg)
+(defun my-mu4e-save-all-attachments (&optional msg)
   "Save all attachments in MSG to attachment directory.
 The sub-directory in `forge-attachment-dir' is derived from the subject of the email message."
   (interactive)
@@ -3361,7 +3363,7 @@ The sub-directory in `forge-attachment-dir' is derived from the subject of the e
 
 ;; This is derived in part from notmuch-show-save-attachments
 ;; but calls mm-save-part-to-file instead so as to save files without prompting.
-(defun forge/notmuch-save-all-attachments ()
+(defun my-notmuch-save-all-attachments ()
   "Save all attachments in MSG to attachment directory."
   (interactive)
   (let* ((subject (message-wash-subject (notmuch-show-get-subject)))
@@ -3622,7 +3624,7 @@ Miscellaneous notes:
              "* %U - %?\n")
             ("lr" "Radio log" entry
              (file+olp+datetree "radio-log.org")
-             "* %U - %^{LOCATION|QTH}p %? :RADIO:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
+             "* %?\n:PROPERTIES:\n:CAPTURED: %U\n:END:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
              )
 
             ("r" "Reference")
@@ -3897,11 +3899,25 @@ Miscellaneous notes:
 
 #+end_src
 *** Presentations with =org-reveal=
-See: https://github.com/yjwen/org-reveal/
+See:
+- https://github.com/yjwen/org-reveal/
+- https://revealjs.com/
 
 #+begin_src emacs-lisp :tangle lisp/init-org.el
 (use-package ox-reveal)
 #+end_src
+
+Something to consider for an org document:
+
+#+begin_example
+#+OPTIONS: toc:nil email:t timestamp:nil num:nil author:nil
+#+REVEAL_INIT_OPTIONS: width:1200, height:900
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_THEME: moon
+#+REVEAL_PLUGINS: (notes highlight)
+#+REVEAL_TRANS: slide
+#+end_example
+
 *** Org Agenda and Holidays
 Configure the holidays package and what holidays to show or not show.
 

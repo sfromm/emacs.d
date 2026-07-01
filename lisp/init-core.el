@@ -87,6 +87,7 @@
 (setopt ring-bell-function #'ignore)    ;; and squash the audio bell
 (setopt load-prefer-newer t)            ;; always load the newer version of a file
 (setopt large-file-warning-threshold 50000000) ;; warn when opening files bigger than 50MB
+(setopt kill-do-not-save-duplicates t)  ;; do not save duplicates to kill ring
 
 (when (display-graphic-p)
   (when (forge/system-type-darwin-p)
