@@ -147,6 +147,8 @@ Query for DNS records for DOMAIN of QUERY-TYPE."
       world-clock-buffer-name "*world-clock*"
       world-clock-time-format "%R %Z (%z)  %A %d %B")
 
+(add-hook 'world-clock-mode-hook #'hl-line-mode)
+
 (defun my-date-utc-to-local (beg end &optional date)
   "Convert UTC date string to local time."
   (interactive "r")
