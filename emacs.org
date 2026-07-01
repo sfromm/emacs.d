@@ -883,12 +883,40 @@ looks good.  It will also define a default theme to start with.
 (add-hook 'after-init-hook #'my-load-theme)
 #+end_src
 ** Modeline
-At this point, I've been fairly happy with using [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  I try to keep it simple.
+For a long time, I've used [[https://github.com/seagle0128/doom-modeline][doom-modeline]].  The goal has been to keep it simple.  In that vein, this is a pivot to try [[https://github.com/emacsmirror/mood-line][mood-line]].
 
 #+begin_src emacs-lisp
 
+(use-package mood-line
+  :custom
+  (mood-line-glyph-alist mood-line-glyphs-fira-code)
+  :config
+  (setq mood-line-format
+        (mood-line-defformat
+         :left
+         (((mood-line-segment-modal)                  . " ")
+          ((or (mood-line-segment-buffer-status) " ") . " ")
+          ((mood-line-segment-buffer-name)            . "  ")
+          ((mood-line-segment-anzu)                   . "  ")
+          ((mood-line-segment-multiple-cursors)       . "  ")
+          ((mood-line-segment-cursor-position)        . " ")
+          ((mood-line-segment-region)           . " ")
+          (mood-line-segment-scroll))
+         :right
+         (((mood-line-segment-vc)         . "  ")
+          ((mood-line-segment-major-mode) . "  ")
+          ((mood-line-segment-misc-info)  . "  ")
+          ((mood-line-segment-checker)    . "  ")
+          ((mood-line-segment-process)    . "  ")))
+        ))
+
+(use-package nyan-mode)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
 ;; https://github.com/seagle0128/doom-modeline
 (use-package doom-modeline
+  :disabled t
   :custom
   (doom-modeline-github nil "Disable github integration")
   (doom-modeline-buffer-file-name-style 'buffer-name)

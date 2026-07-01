@@ -176,17 +176,28 @@
 (add-hook 'after-init-hook #'my-load-theme)
 
 
-;; https://github.com/seagle0128/doom-modeline
-(use-package doom-modeline
+(use-package mood-line
   :custom
-  (doom-modeline-github nil "Disable github integration")
-  (doom-modeline-buffer-file-name-style 'buffer-name)
-  (doom-modeline-lsp nil "Disable integration with lsp")
-  (doom-modeline-workspace-name t)
-  :hook
-  (doom-modeline-mode . column-number-mode)
-  (doom-modeline-mode . size-indication-mode)
-  (after-init . doom-modeline-mode))
+  (mood-line-glyph-alist mood-line-glyphs-fira-code)
+  :config
+  (setq mood-line-format
+        (mood-line-defformat
+         :left
+         (((mood-line-segment-modal)                  . " ")
+          ((or (mood-line-segment-buffer-status) " ") . " ")
+          ((mood-line-segment-buffer-name)            . "  ")
+          ((mood-line-segment-anzu)                   . "  ")
+          ((mood-line-segment-multiple-cursors)       . "  ")
+          ((mood-line-segment-cursor-position)        . " ")
+          ((mood-line-segment-region)           . " ")
+          (mood-line-segment-scroll))
+         :right
+         (((mood-line-segment-vc)         . "  ")
+          ((mood-line-segment-major-mode) . "  ")
+          ((mood-line-segment-misc-info)  . "  ")
+          ((mood-line-segment-checker)    . "  ")
+          ((mood-line-segment-process)    . "  ")))
+        ))
 
 (use-package nyan-mode)
 
