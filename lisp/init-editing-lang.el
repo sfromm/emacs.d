@@ -85,6 +85,41 @@
   :config
   (setq eldoc-idle-delay 0.3))
 
+(use-package paredit
+  :ensure t
+  :commands (paredit-mode)
+  :diminish "()"
+  :hook
+  (emacs-lisp-mode . paredit-mode)
+  (clojure-mode . paredit-mode)
+  (clojure-ts-mode . paredit-mode)
+  (cider-mode . paredit-mode))
+
+(defun my-clojure-mode-hook ()
+  (eldoc-mode 1)
+  (subword-mode 1))
+
+
+(use-package clojure-mode
+  :ensure t
+  :hook
+  (clojure-mode . eldoc-mode)
+  (clojure-mode . subword-mode))
+
+(use-package clojure-ts-mode
+  :ensure t
+  :custom
+  (clojure-align-forms-automatically t)
+  :hook
+  (clojure-ts-mode . eldoc-mode)
+  (clojure-ts-mode . subword-mode))
+
+(use-package cider
+  :ensure t
+  :hook
+  (cider-mode . eldoc-mode)
+  (cider-mode . subword-mode))
+
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
