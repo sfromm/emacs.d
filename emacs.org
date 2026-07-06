@@ -891,6 +891,8 @@ For a long time, I've used [[https://github.com/seagle0128/doom-modeline][doom-m
 (use-package mood-line
   :custom
   (mood-line-glyph-alist mood-line-glyphs-fira-code)
+  :hook
+  (after-init . mood-line-mode)
   :config
   (setq mood-line-format
         (mood-line-defformat

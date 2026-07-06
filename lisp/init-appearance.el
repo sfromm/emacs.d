@@ -179,6 +179,8 @@
 (use-package mood-line
   :custom
   (mood-line-glyph-alist mood-line-glyphs-fira-code)
+  :hook
+  (after-init . mood-line-mode)
   :config
   (setq mood-line-format
         (mood-line-defformat
