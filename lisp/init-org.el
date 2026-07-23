@@ -148,14 +148,14 @@
              :prepend t)
             ("n" "Meeting notes" entry
              (file+olp+datetree "journal.org")
-             "* Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
+             "* %u Notes - %a \n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n%U\nAttendees:\n\nAgenda:\n\nDiscussion:\n"
              :clock-in t
-             :clock-resume t)
+             :clock-resume t :tree-type month)
             ("j" "Journal" entry
              (file+olp+datetree "journal.org")
-             "* %?\n%U\n"
+             "* %u %?\n%U\n"
              :clock-in t
-             :clock-resume t)
+             :clock-resume t :tree-type month)
             ("b" "Bookmark" entry
              (file+headline "notebook.org" "Unfiled")
              "* %^L %^g \n:PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
@@ -164,20 +164,20 @@
             ("l" "Log")
             ("ll" "Log" entry
              (file+olp+datetree "journal.org")
-             "* %U - %?\n")
+             "* %U - %?\n"
+             :tree-type month)
             ("lr" "Radio log" entry
              (file+olp+datetree "radio-log.org")
-             "* %?\n:PROPERTIES:\n:CAPTURED: %U\n:END:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
-             )
+             "* %u %?\n:PROPERTIES:\n:CAPTURED: %U\n:END:\n#+begin_src fle\n%(fle-init-log--contents)\n#+end_src"
+             :tree-type month)
 
             ("r" "Reference")
             ("rm" "Music" entry
              (file+olp+datetree "journal.org")
-             "* %(forge/capture-current-song) :music:\n%U\n")
+             "* %(forge/capture-current-song) :music:\n%U\n" :tree-type month)
             ("rr" "Reference" entry
              (file+olp+datetree "articles.org")
-             "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n"
-             :prepend t)
+             "* %a %?\n:PROPERTIES:\n:CAPTURED:  %U\n:END:\n" :prepend t)
             ("rw" "Web Page" entry
              (file+olp+datetree "articles.org")
              (function my-org-clip-web-page)

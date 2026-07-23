@@ -83,22 +83,4 @@
 ;; Enable the netrc authentication function for &biblbee channels.
 (add-hook 'erc-join-hook 'bitlbee-netrc-identify)
 
-
-(defvar forge-slack-client-id nil
-  "Slack Client ID.")
-
-(defvar forge-slack-client-token nil
-  "Slack client token.")
-
-(use-package slack
-  :commands (slack-start)
-  :bind (:map slack-mode-map
-              ("C-c C-e" . slack-message-edit)
-              ("C-c C-k" . slack-channel-leave)
-              ("@" . slack-message-embed-mention)
-              ("#" . slack-message-embed-channel))
-  :init
-  (setq slack-buffer-emojify t
-        slack-prefer-current-team t))
-
 (provide 'init-chat)

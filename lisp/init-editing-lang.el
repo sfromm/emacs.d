@@ -56,18 +56,12 @@
   (eglot-send-changes-idle-time 0.1)
   (eglot-extend-to-xref t)
   :config
-  ;; (setq-default eglot-workspace-configuration
-  ;;               '((:pylsp . (:configurationSources ["flake8"]
-  ;;                                                  :plugins (
-  ;;                                                            :pycodestyle (:enabled nil)
-  ;;                                                            :mccabe (:enabled nil)
-  ;;                                                            :flake8 (:enabled t))))))
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '(python-mode . ("pylsp"))
-  ;;              '(yaml-mode . ("yaml-language-server")))
   (fset #'jsonrpc--log-event #'ignore)  ; don't log every event
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(python-base-mode . ("ruff" "server"))))
   :hook
-  (python-ts-mode . eglot-ensure)
+  (python-base-mode . eglot-ensure)
   (yaml-mode . eglot-ensure))
 
 

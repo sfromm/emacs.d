@@ -43,7 +43,7 @@
     "Wrapper to load elfeed database from disk when running elfeed."
     (elfeed-db-load))
 
-  (advice-add 'elfeed :before #'forge/elfeed-load-db)
+  ;; (advice-add 'elfeed :before #'forge/elfeed-load-db)
 
   (defun forge/elfeed-stop-timer ()
     "Cancel elfeed-update-timer."
@@ -149,9 +149,9 @@
     (elfeed-db-save)
     (message "elfeed db saved."))
 
-  (advice-add 'elfeed-search-update--force
-              :before
-              'forge/elfeed-search-save-db)
+  ;; (advice-add 'elfeed-search-update--force
+  ;;             :before
+  ;;             'forge/elfeed-search-save-db)
 
   ;; from manuel uberti
   ;; https://manuel-uberti.github.io/emacs/2017/08/01/elfeed/
